@@ -62,6 +62,15 @@ export default [
     component: () => import("../views/dashboard/ecommerce/index.vue"),
   },
   {
+    path: "/nguoi-dung",
+    name: "nguoi-dung",
+    meta: {
+      title: "Người dùng",
+      authRequired: true,
+    },
+    component: () => import("../pages/user/index.vue"),
+  },
+  {
     path: "/quan-ly-van-ban-den/van-ban-den",
     name: "van-ban-den",
     meta: {

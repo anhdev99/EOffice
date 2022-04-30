@@ -34,7 +34,7 @@ export default {
   },
   mounted(){
     let rightbar_isopen = localStorage.getItem('rightbar_isopen')
-    if(rightbar_isopen=='true'){
+    if(rightbar_isopen=='false'){
       document.getElementById('mdi-cog').click()
       localStorage.setItem("rightbar_isopen", false);
     }
@@ -46,7 +46,7 @@ export default {
         return this.$store ? this.$store.state.layout.layoutType : {} || {};
       },
       set(layout) {
-        localStorage.setItem("rightbar_isopen", true);
+        localStorage.setItem("rightbar_isopen", false);
         this.changeLayoutType({
           layoutType: layout,
         });
