@@ -142,7 +142,7 @@ export default {
                   <img
                       src="@/assets/images/logo-eoffice.png"
                       alt=""
-                      height="30"
+                      height="40"
                   />
                 </router-link>
               </div>
