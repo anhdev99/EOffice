@@ -54,12 +54,12 @@ router.beforeEach((routeTo, routeFrom, next) => {
       next({ name: 'login', query: { redirectFrom: routeTo.fullPath } })
     }
   } else {
-    const publicPages = ['/login', '/register', '/forgot-password'];
+    const publicPages = ['/dang-nhap', '/register', '/forgot-password'];
     const authpage = !publicPages.includes(routeTo.path);
     const loggeduser = localStorage.getItem('user');
 
     if (authpage && !loggeduser) {
-      return next('/login');
+      return next('/dang-nhap');
     }
 
     next();

@@ -2,10 +2,10 @@ import store from "@/state/store";
 
 export default [
   {
-    path: "/login",
-    name: "login",
-    component: () => import("../views/account/login.vue"),
-    meta:  { title: "Login",
+    path: "/dang-nhap",
+    name: "dang-nhap",
+    component: () => import("../pages/auth/login.vue"),
+    meta:  { title: "Đăng nhập",
       beforeResolve(routeTo, routeFrom, next) {
         // If the user is already logged in
         if (store.getters["auth/loggedIn"]) {

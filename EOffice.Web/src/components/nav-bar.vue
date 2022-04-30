@@ -235,6 +235,9 @@ export default {
               <span></span>
             </span>
           </button>
+          <div class="   d-flex justify-content-center align-items-center">
+            <h5 style="margin: 0px;font-weight: 600">HỆ THỐNG EOFFICE - DThU</h5>
+          </div>
 
           <!-- App Search-->
 <!--          <form class="app-search d-none d-md-block">-->

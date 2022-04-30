@@ -5,6 +5,8 @@ import AOS from 'aos'
 import 'aos/dist/aos.css'
 import i18n from './i18n'
 import store from "./state/store";
+import VueLoading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/vue-loading.css';
 
 import BootstrapVue3 from 'bootstrap-vue-3';
 import vClickOutside from "click-outside-vue3"
@@ -52,4 +54,14 @@ createApp(App)
     .use(Maska)
     .use(Particles)
     .use(i18n)
+    .use(VueLoading,{
+            canCancel: false,
+            color: '#000000',
+            loader: 'spinner',
+            width: 30,
+            height: 30,
+            backgroundColor: '#ffffff',
+            opacity: 0.7,
+            zIndex: 999,
+        }, {})
     .use(vClickOutside).mount('#app')
