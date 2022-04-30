@@ -658,7 +658,7 @@ export default {
           <!--end card-body-->
           <div class="card-body">
             <div class="table-responsive table-card mb-4">
-              <table class="table align-middle table-nowrap mb-0" id="tasksTable">
+              <table class="table align-middle table-nowrap mb-0  table-bordered border-secondary" id="tasksTable">
                 <thead class="table-light text-muted">
                   <tr>
                     <th scope="col" style="width: 40px">
