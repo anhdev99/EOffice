@@ -1,9 +1,9 @@
 <script>
-import { layoutComputed } from "@/state/helpers";
-import { SimpleBar } from "simplebar-vue3";
+import {layoutComputed} from "@/state/helpers";
+import {SimpleBar} from "simplebar-vue3";
 
 export default {
-  components: { SimpleBar },
+  components: {SimpleBar},
   data() {
     return {
       settings: {
@@ -29,77 +29,77 @@ export default {
   },
 
   mounted() {
-      if (document.querySelectorAll(".navbar-nav .collapse")) {
-        let collapses = document.querySelectorAll(".navbar-nav .collapse");
-        collapses.forEach((collapse) => {
-          // Hide sibling collapses on `show.bs.collapse`
-          collapse.addEventListener("show.bs.collapse", (e) => {
-            e.stopPropagation();
-            let closestCollapse = collapse.parentElement.closest(".collapse");
-            if (closestCollapse) {
-              let siblingCollapses =
+    if (document.querySelectorAll(".navbar-nav .collapse")) {
+      let collapses = document.querySelectorAll(".navbar-nav .collapse");
+      collapses.forEach((collapse) => {
+        // Hide sibling collapses on `show.bs.collapse`
+        collapse.addEventListener("show.bs.collapse", (e) => {
+          e.stopPropagation();
+          let closestCollapse = collapse.parentElement.closest(".collapse");
+          if (closestCollapse) {
+            let siblingCollapses =
                 closestCollapse.querySelectorAll(".collapse");
-              siblingCollapses.forEach((siblingCollapse) => {
-                if (siblingCollapse.classList.contains("show")) {
-                  siblingCollapse.classList.remove("show");
-                }
-              });
-            } else {
-              let getSiblings = (elem) => {
-                // Setup siblings array and get the first sibling
-                let siblings = [];
-                let sibling = elem.parentNode.firstChild;
-                // Loop through each sibling and push to the array
-                while (sibling) {
-                  if (sibling.nodeType === 1 && sibling !== elem) {
-                    siblings.push(sibling);
-                  }
-                  sibling = sibling.nextSibling;
-                }
-                return siblings;
-              };
-              let siblings = getSiblings(collapse.parentElement);
-              siblings.forEach((item) => {
-                if (item.childNodes.length > 2)
-                  item.firstElementChild.setAttribute("aria-expanded", "false");
-                let ids = item.querySelectorAll("*[id]");
-                ids.forEach((item1) => {
-                  item1.classList.remove("show");
-                  if (item1.childNodes.length > 2) {
-                    let val = item1.querySelectorAll("ul li a");
-
-                    val.forEach((subitem) => {
-                      if (subitem.hasAttribute("aria-expanded"))
-                        subitem.setAttribute("aria-expanded", "false");
-                    });
-                  }
-                });
-              });
-            }
-          });
-
-          // Hide nested collapses on `hide.bs.collapse`
-          collapse.addEventListener("hide.bs.collapse", (e) => {
-            e.stopPropagation();
-            let childCollapses = collapse.querySelectorAll(".collapse");
-            childCollapses.forEach((childCollapse) => {
-              let childCollapseInstance = childCollapse;
-              childCollapseInstance.hide();
+            siblingCollapses.forEach((siblingCollapse) => {
+              if (siblingCollapse.classList.contains("show")) {
+                siblingCollapse.classList.remove("show");
+              }
             });
+          } else {
+            let getSiblings = (elem) => {
+              // Setup siblings array and get the first sibling
+              let siblings = [];
+              let sibling = elem.parentNode.firstChild;
+              // Loop through each sibling and push to the array
+              while (sibling) {
+                if (sibling.nodeType === 1 && sibling !== elem) {
+                  siblings.push(sibling);
+                }
+                sibling = sibling.nextSibling;
+              }
+              return siblings;
+            };
+            let siblings = getSiblings(collapse.parentElement);
+            siblings.forEach((item) => {
+              if (item.childNodes.length > 2)
+                item.firstElementChild.setAttribute("aria-expanded", "false");
+              let ids = item.querySelectorAll("*[id]");
+              ids.forEach((item1) => {
+                item1.classList.remove("show");
+                if (item1.childNodes.length > 2) {
+                  let val = item1.querySelectorAll("ul li a");
+
+                  val.forEach((subitem) => {
+                    if (subitem.hasAttribute("aria-expanded"))
+                      subitem.setAttribute("aria-expanded", "false");
+                  });
+                }
+              });
+            });
+          }
+        });
+
+        // Hide nested collapses on `hide.bs.collapse`
+        collapse.addEventListener("hide.bs.collapse", (e) => {
+          e.stopPropagation();
+          let childCollapses = collapse.querySelectorAll(".collapse");
+          childCollapses.forEach((childCollapse) => {
+            let childCollapseInstance = childCollapse;
+            childCollapseInstance.hide();
           });
         });
-      }
+      });
+    }
   },
 
   methods: {
     onRoutechange(ele) {
       this.initActiveMenu(ele.path);
-        if (document.getElementsByClassName("mm-active").length > 0) {
-          const currentPosition = document.getElementsByClassName("mm-active")[0].offsetTop;
-          if (currentPosition > 500)
-            if (this.$refs.isSimplebar)
-              this.$refs.isSimplebar.value.getScrollElement().scrollTop = currentPosition + 300;
-        }
+      if (document.getElementsByClassName("mm-active").length > 0) {
+        const currentPosition = document.getElementsByClassName("mm-active")[0].offsetTop;
+        if (currentPosition > 500)
+          if (this.$refs.isSimplebar)
+            this.$refs.isSimplebar.value.getScrollElement().scrollTop = currentPosition + 300;
+      }
     },
 
     initActiveMenu(ele) {
@@ -113,7 +113,7 @@ export default {
             if (parentCollapseDiv) {
               parentCollapseDiv.classList.add("show");
               parentCollapseDiv.parentElement.children[0].classList.add("active");
-              parentCollapseDiv.parentElement.children[0].setAttribute("aria-expanded","true");
+              parentCollapseDiv.parentElement.children[0].setAttribute("aria-expanded", "true");
               if (parentCollapseDiv.parentElement.closest(".collapse.menu-dropdown")) {
                 parentCollapseDiv.parentElement.closest(".collapse").classList.add("show");
                 if (parentCollapseDiv.parentElement.closest(".collapse").previousElementSibling)
@@ -138,7 +138,8 @@ export default {
           <span data-key="t-menu"> {{ $t("t-menu") }}</span>
         </li>
         <li class="nav-item">
-          <a class="nav-link menu-link" href="#sidebarDashboards" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarDashboards">
+          <a class="nav-link menu-link" href="#sidebarDashboards" data-bs-toggle="collapse" role="button"
+             aria-expanded="false" aria-controls="sidebarDashboards">
             <i class="ri-dashboard-2-line"></i>
             <span data-key="t-dashboards"> {{ $t("t-dashboards") }}</span>
           </a>
@@ -146,41 +147,42 @@ export default {
             <ul class="nav nav-sm flex-column">
               <li class="nav-item">
                 <router-link
-                  to="/dashboard/analytics"
-                  class="nav-link custom-abc"
-                  data-key="t-analytics"
+                    to="/dashboard/analytics"
+                    class="nav-link custom-abc"
+                    data-key="t-analytics"
                 >
                   {{ $t("t-analytics") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/dashboard/crm"
-                  class="nav-link"
-                  data-key="t-crm"
+                    to="/dashboard/crm"
+                    class="nav-link"
+                    data-key="t-crm"
                 >
-                  {{ $t("t-crm") }}
+
                 </router-link>
+
               </li>
               <li class="nav-item">
                 <router-link to="/" class="nav-link" data-key="t-ecommerce">
-                  {{ $t("t-ecommerce") }}
+                  văn bản đến
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/dashboard/crypto"
-                  class="nav-link"
-                  data-key="t-crypto"
+                    to="/dashboard/crypto"
+                    class="nav-link"
+                    data-key="t-crypto"
                 >
                   {{ $t("t-crypto") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/dashboard/projects"
-                  class="nav-link"
-                  data-key="t-projects"
+                    to="/dashboard/projects"
+                    class="nav-link"
+                    data-key="t-projects"
                 >
                   {{ $t("t-projects") }}
                 </router-link>
@@ -191,12 +193,12 @@ export default {
         <!-- end Dashboard Menu -->
         <li class="nav-item">
           <a
-            class="nav-link menu-link"
-            href="#sidebarApps"
-            data-bs-toggle="collapse"
-            role="button"
-            aria-expanded="false"
-            aria-controls="sidebarApps"
+              class="nav-link menu-link"
+              href="#sidebarApps"
+              data-bs-toggle="collapse"
+              role="button"
+              aria-expanded="false"
+              aria-controls="sidebarApps"
           >
             <i class="ri-apps-2-line"></i>
             <span data-key="t-apps"> {{ $t("t-apps") }}</span>
@@ -205,9 +207,9 @@ export default {
             <ul class="nav nav-sm flex-column">
               <li class="nav-item">
                 <router-link
-                  to="/calendar"
-                  class="nav-link"
-                  data-key="t-calendar"
+                    to="/calendar"
+                    class="nav-link"
+                    data-key="t-calendar"
                 >
                   {{ $t("t-calendar") }}
                 </router-link>
@@ -219,22 +221,22 @@ export default {
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/mailbox"
-                  class="nav-link"
-                  data-key="t-mailbox"
+                    to="/mailbox"
+                    class="nav-link"
+                    data-key="t-mailbox"
                 >
                   {{ $t("t-mailbox") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <a
-                  href="#sidebarEcommerce"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarEcommerce"
-                  data-key="t-ecommerce"
+                    href="#sidebarEcommerce"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarEcommerce"
+                    data-key="t-ecommerce"
                 >
                   {{ $t("t-ecommerce") }}
                 </a>
@@ -242,90 +244,90 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/ecommerce/products"
-                        class="nav-link"
-                        data-key="t-products"
+                          to="/ecommerce/products"
+                          class="nav-link"
+                          data-key="t-products"
                       >
                         {{ $t("t-products") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/ecommerce/product-details"
-                        class="nav-link"
-                        data-key="t-product-Details"
+                          to="/ecommerce/product-details"
+                          class="nav-link"
+                          data-key="t-product-Details"
                       >
                         {{ $t("t-product-Details") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/ecommerce/add-product"
-                        class="nav-link"
-                        data-key="t-create-product"
+                          to="/ecommerce/add-product"
+                          class="nav-link"
+                          data-key="t-create-product"
                       >
                         {{ $t("t-create-product") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/ecommerce/orders"
-                        class="nav-link"
-                        data-key="t-orders"
+                          to="/ecommerce/orders"
+                          class="nav-link"
+                          data-key="t-orders"
                       >
                         {{ $t("t-orders") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/ecommerce/order-details"
-                        class="nav-link"
-                        data-key="t-order-details"
+                          to="/ecommerce/order-details"
+                          class="nav-link"
+                          data-key="t-order-details"
                       >
                         {{ $t("t-order-details") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/ecommerce/customers"
-                        class="nav-link"
-                        data-key="t-customers"
+                          to="/ecommerce/customers"
+                          class="nav-link"
+                          data-key="t-customers"
                       >
                         {{ $t("t-customers") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/ecommerce/shopping-cart"
-                        class="nav-link"
-                        data-key="t-shopping-cart"
+                          to="/ecommerce/shopping-cart"
+                          class="nav-link"
+                          data-key="t-shopping-cart"
                       >
                         {{ $t("t-shopping-cart") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/ecommerce/checkout"
-                        class="nav-link"
-                        data-key="t-checkout"
+                          to="/ecommerce/checkout"
+                          class="nav-link"
+                          data-key="t-checkout"
                       >
                         {{ $t("t-checkout") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/ecommerce/sellers"
-                        class="nav-link"
-                        data-key="t-sellers"
+                          to="/ecommerce/sellers"
+                          class="nav-link"
+                          data-key="t-sellers"
                       >
                         {{ $t("t-sellers") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/ecommerce/seller-details"
-                        class="nav-link"
-                        data-key="t-sellers-details"
+                          to="/ecommerce/seller-details"
+                          class="nav-link"
+                          data-key="t-sellers-details"
                       >
                         {{ $t("t-sellers-details") }}
                       </router-link>
@@ -335,13 +337,13 @@ export default {
               </li>
               <li class="nav-item">
                 <a
-                  href="#sidebarProjects"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarProjects"
-                  data-key="t-projects"
+                    href="#sidebarProjects"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarProjects"
+                    data-key="t-projects"
                 >
                   {{ $t("t-projects") }}
                 </a>
@@ -349,27 +351,27 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/apps/projects-list"
-                        class="nav-link"
-                        data-key="t-list"
+                          to="/apps/projects-list"
+                          class="nav-link"
+                          data-key="t-list"
                       >
                         {{ $t("t-list") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/apps/projects-overview"
-                        class="nav-link"
-                        data-key="t-overview"
+                          to="/apps/projects-overview"
+                          class="nav-link"
+                          data-key="t-overview"
                       >
                         {{ $t("t-overview") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/apps/projects-create"
-                        class="nav-link"
-                        data-key="t-create-project"
+                          to="/apps/projects-create"
+                          class="nav-link"
+                          data-key="t-create-project"
                       >
                         {{ $t("t-create-project") }}
                       </router-link>
@@ -379,13 +381,13 @@ export default {
               </li>
               <li class="nav-item">
                 <a
-                  href="#sidebarTasks"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarTasks"
-                  data-key="t-tasks"
+                    href="#sidebarTasks"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarTasks"
+                    data-key="t-tasks"
                 >
                   {{ $t("t-tasks") }}
                 </a>
@@ -393,27 +395,27 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/apps/tasks-kanban"
-                        class="nav-link"
-                        data-key="t-kanbanboard"
+                          to="/apps/tasks-kanban"
+                          class="nav-link"
+                          data-key="t-kanbanboard"
                       >
                         {{ $t("t-kanbanboard") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/apps/tasks-list-view"
-                        class="nav-link"
-                        data-key="t-list-view"
+                          to="/apps/tasks-list-view"
+                          class="nav-link"
+                          data-key="t-list-view"
                       >
                         {{ $t("t-list-view") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/apps/tasks-details"
-                        class="nav-link"
-                        data-key="t-task-details"
+                          to="/apps/tasks-details"
+                          class="nav-link"
+                          data-key="t-task-details"
                       >
                         {{ $t("t-task-details") }}
                       </router-link>
@@ -423,13 +425,13 @@ export default {
               </li>
               <li class="nav-item">
                 <a
-                  href="#sidebarCRM"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarCRM"
-                  data-key="t-crm"
+                    href="#sidebarCRM"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarCRM"
+                    data-key="t-crm"
                 >
                   {{ $t("t-crm") }}
                 </a>
@@ -437,36 +439,36 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/apps/crm-contacts"
-                        class="nav-link"
-                        data-key="t-contacts"
+                          to="/apps/crm-contacts"
+                          class="nav-link"
+                          data-key="t-contacts"
                       >
                         {{ $t("t-contacts") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/apps/crm-companies"
-                        class="nav-link"
-                        data-key="t-companies"
+                          to="/apps/crm-companies"
+                          class="nav-link"
+                          data-key="t-companies"
                       >
                         {{ $t("t-companies") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/apps/crm-deals"
-                        class="nav-link"
-                        data-key="t-deals"
+                          to="/apps/crm-deals"
+                          class="nav-link"
+                          data-key="t-deals"
                       >
                         {{ $t("t-deals") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/apps/crm-leads"
-                        class="nav-link"
-                        data-key="t-leads"
+                          to="/apps/crm-leads"
+                          class="nav-link"
+                          data-key="t-leads"
                       >
                         {{ $t("t-leads") }}
                       </router-link>
@@ -476,13 +478,13 @@ export default {
               </li>
               <li class="nav-item">
                 <a
-                  href="#sidebarCrypto"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarCrypto"
-                  data-key="t-crypto"
+                    href="#sidebarCrypto"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarCrypto"
+                    data-key="t-crypto"
                 >
                   {{ $t("t-crypto") }}
                 </a>
@@ -490,54 +492,54 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/crypto/transactions"
-                        class="nav-link"
-                        data-key="t-transactions"
+                          to="/crypto/transactions"
+                          class="nav-link"
+                          data-key="t-transactions"
                       >
                         {{ $t("t-transactions") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/crypto/buy-sell"
-                        class="nav-link"
-                        data-key="t-buy-sell"
+                          to="/crypto/buy-sell"
+                          class="nav-link"
+                          data-key="t-buy-sell"
                       >
                         {{ $t("t-buy-sell") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/crypto/orders"
-                        class="nav-link"
-                        data-key="t-orders"
+                          to="/crypto/orders"
+                          class="nav-link"
+                          data-key="t-orders"
                       >
                         {{ $t("t-orders") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/crypto/wallet"
-                        class="nav-link"
-                        data-key="t-my-wallet"
+                          to="/crypto/wallet"
+                          class="nav-link"
+                          data-key="t-my-wallet"
                       >
                         {{ $t("t-my-wallet") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/crypto/ico"
-                        class="nav-link"
-                        data-key="t-ico-list"
+                          to="/crypto/ico"
+                          class="nav-link"
+                          data-key="t-ico-list"
                       >
                         {{ $t("t-ico-list") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/crypto/kyc"
-                        class="nav-link"
-                        data-key="t-kyc-application"
+                          to="/crypto/kyc"
+                          class="nav-link"
+                          data-key="t-kyc-application"
                       >
                         {{ $t("t-kyc-application") }}
                       </router-link>
@@ -547,13 +549,13 @@ export default {
               </li>
               <li class="nav-item">
                 <a
-                  href="#sidebarInvoices"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarInvoices"
-                  data-key="t-invoices"
+                    href="#sidebarInvoices"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarInvoices"
+                    data-key="t-invoices"
                 >
                   {{ $t("t-invoices") }}
                 </a>
@@ -561,27 +563,27 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/invoices/list"
-                        class="nav-link"
-                        data-key="t-list-view"
+                          to="/invoices/list"
+                          class="nav-link"
+                          data-key="t-list-view"
                       >
                         {{ $t("t-list-view") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/invoices/detail"
-                        class="nav-link"
-                        data-key="t-details"
+                          to="/invoices/detail"
+                          class="nav-link"
+                          data-key="t-details"
                       >
                         {{ $t("t-details") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/invoices/create"
-                        class="nav-link"
-                        data-key="t-create-invoice"
+                          to="/invoices/create"
+                          class="nav-link"
+                          data-key="t-create-invoice"
                       >
                         {{ $t("t-create-invoice") }}
                       </router-link>
@@ -591,13 +593,13 @@ export default {
               </li>
               <li class="nav-item">
                 <a
-                  href="#sidebarTickets"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarTickets"
-                  data-key="t-supprt-tickets"
+                    href="#sidebarTickets"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarTickets"
+                    data-key="t-supprt-tickets"
                 >
                   {{ $t("t-supprt-tickets") }}
                 </a>
@@ -605,18 +607,18 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/apps/tickets-list"
-                        class="nav-link"
-                        data-key="t-list-view"
+                          to="/apps/tickets-list"
+                          class="nav-link"
+                          data-key="t-list-view"
                       >
                         {{ $t("t-list-view") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/apps/tickets-details"
-                        class="nav-link"
-                        data-key="t-ticket-details"
+                          to="/apps/tickets-details"
+                          class="nav-link"
+                          data-key="t-ticket-details"
                       >
                         {{ $t("t-ticket-details") }}
                       </router-link>
@@ -635,47 +637,47 @@ export default {
 
         <li class="nav-item">
           <a
-            class="nav-link menu-link"
-            href="#sidebarAuth"
-            data-bs-toggle="collapse"
-            role="button"
-            aria-expanded="false"
-            aria-controls="sidebarAuth"
+              class="nav-link menu-link"
+              href="#sidebarAuth"
+              data-bs-toggle="collapse"
+              role="button"
+              aria-expanded="false"
+              aria-controls="sidebarAuth"
           >
             <i class="ri-account-circle-line"></i>
             <span data-key="t-authentication">{{
-              $t("t-authentication")
-            }}</span>
+                $t("t-authentication")
+              }}</span>
           </a>
           <div class="collapse menu-dropdown" id="sidebarAuth">
             <ul class="nav nav-sm flex-column">
               <li class="nav-item">
                 <a
-                  href="#sidebarSignIn"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarSignIn"
-                  data-key="t-signin"
-                  >{{ $t("t-signin") }}
+                    href="#sidebarSignIn"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarSignIn"
+                    data-key="t-signin"
+                >{{ $t("t-signin") }}
                 </a>
                 <div class="collapse menu-dropdown" id="sidebarSignIn">
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/auth/signin-basic"
-                        class="nav-link"
-                        data-key="t-basic"
-                        >{{ $t("t-basic") }}
+                          to="/auth/signin-basic"
+                          class="nav-link"
+                          data-key="t-basic"
+                      >{{ $t("t-basic") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/auth/signin-cover"
-                        class="nav-link"
-                        data-key="t-cover"
-                        >{{ $t("t-cover") }}
+                          to="/auth/signin-cover"
+                          class="nav-link"
+                          data-key="t-cover"
+                      >{{ $t("t-cover") }}
                       </router-link>
                     </li>
                   </ul>
@@ -683,31 +685,31 @@ export default {
               </li>
               <li class="nav-item">
                 <a
-                  href="#sidebarSignUp"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarSignUp"
-                  data-key="t-signup"
-                  >{{ $t("t-signup") }}
+                    href="#sidebarSignUp"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarSignUp"
+                    data-key="t-signup"
+                >{{ $t("t-signup") }}
                 </a>
                 <div class="collapse menu-dropdown" id="sidebarSignUp">
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/auth/signup-basic"
-                        class="nav-link"
-                        data-key="t-basic"
-                        >{{ $t("t-basic") }}
+                          to="/auth/signup-basic"
+                          class="nav-link"
+                          data-key="t-basic"
+                      >{{ $t("t-basic") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/auth/signup-cover"
-                        class="nav-link"
-                        data-key="t-cover"
-                        >{{ $t("t-cover") }}
+                          to="/auth/signup-cover"
+                          class="nav-link"
+                          data-key="t-cover"
+                      >{{ $t("t-cover") }}
                       </router-link>
                     </li>
                   </ul>
@@ -716,13 +718,13 @@ export default {
 
               <li class="nav-item">
                 <a
-                  href="#sidebarResetPass"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarResetPass"
-                  data-key="t-password-reset"
+                    href="#sidebarResetPass"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarResetPass"
+                    data-key="t-password-reset"
                 >
                   {{ $t("t-password-reset") }}
                 </a>
@@ -730,18 +732,18 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/auth/reset-pwd-basic"
-                        class="nav-link"
-                        data-key="t-basic"
+                          to="/auth/reset-pwd-basic"
+                          class="nav-link"
+                          data-key="t-basic"
                       >
                         {{ $t("t-basic") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/auth/reset-pwd-cover"
-                        class="nav-link"
-                        data-key="t-cover"
+                          to="/auth/reset-pwd-cover"
+                          class="nav-link"
+                          data-key="t-cover"
                       >
                         {{ $t("t-cover") }}
                       </router-link>
@@ -752,13 +754,13 @@ export default {
 
               <li class="nav-item">
                 <a
-                  href="#sidebarLockScreen"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarLockScreen"
-                  data-key="t-lock-screen"
+                    href="#sidebarLockScreen"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarLockScreen"
+                    data-key="t-lock-screen"
                 >
                   {{ $t("t-lock-screen") }}
                 </a>
@@ -766,18 +768,18 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/auth/lockscreen-basic"
-                        class="nav-link"
-                        data-key="t-basic"
+                          to="/auth/lockscreen-basic"
+                          class="nav-link"
+                          data-key="t-basic"
                       >
                         {{ $t("t-basic") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/auth/lockscreen-cover"
-                        class="nav-link"
-                        data-key="t-cover"
+                          to="/auth/lockscreen-cover"
+                          class="nav-link"
+                          data-key="t-cover"
                       >
                         {{ $t("t-cover") }}
                       </router-link>
@@ -788,13 +790,13 @@ export default {
 
               <li class="nav-item">
                 <a
-                  href="#sidebarLogout"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarLogout"
-                  data-key="t-logout"
+                    href="#sidebarLogout"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarLogout"
+                    data-key="t-logout"
                 >
                   {{ $t("t-logout") }}
                 </a>
@@ -802,18 +804,18 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/auth/logout-basic"
-                        class="nav-link"
-                        data-key="t-basic"
+                          to="/auth/logout-basic"
+                          class="nav-link"
+                          data-key="t-basic"
                       >
                         {{ $t("t-basic") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/auth/logout-cover"
-                        class="nav-link"
-                        data-key="t-cover"
+                          to="/auth/logout-cover"
+                          class="nav-link"
+                          data-key="t-cover"
                       >
                         {{ $t("t-cover") }}
                       </router-link>
@@ -823,13 +825,13 @@ export default {
               </li>
               <li class="nav-item">
                 <a
-                  href="#sidebarSuccessMsg"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarSuccessMsg"
-                  data-key="t-success-message"
+                    href="#sidebarSuccessMsg"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarSuccessMsg"
+                    data-key="t-success-message"
                 >
                   {{ $t("t-success-message") }}
                 </a>
@@ -837,18 +839,18 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/auth/success-msg-basic"
-                        class="nav-link"
-                        data-key="t-basic"
+                          to="/auth/success-msg-basic"
+                          class="nav-link"
+                          data-key="t-basic"
                       >
                         {{ $t("t-basic") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/auth/success-msg-cover"
-                        class="nav-link"
-                        data-key="t-cover"
+                          to="/auth/success-msg-cover"
+                          class="nav-link"
+                          data-key="t-cover"
                       >
                         {{ $t("t-cover") }}
                       </router-link>
@@ -858,13 +860,13 @@ export default {
               </li>
               <li class="nav-item">
                 <a
-                  href="#sidebarTwoStep"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarTwoStep"
-                  data-key="t-two-step-verification"
+                    href="#sidebarTwoStep"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarTwoStep"
+                    data-key="t-two-step-verification"
                 >
                   {{ $t("t-two-step-verification") }}
                 </a>
@@ -872,18 +874,18 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/auth/twostep-basic"
-                        class="nav-link"
-                        data-key="t-basic"
+                          to="/auth/twostep-basic"
+                          class="nav-link"
+                          data-key="t-basic"
                       >
                         {{ $t("t-basic") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/auth/twostep-cover"
-                        class="nav-link"
-                        data-key="t-cover"
+                          to="/auth/twostep-cover"
+                          class="nav-link"
+                          data-key="t-cover"
                       >
                         {{ $t("t-cover") }}
                       </router-link>
@@ -893,13 +895,13 @@ export default {
               </li>
               <li class="nav-item">
                 <a
-                  href="#sidebarErrors"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarErrors"
-                  data-key="t-errors"
+                    href="#sidebarErrors"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarErrors"
+                    data-key="t-errors"
                 >
                   {{ $t("t-errors") }}
                 </a>
@@ -907,36 +909,36 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/auth/404-basic"
-                        class="nav-link"
-                        data-key="t-404-basic"
+                          to="/auth/404-basic"
+                          class="nav-link"
+                          data-key="t-404-basic"
                       >
                         {{ $t("t-404-basic") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/auth/404-cover"
-                        class="nav-link"
-                        data-key="t-404-cover"
+                          to="/auth/404-cover"
+                          class="nav-link"
+                          data-key="t-404-cover"
                       >
                         {{ $t("t-404-cover") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/auth/404"
-                        class="nav-link"
-                        data-key="t-404-alt"
+                          to="/auth/404"
+                          class="nav-link"
+                          data-key="t-404-alt"
                       >
                         {{ $t("t-404-alt") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/auth/500"
-                        class="nav-link"
-                        data-key="t-500"
+                          to="/auth/500"
+                          class="nav-link"
+                          data-key="t-500"
                       >
                         {{ $t("t-500") }}
                       </router-link>
@@ -950,12 +952,12 @@ export default {
 
         <li class="nav-item">
           <a
-            class="nav-link menu-link"
-            href="#sidebarPages"
-            data-bs-toggle="collapse"
-            role="button"
-            aria-expanded="false"
-            aria-controls="sidebarPages"
+              class="nav-link menu-link"
+              href="#sidebarPages"
+              data-bs-toggle="collapse"
+              role="button"
+              aria-expanded="false"
+              aria-controls="sidebarPages"
           >
             <i class="ri-pages-line"></i>
             <span data-key="t-pages">{{ $t("t-pages") }}</span>
@@ -964,39 +966,39 @@ export default {
             <ul class="nav nav-sm flex-column">
               <li class="nav-item">
                 <router-link
-                  to="/pages/starter"
-                  class="nav-link"
-                  data-key="t-starter"
-                  >{{ $t("t-starter") }}
+                    to="/pages/starter"
+                    class="nav-link"
+                    data-key="t-starter"
+                >{{ $t("t-starter") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <a
-                  href="#sidebarProfile"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarProfile"
-                  data-key="t-profile"
-                  >{{ $t("t-profile") }}
+                    href="#sidebarProfile"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarProfile"
+                    data-key="t-profile"
+                >{{ $t("t-profile") }}
                 </a>
                 <div class="collapse menu-dropdown" id="sidebarProfile">
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/pages/profile"
-                        class="nav-link"
-                        data-key="t-simple-page"
+                          to="/pages/profile"
+                          class="nav-link"
+                          data-key="t-simple-page"
                       >
                         {{ $t("t-simple-page") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/pages/profile-setting"
-                        class="nav-link"
-                        data-key="t-settings"
+                          to="/pages/profile-setting"
+                          class="nav-link"
+                          data-key="t-settings"
                       >
                         {{ $t("t-settings") }}
                       </router-link>
@@ -1006,36 +1008,36 @@ export default {
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/pages/team"
-                  class="nav-link"
-                  data-key="t-team"
+                    to="/pages/team"
+                    class="nav-link"
+                    data-key="t-team"
                 >
                   {{ $t("t-team") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/pages/timeline"
-                  class="nav-link"
-                  data-key="t-timeline"
+                    to="/pages/timeline"
+                    class="nav-link"
+                    data-key="t-timeline"
                 >
                   {{ $t("t-timeline") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/pages/faqs"
-                  class="nav-link"
-                  data-key="t-faqs"
+                    to="/pages/faqs"
+                    class="nav-link"
+                    data-key="t-faqs"
                 >
                   {{ $t("t-faqs") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/pages/pricing"
-                  class="nav-link"
-                  data-key="t-pricing"
+                    to="/pages/pricing"
+                    class="nav-link"
+                    data-key="t-pricing"
                 >
                   {{ $t("t-pricing") }}
                 </router-link>
@@ -1043,36 +1045,36 @@ export default {
 
               <li class="nav-item">
                 <router-link
-                  to="/pages/maintenance"
-                  class="nav-link"
-                  data-key="t-maintenance"
+                    to="/pages/maintenance"
+                    class="nav-link"
+                    data-key="t-maintenance"
                 >
                   {{ $t("t-maintenance") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/pages/coming-soon"
-                  class="nav-link"
-                  data-key="t-coming-soon"
+                    to="/pages/coming-soon"
+                    class="nav-link"
+                    data-key="t-coming-soon"
                 >
                   {{ $t("t-coming-soon") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/pages/sitemap"
-                  class="nav-link"
-                  data-key="t-sitemap"
+                    to="/pages/sitemap"
+                    class="nav-link"
+                    data-key="t-sitemap"
                 >
                   {{ $t("t-sitemap") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/pages/search-results"
-                  class="nav-link"
-                  data-key="t-search-results"
+                    to="/pages/search-results"
+                    class="nav-link"
+                    data-key="t-search-results"
                 >
                   {{ $t("t-search-results") }}
                 </router-link>
@@ -1082,8 +1084,6 @@ export default {
         </li>
 
 
-
-
         <li class="menu-title">
           <i class="ri-more-fill"></i>
           <span data-key="t-components">{{ $t("t-components") }}</span>
@@ -1091,12 +1091,12 @@ export default {
 
         <li class="nav-item">
           <a
-            class="nav-link menu-link"
-            href="#sidebarUI"
-            data-bs-toggle="collapse"
-            role="button"
-            aria-expanded="false"
-            aria-controls="sidebarUI"
+              class="nav-link menu-link"
+              href="#sidebarUI"
+              data-bs-toggle="collapse"
+              role="button"
+              aria-expanded="false"
+              aria-controls="sidebarUI"
           >
             <i class="ri-pencil-ruler-2-line"></i>
             <span data-key="t-base-ui">{{ $t("t-base-ui") }}</span>
@@ -1107,134 +1107,74 @@ export default {
                 <ul class="nav nav-sm flex-column">
                   <li class="nav-item">
                     <router-link
-                      to="/ui/alerts"
-                      class="nav-link"
-                      data-key="t-alerts"
-                      >{{ $t("t-alerts") }}</router-link
+                        to="/ui/alerts"
+                        class="nav-link"
+                        data-key="t-alerts"
+                    >{{ $t("t-alerts") }}
+                    </router-link
                     >
                   </li>
                   <li class="nav-item">
                     <router-link
-                      to="/ui/badges"
-                      class="nav-link"
-                      data-key="t-badges"
-                      >{{ $t("t-badges") }}</router-link
+                        to="/ui/badges"
+                        class="nav-link"
+                        data-key="t-badges"
+                    >{{ $t("t-badges") }}
+                    </router-link
                     >
                   </li>
                   <li class="nav-item">
                     <router-link
-                      to="/ui/buttons"
-                      class="nav-link"
-                      data-key="t-buttons"
-                      >{{ $t("t-buttons") }}</router-link
+                        to="/ui/buttons"
+                        class="nav-link"
+                        data-key="t-buttons"
+                    >{{ $t("t-buttons") }}
+                    </router-link
                     >
                   </li>
                   <li class="nav-item">
                     <router-link
-                      to="/ui/colors"
-                      class="nav-link"
-                      data-key="t-colors"
-                      >{{ $t("t-colors") }}</router-link
+                        to="/ui/colors"
+                        class="nav-link"
+                        data-key="t-colors"
+                    >{{ $t("t-colors") }}
+                    </router-link
                     >
                   </li>
                   <li class="nav-item">
                     <router-link
-                      to="/ui/cards"
-                      class="nav-link"
-                      data-key="t-cards"
-                      >{{ $t("t-cards") }}</router-link
+                        to="/ui/cards"
+                        class="nav-link"
+                        data-key="t-cards"
+                    >{{ $t("t-cards") }}
+                    </router-link
                     >
                   </li>
                   <li class="nav-item">
                     <router-link
-                      to="/ui/carousel"
-                      class="nav-link"
-                      data-key="t-carousel"
-                      >{{ $t("t-carousel") }}</router-link
+                        to="/ui/carousel"
+                        class="nav-link"
+                        data-key="t-carousel"
+                    >{{ $t("t-carousel") }}
+                    </router-link
                     >
                   </li>
                   <li class="nav-item">
                     <router-link
-                      to="/ui/dropdowns"
-                      class="nav-link"
-                      data-key="t-dropdowns"
-                      >{{ $t("t-dropdowns") }}</router-link
+                        to="/ui/dropdowns"
+                        class="nav-link"
+                        data-key="t-dropdowns"
+                    >{{ $t("t-dropdowns") }}
+                    </router-link
                     >
                   </li>
                   <li class="nav-item">
                     <router-link
-                      to="/ui/grid"
-                      class="nav-link"
-                      data-key="t-grid"
-                      >{{ $t("t-grid") }}</router-link
-                    >
-                  </li>
-                </ul>
-              </div>
-              <div class="col-lg-4">
-                <ul class="nav nav-sm flex-column">
-                  <li class="nav-item">
-                    <router-link
-                      to="/ui/images"
-                      class="nav-link"
-                      data-key="t-images"
-                      >{{ $t("t-images") }}</router-link
-                    >
-                  </li>
-                  <li class="nav-item">
-                    <router-link
-                      to="/ui/tabs"
-                      class="nav-link"
-                      data-key="t-tabs"
-                      >{{ $t("t-tabs") }}</router-link
-                    >
-                  </li>
-                  <li class="nav-item">
-                    <router-link
-                      to="/ui/accordions"
-                      class="nav-link"
-                      data-key="t-accordion-collapse"
-                      >{{ $t("t-accordion-collapse") }}</router-link
-                    >
-                  </li>
-                  <li class="nav-item">
-                    <router-link
-                      to="/ui/modals"
-                      class="nav-link"
-                      data-key="t-modals"
-                      >{{ $t("t-modals") }}</router-link
-                    >
-                  </li>
-                  <li class="nav-item">
-                    <router-link
-                      to="/ui/offcanvas"
-                      class="nav-link"
-                      data-key="t-offcanvas"
-                      >{{ $t("t-offcanvas") }}</router-link
-                    >
-                  </li>
-                  <li class="nav-item">
-                    <router-link
-                      to="/ui/placeholders"
-                      class="nav-link"
-                      data-key="t-placeholders"
-                      >{{ $t("t-placeholders") }}</router-link
-                    >
-                  </li>
-                  <li class="nav-item">
-                    <router-link
-                      to="/ui/progress"
-                      class="nav-link"
-                      data-key="t-progress"
-                      >{{ $t("t-progress") }}</router-link
-                    >
-                  </li>
-                  <li class="nav-item">
-                    <router-link
-                      to="/ui/notifications"
-                      class="nav-link"
-                      data-key="t-notifications"
-                      >{{ $t("t-notifications") }}</router-link
+                        to="/ui/grid"
+                        class="nav-link"
+                        data-key="t-grid"
+                    >{{ $t("t-grid") }}
+                    </router-link
                     >
                   </li>
                 </ul>
@@ -1243,58 +1183,141 @@ export default {
                 <ul class="nav nav-sm flex-column">
                   <li class="nav-item">
                     <router-link
-                      to="/ui/media"
-                      class="nav-link"
-                      data-key="t-media-object"
-                      >{{ $t("t-media-object") }}</router-link
+                        to="/ui/images"
+                        class="nav-link"
+                        data-key="t-images"
+                    >{{ $t("t-images") }}
+                    </router-link
                     >
                   </li>
                   <li class="nav-item">
                     <router-link
-                      to="/ui/embed-video"
-                      class="nav-link"
-                      data-key="t-embed-video"
-                      >{{ $t("t-embed-video") }}</router-link
+                        to="/ui/tabs"
+                        class="nav-link"
+                        data-key="t-tabs"
+                    >{{ $t("t-tabs") }}
+                    </router-link
                     >
                   </li>
                   <li class="nav-item">
                     <router-link
-                      to="/ui/typography"
-                      class="nav-link"
-                      data-key="t-typography"
-                      >{{ $t("t-typography") }}</router-link
+                        to="/ui/accordions"
+                        class="nav-link"
+                        data-key="t-accordion-collapse"
+                    >{{ $t("t-accordion-collapse") }}
+                    </router-link
                     >
                   </li>
                   <li class="nav-item">
                     <router-link
-                      to="/ui/lists"
-                      class="nav-link"
-                      data-key="t-lists"
-                      >{{ $t("t-lists") }}</router-link
+                        to="/ui/modals"
+                        class="nav-link"
+                        data-key="t-modals"
+                    >{{ $t("t-modals") }}
+                    </router-link
                     >
                   </li>
                   <li class="nav-item">
                     <router-link
-                      to="/ui/general"
-                      class="nav-link"
-                      data-key="t-general"
-                      >{{ $t("t-general") }}</router-link
+                        to="/ui/offcanvas"
+                        class="nav-link"
+                        data-key="t-offcanvas"
+                    >{{ $t("t-offcanvas") }}
+                    </router-link
                     >
                   </li>
                   <li class="nav-item">
                     <router-link
-                      to="/ui/ribbons"
-                      class="nav-link"
-                      data-key="t-ribbons"
-                      >{{ $t("t-ribbons") }}</router-link
+                        to="/ui/placeholders"
+                        class="nav-link"
+                        data-key="t-placeholders"
+                    >{{ $t("t-placeholders") }}
+                    </router-link
                     >
                   </li>
                   <li class="nav-item">
                     <router-link
-                      to="/ui/utilities"
-                      class="nav-link"
-                      data-key="t-utilities"
-                      >{{ $t("t-utilities") }}</router-link
+                        to="/ui/progress"
+                        class="nav-link"
+                        data-key="t-progress"
+                    >{{ $t("t-progress") }}
+                    </router-link
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <router-link
+                        to="/ui/notifications"
+                        class="nav-link"
+                        data-key="t-notifications"
+                    >{{ $t("t-notifications") }}
+                    </router-link
+                    >
+                  </li>
+                </ul>
+              </div>
+              <div class="col-lg-4">
+                <ul class="nav nav-sm flex-column">
+                  <li class="nav-item">
+                    <router-link
+                        to="/ui/media"
+                        class="nav-link"
+                        data-key="t-media-object"
+                    >{{ $t("t-media-object") }}
+                    </router-link
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <router-link
+                        to="/ui/embed-video"
+                        class="nav-link"
+                        data-key="t-embed-video"
+                    >{{ $t("t-embed-video") }}
+                    </router-link
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <router-link
+                        to="/ui/typography"
+                        class="nav-link"
+                        data-key="t-typography"
+                    >{{ $t("t-typography") }}
+                    </router-link
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <router-link
+                        to="/ui/lists"
+                        class="nav-link"
+                        data-key="t-lists"
+                    >{{ $t("t-lists") }}
+                    </router-link
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <router-link
+                        to="/ui/general"
+                        class="nav-link"
+                        data-key="t-general"
+                    >{{ $t("t-general") }}
+                    </router-link
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <router-link
+                        to="/ui/ribbons"
+                        class="nav-link"
+                        data-key="t-ribbons"
+                    >{{ $t("t-ribbons") }}
+                    </router-link
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <router-link
+                        to="/ui/utilities"
+                        class="nav-link"
+                        data-key="t-utilities"
+                    >{{ $t("t-utilities") }}
+                    </router-link
                     >
                   </li>
                 </ul>
@@ -1305,69 +1328,75 @@ export default {
 
         <li class="nav-item">
           <a
-            class="nav-link menu-link"
-            href="#sidebarAdvanceUI"
-            data-bs-toggle="collapse"
-            role="button"
-            aria-expanded="false"
-            aria-controls="sidebarAdvanceUI"
+              class="nav-link menu-link"
+              href="#sidebarAdvanceUI"
+              data-bs-toggle="collapse"
+              role="button"
+              aria-expanded="false"
+              aria-controls="sidebarAdvanceUI"
           >
             <i class="ri-stack-line"></i>
             <span data-key="t-advance-ui">{{ $t("t-advance-ui") }}</span>
             <span class="badge badge-pill bg-success" data-key="t-new">{{
-              $t("t-new")
-            }}</span>
+                $t("t-new")
+              }}</span>
           </a>
           <div class="collapse menu-dropdown" id="sidebarAdvanceUI">
             <ul class="nav nav-sm flex-column">
               <li class="nav-item">
                 <router-link
-                  to="/advance-ui/sweetalerts"
-                  class="nav-link"
-                  data-key="t-sweet-alerts"
-                  >{{ $t("t-sweet-alerts") }}</router-link
+                    to="/advance-ui/sweetalerts"
+                    class="nav-link"
+                    data-key="t-sweet-alerts"
+                >{{ $t("t-sweet-alerts") }}
+                </router-link
                 >
               </li>
 
               <li class="nav-item">
                 <router-link
-                  to="/advance-ui/scrollbar"
-                  class="nav-link"
-                  data-key="t-scrollbar"
-                  >{{ $t("t-scrollbar") }}</router-link
+                    to="/advance-ui/scrollbar"
+                    class="nav-link"
+                    data-key="t-scrollbar"
+                >{{ $t("t-scrollbar") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/advance-ui/animation"
-                  class="nav-link"
-                  data-key="t-animation"
-                  >{{ $t("t-animation") }}</router-link
+                    to="/advance-ui/animation"
+                    class="nav-link"
+                    data-key="t-animation"
+                >{{ $t("t-animation") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/advance-ui/swiper"
-                  class="nav-link"
-                  data-key="t-swiper-slider"
-                  >{{ $t("t-swiper-slider") }}</router-link
+                    to="/advance-ui/swiper"
+                    class="nav-link"
+                    data-key="t-swiper-slider"
+                >{{ $t("t-swiper-slider") }}
+                </router-link
                 >
               </li>
 
               <li class="nav-item">
                 <router-link
-                  to="/advance-ui/highlight"
-                  class="nav-link"
-                  data-key="t-highlight"
-                  >{{ $t("t-highlight") }}</router-link
+                    to="/advance-ui/highlight"
+                    class="nav-link"
+                    data-key="t-highlight"
+                >{{ $t("t-highlight") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/advance-ui/scrollspy"
-                  class="nav-link"
-                  data-key="t-scrollSpy"
-                  >{{ $t("t-scrollSpy") }}</router-link
+                    to="/advance-ui/scrollspy"
+                    class="nav-link"
+                    data-key="t-scrollSpy"
+                >{{ $t("t-scrollSpy") }}
+                </router-link
                 >
               </li>
             </ul>
@@ -1383,12 +1412,12 @@ export default {
 
         <li class="nav-item">
           <a
-            class="nav-link menu-link"
-            href="#sidebarForms"
-            data-bs-toggle="collapse"
-            role="button"
-            aria-expanded="false"
-            aria-controls="sidebarForms"
+              class="nav-link menu-link"
+              href="#sidebarForms"
+              data-bs-toggle="collapse"
+              role="button"
+              aria-expanded="false"
+              aria-controls="sidebarForms"
           >
             <i class="ri-file-list-3-line"></i>
             <span data-key="t-forms">{{ $t("t-forms") }}</span>
@@ -1397,101 +1426,111 @@ export default {
             <ul class="nav nav-sm flex-column">
               <li class="nav-item">
                 <router-link
-                  to="/form/elements"
-                  class="nav-link"
-                  data-key="t-basic-elements"
-                  >{{ $t("t-basic-elements") }}</router-link
+                    to="/form/elements"
+                    class="nav-link"
+                    data-key="t-basic-elements"
+                >{{ $t("t-basic-elements") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/form/select"
-                  class="nav-link"
-                  data-key="t-form-select"
-                  >{{ $t("t-form-select") }}</router-link
+                    to="/form/select"
+                    class="nav-link"
+                    data-key="t-form-select"
+                >{{ $t("t-form-select") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/form/checkboxs-radios"
-                  class="nav-link"
-                  data-key="t-checkboxs-radios"
-                  >{{ $t("t-checkboxs-radios") }}</router-link
+                    to="/form/checkboxs-radios"
+                    class="nav-link"
+                    data-key="t-checkboxs-radios"
+                >{{ $t("t-checkboxs-radios") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/form/pickers"
-                  class="nav-link"
-                  data-key="t-pickers"
+                    to="/form/pickers"
+                    class="nav-link"
+                    data-key="t-pickers"
                 >
                   {{ $t("t-pickers") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/form/masks"
-                  class="nav-link"
-                  data-key="t-input-masks"
-                  >{{ $t("t-input-masks") }}</router-link
+                    to="/form/masks"
+                    class="nav-link"
+                    data-key="t-input-masks"
+                >{{ $t("t-input-masks") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/form/advanced"
-                  class="nav-link"
-                  data-key="t-advanced"
+                    to="/form/advanced"
+                    class="nav-link"
+                    data-key="t-advanced"
                 >
-                  {{ $t("t-advanced") }}</router-link
+                  {{ $t("t-advanced") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/form/range-sliders"
-                  class="nav-link"
-                  data-key="t-range-slider"
+                    to="/form/range-sliders"
+                    class="nav-link"
+                    data-key="t-range-slider"
                 >
                   {{ $t("t-range-slider") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/form/validation"
-                  class="nav-link"
-                  data-key="t-validation"
-                  >{{ $t("t-validation") }}</router-link
+                    to="/form/validation"
+                    class="nav-link"
+                    data-key="t-validation"
+                >{{ $t("t-validation") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/form/wizard"
-                  class="nav-link"
-                  data-key="t-wizard"
-                  >{{ $t("t-wizard") }}</router-link
+                    to="/form/wizard"
+                    class="nav-link"
+                    data-key="t-wizard"
+                >{{ $t("t-wizard") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/form/editors"
-                  class="nav-link"
-                  data-key="t-editors"
-                  >{{ $t("t-editors") }}</router-link
+                    to="/form/editors"
+                    class="nav-link"
+                    data-key="t-editors"
+                >{{ $t("t-editors") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/form/file-uploads"
-                  class="nav-link"
-                  data-key="t-file-uploads"
-                  >{{ $t("t-file-uploads") }}</router-link
+                    to="/form/file-uploads"
+                    class="nav-link"
+                    data-key="t-file-uploads"
+                >{{ $t("t-file-uploads") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/form/layouts"
-                  class="nav-link"
-                  data-key="t-form-layouts"
-                  >{{ $t("t-form-layouts") }}</router-link
+                    to="/form/layouts"
+                    class="nav-link"
+                    data-key="t-form-layouts"
+                >{{ $t("t-form-layouts") }}
+                </router-link
                 >
               </li>
             </ul>
@@ -1500,12 +1539,12 @@ export default {
 
         <li class="nav-item">
           <a
-            class="nav-link menu-link"
-            href="#sidebarTables"
-            data-bs-toggle="collapse"
-            role="button"
-            aria-expanded="false"
-            aria-controls="sidebarTables"
+              class="nav-link menu-link"
+              href="#sidebarTables"
+              data-bs-toggle="collapse"
+              role="button"
+              aria-expanded="false"
+              aria-controls="sidebarTables"
           >
             <i class="ri-layout-grid-line"></i>
             <span data-key="t-tables">{{ $t("t-tables") }}</span>
@@ -1514,18 +1553,20 @@ export default {
             <ul class="nav nav-sm flex-column">
               <li class="nav-item">
                 <router-link
-                  to="/tables/basic"
-                  class="nav-link"
-                  data-key="t-basic-tables"
-                  >{{ $t("t-basic-tables") }}</router-link
+                    to="/tables/basic"
+                    class="nav-link"
+                    data-key="t-basic-tables"
+                >{{ $t("t-basic-tables") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/tables/gridjs"
-                  class="nav-link"
-                  data-key="t-grid-js"
-                  >{{ $t("t-grid-js") }}</router-link
+                    to="/tables/gridjs"
+                    class="nav-link"
+                    data-key="t-grid-js"
+                >{{ $t("t-grid-js") }}
+                </router-link
                 >
               </li>
             </ul>
@@ -1534,12 +1575,12 @@ export default {
 
         <li class="nav-item">
           <a
-            class="nav-link menu-link"
-            href="#sidebarCharts"
-            data-bs-toggle="collapse"
-            role="button"
-            aria-expanded="false"
-            aria-controls="sidebarCharts"
+              class="nav-link menu-link"
+              href="#sidebarCharts"
+              data-bs-toggle="collapse"
+              role="button"
+              aria-expanded="false"
+              aria-controls="sidebarCharts"
           >
             <i class="ri-pie-chart-line"></i>
             <span data-key="t-charts">{{ $t("t-charts") }}</span>
@@ -1548,13 +1589,13 @@ export default {
             <ul class="nav nav-sm flex-column">
               <li class="nav-item">
                 <a
-                  href="#sidebarApexcharts"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarApexcharts"
-                  data-key="t-apexcharts"
+                    href="#sidebarApexcharts"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarApexcharts"
+                    data-key="t-apexcharts"
                 >
                   {{ $t("t-apexcharts") }}
                 </a>
@@ -1562,45 +1603,45 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-line"
-                        class="nav-link"
-                        data-key="t-line"
+                          to="/charts/apex-line"
+                          class="nav-link"
+                          data-key="t-line"
                       >
                         {{ $t("t-line") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-area"
-                        class="nav-link"
-                        data-key="t-area"
+                          to="/charts/apex-area"
+                          class="nav-link"
+                          data-key="t-area"
                       >
                         {{ $t("t-area") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-column"
-                        class="nav-link"
-                        data-key="t-column"
+                          to="/charts/apex-column"
+                          class="nav-link"
+                          data-key="t-column"
                       >
                         {{ $t("t-column") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-bar"
-                        class="nav-link"
-                        data-key="t-bar"
+                          to="/charts/apex-bar"
+                          class="nav-link"
+                          data-key="t-bar"
                       >
                         {{ $t("t-bar") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-mixed"
-                        class="nav-link"
-                        data-key="t-mixed"
+                          to="/charts/apex-mixed"
+                          class="nav-link"
+                          data-key="t-mixed"
                       >
                         {{ $t("t-mixed") }}
                       </router-link>
@@ -1608,90 +1649,90 @@ export default {
 
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-candlestick"
-                        class="nav-link"
-                        data-key="t-candlstick"
+                          to="/charts/apex-candlestick"
+                          class="nav-link"
+                          data-key="t-candlstick"
                       >
                         {{ $t("t-candlstick") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-boxplot"
-                        class="nav-link"
-                        data-key="t-boxplot"
+                          to="/charts/apex-boxplot"
+                          class="nav-link"
+                          data-key="t-boxplot"
                       >
                         {{ $t("t-boxplot") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-bubble"
-                        class="nav-link"
-                        data-key="t-bubble"
+                          to="/charts/apex-bubble"
+                          class="nav-link"
+                          data-key="t-bubble"
                       >
                         {{ $t("t-bubble") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-scatter"
-                        class="nav-link"
-                        data-key="t-scatter"
+                          to="/charts/apex-scatter"
+                          class="nav-link"
+                          data-key="t-scatter"
                       >
                         {{ $t("t-scatter") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-heatmap"
-                        class="nav-link"
-                        data-key="t-heatmap"
+                          to="/charts/apex-heatmap"
+                          class="nav-link"
+                          data-key="t-heatmap"
                       >
                         {{ $t("t-heatmap") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-treemap"
-                        class="nav-link"
-                        data-key="t-treemap"
+                          to="/charts/apex-treemap"
+                          class="nav-link"
+                          data-key="t-treemap"
                       >
                         {{ $t("t-treemap") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-pie"
-                        class="nav-link"
-                        data-key="t-pie"
+                          to="/charts/apex-pie"
+                          class="nav-link"
+                          data-key="t-pie"
                       >
                         {{ $t("t-pie") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-radialbar"
-                        class="nav-link"
-                        data-key="t-radialbar"
+                          to="/charts/apex-radialbar"
+                          class="nav-link"
+                          data-key="t-radialbar"
                       >
                         {{ $t("t-radialbar") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-radar"
-                        class="nav-link"
-                        data-key="t-radar"
+                          to="/charts/apex-radar"
+                          class="nav-link"
+                          data-key="t-radar"
                       >
                         {{ $t("t-radar") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-polararea"
-                        class="nav-link"
-                        data-key="t-polar-area"
+                          to="/charts/apex-polararea"
+                          class="nav-link"
+                          data-key="t-polar-area"
                       >
                         {{ $t("t-polar-area") }}
                       </router-link>
@@ -1701,18 +1742,18 @@ export default {
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/charts/chartjs"
-                  class="nav-link"
-                  data-key="t-chartjs"
-                  >{{ $t("t-chartjs") }}
+                    to="/charts/chartjs"
+                    class="nav-link"
+                    data-key="t-chartjs"
+                >{{ $t("t-chartjs") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/charts/echart"
-                  class="nav-link"
-                  data-key="t-echarts"
-                  >{{ $t("t-echarts") }}
+                    to="/charts/echart"
+                    class="nav-link"
+                    data-key="t-echarts"
+                >{{ $t("t-echarts") }}
                 </router-link>
               </li>
             </ul>
@@ -1721,12 +1762,12 @@ export default {
 
         <li class="nav-item">
           <a
-            class="nav-link menu-link"
-            href="#sidebarIcons"
-            data-bs-toggle="collapse"
-            role="button"
-            aria-expanded="false"
-            aria-controls="sidebarIcons"
+              class="nav-link menu-link"
+              href="#sidebarIcons"
+              data-bs-toggle="collapse"
+              role="button"
+              aria-expanded="false"
+              aria-controls="sidebarIcons"
           >
             <i class="ri-compasses-2-line"></i>
             <span data-key="t-icons">{{ $t("t-icons") }}</span>
@@ -1735,42 +1776,47 @@ export default {
             <ul class="nav nav-sm flex-column">
               <li class="nav-item">
                 <router-link
-                  to="/icons/remix"
-                  class="nav-link"
-                  data-key="t-remix"
-                  >{{ $t("t-remix") }}</router-link
+                    to="/icons/remix"
+                    class="nav-link"
+                    data-key="t-remix"
+                >{{ $t("t-remix") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/icons/boxicons"
-                  class="nav-link"
-                  data-key="t-boxicons"
-                  >{{ $t("t-boxicons") }}</router-link
+                    to="/icons/boxicons"
+                    class="nav-link"
+                    data-key="t-boxicons"
+                >{{ $t("t-boxicons") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/icons/materialdesign"
-                  class="nav-link"
-                  data-key="t-material-design"
-                  >{{ $t("t-material-design") }}</router-link
+                    to="/icons/materialdesign"
+                    class="nav-link"
+                    data-key="t-material-design"
+                >{{ $t("t-material-design") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/icons/lineawesome"
-                  class="nav-link"
-                  data-key="t-line-awesome"
-                  >{{ $t("t-line-awesome") }}</router-link
+                    to="/icons/lineawesome"
+                    class="nav-link"
+                    data-key="t-line-awesome"
+                >{{ $t("t-line-awesome") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/icons/feather"
-                  class="nav-link"
-                  data-key="t-feather"
-                  >{{ $t("t-feather") }}</router-link
+                    to="/icons/feather"
+                    class="nav-link"
+                    data-key="t-feather"
+                >{{ $t("t-feather") }}
+                </router-link
                 >
               </li>
             </ul>
@@ -1779,12 +1825,12 @@ export default {
 
         <li class="nav-item">
           <a
-            class="nav-link menu-link"
-            href="#sidebarMaps"
-            data-bs-toggle="collapse"
-            role="button"
-            aria-expanded="false"
-            aria-controls="sidebarMaps"
+              class="nav-link menu-link"
+              href="#sidebarMaps"
+              data-bs-toggle="collapse"
+              role="button"
+              aria-expanded="false"
+              aria-controls="sidebarMaps"
           >
             <i class="ri-map-pin-line"></i>
             <span data-key="t-maps">{{ $t("t-maps") }}</span>
@@ -1793,18 +1839,18 @@ export default {
             <ul class="nav nav-sm flex-column">
               <li class="nav-item">
                 <router-link
-                  to="/maps/google"
-                  class="nav-link"
-                  data-key="t-google"
+                    to="/maps/google"
+                    class="nav-link"
+                    data-key="t-google"
                 >
                   {{ $t("t-google") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/maps/leaflet"
-                  class="nav-link"
-                  data-key="t-leaflet"
+                    to="/maps/leaflet"
+                    class="nav-link"
+                    data-key="t-leaflet"
                 >
                   {{ $t("t-leaflet") }}
                 </router-link>
@@ -1815,12 +1861,12 @@ export default {
 
         <li class="nav-item">
           <a
-            class="nav-link menu-link"
-            href="#sidebarMultilevel"
-            data-bs-toggle="collapse"
-            role="button"
-            aria-expanded="false"
-            aria-controls="sidebarMultilevel"
+              class="nav-link menu-link"
+              href="#sidebarMultilevel"
+              data-bs-toggle="collapse"
+              role="button"
+              aria-expanded="false"
+              aria-controls="sidebarMultilevel"
           >
             <i class="ri-share-line"></i>
             <span data-key="t-multi-level">{{ $t("t-multi-level") }}</span>
@@ -1834,13 +1880,13 @@ export default {
               </li>
               <li class="nav-item">
                 <a
-                  href="#sidebarAccount"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarAccount"
-                  data-key="t-level-1.2"
+                    href="#sidebarAccount"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarAccount"
+                    data-key="t-level-1.2"
                 >
                   {{ $t("t-level-1.2") }}
                 </a>
@@ -1853,13 +1899,13 @@ export default {
                     </li>
                     <li class="nav-item">
                       <a
-                        href="#sidebarCrm"
-                        class="nav-link"
-                        data-bs-toggle="collapse"
-                        role="button"
-                        aria-expanded="false"
-                        aria-controls="sidebarCrm"
-                        data-key="t-level-2.2"
+                          href="#sidebarCrm"
+                          class="nav-link"
+                          data-bs-toggle="collapse"
+                          role="button"
+                          aria-expanded="false"
+                          aria-controls="sidebarCrm"
+                          data-key="t-level-2.2"
                       >
                         {{ $t("t-level-2.2") }}
                       </a>
@@ -1890,16 +1936,136 @@ export default {
     <template v-else>
       <ul class="navbar-nav h-100" id="navbar-nav">
         <li class="menu-title">
-          <span data-key="t-menu"> {{ $t("t-menu") }}</span>
+          <span data-key="t-menu"> E-OFFICE</span>
         </li>
+
+        <!--Thông báo-->
+        <li class="nav-item">
+          <router-link class="nav-link menu-link" to="/thong-bao">
+            <i class="ri-honour-line"></i>
+            <span data-key="thong-bao">Thông báo</span>
+          </router-link>
+        </li>
+
+        <li class="menu-title">
+          <i class="ri-more-fill"></i>
+          <span data-key="quan-ly-van-ban">QUẢN LÝ VĂN BẢN</span>
+        </li>
+
         <li class="nav-item">
           <a
-            class="nav-link menu-link"
-            href="#sidebarDashboards"
-            data-bs-toggle="collapse"
-            role="button"
-            aria-expanded="false"
-            aria-controls="sidebarDashboards"
+              class="nav-link menu-link"
+              href="#sidebarDashboards"
+              data-bs-toggle="collapse"
+              role="button"
+              aria-expanded="false"
+              aria-controls="sidebarDashboards"
+          >
+            <i class="ri-dashboard-2-line"></i>
+            <span data-key="quan-ly-van-ban-den"> Văn bản đến </span>
+          </a>
+          <div class="collapse menu-dropdown" id="sidebarDashboards">
+            <ul class="nav nav-sm flex-column">
+              <li class="nav-item">
+                <router-link
+                    to="/quan-ly-van-ban-den/van-ban-den"
+                    class="nav-link custom-abc"
+                    data-key="van-ban-den"
+                >
+                  Văn bản đến
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link
+                    to="/quan-ly-van-ban-den/phan-cong-xu-ly"
+                    class="nav-link"
+                    data-key="t-crm"
+                >
+                  Phân công xử lý
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link
+                    to="/quan-ly-van-ban-den/xu-ly-van-ban"
+                    class="nav-link"
+                    data-key="xu-ly-van-ban">
+                  Xử lý văn bản
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link
+                    to="/quan-ly-van-ban-den/nhan-xu-ly-van-ban"
+                    class="nav-link"
+                    data-key="t-crypto"
+                >
+                  Nhận xử lý văn bản
+                </router-link>
+              </li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <a
+              class="nav-link menu-link"
+              href="#sidebarDashboards"
+              data-bs-toggle="collapse"
+              role="button"
+              aria-expanded="false"
+              aria-controls="sidebarDashboards"
+          >
+            <i class="ri-dashboard-2-line"></i>
+            <span data-key="quan-ly-van-ban-di"> Văn bản đi </span>
+          </a>
+          <div class="collapse menu-dropdown" id="sidebarDashboards">
+            <ul class="nav nav-sm flex-column">
+              <li class="nav-item">
+                <router-link
+                    to="/quan-ly-van-ban-di/van-ban-di"
+                    class="nav-link custom-abc"
+                    data-key="van-ban-di"
+                >
+                  Văn bản đi
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link
+                    to="/quan-ly-van-ban-di/phan-cong-xu-ly"
+                    class="nav-link"
+                    data-key="phan-cong-xu-ly"
+                >
+                  Phân công xử lý
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link
+                    to="/quan-ly-van-ban-di/xu-ly-van-ban"
+                    class="nav-link" data-key="t-ecommerce">
+                  Xử lý văn bản
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link
+                    to="/quan-ly-van-ban-di/nhan-xu-ly-van-ban"
+                    class="nav-link"
+                    data-key="nhan-xu-ly-van-ban"
+                >
+                  Nhận xử lý văn bản
+                </router-link>
+              </li>
+            </ul>
+          </div>
+        </li>
+
+
+        <li class="nav-item">
+          <a
+              class="nav-link menu-link"
+              href="#sidebarDashboards"
+              data-bs-toggle="collapse"
+              role="button"
+              aria-expanded="false"
+              aria-controls="sidebarDashboards"
           >
             <i class="ri-dashboard-2-line"></i>
             <span data-key="t-dashboards"> {{ $t("t-dashboards") }}</span>
@@ -1908,41 +2074,41 @@ export default {
             <ul class="nav nav-sm flex-column">
               <li class="nav-item">
                 <router-link
-                  to="/dashboard/analytics"
-                  class="nav-link custom-abc"
-                  data-key="t-analytics"
+                    to="/dashboard/analytics"
+                    class="nav-link custom-abc"
+                    data-key="t-analytics"
                 >
                   {{ $t("t-analytics") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/dashboard/crm"
-                  class="nav-link"
-                  data-key="t-crm"
+                    to="/dashboard/crm"
+                    class="nav-link"
+                    data-key="t-crm"
                 >
                   {{ $t("t-crm") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link to="/" class="nav-link" data-key="t-ecommerce">
-                  {{ $t("t-ecommerce") }}
+                  àhajshf
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/dashboard/crypto"
-                  class="nav-link"
-                  data-key="t-crypto"
+                    to="/dashboard/crypto"
+                    class="nav-link"
+                    data-key="t-crypto"
                 >
                   {{ $t("t-crypto") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/dashboard/projects"
-                  class="nav-link"
-                  data-key="t-projects"
+                    to="/dashboard/projects"
+                    class="nav-link"
+                    data-key="t-projects"
                 >
                   {{ $t("t-projects") }}
                 </router-link>
@@ -1953,12 +2119,12 @@ export default {
         <!-- end Dashboard Menu -->
         <li class="nav-item">
           <a
-            class="nav-link menu-link"
-            href="#sidebarApps"
-            data-bs-toggle="collapse"
-            role="button"
-            aria-expanded="false"
-            aria-controls="sidebarApps"
+              class="nav-link menu-link"
+              href="#sidebarApps"
+              data-bs-toggle="collapse"
+              role="button"
+              aria-expanded="false"
+              aria-controls="sidebarApps"
           >
             <i class="ri-apps-2-line"></i>
             <span data-key="t-apps"> {{ $t("t-apps") }}</span>
@@ -1967,9 +2133,9 @@ export default {
             <ul class="nav nav-sm flex-column">
               <li class="nav-item">
                 <router-link
-                  to="/calendar"
-                  class="nav-link"
-                  data-key="t-calendar"
+                    to="/calendar"
+                    class="nav-link"
+                    data-key="t-calendar"
                 >
                   {{ $t("t-calendar") }}
                 </router-link>
@@ -1981,22 +2147,22 @@ export default {
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/mailbox"
-                  class="nav-link"
-                  data-key="t-mailbox"
+                    to="/mailbox"
+                    class="nav-link"
+                    data-key="t-mailbox"
                 >
                   {{ $t("t-mailbox") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <a
-                  href="#sidebarEcommerce"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarEcommerce"
-                  data-key="t-ecommerce"
+                    href="#sidebarEcommerce"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarEcommerce"
+                    data-key="t-ecommerce"
                 >
                   {{ $t("t-ecommerce") }}
                 </a>
@@ -2004,90 +2170,90 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/ecommerce/products"
-                        class="nav-link"
-                        data-key="t-products"
+                          to="/ecommerce/products"
+                          class="nav-link"
+                          data-key="t-products"
                       >
                         {{ $t("t-products") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/ecommerce/product-details"
-                        class="nav-link"
-                        data-key="t-product-Details"
+                          to="/ecommerce/product-details"
+                          class="nav-link"
+                          data-key="t-product-Details"
                       >
                         {{ $t("t-product-Details") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/ecommerce/add-product"
-                        class="nav-link"
-                        data-key="t-create-product"
+                          to="/ecommerce/add-product"
+                          class="nav-link"
+                          data-key="t-create-product"
                       >
                         {{ $t("t-create-product") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/ecommerce/orders"
-                        class="nav-link"
-                        data-key="t-orders"
+                          to="/ecommerce/orders"
+                          class="nav-link"
+                          data-key="t-orders"
                       >
                         {{ $t("t-orders") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/ecommerce/order-details"
-                        class="nav-link"
-                        data-key="t-order-details"
+                          to="/ecommerce/order-details"
+                          class="nav-link"
+                          data-key="t-order-details"
                       >
                         {{ $t("t-order-details") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/ecommerce/customers"
-                        class="nav-link"
-                        data-key="t-customers"
+                          to="/ecommerce/customers"
+                          class="nav-link"
+                          data-key="t-customers"
                       >
                         {{ $t("t-customers") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/ecommerce/shopping-cart"
-                        class="nav-link"
-                        data-key="t-shopping-cart"
+                          to="/ecommerce/shopping-cart"
+                          class="nav-link"
+                          data-key="t-shopping-cart"
                       >
                         {{ $t("t-shopping-cart") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/ecommerce/checkout"
-                        class="nav-link"
-                        data-key="t-checkout"
+                          to="/ecommerce/checkout"
+                          class="nav-link"
+                          data-key="t-checkout"
                       >
                         {{ $t("t-checkout") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/ecommerce/sellers"
-                        class="nav-link"
-                        data-key="t-sellers"
+                          to="/ecommerce/sellers"
+                          class="nav-link"
+                          data-key="t-sellers"
                       >
                         {{ $t("t-sellers") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/ecommerce/seller-details"
-                        class="nav-link"
-                        data-key="t-sellers-details"
+                          to="/ecommerce/seller-details"
+                          class="nav-link"
+                          data-key="t-sellers-details"
                       >
                         {{ $t("t-sellers-details") }}
                       </router-link>
@@ -2097,13 +2263,13 @@ export default {
               </li>
               <li class="nav-item">
                 <a
-                  href="#sidebarProjects"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarProjects"
-                  data-key="t-projects"
+                    href="#sidebarProjects"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarProjects"
+                    data-key="t-projects"
                 >
                   {{ $t("t-projects") }}
                 </a>
@@ -2111,27 +2277,27 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/apps/projects-list"
-                        class="nav-link"
-                        data-key="t-list"
+                          to="/apps/projects-list"
+                          class="nav-link"
+                          data-key="t-list"
                       >
                         {{ $t("t-list") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/apps/projects-overview"
-                        class="nav-link"
-                        data-key="t-overview"
+                          to="/apps/projects-overview"
+                          class="nav-link"
+                          data-key="t-overview"
                       >
                         {{ $t("t-overview") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/apps/projects-create"
-                        class="nav-link"
-                        data-key="t-create-project"
+                          to="/apps/projects-create"
+                          class="nav-link"
+                          data-key="t-create-project"
                       >
                         {{ $t("t-create-project") }}
                       </router-link>
@@ -2141,13 +2307,13 @@ export default {
               </li>
               <li class="nav-item">
                 <a
-                  href="#sidebarTasks"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarTasks"
-                  data-key="t-tasks"
+                    href="#sidebarTasks"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarTasks"
+                    data-key="t-tasks"
                 >
                   {{ $t("t-tasks") }}
                 </a>
@@ -2155,27 +2321,27 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/apps/tasks-kanban"
-                        class="nav-link"
-                        data-key="t-kanbanboard"
+                          to="/apps/tasks-kanban"
+                          class="nav-link"
+                          data-key="t-kanbanboard"
                       >
                         {{ $t("t-kanbanboard") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/apps/tasks-list-view"
-                        class="nav-link"
-                        data-key="t-list-view"
+                          to="/apps/tasks-list-view"
+                          class="nav-link"
+                          data-key="t-list-view"
                       >
                         {{ $t("t-list-view") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/apps/tasks-details"
-                        class="nav-link"
-                        data-key="t-task-details"
+                          to="/apps/tasks-details"
+                          class="nav-link"
+                          data-key="t-task-details"
                       >
                         {{ $t("t-task-details") }}
                       </router-link>
@@ -2185,13 +2351,13 @@ export default {
               </li>
               <li class="nav-item">
                 <a
-                  href="#sidebarCRM"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarCRM"
-                  data-key="t-crm"
+                    href="#sidebarCRM"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarCRM"
+                    data-key="t-crm"
                 >
                   {{ $t("t-crm") }}
                 </a>
@@ -2199,36 +2365,36 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/apps/crm-contacts"
-                        class="nav-link"
-                        data-key="t-contacts"
+                          to="/apps/crm-contacts"
+                          class="nav-link"
+                          data-key="t-contacts"
                       >
                         {{ $t("t-contacts") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/apps/crm-companies"
-                        class="nav-link"
-                        data-key="t-companies"
+                          to="/apps/crm-companies"
+                          class="nav-link"
+                          data-key="t-companies"
                       >
                         {{ $t("t-companies") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/apps/crm-deals"
-                        class="nav-link"
-                        data-key="t-deals"
+                          to="/apps/crm-deals"
+                          class="nav-link"
+                          data-key="t-deals"
                       >
                         {{ $t("t-deals") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/apps/crm-leads"
-                        class="nav-link"
-                        data-key="t-leads"
+                          to="/apps/crm-leads"
+                          class="nav-link"
+                          data-key="t-leads"
                       >
                         {{ $t("t-leads") }}
                       </router-link>
@@ -2238,13 +2404,13 @@ export default {
               </li>
               <li class="nav-item">
                 <a
-                  href="#sidebarCrypto"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarCrypto"
-                  data-key="t-crypto"
+                    href="#sidebarCrypto"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarCrypto"
+                    data-key="t-crypto"
                 >
                   {{ $t("t-crypto") }}
                 </a>
@@ -2252,54 +2418,54 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/crypto/transactions"
-                        class="nav-link"
-                        data-key="t-transactions"
+                          to="/crypto/transactions"
+                          class="nav-link"
+                          data-key="t-transactions"
                       >
                         {{ $t("t-transactions") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/crypto/buy-sell"
-                        class="nav-link"
-                        data-key="t-buy-sell"
+                          to="/crypto/buy-sell"
+                          class="nav-link"
+                          data-key="t-buy-sell"
                       >
                         {{ $t("t-buy-sell") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/crypto/orders"
-                        class="nav-link"
-                        data-key="t-orders"
+                          to="/crypto/orders"
+                          class="nav-link"
+                          data-key="t-orders"
                       >
                         {{ $t("t-orders") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/crypto/wallet"
-                        class="nav-link"
-                        data-key="t-my-wallet"
+                          to="/crypto/wallet"
+                          class="nav-link"
+                          data-key="t-my-wallet"
                       >
                         {{ $t("t-my-wallet") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/crypto/ico"
-                        class="nav-link"
-                        data-key="t-ico-list"
+                          to="/crypto/ico"
+                          class="nav-link"
+                          data-key="t-ico-list"
                       >
                         {{ $t("t-ico-list") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/crypto/kyc"
-                        class="nav-link"
-                        data-key="t-kyc-application"
+                          to="/crypto/kyc"
+                          class="nav-link"
+                          data-key="t-kyc-application"
                       >
                         {{ $t("t-kyc-application") }}
                       </router-link>
@@ -2309,13 +2475,13 @@ export default {
               </li>
               <li class="nav-item">
                 <a
-                  href="#sidebarInvoices"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarInvoices"
-                  data-key="t-invoices"
+                    href="#sidebarInvoices"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarInvoices"
+                    data-key="t-invoices"
                 >
                   {{ $t("t-invoices") }}
                 </a>
@@ -2323,27 +2489,27 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/invoices/list"
-                        class="nav-link"
-                        data-key="t-list-view"
+                          to="/invoices/list"
+                          class="nav-link"
+                          data-key="t-list-view"
                       >
                         {{ $t("t-list-view") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/invoices/detail"
-                        class="nav-link"
-                        data-key="t-details"
+                          to="/invoices/detail"
+                          class="nav-link"
+                          data-key="t-details"
                       >
                         {{ $t("t-details") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/invoices/create"
-                        class="nav-link"
-                        data-key="t-create-invoice"
+                          to="/invoices/create"
+                          class="nav-link"
+                          data-key="t-create-invoice"
                       >
                         {{ $t("t-create-invoice") }}
                       </router-link>
@@ -2353,13 +2519,13 @@ export default {
               </li>
               <li class="nav-item">
                 <a
-                  href="#sidebarTickets"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarTickets"
-                  data-key="t-supprt-tickets"
+                    href="#sidebarTickets"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarTickets"
+                    data-key="t-supprt-tickets"
                 >
                   {{ $t("t-supprt-tickets") }}
                 </a>
@@ -2367,18 +2533,18 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/apps/tickets-list"
-                        class="nav-link"
-                        data-key="t-list-view"
+                          to="/apps/tickets-list"
+                          class="nav-link"
+                          data-key="t-list-view"
                       >
                         {{ $t("t-list-view") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/apps/tickets-details"
-                        class="nav-link"
-                        data-key="t-ticket-details"
+                          to="/apps/tickets-details"
+                          class="nav-link"
+                          data-key="t-ticket-details"
                       >
                         {{ $t("t-ticket-details") }}
                       </router-link>
@@ -2397,47 +2563,47 @@ export default {
 
         <li class="nav-item">
           <a
-            class="nav-link menu-link"
-            href="#sidebarAuth"
-            data-bs-toggle="collapse"
-            role="button"
-            aria-expanded="false"
-            aria-controls="sidebarAuth"
+              class="nav-link menu-link"
+              href="#sidebarAuth"
+              data-bs-toggle="collapse"
+              role="button"
+              aria-expanded="false"
+              aria-controls="sidebarAuth"
           >
             <i class="ri-account-circle-line"></i>
             <span data-key="t-authentication">{{
-              $t("t-authentication")
-            }}</span>
+                $t("t-authentication")
+              }}</span>
           </a>
           <div class="collapse menu-dropdown" id="sidebarAuth">
             <ul class="nav nav-sm flex-column">
               <li class="nav-item">
                 <a
-                  href="#sidebarSignIn"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarSignIn"
-                  data-key="t-signin"
-                  >{{ $t("t-signin") }}
+                    href="#sidebarSignIn"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarSignIn"
+                    data-key="t-signin"
+                >{{ $t("t-signin") }}
                 </a>
                 <div class="collapse menu-dropdown" id="sidebarSignIn">
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/auth/signin-basic"
-                        class="nav-link"
-                        data-key="t-basic"
-                        >{{ $t("t-basic") }}
+                          to="/auth/signin-basic"
+                          class="nav-link"
+                          data-key="t-basic"
+                      >{{ $t("t-basic") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/auth/signin-cover"
-                        class="nav-link"
-                        data-key="t-cover"
-                        >{{ $t("t-cover") }}
+                          to="/auth/signin-cover"
+                          class="nav-link"
+                          data-key="t-cover"
+                      >{{ $t("t-cover") }}
                       </router-link>
                     </li>
                   </ul>
@@ -2445,31 +2611,31 @@ export default {
               </li>
               <li class="nav-item">
                 <a
-                  href="#sidebarSignUp"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarSignUp"
-                  data-key="t-signup"
-                  >{{ $t("t-signup") }}
+                    href="#sidebarSignUp"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarSignUp"
+                    data-key="t-signup"
+                >{{ $t("t-signup") }}
                 </a>
                 <div class="collapse menu-dropdown" id="sidebarSignUp">
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/auth/signup-basic"
-                        class="nav-link"
-                        data-key="t-basic"
-                        >{{ $t("t-basic") }}
+                          to="/auth/signup-basic"
+                          class="nav-link"
+                          data-key="t-basic"
+                      >{{ $t("t-basic") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/auth/signup-cover"
-                        class="nav-link"
-                        data-key="t-cover"
-                        >{{ $t("t-cover") }}
+                          to="/auth/signup-cover"
+                          class="nav-link"
+                          data-key="t-cover"
+                      >{{ $t("t-cover") }}
                       </router-link>
                     </li>
                   </ul>
@@ -2478,13 +2644,13 @@ export default {
 
               <li class="nav-item">
                 <a
-                  href="#sidebarResetPass"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarResetPass"
-                  data-key="t-password-reset"
+                    href="#sidebarResetPass"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarResetPass"
+                    data-key="t-password-reset"
                 >
                   {{ $t("t-password-reset") }}
                 </a>
@@ -2492,18 +2658,18 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/auth/reset-pwd-basic"
-                        class="nav-link"
-                        data-key="t-basic"
+                          to="/auth/reset-pwd-basic"
+                          class="nav-link"
+                          data-key="t-basic"
                       >
                         {{ $t("t-basic") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/auth/reset-pwd-cover"
-                        class="nav-link"
-                        data-key="t-cover"
+                          to="/auth/reset-pwd-cover"
+                          class="nav-link"
+                          data-key="t-cover"
                       >
                         {{ $t("t-cover") }}
                       </router-link>
@@ -2514,13 +2680,13 @@ export default {
 
               <li class="nav-item">
                 <a
-                  href="#sidebarLockScreen"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarLockScreen"
-                  data-key="t-lock-screen"
+                    href="#sidebarLockScreen"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarLockScreen"
+                    data-key="t-lock-screen"
                 >
                   {{ $t("t-lock-screen") }}
                 </a>
@@ -2528,18 +2694,18 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/auth/lockscreen-basic"
-                        class="nav-link"
-                        data-key="t-basic"
+                          to="/auth/lockscreen-basic"
+                          class="nav-link"
+                          data-key="t-basic"
                       >
                         {{ $t("t-basic") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/auth/lockscreen-cover"
-                        class="nav-link"
-                        data-key="t-cover"
+                          to="/auth/lockscreen-cover"
+                          class="nav-link"
+                          data-key="t-cover"
                       >
                         {{ $t("t-cover") }}
                       </router-link>
@@ -2550,13 +2716,13 @@ export default {
 
               <li class="nav-item">
                 <a
-                  href="#sidebarLogout"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarLogout"
-                  data-key="t-logout"
+                    href="#sidebarLogout"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarLogout"
+                    data-key="t-logout"
                 >
                   {{ $t("t-logout") }}
                 </a>
@@ -2564,18 +2730,18 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/auth/logout-basic"
-                        class="nav-link"
-                        data-key="t-basic"
+                          to="/auth/logout-basic"
+                          class="nav-link"
+                          data-key="t-basic"
                       >
                         {{ $t("t-basic") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/auth/logout-cover"
-                        class="nav-link"
-                        data-key="t-cover"
+                          to="/auth/logout-cover"
+                          class="nav-link"
+                          data-key="t-cover"
                       >
                         {{ $t("t-cover") }}
                       </router-link>
@@ -2585,13 +2751,13 @@ export default {
               </li>
               <li class="nav-item">
                 <a
-                  href="#sidebarSuccessMsg"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarSuccessMsg"
-                  data-key="t-success-message"
+                    href="#sidebarSuccessMsg"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarSuccessMsg"
+                    data-key="t-success-message"
                 >
                   {{ $t("t-success-message") }}
                 </a>
@@ -2599,18 +2765,18 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/auth/success-msg-basic"
-                        class="nav-link"
-                        data-key="t-basic"
+                          to="/auth/success-msg-basic"
+                          class="nav-link"
+                          data-key="t-basic"
                       >
                         {{ $t("t-basic") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/auth/success-msg-cover"
-                        class="nav-link"
-                        data-key="t-cover"
+                          to="/auth/success-msg-cover"
+                          class="nav-link"
+                          data-key="t-cover"
                       >
                         {{ $t("t-cover") }}
                       </router-link>
@@ -2620,13 +2786,13 @@ export default {
               </li>
               <li class="nav-item">
                 <a
-                  href="#sidebarTwoStep"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarTwoStep"
-                  data-key="t-two-step-verification"
+                    href="#sidebarTwoStep"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarTwoStep"
+                    data-key="t-two-step-verification"
                 >
                   {{ $t("t-two-step-verification") }}
                 </a>
@@ -2634,18 +2800,18 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/auth/twostep-basic"
-                        class="nav-link"
-                        data-key="t-basic"
+                          to="/auth/twostep-basic"
+                          class="nav-link"
+                          data-key="t-basic"
                       >
                         {{ $t("t-basic") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/auth/twostep-cover"
-                        class="nav-link"
-                        data-key="t-cover"
+                          to="/auth/twostep-cover"
+                          class="nav-link"
+                          data-key="t-cover"
                       >
                         {{ $t("t-cover") }}
                       </router-link>
@@ -2655,13 +2821,13 @@ export default {
               </li>
               <li class="nav-item">
                 <a
-                  href="#sidebarErrors"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarErrors"
-                  data-key="t-errors"
+                    href="#sidebarErrors"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarErrors"
+                    data-key="t-errors"
                 >
                   {{ $t("t-errors") }}
                 </a>
@@ -2669,36 +2835,36 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/auth/404-basic"
-                        class="nav-link"
-                        data-key="t-404-basic"
+                          to="/auth/404-basic"
+                          class="nav-link"
+                          data-key="t-404-basic"
                       >
                         {{ $t("t-404-basic") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/auth/404-cover"
-                        class="nav-link"
-                        data-key="t-404-cover"
+                          to="/auth/404-cover"
+                          class="nav-link"
+                          data-key="t-404-cover"
                       >
                         {{ $t("t-404-cover") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/auth/404"
-                        class="nav-link"
-                        data-key="t-404-alt"
+                          to="/auth/404"
+                          class="nav-link"
+                          data-key="t-404-alt"
                       >
                         {{ $t("t-404-alt") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/auth/500"
-                        class="nav-link"
-                        data-key="t-500"
+                          to="/auth/500"
+                          class="nav-link"
+                          data-key="t-500"
                       >
                         {{ $t("t-500") }}
                       </router-link>
@@ -2712,12 +2878,12 @@ export default {
 
         <li class="nav-item">
           <a
-            class="nav-link menu-link"
-            href="#sidebarPages"
-            data-bs-toggle="collapse"
-            role="button"
-            aria-expanded="false"
-            aria-controls="sidebarPages"
+              class="nav-link menu-link"
+              href="#sidebarPages"
+              data-bs-toggle="collapse"
+              role="button"
+              aria-expanded="false"
+              aria-controls="sidebarPages"
           >
             <i class="ri-pages-line"></i>
             <span data-key="t-pages">{{ $t("t-pages") }}</span>
@@ -2726,39 +2892,39 @@ export default {
             <ul class="nav nav-sm flex-column">
               <li class="nav-item">
                 <router-link
-                  to="/pages/starter"
-                  class="nav-link"
-                  data-key="t-starter"
-                  >{{ $t("t-starter") }}
+                    to="/pages/starter"
+                    class="nav-link"
+                    data-key="t-starter"
+                >{{ $t("t-starter") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <a
-                  href="#sidebarProfile"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarProfile"
-                  data-key="t-profile"
-                  >{{ $t("t-profile") }}
+                    href="#sidebarProfile"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarProfile"
+                    data-key="t-profile"
+                >{{ $t("t-profile") }}
                 </a>
                 <div class="collapse menu-dropdown" id="sidebarProfile">
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/pages/profile"
-                        class="nav-link"
-                        data-key="t-simple-page"
+                          to="/pages/profile"
+                          class="nav-link"
+                          data-key="t-simple-page"
                       >
                         {{ $t("t-simple-page") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/pages/profile-setting"
-                        class="nav-link"
-                        data-key="t-settings"
+                          to="/pages/profile-setting"
+                          class="nav-link"
+                          data-key="t-settings"
                       >
                         {{ $t("t-settings") }}
                       </router-link>
@@ -2768,73 +2934,73 @@ export default {
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/pages/team"
-                  class="nav-link"
-                  data-key="t-team"
+                    to="/pages/team"
+                    class="nav-link"
+                    data-key="t-team"
                 >
                   {{ $t("t-team") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/pages/timeline"
-                  class="nav-link"
-                  data-key="t-timeline"
+                    to="/pages/timeline"
+                    class="nav-link"
+                    data-key="t-timeline"
                 >
                   {{ $t("t-timeline") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/pages/faqs"
-                  class="nav-link"
-                  data-key="t-faqs"
+                    to="/pages/faqs"
+                    class="nav-link"
+                    data-key="t-faqs"
                 >
                   {{ $t("t-faqs") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/pages/pricing"
-                  class="nav-link"
-                  data-key="t-pricing"
+                    to="/pages/pricing"
+                    class="nav-link"
+                    data-key="t-pricing"
                 >
                   {{ $t("t-pricing") }}
                 </router-link>
               </li>
-           
+
               <li class="nav-item">
                 <router-link
-                  to="/pages/maintenance"
-                  class="nav-link"
-                  data-key="t-maintenance"
+                    to="/pages/maintenance"
+                    class="nav-link"
+                    data-key="t-maintenance"
                 >
                   {{ $t("t-maintenance") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/pages/coming-soon"
-                  class="nav-link"
-                  data-key="t-coming-soon"
+                    to="/pages/coming-soon"
+                    class="nav-link"
+                    data-key="t-coming-soon"
                 >
                   {{ $t("t-coming-soon") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/pages/sitemap"
-                  class="nav-link"
-                  data-key="t-sitemap"
+                    to="/pages/sitemap"
+                    class="nav-link"
+                    data-key="t-sitemap"
                 >
                   {{ $t("t-sitemap") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/pages/search-results"
-                  class="nav-link"
-                  data-key="t-search-results"
+                    to="/pages/search-results"
+                    class="nav-link"
+                    data-key="t-search-results"
                 >
                   {{ $t("t-search-results") }}
                 </router-link>
@@ -2847,8 +3013,8 @@ export default {
             <i class="ri-rocket-line"></i>
             <span data-key="t-landing">{{ $t("t-landing") }}</span>
             <span class="badge badge-pill bg-danger" data-key="t-new">{{
-              $t("t-new")
-            }}</span>
+                $t("t-new")
+              }}</span>
           </a>
         </li>
         <li class="menu-title">
@@ -2858,12 +3024,12 @@ export default {
 
         <li class="nav-item">
           <a
-            class="nav-link menu-link"
-            href="#sidebarUI"
-            data-bs-toggle="collapse"
-            role="button"
-            aria-expanded="false"
-            aria-controls="sidebarUI"
+              class="nav-link menu-link"
+              href="#sidebarUI"
+              data-bs-toggle="collapse"
+              role="button"
+              aria-expanded="false"
+              aria-controls="sidebarUI"
           >
             <i class="ri-pencil-ruler-2-line"></i>
             <span data-key="t-base-ui">{{ $t("t-base-ui") }}</span>
@@ -2874,134 +3040,74 @@ export default {
                 <ul class="nav nav-sm flex-column">
                   <li class="nav-item">
                     <router-link
-                      to="/ui/alerts"
-                      class="nav-link"
-                      data-key="t-alerts"
-                      >{{ $t("t-alerts") }}</router-link
+                        to="/ui/alerts"
+                        class="nav-link"
+                        data-key="t-alerts"
+                    >{{ $t("t-alerts") }}
+                    </router-link
                     >
                   </li>
                   <li class="nav-item">
                     <router-link
-                      to="/ui/badges"
-                      class="nav-link"
-                      data-key="t-badges"
-                      >{{ $t("t-badges") }}</router-link
+                        to="/ui/badges"
+                        class="nav-link"
+                        data-key="t-badges"
+                    >{{ $t("t-badges") }}
+                    </router-link
                     >
                   </li>
                   <li class="nav-item">
                     <router-link
-                      to="/ui/buttons"
-                      class="nav-link"
-                      data-key="t-buttons"
-                      >{{ $t("t-buttons") }}</router-link
+                        to="/ui/buttons"
+                        class="nav-link"
+                        data-key="t-buttons"
+                    >{{ $t("t-buttons") }}
+                    </router-link
                     >
                   </li>
                   <li class="nav-item">
                     <router-link
-                      to="/ui/colors"
-                      class="nav-link"
-                      data-key="t-colors"
-                      >{{ $t("t-colors") }}</router-link
+                        to="/ui/colors"
+                        class="nav-link"
+                        data-key="t-colors"
+                    >{{ $t("t-colors") }}
+                    </router-link
                     >
                   </li>
                   <li class="nav-item">
                     <router-link
-                      to="/ui/cards"
-                      class="nav-link"
-                      data-key="t-cards"
-                      >{{ $t("t-cards") }}</router-link
+                        to="/ui/cards"
+                        class="nav-link"
+                        data-key="t-cards"
+                    >{{ $t("t-cards") }}
+                    </router-link
                     >
                   </li>
                   <li class="nav-item">
                     <router-link
-                      to="/ui/carousel"
-                      class="nav-link"
-                      data-key="t-carousel"
-                      >{{ $t("t-carousel") }}</router-link
+                        to="/ui/carousel"
+                        class="nav-link"
+                        data-key="t-carousel"
+                    >{{ $t("t-carousel") }}
+                    </router-link
                     >
                   </li>
                   <li class="nav-item">
                     <router-link
-                      to="/ui/dropdowns"
-                      class="nav-link"
-                      data-key="t-dropdowns"
-                      >{{ $t("t-dropdowns") }}</router-link
+                        to="/ui/dropdowns"
+                        class="nav-link"
+                        data-key="t-dropdowns"
+                    >{{ $t("t-dropdowns") }}
+                    </router-link
                     >
                   </li>
                   <li class="nav-item">
                     <router-link
-                      to="/ui/grid"
-                      class="nav-link"
-                      data-key="t-grid"
-                      >{{ $t("t-grid") }}</router-link
-                    >
-                  </li>
-                </ul>
-              </div>
-              <div class="col-lg-4">
-                <ul class="nav nav-sm flex-column">
-                  <li class="nav-item">
-                    <router-link
-                      to="/ui/images"
-                      class="nav-link"
-                      data-key="t-images"
-                      >{{ $t("t-images") }}</router-link
-                    >
-                  </li>
-                  <li class="nav-item">
-                    <router-link
-                      to="/ui/tabs"
-                      class="nav-link"
-                      data-key="t-tabs"
-                      >{{ $t("t-tabs") }}</router-link
-                    >
-                  </li>
-                  <li class="nav-item">
-                    <router-link
-                      to="/ui/accordions"
-                      class="nav-link"
-                      data-key="t-accordion-collapse"
-                      >{{ $t("t-accordion-collapse") }}</router-link
-                    >
-                  </li>
-                  <li class="nav-item">
-                    <router-link
-                      to="/ui/modals"
-                      class="nav-link"
-                      data-key="t-modals"
-                      >{{ $t("t-modals") }}</router-link
-                    >
-                  </li>
-                  <li class="nav-item">
-                    <router-link
-                      to="/ui/offcanvas"
-                      class="nav-link"
-                      data-key="t-offcanvas"
-                      >{{ $t("t-offcanvas") }}</router-link
-                    >
-                  </li>
-                  <li class="nav-item">
-                    <router-link
-                      to="/ui/placeholders"
-                      class="nav-link"
-                      data-key="t-placeholders"
-                      >{{ $t("t-placeholders") }}</router-link
-                    >
-                  </li>
-                  <li class="nav-item">
-                    <router-link
-                      to="/ui/progress"
-                      class="nav-link"
-                      data-key="t-progress"
-                      >{{ $t("t-progress") }}</router-link
-                    >
-                  </li>
-                  <li class="nav-item">
-                    <router-link
-                      to="/ui/notifications"
-                      class="nav-link"
-                      data-key="t-notifications"
-                      >{{ $t("t-notifications") }}</router-link
+                        to="/ui/grid"
+                        class="nav-link"
+                        data-key="t-grid"
+                    >{{ $t("t-grid") }}
+                    </router-link
                     >
                   </li>
                 </ul>
@@ -3010,58 +3116,141 @@ export default {
                 <ul class="nav nav-sm flex-column">
                   <li class="nav-item">
                     <router-link
-                      to="/ui/media"
-                      class="nav-link"
-                      data-key="t-media-object"
-                      >{{ $t("t-media-object") }}</router-link
+                        to="/ui/images"
+                        class="nav-link"
+                        data-key="t-images"
+                    >{{ $t("t-images") }}
+                    </router-link
                     >
                   </li>
                   <li class="nav-item">
                     <router-link
-                      to="/ui/embed-video"
-                      class="nav-link"
-                      data-key="t-embed-video"
-                      >{{ $t("t-embed-video") }}</router-link
+                        to="/ui/tabs"
+                        class="nav-link"
+                        data-key="t-tabs"
+                    >{{ $t("t-tabs") }}
+                    </router-link
                     >
                   </li>
                   <li class="nav-item">
                     <router-link
-                      to="/ui/typography"
-                      class="nav-link"
-                      data-key="t-typography"
-                      >{{ $t("t-typography") }}</router-link
+                        to="/ui/accordions"
+                        class="nav-link"
+                        data-key="t-accordion-collapse"
+                    >{{ $t("t-accordion-collapse") }}
+                    </router-link
                     >
                   </li>
                   <li class="nav-item">
                     <router-link
-                      to="/ui/lists"
-                      class="nav-link"
-                      data-key="t-lists"
-                      >{{ $t("t-lists") }}</router-link
+                        to="/ui/modals"
+                        class="nav-link"
+                        data-key="t-modals"
+                    >{{ $t("t-modals") }}
+                    </router-link
                     >
                   </li>
                   <li class="nav-item">
                     <router-link
-                      to="/ui/general"
-                      class="nav-link"
-                      data-key="t-general"
-                      >{{ $t("t-general") }}</router-link
+                        to="/ui/offcanvas"
+                        class="nav-link"
+                        data-key="t-offcanvas"
+                    >{{ $t("t-offcanvas") }}
+                    </router-link
                     >
                   </li>
                   <li class="nav-item">
                     <router-link
-                      to="/ui/ribbons"
-                      class="nav-link"
-                      data-key="t-ribbons"
-                      >{{ $t("t-ribbons") }}</router-link
+                        to="/ui/placeholders"
+                        class="nav-link"
+                        data-key="t-placeholders"
+                    >{{ $t("t-placeholders") }}
+                    </router-link
                     >
                   </li>
                   <li class="nav-item">
                     <router-link
-                      to="/ui/utilities"
-                      class="nav-link"
-                      data-key="t-utilities"
-                      >{{ $t("t-utilities") }}</router-link
+                        to="/ui/progress"
+                        class="nav-link"
+                        data-key="t-progress"
+                    >{{ $t("t-progress") }}
+                    </router-link
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <router-link
+                        to="/ui/notifications"
+                        class="nav-link"
+                        data-key="t-notifications"
+                    >{{ $t("t-notifications") }}
+                    </router-link
+                    >
+                  </li>
+                </ul>
+              </div>
+              <div class="col-lg-4">
+                <ul class="nav nav-sm flex-column">
+                  <li class="nav-item">
+                    <router-link
+                        to="/ui/media"
+                        class="nav-link"
+                        data-key="t-media-object"
+                    >{{ $t("t-media-object") }}
+                    </router-link
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <router-link
+                        to="/ui/embed-video"
+                        class="nav-link"
+                        data-key="t-embed-video"
+                    >{{ $t("t-embed-video") }}
+                    </router-link
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <router-link
+                        to="/ui/typography"
+                        class="nav-link"
+                        data-key="t-typography"
+                    >{{ $t("t-typography") }}
+                    </router-link
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <router-link
+                        to="/ui/lists"
+                        class="nav-link"
+                        data-key="t-lists"
+                    >{{ $t("t-lists") }}
+                    </router-link
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <router-link
+                        to="/ui/general"
+                        class="nav-link"
+                        data-key="t-general"
+                    >{{ $t("t-general") }}
+                    </router-link
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <router-link
+                        to="/ui/ribbons"
+                        class="nav-link"
+                        data-key="t-ribbons"
+                    >{{ $t("t-ribbons") }}
+                    </router-link
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <router-link
+                        to="/ui/utilities"
+                        class="nav-link"
+                        data-key="t-utilities"
+                    >{{ $t("t-utilities") }}
+                    </router-link
                     >
                   </li>
                 </ul>
@@ -3072,66 +3261,72 @@ export default {
 
         <li class="nav-item">
           <a
-            class="nav-link menu-link"
-            href="#sidebarAdvanceUI"
-            data-bs-toggle="collapse"
-            role="button"
-            aria-expanded="false"
-            aria-controls="sidebarAdvanceUI"
+              class="nav-link menu-link"
+              href="#sidebarAdvanceUI"
+              data-bs-toggle="collapse"
+              role="button"
+              aria-expanded="false"
+              aria-controls="sidebarAdvanceUI"
           >
             <i class="ri-stack-line"></i>
             <span data-key="t-advance-ui">{{ $t("t-advance-ui") }}</span>
-            
+
           </a>
           <div class="collapse menu-dropdown" id="sidebarAdvanceUI">
             <ul class="nav nav-sm flex-column">
               <li class="nav-item">
                 <router-link
-                  to="/advance-ui/sweetalerts"
-                  class="nav-link"
-                  data-key="t-sweet-alerts"
-                  >{{ $t("t-sweet-alerts") }}</router-link
+                    to="/advance-ui/sweetalerts"
+                    class="nav-link"
+                    data-key="t-sweet-alerts"
+                >{{ $t("t-sweet-alerts") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/advance-ui/scrollbar"
-                  class="nav-link"
-                  data-key="t-scrollbar"
-                  >{{ $t("t-scrollbar") }}</router-link
+                    to="/advance-ui/scrollbar"
+                    class="nav-link"
+                    data-key="t-scrollbar"
+                >{{ $t("t-scrollbar") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/advance-ui/animation"
-                  class="nav-link"
-                  data-key="t-animation"
-                  >{{ $t("t-animation") }}</router-link
+                    to="/advance-ui/animation"
+                    class="nav-link"
+                    data-key="t-animation"
+                >{{ $t("t-animation") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/advance-ui/swiper"
-                  class="nav-link"
-                  data-key="t-swiper-slider"
-                  >{{ $t("t-swiper-slider") }}</router-link
+                    to="/advance-ui/swiper"
+                    class="nav-link"
+                    data-key="t-swiper-slider"
+                >{{ $t("t-swiper-slider") }}
+                </router-link
                 >
               </li>
 
               <li class="nav-item">
                 <router-link
-                  to="/advance-ui/highlight"
-                  class="nav-link"
-                  data-key="t-highlight"
-                  >{{ $t("t-highlight") }}</router-link
+                    to="/advance-ui/highlight"
+                    class="nav-link"
+                    data-key="t-highlight"
+                >{{ $t("t-highlight") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/advance-ui/scrollspy"
-                  class="nav-link"
-                  data-key="t-scrollSpy"
-                  >{{ $t("t-scrollSpy") }}</router-link
+                    to="/advance-ui/scrollspy"
+                    class="nav-link"
+                    data-key="t-scrollSpy"
+                >{{ $t("t-scrollSpy") }}
+                </router-link
                 >
               </li>
             </ul>
@@ -3147,12 +3342,12 @@ export default {
 
         <li class="nav-item">
           <a
-            class="nav-link menu-link"
-            href="#sidebarForms"
-            data-bs-toggle="collapse"
-            role="button"
-            aria-expanded="false"
-            aria-controls="sidebarForms"
+              class="nav-link menu-link"
+              href="#sidebarForms"
+              data-bs-toggle="collapse"
+              role="button"
+              aria-expanded="false"
+              aria-controls="sidebarForms"
           >
             <i class="ri-file-list-3-line"></i>
             <span data-key="t-forms">{{ $t("t-forms") }}</span>
@@ -3161,101 +3356,111 @@ export default {
             <ul class="nav nav-sm flex-column">
               <li class="nav-item">
                 <router-link
-                  to="/form/elements"
-                  class="nav-link"
-                  data-key="t-basic-elements"
-                  >{{ $t("t-basic-elements") }}</router-link
+                    to="/form/elements"
+                    class="nav-link"
+                    data-key="t-basic-elements"
+                >{{ $t("t-basic-elements") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/form/select"
-                  class="nav-link"
-                  data-key="t-form-select"
-                  >{{ $t("t-form-select") }}</router-link
+                    to="/form/select"
+                    class="nav-link"
+                    data-key="t-form-select"
+                >{{ $t("t-form-select") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/form/checkboxs-radios"
-                  class="nav-link"
-                  data-key="t-checkboxs-radios"
-                  >{{ $t("t-checkboxs-radios") }}</router-link
+                    to="/form/checkboxs-radios"
+                    class="nav-link"
+                    data-key="t-checkboxs-radios"
+                >{{ $t("t-checkboxs-radios") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/form/pickers"
-                  class="nav-link"
-                  data-key="t-pickers"
+                    to="/form/pickers"
+                    class="nav-link"
+                    data-key="t-pickers"
                 >
                   {{ $t("t-pickers") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/form/masks"
-                  class="nav-link"
-                  data-key="t-input-masks"
-                  >{{ $t("t-input-masks") }}</router-link
+                    to="/form/masks"
+                    class="nav-link"
+                    data-key="t-input-masks"
+                >{{ $t("t-input-masks") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/form/advanced"
-                  class="nav-link"
-                  data-key="t-advanced"
+                    to="/form/advanced"
+                    class="nav-link"
+                    data-key="t-advanced"
                 >
-                  {{ $t("t-advanced") }}</router-link
+                  {{ $t("t-advanced") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/form/range-sliders"
-                  class="nav-link"
-                  data-key="t-range-slider"
+                    to="/form/range-sliders"
+                    class="nav-link"
+                    data-key="t-range-slider"
                 >
                   {{ $t("t-range-slider") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/form/validation"
-                  class="nav-link"
-                  data-key="t-validation"
-                  >{{ $t("t-validation") }}</router-link
+                    to="/form/validation"
+                    class="nav-link"
+                    data-key="t-validation"
+                >{{ $t("t-validation") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/form/wizard"
-                  class="nav-link"
-                  data-key="t-wizard"
-                  >{{ $t("t-wizard") }}</router-link
+                    to="/form/wizard"
+                    class="nav-link"
+                    data-key="t-wizard"
+                >{{ $t("t-wizard") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/form/editors"
-                  class="nav-link"
-                  data-key="t-editors"
-                  >{{ $t("t-editors") }}</router-link
+                    to="/form/editors"
+                    class="nav-link"
+                    data-key="t-editors"
+                >{{ $t("t-editors") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/form/file-uploads"
-                  class="nav-link"
-                  data-key="t-file-uploads"
-                  >{{ $t("t-file-uploads") }}</router-link
+                    to="/form/file-uploads"
+                    class="nav-link"
+                    data-key="t-file-uploads"
+                >{{ $t("t-file-uploads") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/form/layouts"
-                  class="nav-link"
-                  data-key="t-form-layouts"
-                  >{{ $t("t-form-layouts") }}</router-link
+                    to="/form/layouts"
+                    class="nav-link"
+                    data-key="t-form-layouts"
+                >{{ $t("t-form-layouts") }}
+                </router-link
                 >
               </li>
             </ul>
@@ -3264,12 +3469,12 @@ export default {
 
         <li class="nav-item">
           <a
-            class="nav-link menu-link"
-            href="#sidebarTables"
-            data-bs-toggle="collapse"
-            role="button"
-            aria-expanded="false"
-            aria-controls="sidebarTables"
+              class="nav-link menu-link"
+              href="#sidebarTables"
+              data-bs-toggle="collapse"
+              role="button"
+              aria-expanded="false"
+              aria-controls="sidebarTables"
           >
             <i class="ri-layout-grid-line"></i>
             <span data-key="t-tables">{{ $t("t-tables") }}</span>
@@ -3278,18 +3483,20 @@ export default {
             <ul class="nav nav-sm flex-column">
               <li class="nav-item">
                 <router-link
-                  to="/tables/basic"
-                  class="nav-link"
-                  data-key="t-basic-tables"
-                  >{{ $t("t-basic-tables") }}</router-link
+                    to="/tables/basic"
+                    class="nav-link"
+                    data-key="t-basic-tables"
+                >{{ $t("t-basic-tables") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/tables/gridjs"
-                  class="nav-link"
-                  data-key="t-grid-js"
-                  >{{ $t("t-grid-js") }}</router-link
+                    to="/tables/gridjs"
+                    class="nav-link"
+                    data-key="t-grid-js"
+                >{{ $t("t-grid-js") }}
+                </router-link
                 >
               </li>
             </ul>
@@ -3298,12 +3505,12 @@ export default {
 
         <li class="nav-item">
           <a
-            class="nav-link menu-link"
-            href="#sidebarCharts"
-            data-bs-toggle="collapse"
-            role="button"
-            aria-expanded="false"
-            aria-controls="sidebarCharts"
+              class="nav-link menu-link"
+              href="#sidebarCharts"
+              data-bs-toggle="collapse"
+              role="button"
+              aria-expanded="false"
+              aria-controls="sidebarCharts"
           >
             <i class="ri-pie-chart-line"></i>
             <span data-key="t-charts">{{ $t("t-charts") }}</span>
@@ -3312,13 +3519,13 @@ export default {
             <ul class="nav nav-sm flex-column">
               <li class="nav-item">
                 <a
-                  href="#sidebarApexcharts"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarApexcharts"
-                  data-key="t-apexcharts"
+                    href="#sidebarApexcharts"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarApexcharts"
+                    data-key="t-apexcharts"
                 >
                   {{ $t("t-apexcharts") }}
                 </a>
@@ -3326,136 +3533,136 @@ export default {
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-line"
-                        class="nav-link"
-                        data-key="t-line"
+                          to="/charts/apex-line"
+                          class="nav-link"
+                          data-key="t-line"
                       >
                         {{ $t("t-line") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-area"
-                        class="nav-link"
-                        data-key="t-area"
+                          to="/charts/apex-area"
+                          class="nav-link"
+                          data-key="t-area"
                       >
                         {{ $t("t-area") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-column"
-                        class="nav-link"
-                        data-key="t-column"
+                          to="/charts/apex-column"
+                          class="nav-link"
+                          data-key="t-column"
                       >
                         {{ $t("t-column") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-bar"
-                        class="nav-link"
-                        data-key="t-bar"
+                          to="/charts/apex-bar"
+                          class="nav-link"
+                          data-key="t-bar"
                       >
                         {{ $t("t-bar") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-mixed"
-                        class="nav-link"
-                        data-key="t-mixed"
+                          to="/charts/apex-mixed"
+                          class="nav-link"
+                          data-key="t-mixed"
                       >
                         {{ $t("t-mixed") }}
                       </router-link>
                     </li>
-                    
+
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-candlestick"
-                        class="nav-link"
-                        data-key="t-candlstick"
+                          to="/charts/apex-candlestick"
+                          class="nav-link"
+                          data-key="t-candlstick"
                       >
                         {{ $t("t-candlstick") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-boxplot"
-                        class="nav-link"
-                        data-key="t-boxplot"
+                          to="/charts/apex-boxplot"
+                          class="nav-link"
+                          data-key="t-boxplot"
                       >
                         {{ $t("t-boxplot") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-bubble"
-                        class="nav-link"
-                        data-key="t-bubble"
+                          to="/charts/apex-bubble"
+                          class="nav-link"
+                          data-key="t-bubble"
                       >
                         {{ $t("t-bubble") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-scatter"
-                        class="nav-link"
-                        data-key="t-scatter"
+                          to="/charts/apex-scatter"
+                          class="nav-link"
+                          data-key="t-scatter"
                       >
                         {{ $t("t-scatter") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-heatmap"
-                        class="nav-link"
-                        data-key="t-heatmap"
+                          to="/charts/apex-heatmap"
+                          class="nav-link"
+                          data-key="t-heatmap"
                       >
                         {{ $t("t-heatmap") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-treemap"
-                        class="nav-link"
-                        data-key="t-treemap"
+                          to="/charts/apex-treemap"
+                          class="nav-link"
+                          data-key="t-treemap"
                       >
                         {{ $t("t-treemap") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-pie"
-                        class="nav-link"
-                        data-key="t-pie"
+                          to="/charts/apex-pie"
+                          class="nav-link"
+                          data-key="t-pie"
                       >
                         {{ $t("t-pie") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-radialbar"
-                        class="nav-link"
-                        data-key="t-radialbar"
+                          to="/charts/apex-radialbar"
+                          class="nav-link"
+                          data-key="t-radialbar"
                       >
                         {{ $t("t-radialbar") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-radar"
-                        class="nav-link"
-                        data-key="t-radar"
+                          to="/charts/apex-radar"
+                          class="nav-link"
+                          data-key="t-radar"
                       >
                         {{ $t("t-radar") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       <router-link
-                        to="/charts/apex-polararea"
-                        class="nav-link"
-                        data-key="t-polar-area"
+                          to="/charts/apex-polararea"
+                          class="nav-link"
+                          data-key="t-polar-area"
                       >
                         {{ $t("t-polar-area") }}
                       </router-link>
@@ -3465,18 +3672,18 @@ export default {
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/charts/chartjs"
-                  class="nav-link"
-                  data-key="t-chartjs"
-                  >{{ $t("t-chartjs") }}
+                    to="/charts/chartjs"
+                    class="nav-link"
+                    data-key="t-chartjs"
+                >{{ $t("t-chartjs") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/charts/echart"
-                  class="nav-link"
-                  data-key="t-echarts"
-                  >{{ $t("t-echarts") }}
+                    to="/charts/echart"
+                    class="nav-link"
+                    data-key="t-echarts"
+                >{{ $t("t-echarts") }}
                 </router-link>
               </li>
             </ul>
@@ -3485,12 +3692,12 @@ export default {
 
         <li class="nav-item">
           <a
-            class="nav-link menu-link"
-            href="#sidebarIcons"
-            data-bs-toggle="collapse"
-            role="button"
-            aria-expanded="false"
-            aria-controls="sidebarIcons"
+              class="nav-link menu-link"
+              href="#sidebarIcons"
+              data-bs-toggle="collapse"
+              role="button"
+              aria-expanded="false"
+              aria-controls="sidebarIcons"
           >
             <i class="ri-compasses-2-line"></i>
             <span data-key="t-icons">{{ $t("t-icons") }}</span>
@@ -3499,42 +3706,47 @@ export default {
             <ul class="nav nav-sm flex-column">
               <li class="nav-item">
                 <router-link
-                  to="/icons/remix"
-                  class="nav-link"
-                  data-key="t-remix"
-                  >{{ $t("t-remix") }}</router-link
+                    to="/icons/remix"
+                    class="nav-link"
+                    data-key="t-remix"
+                >{{ $t("t-remix") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/icons/boxicons"
-                  class="nav-link"
-                  data-key="t-boxicons"
-                  >{{ $t("t-boxicons") }}</router-link
+                    to="/icons/boxicons"
+                    class="nav-link"
+                    data-key="t-boxicons"
+                >{{ $t("t-boxicons") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/icons/materialdesign"
-                  class="nav-link"
-                  data-key="t-material-design"
-                  >{{ $t("t-material-design") }}</router-link
+                    to="/icons/materialdesign"
+                    class="nav-link"
+                    data-key="t-material-design"
+                >{{ $t("t-material-design") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/icons/lineawesome"
-                  class="nav-link"
-                  data-key="t-line-awesome"
-                  >{{ $t("t-line-awesome") }}</router-link
+                    to="/icons/lineawesome"
+                    class="nav-link"
+                    data-key="t-line-awesome"
+                >{{ $t("t-line-awesome") }}
+                </router-link
                 >
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/icons/feather"
-                  class="nav-link"
-                  data-key="t-feather"
-                  >{{ $t("t-feather") }}</router-link
+                    to="/icons/feather"
+                    class="nav-link"
+                    data-key="t-feather"
+                >{{ $t("t-feather") }}
+                </router-link
                 >
               </li>
             </ul>
@@ -3543,12 +3755,12 @@ export default {
 
         <li class="nav-item">
           <a
-            class="nav-link menu-link"
-            href="#sidebarMaps"
-            data-bs-toggle="collapse"
-            role="button"
-            aria-expanded="false"
-            aria-controls="sidebarMaps"
+              class="nav-link menu-link"
+              href="#sidebarMaps"
+              data-bs-toggle="collapse"
+              role="button"
+              aria-expanded="false"
+              aria-controls="sidebarMaps"
           >
             <i class="ri-map-pin-line"></i>
             <span data-key="t-maps">{{ $t("t-maps") }}</span>
@@ -3557,18 +3769,18 @@ export default {
             <ul class="nav nav-sm flex-column">
               <li class="nav-item">
                 <router-link
-                  to="/maps/google"
-                  class="nav-link"
-                  data-key="t-google"
+                    to="/maps/google"
+                    class="nav-link"
+                    data-key="t-google"
                 >
                   {{ $t("t-google") }}
                 </router-link>
               </li>
               <li class="nav-item">
                 <router-link
-                  to="/maps/leaflet"
-                  class="nav-link"
-                  data-key="t-leaflet"
+                    to="/maps/leaflet"
+                    class="nav-link"
+                    data-key="t-leaflet"
                 >
                   {{ $t("t-leaflet") }}
                 </router-link>
@@ -3579,12 +3791,12 @@ export default {
 
         <li class="nav-item">
           <a
-            class="nav-link menu-link"
-            href="#sidebarMultilevel"
-            data-bs-toggle="collapse"
-            role="button"
-            aria-expanded="false"
-            aria-controls="sidebarMultilevel"
+              class="nav-link menu-link"
+              href="#sidebarMultilevel"
+              data-bs-toggle="collapse"
+              role="button"
+              aria-expanded="false"
+              aria-controls="sidebarMultilevel"
           >
             <i class="ri-share-line"></i>
             <span data-key="t-multi-level">{{ $t("t-multi-level") }}</span>
@@ -3598,13 +3810,13 @@ export default {
               </li>
               <li class="nav-item">
                 <a
-                  href="#sidebarAccount"
-                  class="nav-link"
-                  data-bs-toggle="collapse"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="sidebarAccount"
-                  data-key="t-level-1.2"
+                    href="#sidebarAccount"
+                    class="nav-link"
+                    data-bs-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="sidebarAccount"
+                    data-key="t-level-1.2"
                 >
                   {{ $t("t-level-1.2") }}
                 </a>
@@ -3617,13 +3829,13 @@ export default {
                     </li>
                     <li class="nav-item">
                       <a
-                        href="#sidebarCrm"
-                        class="nav-link"
-                        data-bs-toggle="collapse"
-                        role="button"
-                        aria-expanded="false"
-                        aria-controls="sidebarCrm"
-                        data-key="t-level-2.2"
+                          href="#sidebarCrm"
+                          class="nav-link"
+                          data-bs-toggle="collapse"
+                          role="button"
+                          aria-expanded="false"
+                          aria-controls="sidebarCrm"
+                          data-key="t-level-2.2"
                       >
                         {{ $t("t-level-2.2") }}
                       </a>

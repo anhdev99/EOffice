@@ -62,6 +62,15 @@ export default [
     component: () => import("../views/dashboard/ecommerce/index.vue"),
   },
   {
+    path: "/quan-ly-van-ban-den/van-ban-den",
+    name: "van-ban-den",
+    meta: {
+      title: "Văn bản đến",
+      authRequired: true,
+    },
+    component: () => import("../pages/quanlyvanbanden/vanbanden/index.vue"),
+  },
+  {
     path: "/dashboard/crypto",
     name: "dashboard-crypto",
     meta: {
