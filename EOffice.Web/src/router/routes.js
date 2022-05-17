@@ -71,7 +71,7 @@ export default [
     component: () => import("../pages/user/index.vue"),
   },
   {
-    path: "/quan-ly-van-ban-den/van-ban-den",
+    path: "/van-ban-den",
     name: "van-ban-den",
     meta: {
       title: "Văn bản đến",

@@ -295,7 +295,7 @@ export default {
       this.value1=data.status;
       this.value3=data.priority;
       document.getElementById('edit-btn').style.display='block';
-      document.getElementById('add-btn').style.display='none'
+          document.getElementById('add-btn').style.display='none'
     },
     updateorder(){
         let result = this.allTask.findIndex(o => o.id == document.getElementById('id').value)
@@ -396,9 +396,9 @@ export default {
     },
     addnew(){
       document.getElementById("addform").reset();
-        document.getElementById('exampleModalLabel').innerHTML="Add Task";
-        document.getElementById('add-btn').style.display='block';
-        document.getElementById('edit-btn').style.display='none';
+      document.getElementById('exampleModalLabel').innerHTML="Add Task";
+      document.getElementById('add-btn').style.display='block';
+      document.getElementById('edit-btn').style.display='none';
     },
     setPages() {
       let numberOfPages = Math.ceil(this.allTask.length / this.perPage);

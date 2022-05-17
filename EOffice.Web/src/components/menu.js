@@ -89,6 +89,49 @@ export const menuItems = [
     label: "Quản lý tài khoản",
     icon: "ri-account-circle-line",
     link: "/vai-tro",
-  }
+  },
+  {
+    id: "16",
+    label: "QUẢN LÝ VĂN BẢN",
+    isTitle: true
+  },
+  {
+    id: "17",
+    label: "Văn bản đến",
+    icon: "ri-account-circle-line",
+    subItems: [
+      {
+        id: "18",
+        label: "Văn bản đến",
+        link: "/van-ban-den",
+        parentId: "17"
+      },
+      {
+        id: "19",
+        label: "Xử lý văn bản",
+        link: "/xu-ly-van-ban-den",
+        parentId: "17"
+      }
+    ]
+  },
+  {
+    id: "20",
+    label: "Văn bản đi",
+    icon: "ri-account-circle-line",
+    subItems: [
+      {
+        id: "21",
+        label: "Văn bản đi",
+        link: "/van-ban-di",
+        parentId: "20"
+      },
+      {
+        id: "22",
+        label: "Xử lý văn bản",
+        link: "/xu-ly-van-ban-di",
+        parentId: "20"
+      },
+    ]
+  },
 ];
 
