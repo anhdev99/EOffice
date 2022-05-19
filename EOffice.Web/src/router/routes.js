@@ -5,7 +5,8 @@ export default [
     path: "/dang-nhap",
     name: "dang-nhap",
     component: () => import("../pages/auth/login.vue"),
-    meta:  { title: "Đăng nhập",
+    meta: {
+      title: "Đăng nhập",
       beforeResolve(routeTo, routeFrom, next) {
         // If the user is already logged in
         if (store.getters["auth/loggedIn"]) {
@@ -22,7 +23,8 @@ export default [
     path: "/register",
     name: "Register",
     component: () => import("../views/account/register.vue"),
-    meta: { title: "Register",
+    meta: {
+      title: "Register",
       beforeResolve(routeTo, routeFrom, next) {
         // If the user is already logged in
         if (store.getters["auth/loggedIn"]) {
@@ -39,7 +41,8 @@ export default [
     path: "/forgot-password",
     name: "Forgot password",
     component: () => import("../views/account/forgot-password.vue"),
-    meta: { title: "Forgot Password",
+    meta: {
+      title: "Forgot Password",
       beforeResolve(routeTo, routeFrom, next) {
         // If the user is already logged in
         if (store.getters["auth/loggedIn"]) {
@@ -77,7 +80,27 @@ export default [
       title: "Văn bản đến",
       authRequired: true,
     },
-    component: () => import("../pages/quanlyvanbanden/vanbanden/index.vue"),
+    component: () => import("../pages/quanlyvanbanden/vanbanden/index"),
+  },
+  {
+    path: "/van-ban-den/nhan-xu-ly",
+    name: "vanbanden-nhanxuly",
+    meta: {
+      title: "Văn bản đến",
+      authRequired: true,
+    },
+    component: () =>
+      import("../pages/quanlyvanbanden/vanbanden/nhanxuly/index"),
+  },
+  {
+    path: "/van-ban-den/phan-quyen-xu-ly",
+    name: "vanbanden-phancongxuly",
+    meta: {
+      title: "Văn bản đến",
+      authRequired: true,
+    },
+    component: () =>
+      import("../pages/quanlyvanbanden/vanbanden/phanquyenxuly/index"),
   },
   {
     path: "/dashboard/crypto",
@@ -92,7 +115,8 @@ export default [
     path: "/dashboard/projects",
     name: "dashboard-projects",
     meta: {
-      title: "Projects", authRequired: true,
+      title: "Projects",
+      authRequired: true,
     },
     component: () => import("../views/dashboard/projects/index"),
   },
@@ -100,7 +124,8 @@ export default [
     path: "/dashboard/crm",
     name: "dashboard-crm",
     meta: {
-      title: "CRM", authRequired: true,
+      title: "CRM",
+      authRequired: true,
     },
     component: () => import("../views/dashboard/crm/index"),
   },
@@ -108,7 +133,8 @@ export default [
     path: "/dashboard/analytics",
     name: "dashboard-analytics",
     meta: {
-      title: "Analytics", authRequired: true,
+      title: "Analytics",
+      authRequired: true,
     },
     component: () => import("../views/dashboard/analytics/index"),
   },
@@ -116,7 +142,8 @@ export default [
     path: "/logout",
     name: "logout",
     meta: {
-      title: "Logout", authRequired: true,
+      title: "Logout",
+      authRequired: true,
       beforeResolve(routeTo, routeFrom, next) {
         if (process.env.VUE_APP_DEFAULT_AUTH === "firebase") {
           store.dispatch("auth/logOut");
@@ -132,7 +159,7 @@ export default [
         );
       },
     },
-    component: () => import("../views/auth/logout/basic")
+    component: () => import("../views/auth/logout/basic"),
   },
   {
     path: "/calendar",
@@ -342,7 +369,8 @@ export default [
     path: "/ui/alerts",
     name: "Alerts",
     meta: {
-      title: "Alerts", authRequired: true,
+      title: "Alerts",
+      authRequired: true,
     },
     component: () => import("../views/ui/alerts"),
   },
@@ -350,7 +378,8 @@ export default [
     path: "/ui/buttons",
     name: "Buttons",
     meta: {
-      title: "Buttons", authRequired: true,
+      title: "Buttons",
+      authRequired: true,
     },
     component: () => import("../views/ui/buttons"),
   },
@@ -685,322 +714,363 @@ export default [
     component: () => import("../views/charts/echart/index"),
   },
   {
-    path: '/charts/apex-line',
-    name: 'line',
+    path: "/charts/apex-line",
+    name: "line",
     meta: {
-      title: "Line Charts", authRequired: true,
+      title: "Line Charts",
+      authRequired: true,
     },
-    component: () => import('../views/charts/apex/line/index')
+    component: () => import("../views/charts/apex/line/index"),
   },
   {
-    path: '/charts/apex-area',
-    name: 'area-chart',
+    path: "/charts/apex-area",
+    name: "area-chart",
     meta: {
-      title: "Area Charts", authRequired: true,
+      title: "Area Charts",
+      authRequired: true,
     },
-    component: () => import('../views/charts/apex/area/index')
+    component: () => import("../views/charts/apex/area/index"),
   },
   {
-    path: '/charts/apex-bar',
-    name: 'bar-chart',
+    path: "/charts/apex-bar",
+    name: "bar-chart",
     meta: {
-      title: "Bar Charts", authRequired: true,
+      title: "Bar Charts",
+      authRequired: true,
     },
-    component: () => import('../views/charts/apex/bar/index')
+    component: () => import("../views/charts/apex/bar/index"),
   },
   {
-    path: '/charts/apex-column',
-    name: 'column-chart',
+    path: "/charts/apex-column",
+    name: "column-chart",
     meta: {
-      title: "Column Charts", authRequired: true,
+      title: "Column Charts",
+      authRequired: true,
     },
-    component: () => import('../views/charts/apex/column/index')
+    component: () => import("../views/charts/apex/column/index"),
   },
- 
+
   {
-    path: '/charts/apex-mixed',
-    name: 'mixed-chart',
+    path: "/charts/apex-mixed",
+    name: "mixed-chart",
     meta: {
-      title: "Mixed Charts", authRequired: true,
+      title: "Mixed Charts",
+      authRequired: true,
     },
-    component: () => import('../views/charts/apex/mixed/index')
-  },
-  {
-    path: '/charts/apex-candlestick',
-    name: 'candlestick',
-    meta: {
-      title: "Candlestick", authRequired: true,
-    },
-    component: () => import('../views/charts/apex/candlestick/index')
+    component: () => import("../views/charts/apex/mixed/index"),
   },
   {
-    path: '/charts/apex-boxplot',
-    name: 'boxplot',
+    path: "/charts/apex-candlestick",
+    name: "candlestick",
     meta: {
-      title: "Boxplot", authRequired: true,
+      title: "Candlestick",
+      authRequired: true,
     },
-    component: () => import('../views/charts/apex/boxplot/index')
+    component: () => import("../views/charts/apex/candlestick/index"),
   },
   {
-    path: '/charts/apex-bubble',
-    name: 'bubble',
+    path: "/charts/apex-boxplot",
+    name: "boxplot",
     meta: {
-      title: "Bubble Chart", authRequired: true,
+      title: "Boxplot",
+      authRequired: true,
     },
-    component: () => import('../views/charts/apex/bubble/index')
+    component: () => import("../views/charts/apex/boxplot/index"),
   },
   {
-    path: '/charts/apex-scatter',
-    name: 'scatter',
+    path: "/charts/apex-bubble",
+    name: "bubble",
     meta: {
-      title: "Scatter", authRequired: true,
+      title: "Bubble Chart",
+      authRequired: true,
     },
-    component: () => import('../views/charts/apex/scatter/index')
+    component: () => import("../views/charts/apex/bubble/index"),
   },
   {
-    path: '/charts/apex-heatmap',
-    name: 'heatmap',
+    path: "/charts/apex-scatter",
+    name: "scatter",
     meta: {
-      title: "Heatmap", authRequired: true,
+      title: "Scatter",
+      authRequired: true,
     },
-    component: () => import('../views/charts/apex/heatmap/index')
+    component: () => import("../views/charts/apex/scatter/index"),
   },
   {
-    path: '/charts/apex-treemap',
-    name: 'treemap',
+    path: "/charts/apex-heatmap",
+    name: "heatmap",
     meta: {
-      title: "Treemap", authRequired: true,
+      title: "Heatmap",
+      authRequired: true,
     },
-    component: () => import('../views/charts/apex/treemap/index')
+    component: () => import("../views/charts/apex/heatmap/index"),
   },
   {
-    path: '/charts/apex-pie',
-    name: 'pie',
+    path: "/charts/apex-treemap",
+    name: "treemap",
     meta: {
-      title: "Apex Pie", authRequired: true,
+      title: "Treemap",
+      authRequired: true,
     },
-    component: () => import('../views/charts/apex/pie/index')
+    component: () => import("../views/charts/apex/treemap/index"),
   },
   {
-    path: '/charts/apex-radialbar',
-    name: 'radialbar',
+    path: "/charts/apex-pie",
+    name: "pie",
     meta: {
-      title: "Apex Radialbar", authRequired: true,
+      title: "Apex Pie",
+      authRequired: true,
     },
-    component: () => import('../views/charts/apex/radiabar/index')
+    component: () => import("../views/charts/apex/pie/index"),
   },
   {
-    path: '/charts/apex-radar',
-    name: 'radar',
+    path: "/charts/apex-radialbar",
+    name: "radialbar",
     meta: {
-      title: "Apex Radar", authRequired: true,
+      title: "Apex Radialbar",
+      authRequired: true,
     },
-    component: () => import('../views/charts/apex/radar/index')
+    component: () => import("../views/charts/apex/radiabar/index"),
   },
   {
-    path: '/charts/apex-polararea',
-    name: 'polararea',
+    path: "/charts/apex-radar",
+    name: "radar",
     meta: {
-      title: "Polararea", authRequired: true,
+      title: "Apex Radar",
+      authRequired: true,
     },
-    component: () => import('../views/charts/apex/polararea/index')
+    component: () => import("../views/charts/apex/radar/index"),
   },
   {
-    path: '/advance-ui/animation',
-    name: 'animation',
+    path: "/charts/apex-polararea",
+    name: "polararea",
     meta: {
-      title: "Animation", authRequired: true,
+      title: "Polararea",
+      authRequired: true,
     },
-    component: () => import('../views/advance-ui/animation')
+    component: () => import("../views/charts/apex/polararea/index"),
   },
   {
-    path: '/advance-ui/highlight',
-    name: 'highlight',
+    path: "/advance-ui/animation",
+    name: "animation",
     meta: {
-      title: "Highlight", authRequired: true,
+      title: "Animation",
+      authRequired: true,
     },
-    component: () => import('../views/advance-ui/highlight')
+    component: () => import("../views/advance-ui/animation"),
   },
   {
-    path: '/advance-ui/scrollbar',
-    name: 'scrollbar',
+    path: "/advance-ui/highlight",
+    name: "highlight",
     meta: {
-      title: "Scrollbar", authRequired: true,
+      title: "Highlight",
+      authRequired: true,
     },
-    component: () => import('../views/advance-ui/scrollbar')
+    component: () => import("../views/advance-ui/highlight"),
   },
   {
-    path: '/advance-ui/scrollspy',
-    name: 'scrollspy',
+    path: "/advance-ui/scrollbar",
+    name: "scrollbar",
     meta: {
-      title: "Scrollspy", authRequired: true,
+      title: "Scrollbar",
+      authRequired: true,
     },
-    component: () => import('../views/advance-ui/scrollspy')
+    component: () => import("../views/advance-ui/scrollbar"),
   },
   {
-    path: '/advance-ui/sweetalerts',
-    name: 'sweetalerts',
+    path: "/advance-ui/scrollspy",
+    name: "scrollspy",
     meta: {
-      title: "Sweet Alerts", authRequired: true,
+      title: "Scrollspy",
+      authRequired: true,
     },
-    component: () => import('../views/advance-ui/sweetalerts')
+    component: () => import("../views/advance-ui/scrollspy"),
   },
   {
-    path: '/advance-ui/swiper',
-    name: 'Swiper Slider',
+    path: "/advance-ui/sweetalerts",
+    name: "sweetalerts",
     meta: {
-      title: "Swiper", authRequired: true,
+      title: "Sweet Alerts",
+      authRequired: true,
     },
-    component: () => import('../views/advance-ui/swiper')
+    component: () => import("../views/advance-ui/sweetalerts"),
   },
   {
-    path: '/auth/signin-basic',
-    name: 'signin-basic',
+    path: "/advance-ui/swiper",
+    name: "Swiper Slider",
     meta: {
-      title: "Signin Basic", authRequired: true,
+      title: "Swiper",
+      authRequired: true,
     },
-    component: () => import('../views/auth/signin/basic')
+    component: () => import("../views/advance-ui/swiper"),
   },
   {
-    path: '/auth/signin-cover',
-    name: 'signin-cover',
+    path: "/auth/signin-basic",
+    name: "signin-basic",
     meta: {
-      title: "Signin Cover", authRequired: true,
+      title: "Signin Basic",
+      authRequired: true,
     },
-    component: () => import('../views/auth/signin/cover')
+    component: () => import("../views/auth/signin/basic"),
   },
   {
-    path: '/auth/signup-basic',
-    name: 'signup-basic',
+    path: "/auth/signin-cover",
+    name: "signin-cover",
     meta: {
-      title: "Signup Basic", authRequired: true,
+      title: "Signin Cover",
+      authRequired: true,
     },
-    component: () => import('../views/auth/signup/basic')
+    component: () => import("../views/auth/signin/cover"),
   },
   {
-    path: '/auth/signup-cover',
-    name: 'signup-cover',
+    path: "/auth/signup-basic",
+    name: "signup-basic",
     meta: {
-      title: "Signup Cover", authRequired: true,
+      title: "Signup Basic",
+      authRequired: true,
     },
-    component: () => import('../views/auth/signup/cover')
+    component: () => import("../views/auth/signup/basic"),
   },
   {
-    path: '/auth/reset-pwd-basic',
-    name: 'reset-pwd-basic',
+    path: "/auth/signup-cover",
+    name: "signup-cover",
     meta: {
-      title: "Reset Password", authRequired: true,
+      title: "Signup Cover",
+      authRequired: true,
     },
-    component: () => import('../views/auth/reset/basic')
+    component: () => import("../views/auth/signup/cover"),
   },
   {
-    path: '/auth/reset-pwd-cover',
-    name: 'reset-pwd-cover',
+    path: "/auth/reset-pwd-basic",
+    name: "reset-pwd-basic",
     meta: {
-      title: "Reset Password", authRequired: true,
+      title: "Reset Password",
+      authRequired: true,
     },
-    component: () => import('../views/auth/reset/cover')
+    component: () => import("../views/auth/reset/basic"),
   },
   {
-    path: '/auth/lockscreen-basic',
-    name: 'lock-screen-basic',
+    path: "/auth/reset-pwd-cover",
+    name: "reset-pwd-cover",
     meta: {
-      title: "Lock Screen", authRequired: true,
+      title: "Reset Password",
+      authRequired: true,
     },
-    component: () => import('../views/auth/lockscreen/basic')
+    component: () => import("../views/auth/reset/cover"),
   },
   {
-    path: '/auth/lockscreen-cover',
-    name: 'lock-screen-cover',
+    path: "/auth/lockscreen-basic",
+    name: "lock-screen-basic",
     meta: {
-      title: "Lock Screen", authRequired: true,
+      title: "Lock Screen",
+      authRequired: true,
     },
-    component: () => import('../views/auth/lockscreen/cover')
+    component: () => import("../views/auth/lockscreen/basic"),
   },
   {
-    path: '/auth/twostep-basic',
-    name: 'twostep-basic',
+    path: "/auth/lockscreen-cover",
+    name: "lock-screen-cover",
     meta: {
-      title: "Two Step Auth", authRequired: true,
+      title: "Lock Screen",
+      authRequired: true,
     },
-    component: () => import('../views/auth/twostep/basic')
-  }, {
-    path: '/auth/twostep-cover',
-    name: 'twostep-cover',
-    meta: {
-      title: "Two Step Auth", authRequired: true,
-    },
-    component: () => import('../views/auth/twostep/cover')
+    component: () => import("../views/auth/lockscreen/cover"),
   },
   {
-    path: '/auth/404',
-    name: '404',
+    path: "/auth/twostep-basic",
+    name: "twostep-basic",
     meta: {
-      title: "Error 404", authRequired: true,
+      title: "Two Step Auth",
+      authRequired: true,
     },
-    component: () => import('../views/auth/errors/404')
+    component: () => import("../views/auth/twostep/basic"),
   },
   {
-    path: '/auth/500',
-    name: '500',
+    path: "/auth/twostep-cover",
+    name: "twostep-cover",
     meta: {
-      title: "Error 500", authRequired: true,
+      title: "Two Step Auth",
+      authRequired: true,
     },
-    component: () => import('../views/auth/errors/500')
+    component: () => import("../views/auth/twostep/cover"),
   },
   {
-    path: '/auth/404-basic',
-    name: '404-basic',
+    path: "/auth/404",
+    name: "404",
     meta: {
-      title: "Error 404", authRequired: true,
+      title: "Error 404",
+      authRequired: true,
     },
-    component: () => import('../views/auth/errors/404-basic')
+    component: () => import("../views/auth/errors/404"),
   },
   {
-    path: '/auth/404-cover',
-    name: '404-cover',
+    path: "/auth/500",
+    name: "500",
     meta: {
-      title: "Error 404", authRequired: true,
+      title: "Error 500",
+      authRequired: true,
     },
-    component: () => import('../views/auth/errors/404-cover')
+    component: () => import("../views/auth/errors/500"),
   },
   {
-    path: '/auth/logout-basic',
-    name: 'logout-basic',
+    path: "/auth/404-basic",
+    name: "404-basic",
     meta: {
-      title: "Logout", authRequired: true,
+      title: "Error 404",
+      authRequired: true,
     },
-    component: () => import('../views/auth/logout/basic')
+    component: () => import("../views/auth/errors/404-basic"),
   },
   {
-    path: '/auth/logout-cover',
-    name: 'logout-cover',
+    path: "/auth/404-cover",
+    name: "404-cover",
     meta: {
-      title: "Logout", authRequired: true,
+      title: "Error 404",
+      authRequired: true,
     },
-    component: () => import('../views/auth/logout/cover')
+    component: () => import("../views/auth/errors/404-cover"),
   },
   {
-    path: '/auth/success-msg-basic',
-    name: 'success-msg-basic',
+    path: "/auth/logout-basic",
+    name: "logout-basic",
     meta: {
-      title: "Success Message", authRequired: true,
+      title: "Logout",
+      authRequired: true,
     },
-    component: () => import('../views/auth/success-msg/basic')
+    component: () => import("../views/auth/logout/basic"),
   },
   {
-    path: '/auth/success-msg-cover',
-    name: 'success-msg-cover',
+    path: "/auth/logout-cover",
+    name: "logout-cover",
     meta: {
-      title: "Success Message", authRequired: true,
+      title: "Logout",
+      authRequired: true,
     },
-    component: () => import('../views/auth/success-msg/cover')
+    component: () => import("../views/auth/logout/cover"),
+  },
+  {
+    path: "/auth/success-msg-basic",
+    name: "success-msg-basic",
+    meta: {
+      title: "Success Message",
+      authRequired: true,
+    },
+    component: () => import("../views/auth/success-msg/basic"),
+  },
+  {
+    path: "/auth/success-msg-cover",
+    name: "success-msg-cover",
+    meta: {
+      title: "Success Message",
+      authRequired: true,
+    },
+    component: () => import("../views/auth/success-msg/cover"),
   },
   {
     path: "/maps/google",
     name: "Google Maps",
     meta: {
-      title: "Google Maps", authRequired: true,
+      title: "Google Maps",
+      authRequired: true,
     },
     component: () => import("../views/maps/google"),
   },

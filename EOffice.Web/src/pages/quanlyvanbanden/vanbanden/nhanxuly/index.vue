@@ -1,21 +1,11 @@
 <script>
-import Layout from "../../../layouts/main";
+import Layout from "@/layouts/main";
 import PageHeader from "@/components/page-header";
-import appConfig from "../../../../app.config.json";
 import { data } from "./data";
-
-import ThemVanVanDen from "./themvanbanden";
-import Suavanbanden from "./suavanbanden.vue";
 
 export default {
   page: {
     title: "Văn bản đến",
-    meta: [
-      {
-        name: "van-ban-den",
-        content: appConfig.description,
-      },
-    ],
   },
   data() {
     return {
@@ -33,7 +23,7 @@ export default {
       data: data,
     };
   },
-  components: { Layout, PageHeader, ThemVanVanDen, Suavanbanden },
+  components: { Layout, PageHeader },
   methods: {
     ThemMoi() {
       document.getElementById("ThemMoi").reset();
@@ -177,7 +167,8 @@ export default {
               </button>
             </div>
           </div>
-          <them-van-van-den />
+          <!-- start content -->
+          <!-- end content  -->
         </div>
       </div>
     </div>
@@ -217,7 +208,8 @@ export default {
               </button>
             </div>
           </div>
-          <suavanbanden />
+          <!-- start content  -->
+          <!-- end start  -->
         </div>
       </div>
     </div>

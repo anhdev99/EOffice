@@ -1,11 +1,9 @@
 <script>
-import Layout from "../../../layouts/main";
+import Layout from "@/layouts/main";
 import PageHeader from "@/components/page-header";
-import appConfig from "../../../../app.config.json";
+import ButPhe from "./butphe.vue";
+import PhanCong from "./phancong.vue";
 import { data } from "./data";
-
-import ThemVanVanDen from "./themvanbanden";
-import Suavanbanden from "./suavanbanden.vue";
 
 export default {
   page: {
@@ -13,7 +11,6 @@ export default {
     meta: [
       {
         name: "van-ban-den",
-        content: appConfig.description,
       },
     ],
   },
@@ -33,7 +30,7 @@ export default {
       data: data,
     };
   },
-  components: { Layout, PageHeader, ThemVanVanDen, Suavanbanden },
+  components: { Layout, PageHeader, ButPhe, PhanCong },
   methods: {
     ThemMoi() {
       document.getElementById("ThemMoi").reset();
@@ -46,6 +43,12 @@ export default {
       document.getElementById("EditModalLabel").innerHTML =
         "Chỉnh sửa văn bản đến";
       document.getElementById("ChinhSua").style.display = "block";
+    },
+    PhanCongXuLy() {
+      document.getElementById("PhanCongXuLy").reset();
+      document.getElementById("PhanCongXuLyModalLabel").innerHTML =
+        "Phân công xử lý";
+      document.getElementById("PhanCongXuLy").style.display = "block";
     },
   },
 };
@@ -68,10 +71,18 @@ export default {
                 <button
                   class="btn btn-primary add-btn btn-sm"
                   data-bs-toggle="modal"
-                  href="#ThemMoi"
-                  @click="ThemMoi"
                 >
-                  <i class="ri-add-line align-bottom me-1"></i> Thêm mới
+                  <i class="ri-add-line align-bottom me-1"></i> PDF
+                </button>
+              </div>
+              <div
+                class="form-check form-switch form-switch-right form-switch-md"
+              >
+                <button
+                  class="btn btn-primary add-btn btn-sm"
+                  data-bs-toggle="modal"
+                >
+                  <i class="ri-add-line align-bottom me-1"></i> EXCEL
                 </button>
               </div>
             </div>
@@ -88,6 +99,7 @@ export default {
                     <th scope="col">Trích yếu</th>
                     <th scope="col">Hạn xử lý</th>
                     <th scope="col">Trạng thái VB</th>
+                    <th scope="col">Chuyển xử lý</th>
                     <th scope="col">Thao tác</th>
                   </tr>
                 </thead>
@@ -116,6 +128,21 @@ export default {
                     <td v-if="item.trangthaivanban == 2">
                       <span class="badge badge-soft-success">Hoàn thành</span>
                     </td>
+                    <td v-if="item.chuyenXuLy == 0">
+                      <button
+                        class="badge badge-soft-secondary border-0"
+                        data-bs-toggle="modal"
+                        href="#PhanCongXuLy"
+                        @click="PhanCongXuLy"
+                      >
+                        <i class="ri-send-plane-fill"></i> Chưa chuyển
+                      </button>
+                    </td>
+                    <td v-if="item.chuyenXuLy == 1">
+                      <span class="badge badge-soft-success"
+                        ><i class="ri-send-plane-fill"></i> Đã chuyển</span
+                      >
+                    </td>
                     <td>
                       <div class="hstack gap-3 fs-15">
                         <a href="javascript:void(0);" class="link-info"
@@ -142,19 +169,19 @@ export default {
       </div>
     </div>
 
-    <!--  create modal form  -->
+    <!--  Modal chuyển xử lý -->
     <div
       class="modal fade zoomIn"
-      id="ThemMoi"
+      id="PhanCongXuLy"
       tabindex="-1"
-      aria-labelledby="CreateModalLabel"
+      aria-labelledby="PhanCongXuLyModalLabel"
       aria-hidden="true"
     >
-      <div class="modal-dialog modal-dialog-centered modal-fullscreen">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0">
           <div class="modal-header p-3 bg-primary-dark">
-            <h5 class="modal-title" id="CreateModalLabel">
-              Thêm mới văn bản đến
+            <h5 class="modal-title" id="PhanCongXuLyModalLabel">
+              Phân công xử lý
             </h5>
             <div class="d-flex">
               <button
@@ -177,12 +204,17 @@ export default {
               </button>
             </div>
           </div>
-          <them-van-van-den />
+          <!-- start content -->
+          <div class="p-3">
+            <phan-cong />
+          </div>
+
+          <!-- end content -->
         </div>
       </div>
     </div>
 
-    <!-- Edit modal form -->
+    <!-- Modal chỉnh sửa -->
     <div
       class="modal fade zoomIn"
       id="ChinhSua"
@@ -194,7 +226,7 @@ export default {
         <div class="modal-content border-0">
           <div class="modal-header p-3 bg-primary-dark">
             <h5 class="modal-title" id="EditModalLabel">
-              Chỉnh sửa văn bản đến
+              Bút phê đơn vị lãnh đạo, đơn vị nhận / Xử lý văn bản
             </h5>
             <div class="d-flex">
               <button
@@ -217,7 +249,9 @@ export default {
               </button>
             </div>
           </div>
-          <suavanbanden />
+          <!-- start content  -->
+          <but-phe />
+          <!-- end content  -->
         </div>
       </div>
     </div>

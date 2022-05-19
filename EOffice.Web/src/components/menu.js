@@ -2,7 +2,7 @@ export const menuItems = [
   {
     id: "2",
     label: "E-Office",
-    isTitle: true
+    isTitle: true,
   },
   {
     id: "2",
@@ -13,51 +13,51 @@ export const menuItems = [
         id: "3",
         label: "Cơ quan",
         link: "/",
-        parentId: "2"
+        parentId: "2",
       },
       {
         id: "3",
         label: "Lĩnh vực",
         link: "/linh-vuc",
-        parentId: "2"
+        parentId: "2",
       },
       {
         id: "3",
         label: "Loại nguồn vốn",
         link: "/loai-nguon-von",
-        parentId: "2"
+        parentId: "2",
       },
       {
         id: "3",
         label: "Loại cơ quan",
         link: "/loai-co-quan",
-        parentId: "2"
+        parentId: "2",
       },
       {
         id: "3",
         label: "Cấp cơ quan",
         link: "/cap-co-quan",
-        parentId: "2"
+        parentId: "2",
       },
       {
         id: "3",
         label: "Nhóm dự án",
         link: "/nhom-du-an",
-        parentId: "2"
+        parentId: "2",
       },
       {
         id: "3",
         label: "Loại dự án",
         link: "/",
-        parentId: "2"
+        parentId: "2",
       },
       {
         id: "3",
         label: "Nhóm quản lý dự án",
         link: "/nhom-quan-ly-du-an",
-        parentId: "2"
-      }
-    ]
+        parentId: "2",
+      },
+    ],
   },
   {
     id: "3",
@@ -68,21 +68,21 @@ export const menuItems = [
         id: "3",
         label: "Tài khoản",
         link: "/tai-khoan",
-        parentId: "2"
+        parentId: "2",
       },
       {
         id: "3",
         label: "Quyền",
         link: "/vai-tro",
-        parentId: "2"
+        parentId: "2",
       },
       {
         id: "3",
         label: "Menu",
         link: "/menu",
-        parentId: "2"
-      }
-    ]
+        parentId: "2",
+      },
+    ],
   },
   {
     id: "3",
@@ -93,7 +93,7 @@ export const menuItems = [
   {
     id: "16",
     label: "QUẢN LÝ VĂN BẢN",
-    isTitle: true
+    isTitle: true,
   },
   {
     id: "17",
@@ -104,34 +104,45 @@ export const menuItems = [
         id: "18",
         label: "Văn bản đến",
         link: "/van-ban-den",
-        parentId: "17"
+        parentId: "17",
       },
       {
         id: "19",
         label: "Xử lý văn bản",
         link: "/xu-ly-van-ban-den",
-        parentId: "17"
-      }
-    ]
+        parentId: "17",
+      },
+      {
+        id: "20",
+        label: "Văn bản đến - phân công",
+        link: "/van-ban-den/phan-quyen-xu-ly",
+        parentId: "17",
+      },
+      {
+        id: "21",
+        label: "Văn bản đến - nhận xử lý",
+        link: "/van-ban-den/nhan-xu-ly",
+        parentId: "17",
+      },
+    ],
   },
   {
-    id: "20",
+    id: "22",
     label: "Văn bản đi",
     icon: "ri-account-circle-line",
     subItems: [
       {
-        id: "21",
+        id: "23",
         label: "Văn bản đi",
         link: "/van-ban-di",
-        parentId: "20"
+        parentId: "22",
       },
       {
-        id: "22",
+        id: "24",
         label: "Xử lý văn bản",
         link: "/xu-ly-van-ban-di",
-        parentId: "20"
+        parentId: "22",
       },
-    ]
+    ],
   },
 ];
-
