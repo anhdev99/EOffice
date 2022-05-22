@@ -143,6 +143,12 @@ export const menuItems = [
         link: "/xu-ly-van-ban-di",
         parentId: "22",
       },
+      {
+        id: "25",
+        label: "Chữ ký số",
+        link: "/chu-ky-so",
+        parentId: "23",
+      },
     ],
   },
 ];

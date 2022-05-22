@@ -1,0 +1,247 @@
+<script>
+import Layout from "../../../layouts/main";
+import PageHeader from "@/components/page-header";
+import appConfig from "../../../../app.config.json";
+import { data } from "./data";
+
+import ThemVanVanDen from "./themvanbanden";
+import Suavanbanden from "./suavanbanden.vue";
+
+export default {
+  page: {
+    title: "Văn bản đến",
+    meta: [
+      {
+        name: "van-ban-den",
+        content: appConfig.description,
+      },
+    ],
+  },
+  data() {
+    return {
+      title: "Văn bản đến",
+      items: [
+        {
+          text: "Quản lý văn bản đến",
+          href: "/",
+        },
+        {
+          text: "Văn bản đến",
+          active: true,
+        },
+      ],
+      data: data,
+    };
+  },
+  components: { Layout, PageHeader, ThemVanVanDen, Suavanbanden },
+  methods: {
+    ThemMoi() {
+      document.getElementById("ThemMoi").reset();
+      document.getElementById("CreateModalLabel").innerHTML =
+        "Thêm mới văn bản đến";
+      document.getElementById("ThemMoi").style.display = "block";
+    },
+    ChinhSua() {
+      document.getElementById("ChinhSua").reset();
+      document.getElementById("EditModalLabel").innerHTML =
+        "Chỉnh sửa văn bản đến";
+      document.getElementById("ChinhSua").style.display = "block";
+    },
+  },
+};
+</script>
+
+<template>
+  <Layout>
+    <PageHeader :title="title" :items="items" />
+
+    <div class="row page-vanbanden">
+      <div class="col-xl-12">
+        <div class="card">
+          <div class="card-header align-items-center d-flex">
+            <h4 class="card-title mb-0 flex-grow-1">Danh sách văn bản đến</h4>
+
+            <div class="flex-shrink-0">
+              <div
+                class="form-check form-switch form-switch-right form-switch-md"
+              >
+                <button
+                  class="btn btn-primary add-btn btn-sm"
+                  data-bs-toggle="modal"
+                  href="#ThemMoi"
+                  @click="ThemMoi"
+                >
+                  <i class="ri-add-line align-bottom me-1"></i> Thêm mới
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <!--  Table -->
+              <table class="table align-middle table-nowrap mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Số Lưu</th>
+                    <th scope="col">Số VB đến</th>
+                    <th scope="col">Trích yếu</th>
+                    <th scope="col">Hạn xử lý</th>
+                    <th scope="col">Trạng thái VB</th>
+                    <th scope="col">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-if="data.length <= 0" class="text-center">
+                    <td colspan="6">Không tìm thấy dữ liệu</td>
+                  </tr>
+                  <tr v-else v-for="(item, index) in data" :key="item.id">
+                    <td>{{ ++index }}</td>
+                    <td>{{ item.soluu }}</td>
+                    <td>{{ item.sovanbanden }}</td>
+                    <td>{{ item.trichyeu }}</td>
+                    <td>
+                      <span class="badge badge-soft-danger">{{
+                        item.hanxuxly
+                      }}</span>
+                    </td>
+                    <td v-if="item.trangthaivanban == 0">
+                      <span class="badge badge-soft-secondary"
+                        >Vừa tiếp nhận</span
+                      >
+                    </td>
+                    <td v-if="item.trangthaivanban == 1">
+                      <span class="badge badge-soft-primary">Đã tiếp nhận</span>
+                    </td>
+                    <td v-if="item.trangthaivanban == 2">
+                      <span class="badge badge-soft-success">Hoàn thành</span>
+                    </td>
+                    <td>
+                      <div class="hstack gap-3 fs-15">
+                        <a href="javascript:void(0);" class="link-info"
+                          ><i class="ri-newspaper-line"></i
+                        ></a>
+                        <a
+                          href="#ChinhSua"
+                          class="link-primary edit-btn"
+                          data-bs-toggle="modal"
+                          @click="ChinhSua"
+                          ><i class="ri-edit-2-line"></i
+                        ></a>
+                        <a href="javascript:void(0);" class="link-danger"
+                          ><i class="ri-delete-bin-5-line"></i
+                        ></a>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--  create modal form  -->
+    <div
+      class="modal fade zoomIn"
+      id="ThemMoi"
+      tabindex="-1"
+      aria-labelledby="CreateModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered modal-fullscreen">
+        <div class="modal-content border-0">
+          <div class="modal-header p-3 bg-primary-dark">
+            <h5 class="modal-title" id="CreateModalLabel">
+              Thêm mới văn bản đến
+            </h5>
+            <div class="d-flex">
+              <button
+                type="button"
+                class="btn btn-sm btn-primary waves-effect waves-light me-2 d-flex align-items-center"
+              >
+                <i class="ri-save-3-fill me-1"></i>
+                Lưu
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-sm btn-danger waves-effect waves-light me-2 d-flex align-items-center"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                id="close-modal"
+              >
+                <i class="ri-close-line me-1"></i>
+                Đóng
+              </button>
+            </div>
+          </div>
+          <them-van-van-den />
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit modal form -->
+    <div
+      class="modal fade zoomIn"
+      id="ChinhSua"
+      tabindex="-1"
+      aria-labelledby="EditModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered modal-fullscreen">
+        <div class="modal-content border-0">
+          <div class="modal-header p-3 bg-primary-dark">
+            <h5 class="modal-title" id="EditModalLabel">
+              Chỉnh sửa văn bản đến
+            </h5>
+            <div class="d-flex">
+              <button
+                type="button"
+                class="btn btn-sm btn-primary waves-effect waves-light me-2 d-flex align-items-center"
+              >
+                <i class="ri-save-3-fill me-1"></i>
+                Lưu
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-sm btn-danger waves-effect waves-light me-2 d-flex align-items-center"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                id="close-modal"
+              >
+                <i class="ri-close-line me-1"></i>
+                Đóng
+              </button>
+            </div>
+          </div>
+          <suavanbanden />
+        </div>
+      </div>
+    </div>
+  </Layout>
+</template>
+<style>
+.modal-title {
+  color: #fff;
+}
+.bg-primary-dark {
+  background: linear-gradient(135deg, #06548e, #ffffff);
+  box-shadow: 0px 3px 0px #06548e;
+}
+.vue-treeselect__control {
+  height: 26px;
+  border-radius: 3px;
+  border-color: #ced4da;
+  font-size: 12px;
+}
+.vue-treeselect__single-value {
+  margin-top: -5px;
+}
+
+.vue-treeselect__placeholder {
+  margin-top: -5px;
+}
+</style>

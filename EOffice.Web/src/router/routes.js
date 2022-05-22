@@ -80,7 +80,7 @@ export default [
       title: "Văn bản đến",
       authRequired: true,
     },
-    component: () => import("../pages/quanlyvanbanden/vanbanden/index"),
+    component: () => import("../pages/quanlyvanban/vanbanden/index"),
   },
   {
     path: "/van-ban-den/nhan-xu-ly",
@@ -89,8 +89,7 @@ export default [
       title: "Văn bản đến",
       authRequired: true,
     },
-    component: () =>
-      import("../pages/quanlyvanbanden/vanbanden/nhanxuly/index"),
+    component: () => import("../pages/quanlyvanban/vanbanden/nhanxuly/index"),
   },
   {
     path: "/van-ban-den/phan-quyen-xu-ly",
@@ -100,7 +99,25 @@ export default [
       authRequired: true,
     },
     component: () =>
-      import("../pages/quanlyvanbanden/vanbanden/phanquyenxuly/index"),
+      import("../pages/quanlyvanban/vanbanden/phanquyenxuly/index"),
+  },
+  {
+    path: "/van-ban-di",
+    name: "vanbandi",
+    meta: {
+      title: "Văn bản đi",
+      authRequired: true,
+    },
+    component: () => import("../pages/quanlyvanban/vanbandi/index"),
+  },
+  {
+    path: "/chu-ky-so",
+    name: "chu-ky-so",
+    meta: {
+      title: "Chữ ký số",
+      authRequired: true,
+    },
+    component: () => import("../pages/quanlyvanban/vanbandi/chukyso/index"),
   },
   {
     path: "/dashboard/crypto",
