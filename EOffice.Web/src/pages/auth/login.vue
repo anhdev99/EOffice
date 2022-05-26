@@ -70,26 +70,26 @@ export default {
           // Reset the authError if it existed.
           this.authError = null;
           return (
-              this.logIn({
-                email: this.email,
-                password: this.password,
+            this.logIn({
+              email: this.email,
+              password: this.password,
+            })
+              // eslint-disable-next-line no-unused-vars
+              .then((token) => {
+                this.tryingToLogIn = false;
+                this.isAuthError = false;
+                // Redirect to the originally requested page, or to the home page
+                this.$router.push(
+                  this.$route.query.redirectFrom || {
+                    name: "default",
+                  }
+                );
               })
-                  // eslint-disable-next-line no-unused-vars
-                  .then((token) => {
-                    this.tryingToLogIn = false;
-                    this.isAuthError = false;
-                    // Redirect to the originally requested page, or to the home page
-                    this.$router.push(
-                        this.$route.query.redirectFrom || {
-                          name: "default",
-                        }
-                    );
-                  })
-                  .catch((error) => {
-                    this.tryingToLogIn = false;
-                    this.authError = error ? error : "";
-                    this.isAuthError = true;
-                  })
+              .catch((error) => {
+                this.tryingToLogIn = false;
+                this.authError = error ? error : "";
+                this.isAuthError = true;
+              })
           );
         } else if (process.env.VUE_APP_DEFAULT_AUTH === "fakebackend") {
           const { email, password } = this;
@@ -100,11 +100,9 @@ export default {
             });
           }
         }
-        setTimeout(function (){
-              loader.hide();
-            },
-        1000)
-
+        setTimeout(function () {
+          loader.hide();
+        }, 1000);
       }
     },
   },
@@ -119,13 +117,13 @@ export default {
 
       <div class="shape">
         <svg
-            xmlns="http://www.w3.org/2000/svg"
-            version="1.1"
-            xmlns:xlink="http://www.w3.org/1999/xlink"
-            viewBox="0 0 1440 120"
+          xmlns="http://www.w3.org/2000/svg"
+          version="1.1"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          viewBox="0 0 1440 120"
         >
           <path
-              d="M 0,36 C 144,53.6 432,123.2 720,124 C 1008,124.8 1296,56.8 1440,40L1440 140L0 140z"
+            d="M 0,36 C 144,53.6 432,123.2 720,124 C 1008,124.8 1296,56.8 1440,40L1440 140L0 140z"
           ></path>
         </svg>
       </div>
@@ -140,15 +138,13 @@ export default {
               <div>
                 <router-link to="/" class="d-inline-block auth-logo">
                   <img
-                      src="@/assets/images/logo-eoffice.png"
-                      alt=""
-                      height="40"
+                    src="@/assets/images/logo-eoffice.png"
+                    alt=""
+                    height="40"
                   />
                 </router-link>
               </div>
-              <p class="mt-3 fs-16 fw-medium">
-                Trường Đại học Đồng Tháp
-              </p>
+              <p class="mt-3 fs-16 fw-medium">Trường Đại học Đồng Tháp</p>
             </div>
           </div>
         </div>
@@ -159,20 +155,22 @@ export default {
             <div class="card mt-4">
               <div class="card-body p-4">
                 <div class="text-center mt-2">
-                  <h5 class="text-primary" style="font-weight: bold">HỆ THỐNG E-OFFICE</h5>
+                  <h5 class="text-primary" style="font-weight: bold">
+                    HỆ THỐNG E-OFFICE
+                  </h5>
                 </div>
                 <div class="p-2 mt-4">
                   <b-alert
-                      v-model="isAuthError"
-                      variant="danger"
-                      class="mt-3"
-                      dismissible
-                  >{{ authError }}</b-alert
+                    v-model="isAuthError"
+                    variant="danger"
+                    class="mt-3"
+                    dismissible
+                    >{{ authError }}</b-alert
                   >
 
                   <div
-                      v-if="notification.message"
-                      :class="'alert ' + notification.type"
+                    v-if="notification.message"
+                    :class="'alert ' + notification.type"
                   >
                     {{ notification.message }}
                   </div>
@@ -181,19 +179,19 @@ export default {
                     <div class="mb-3">
                       <label for="email" class="form-label">Tài khoản</label>
                       <input
-                          type="email"
-                          class="form-control"
-                          id="email"
-                          placeholder="Enter email"
-                          v-model="email"
-                          :class="{
+                        type="email"
+                        class="form-control"
+                        id="email"
+                        placeholder="Enter email"
+                        v-model="email"
+                        :class="{
                           'is-invalid': submitted && v$.email.$error,
                         }"
                       />
                       <div
-                          v-for="(item, index) in v$.email.$errors"
-                          :key="index"
-                          class="invalid-feedback"
+                        v-for="(item, index) in v$.email.$errors"
+                        :key="index"
+                        class="invalid-feedback"
                       >
                         <span v-if="item.$message">{{ item.$message }}</span>
                       </div>
@@ -201,114 +199,106 @@ export default {
 
                     <div class="mb-3">
                       <div class="float-end">
-                        <router-link
-                            to="/forgot-password"
-                            class="text-muted"
-                        >Quên mật khẩu</router-link
+                        <router-link to="/forgot-password" class="text-muted"
+                          >Quên mật khẩu</router-link
                         >
                       </div>
                       <label class="form-label" for="password-input"
-                      >Mật khẩu</label
+                        >Mật khẩu</label
                       >
                       <div class="position-relative auth-pass-inputgroup mb-3">
                         <input
-                            type="password"
-                            v-model="password"
-                            class="form-control pe-5"
-                            :class="{
+                          type="password"
+                          v-model="password"
+                          class="form-control pe-5"
+                          :class="{
                             'is-invalid': submitted && v$.password.$error,
                           }"
-                            placeholder="Enter password"
-                            id="password-input"
+                          placeholder="Enter password"
+                          id="password-input"
                         />
                         <button
-                            class="
-                            btn btn-link
-                            position-absolute
-                            end-0
-                            top-0
-                            text-decoration-none text-muted
-                          "
-                            type="button"
-                            id="password-addon"
+                          class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted"
+                          type="button"
+                          id="password-addon"
                         >
                           <i class="ri-eye-fill align-middle"></i>
                         </button>
                         <div
-                            v-if="submitted && v$.password.$error"
-                            class="invalid-feedback"
+                          v-if="submitted && v$.password.$error"
+                          class="invalid-feedback"
                         >
                           <span v-if="v$.password.required.$message">{{
-                              v$.password.required.$message
-                            }}</span>
+                            v$.password.required.$message
+                          }}</span>
                         </div>
                       </div>
                     </div>
 
                     <div class="form-check">
                       <input
-                          class="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="auth-remember-check"
+                        class="form-check-input"
+                        type="checkbox"
+                        value=""
+                        id="auth-remember-check"
                       />
                       <label class="form-check-label" for="auth-remember-check"
-                      >Ghi nhớ đăng nhập</label
+                        >Ghi nhớ đăng nhập</label
                       >
                     </div>
 
                     <div class="mt-4">
-                      <button class="btn btn-success w-100" type="submit">
+                      <button class="btn btn-primary w-100" type="submit">
                         Đăng nhập
                       </button>
                     </div>
 
-  <!--                    <div class="mt-4 text-center">-->
-  <!--                      <div class="signin-other-title">-->
-  <!--                        <h5 class="fs-13 mb-4 title">Sign In with</h5>-->
-  <!--                      </div>-->
-  <!--                      <div>-->
-  <!--                        <button-->
-  <!--                            type="button"-->
-  <!--                            class="-->
-  <!--                            btn btn-primary btn-icon-->
-  <!--                            waves-effect waves-light-->
-  <!--                          "-->
-  <!--                        >-->
-  <!--                          <i class="ri-facebook-fill fs-16"></i>-->
-  <!--                        </button>-->
-  <!--                        <button-->
-  <!--                            type="button"-->
-  <!--                            class="-->
-  <!--                            btn btn-danger btn-icon-->
-  <!--                            waves-effect waves-light-->
-  <!--                            ms-1-->
-  <!--                          "-->
-  <!--                        >-->
-  <!--                          <i class="ri-google-fill fs-16"></i>-->
-  <!--                        </button>-->
-  <!--                        <button-->
-  <!--                            type="button"-->
-  <!--                            class="-->
-  <!--                            btn btn-dark btn-icon-->
-  <!--                            waves-effect waves-light-->
-  <!--                            ms-1-->
-  <!--                          "-->
-  <!--                        >-->
-  <!--                          <i class="ri-github-fill fs-16"></i>-->
-  <!--                        </button>-->
-  <!--                        <button-->
-  <!--                            type="button"-->
-  <!--                            class="-->
-  <!--                            btn btn-info btn-icon-->
-  <!--                            waves-effect waves-light-->
-  <!--                            ms-1-->
-  <!--                          "-->
-  <!--                        >-->
-  <!--                          <i class="ri-twitter-fill fs-16"></i>-->
-  <!--                        </button>-->
-  <!--                      </div>-->
-  <!--                    </div>-->
+                    <!--                    <div class="mt-4 text-center">-->
+                    <!--                      <div class="signin-other-title">-->
+                    <!--                        <h5 class="fs-13 mb-4 title">Sign In with</h5>-->
+                    <!--                      </div>-->
+                    <!--                      <div>-->
+                    <!--                        <button-->
+                    <!--                            type="button"-->
+                    <!--                            class="-->
+                    <!--                            btn btn-primary btn-icon-->
+                    <!--                            waves-effect waves-light-->
+                    <!--                          "-->
+                    <!--                        >-->
+                    <!--                          <i class="ri-facebook-fill fs-16"></i>-->
+                    <!--                        </button>-->
+                    <!--                        <button-->
+                    <!--                            type="button"-->
+                    <!--                            class="-->
+                    <!--                            btn btn-danger btn-icon-->
+                    <!--                            waves-effect waves-light-->
+                    <!--                            ms-1-->
+                    <!--                          "-->
+                    <!--                        >-->
+                    <!--                          <i class="ri-google-fill fs-16"></i>-->
+                    <!--                        </button>-->
+                    <!--                        <button-->
+                    <!--                            type="button"-->
+                    <!--                            class="-->
+                    <!--                            btn btn-dark btn-icon-->
+                    <!--                            waves-effect waves-light-->
+                    <!--                            ms-1-->
+                    <!--                          "-->
+                    <!--                        >-->
+                    <!--                          <i class="ri-github-fill fs-16"></i>-->
+                    <!--                        </button>-->
+                    <!--                        <button-->
+                    <!--                            type="button"-->
+                    <!--                            class="-->
+                    <!--                            btn btn-info btn-icon-->
+                    <!--                            waves-effect waves-light-->
+                    <!--                            ms-1-->
+                    <!--                          "-->
+                    <!--                        >-->
+                    <!--                          <i class="ri-twitter-fill fs-16"></i>-->
+                    <!--                        </button>-->
+                    <!--                      </div>-->
+                    <!--                    </div>-->
                   </form>
                 </div>
               </div>
@@ -316,17 +306,17 @@ export default {
             </div>
             <!-- end card -->
 
-<!--            <div class="mt-4 text-center">-->
-<!--              <p class="mb-0">-->
-<!--                Don't have an account ?-->
-<!--                <router-link-->
-<!--                    to="/register"-->
-<!--                    class="fw-semibold text-primary text-decoration-underline"-->
-<!--                >-->
-<!--                  Signup-->
-<!--                </router-link>-->
-<!--              </p>-->
-<!--            </div>-->
+            <!--            <div class="mt-4 text-center">-->
+            <!--              <p class="mb-0">-->
+            <!--                Don't have an account ?-->
+            <!--                <router-link-->
+            <!--                    to="/register"-->
+            <!--                    class="fw-semibold text-primary text-decoration-underline"-->
+            <!--                >-->
+            <!--                  Signup-->
+            <!--                </router-link>-->
+            <!--              </p>-->
+            <!--            </div>-->
           </div>
         </div>
         <!-- end row -->

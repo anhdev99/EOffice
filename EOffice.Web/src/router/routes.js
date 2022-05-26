@@ -74,6 +74,15 @@ export default [
     component: () => import("../pages/user/index.vue"),
   },
   {
+    path: "/thong-bao",
+    name: "thong-bao",
+    meta: {
+      title: "Thông báo",
+      authRequired: true,
+    },
+    component: () => import("../pages/thongbao/index.vue"),
+  },
+  {
     path: "/van-ban-den",
     name: "van-ban-den",
     meta: {

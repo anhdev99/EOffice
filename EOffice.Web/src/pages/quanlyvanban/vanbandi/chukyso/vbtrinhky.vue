@@ -1,8 +1,28 @@
 <script>
+import PSPDFKitContainer from "./PSPDFKitContainer";
+
 export default {
-  components: {},
+  components: { PSPDFKitContainer },
   data() {
-    return {};
+    return {
+      pdfFile: this.pdfFile || "./DH_GDCT.pdf",
+    };
+  },
+  methods: {
+    handleLoaded(instance) {
+      console.log("PSPDFKit has loaded: ", instance);
+      // Do something.
+    },
+
+    openDocument() {
+      // To access the Vue instance data properties, use `this` keyword.
+      console.log("this.pdfFile", this.pdfFile);
+      if (this.pdfFile) {
+        window.URL.revokeObjectURL(this.pdfFile);
+      }
+      this.pdfFile = window.URL.createObjectURL(event.target.files[0]);
+      console.log("event.target.files[0]", event.target.files[0]);
+    },
   },
 };
 </script>
@@ -10,7 +30,16 @@ export default {
 <template>
   <div class="row p-4 content-ky-so">
     <div class="col-md-7">
-      <span>file PDF</span>
+      <div id="app">
+        <label for="file-upload" class="custom-file-upload"> Open PDF </label>
+        <input
+          id="file-upload"
+          type="file"
+          @change="openDocument"
+          class="btn"
+        />
+        <PSPDFKitContainer :pdfFile="pdfFile" @loaded="handleLoaded" />
+      </div>
     </div>
     <div class="col-md-5">
       <div class="card ribbon-box border shadow-none mb-lg-0">
@@ -83,5 +112,31 @@ export default {
 }
 textarea:focus {
   border: none;
+}
+
+#app {
+  color: #2c3e50;
+}
+
+body {
+  margin: 0;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.custom-file-upload {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+  background: #4a8fed;
+  padding: 10px;
+  color: #fff;
+  font: inherit;
+  font-size: 16px;
+  font-weight: bold;
 }
 </style>

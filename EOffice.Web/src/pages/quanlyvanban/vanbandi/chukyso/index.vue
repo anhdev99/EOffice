@@ -142,10 +142,17 @@ export default {
             <div class="d-flex">
               <button
                 type="button"
+                class="btn btn-sm btn-danger waves-effect waves-light me-2 d-flex align-items-center"
+              >
+                <i class="ri-save-3-fill me-1"></i>
+                Hủy ký số
+              </button>
+              <button
+                type="button"
                 class="btn btn-sm btn-primary waves-effect waves-light me-2 d-flex align-items-center"
               >
                 <i class="ri-save-3-fill me-1"></i>
-                Lưu
+                Ký số
               </button>
 
               <button
