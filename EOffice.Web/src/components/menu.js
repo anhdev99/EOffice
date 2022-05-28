@@ -18,7 +18,7 @@ export const menuItems = [
       {
         id: "4",
         label: "Cơ quan",
-        link: "/",
+        link: "/co-quan",
         parentId: "3",
       },
       {
@@ -54,7 +54,7 @@ export const menuItems = [
       {
         id: "10",
         label: "Loại dự án",
-        link: "/",
+        link: "/loai-du-an",
         parentId: "3",
       },
       {
