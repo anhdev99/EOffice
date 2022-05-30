@@ -4,6 +4,7 @@ import PageHeader from "@/components/page-header";
 import appConfig from "../../../../../app.config.json";
 import { data } from "./data";
 import KySo from "./vbtrinhky.vue";
+import XacThuc from "./xacthuc.vue";
 
 export default {
   page: {
@@ -30,7 +31,7 @@ export default {
       data: data,
     };
   },
-  components: { Layout, PageHeader, KySo },
+  components: { Layout, PageHeader, KySo, XacThuc },
   methods: {
     ThemMoi() {
       document.getElementById("ThemMoi").reset();
@@ -150,6 +151,8 @@ export default {
               <button
                 type="button"
                 class="btn btn-sm btn-primary waves-effect waves-light me-2 d-flex align-items-center"
+                data-bs-toggle="modal"
+                data-bs-target="#ky-so"
               >
                 <i class="ri-save-3-fill me-1"></i>
                 Ký số
@@ -170,6 +173,32 @@ export default {
           <!-- start content -->
           <ky-so />
           <!-- end content -->
+        </div>
+      </div>
+    </div>
+
+    <!-- modal ký số -->
+    <div class="modal fade zoomIn" id="ky-so" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0">
+          <div class="modal-header p-3 bg-primary-dark">
+            <h5 class="modal-title">Ký số</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body p-3">
+            <xac-thuc />
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+              Đóng
+            </button>
+            <button type="button" class="btn btn-primary">Lưu</button>
+          </div>
         </div>
       </div>
     </div>
