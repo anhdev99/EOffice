@@ -84,17 +84,17 @@ export const menuItems = [
       },
       {
         id: "15",
+        label: "Nhóm quyền",
+        link: "/nhom-quyen",
+        parentId: "12",
+      },
+      {
+        id: "16",
         label: "Menu",
         link: "/menu",
         parentId: "12",
       },
     ],
-  },
-  {
-    id: "16",
-    label: "Quản lý tài khoản",
-    icon: "ri-account-circle-line",
-    link: "/vai-tro",
   },
   {
     id: "17",

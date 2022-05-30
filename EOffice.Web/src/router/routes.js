@@ -155,6 +155,33 @@ export default [
     component: () => import("../pages/quanlydanhmuc/nhomquanlyduan/index"),
   },
   {
+    path: "/nhom-quyen",
+    name: "nhom-quyen",
+    meta: {
+      title: "Nhóm quyền",
+      authRequired: true,
+    },
+    component: () => import("../pages/quanlytaikhoan/nhomquyen/index"),
+  },
+  {
+    path: "/tai-khoan",
+    name: "tai-khoan",
+    meta: {
+      title: "Tài khoản",
+      authRequired: true,
+    },
+    component: () => import("../pages/quanlytaikhoan/taikhoan/index"),
+  },
+  {
+    path: "/vai-tro",
+    name: "vai-tro",
+    meta: {
+      title: "Quản lý vai trò",
+      authRequired: true,
+    },
+    component: () => import("../pages/quanlytaikhoan/quyen/index"),
+  },
+  {
     path: "/van-ban-den",
     name: "van-ban-den",
     meta: {
