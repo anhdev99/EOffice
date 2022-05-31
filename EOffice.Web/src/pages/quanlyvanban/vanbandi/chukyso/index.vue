@@ -29,6 +29,7 @@ export default {
         },
       ],
       data: data,
+      modalShow: false,
     };
   },
   components: { Layout, PageHeader, KySo, XacThuc },
@@ -141,18 +142,17 @@ export default {
           <div class="modal-header p-3 bg-primary-dark">
             <h5 class="modal-title" id="EditModalLabel">Văn bản trình ký</h5>
             <div class="d-flex">
-              <button
+              <b-button
                 type="button"
                 class="btn btn-sm btn-danger waves-effect waves-light me-2 d-flex align-items-center"
               >
                 <i class="ri-save-3-fill me-1"></i>
                 Hủy ký số
-              </button>
+              </b-button>
               <button
                 type="button"
                 class="btn btn-sm btn-primary waves-effect waves-light me-2 d-flex align-items-center"
-                data-bs-toggle="modal"
-                data-bs-target="#ky-so"
+                @click="modalShow = !modalShow"
               >
                 <i class="ri-save-3-fill me-1"></i>
                 Ký số
@@ -178,30 +178,16 @@ export default {
     </div>
 
     <!-- modal ký số -->
-    <div class="modal fade zoomIn" id="ky-so" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content border-0">
-          <div class="modal-header p-3 bg-primary-dark">
-            <h5 class="modal-title">Ký số</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body p-3">
-            <xac-thuc />
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-              Đóng
-            </button>
-            <button type="button" class="btn btn-primary">Lưu</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <b-modal
+      v-model="modalShow"
+      header-class="modal-header p-3 bg-primary-dark"
+      content-class="modal-content border-0"
+      dialog-class="modal-dialog modal-dialog-centered modal-lg"
+      title="Ký số"
+      no-close-on-backdrop
+    >
+      <xac-thuc />
+    </b-modal>
   </Layout>
 </template>
 <style>
