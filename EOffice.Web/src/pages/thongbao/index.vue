@@ -3,6 +3,7 @@ import Layout from "@/layouts/main";
 import PageHeader from "@/components/page-header";
 import appConfig from "../../../app.config.json";
 import { data } from "./data";
+import XemThongTin from "./xemthongtin.vue";
 
 export default {
   page: {
@@ -29,7 +30,7 @@ export default {
       data: data,
     };
   },
-  components: { Layout, PageHeader },
+  components: { Layout, PageHeader, XemThongTin },
   methods: {
     ThemMoi() {
       document.getElementById("ThemMoi").reset();
@@ -79,8 +80,17 @@ export default {
                     <td>{{ item.createDate }}</td>
                     <td>
                       <div class="hstack gap-3 fs-15">
+                        <a
+                          href="javascript:void(0);"
+                          class="link-info"
+                          data-bs-toggle="modal"
+                          data-bs-target="#xem-thong-tin"
+                          ><i class="ri-eye-line text-primary"></i
+                        ></a>
                         <a href="javascript:void(0);" class="link-info"
-                          ><i class="ri-checkbox-blank-circle-fill"></i
+                          ><i
+                            class="ri-checkbox-blank-circle-fill text-secondary"
+                          ></i
                         ></a>
                       </div>
                     </td>
@@ -124,6 +134,44 @@ export default {
       </div>
     </div>
   </Layout>
+  <!-- modal -->
+  <div
+    class="modal fade zoomIn"
+    id="xem-thong-tin"
+    tabindex="-1"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0">
+        <div class="modal-header p-3 bg-primary-dark">
+          <h5 class="modal-title">Xem thông tin</h5>
+          <div class="d-flex">
+            <button
+              type="button"
+              class="btn btn-sm btn-danger waves-effect waves-light me-2 d-flex align-items-center"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+              id="close-modal"
+            >
+              <i class="ri-close-line me-1"></i>
+              Đóng
+            </button>
+          </div>
+        </div>
+        <div class="modal-body">
+          <xem-thong-tin />
+        </div>
+        <div class="modal-footer">
+          <div class="mx-auto">
+            <a href="javascript:void(0);" class="btn btn-link fw-medium">
+              Chuyển tiếp
+              <i class="ri-arrow-right-line ms-1 align-middle"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 <style>
 .modal-title {
