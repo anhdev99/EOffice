@@ -102,7 +102,7 @@ export default {
                     <td>{{ item.ngayNhap }}</td>
                     <td>
                       <div class="hstack gap-3 fs-15">
-                        <a href="javascript:void(0);" class="link-info"
+                        <a          @click="modalShow = !modalShow"  class="link-info"
                           ><i class="ri-newspaper-line"></i
                         ></a>
                         <a href="javascript:void(0);" class="link-info"
@@ -152,7 +152,7 @@ export default {
               <button
                 type="button"
                 class="btn btn-sm btn-primary waves-effect waves-light me-2 d-flex align-items-center"
-                @click="modalShow = !modalShow"
+
               >
                 <i class="ri-save-3-fill me-1"></i>
                 Ký số
@@ -176,7 +176,16 @@ export default {
         </div>
       </div>
     </div>
-
+    <b-modal
+        v-model="modalShow"
+        header-class="modal-header p-3 bg-primary-dark"
+        content-class="modal-content border-0"
+        dialog-class="modal-dialog modal-dialog-centered  modal-fullscreen"
+        title="Ký số"
+        no-close-on-backdrop
+    >
+      <ky-so />
+    </b-modal>
     <!-- modal ký số -->
     <b-modal
       v-model="modalShow"
@@ -197,5 +206,11 @@ export default {
 .bg-primary-dark {
   background: linear-gradient(135deg, #06548e, #ffffff);
   box-shadow: 0px 3px 0px #06548e;
+}
+.modal-backdrop + .modal-backdrop {
+  z-index: 1000;
+}
+.modal  {
+
 }
 </style>

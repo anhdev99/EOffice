@@ -3,6 +3,7 @@ import { mapState } from "vuex";
 import { required, email, helpers } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
 import appConfig from "../../../app.config";
+import axios from 'axios'
 
 import {
   authMethods,
@@ -25,7 +26,7 @@ export default {
   },
   data() {
     return {
-      email: "admin@themesbrand.com",
+      email: "admin",
       password: "123456",
       submitted: false,
       authError: null,
@@ -36,7 +37,6 @@ export default {
   validations: {
     email: {
       required: helpers.withMessage("Email is required", required),
-      email: helpers.withMessage("Please enter valid email", email),
     },
     password: {
       required: helpers.withMessage("Password is required", required),
@@ -54,6 +54,17 @@ export default {
     ...notificationMethods,
     // Try to log the user in with the username
     // and password they provided.
+    postPost() {
+      let a = this.email;
+      let p = this.password;
+      axios.post(`http://apieoffice.dthu.edu.vn/api/v1/login`, {
+        body: {a, p}
+      })
+          .then(response => {})
+          .catch(e => {
+            this.errors.push(e)
+          })
+    },
     tryToLogIn() {
       this.submitted = true;
       // stop here if form is invalid
@@ -100,6 +111,7 @@ export default {
             });
           }
         }
+        this.postPost();
         setTimeout(function () {
           loader.hide();
         }, 1000);
@@ -165,21 +177,21 @@ export default {
                     variant="danger"
                     class="mt-3"
                     dismissible
-                    >{{ authError }}</b-alert
+                    >Kiểm tra lại mạng</b-alert
                   >
 
                   <div
                     v-if="notification.message"
                     :class="'alert ' + notification.type"
                   >
-                    {{ notification.message }}
+                    Kiểm tra lại mạng
                   </div>
 
                   <form @submit.prevent="tryToLogIn" ref="formContainer">
                     <div class="mb-3">
                       <label for="email" class="form-label">Tài khoản</label>
                       <input
-                        type="email"
+                        type="text"
                         class="form-control"
                         id="email"
                         placeholder="Enter email"
@@ -198,11 +210,6 @@ export default {
                     </div>
 
                     <div class="mb-3">
-                      <div class="float-end">
-                        <router-link to="/forgot-password" class="text-muted"
-                          >Quên mật khẩu</router-link
-                        >
-                      </div>
                       <label class="form-label" for="password-input"
                         >Mật khẩu</label
                       >
