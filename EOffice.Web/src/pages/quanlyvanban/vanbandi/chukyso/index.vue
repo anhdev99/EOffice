@@ -149,14 +149,14 @@ export default {
                 <i class="ri-save-3-fill me-1"></i>
                 Hủy ký số
               </b-button>
-              <button
+              <b-button
                 type="button"
                 class="btn btn-sm btn-primary waves-effect waves-light me-2 d-flex align-items-center"
 
               >
                 <i class="ri-save-3-fill me-1"></i>
                 Ký số
-              </button>
+              </b-button>
 
               <button
                 type="button"
@@ -189,11 +189,12 @@ export default {
     <!-- modal ký số -->
     <b-modal
       v-model="modalShow"
-      header-class="modal-header p-3 bg-primary-dark"
-      content-class="modal-content border-0"
+      header-class="modal-header p-3 bg-primary-dark "
+      content-class="modal-content border-0 "
       dialog-class="modal-dialog modal-dialog-centered modal-lg"
       title="Ký số"
       no-close-on-backdrop
+      modal-class="bg-modal modal-shadown"
     >
       <xac-thuc />
     </b-modal>
@@ -207,10 +208,8 @@ export default {
   background: linear-gradient(135deg, #06548e, #ffffff);
   box-shadow: 0px 3px 0px #06548e;
 }
-.modal-backdrop + .modal-backdrop {
-  z-index: 1000;
-}
-.modal  {
 
+.bg-modal {
+  background: rgba(0, 0, 0, 0.5);
 }
 </style>
