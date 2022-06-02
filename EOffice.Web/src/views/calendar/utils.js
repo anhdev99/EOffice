@@ -1,6 +1,4 @@
-
-
-let eventGuid = 0
+let eventGuid = 0;
 // let todayStr = new Date().toISOString().replace(/T.*$/, '') // YYYY-MM-DD of today
 var date = new Date();
 var d = date.getDate();
@@ -9,141 +7,145 @@ var y = date.getFullYear();
 export const INITIAL_EVENTS = [
   {
     id: 153,
-    title: 'All Day Event',
+    title: "Sự kiện cả ngày",
     start: new Date(y, m, 1),
-    className: 'bg-soft-primary',
-    location: 'San Francisco, US',
+    className: "bg-soft-primary",
+    location: "San Francisco, US",
     allDay: false,
     extendedProps: {
-        department: 'All Day Event'
+      department: "Sự kiện cả ngày",
     },
-    description: 'An all-day event is an event that lasts an entire day or longer'
-},
-{
+    description: "Sự kiện cả ngày là sự kiện kéo dài hoặc lâu hơn",
+  },
+  {
     id: 136,
-    title: 'Visit Online Course',
+    title: "Visit Online Course",
     start: new Date(y, m, d - 5),
     end: new Date(y, m, d - 2),
     allDay: false,
-    className: 'bg-soft-warning',
+    className: "bg-soft-warning",
     extendedProps: {
-        department: 'Long Event'
+      department: "Long Event",
     },
-    description: 'Long Term Event means an incident that last longer than 12 hours.'
-},
-{
+    description:
+      "Long Term Event means an incident that last longer than 12 hours.",
+  },
+  {
     id: 999,
-    title: 'Client Meeting with Alexis',
+    title: "Client Meeting with Alexis",
     start: new Date(y, m, d + 22, 20, 0),
     end: new Date(y, m, d + 24, 16, 0),
     allDay: false,
-    className: 'bg-soft-danger',
-    location: 'California, US',
+    className: "bg-soft-danger",
+    location: "California, US",
     extendedProps: {
-        department: 'Meeting with Alexis'
+      department: "Meeting with Alexis",
     },
-    description: 'A meeting is a gathering of two or more people that has been convened for the purpose of achieving a common goal through verbal interaction, such as sharing information or reaching agreement.'
-},
-{
+    description:
+      "A meeting is a gathering of two or more people that has been convened for the purpose of achieving a common goal through verbal interaction, such as sharing information or reaching agreement.",
+  },
+  {
     id: 991,
-    title: 'Repeating Event',
+    title: "Repeating Event",
     start: new Date(y, m, d + 4, 16, 0),
     end: new Date(y, m, d + 9, 16, 0),
     allDay: false,
-    className: 'bg-soft-primary',
-    location: 'Las Vegas, US',
+    className: "bg-soft-primary",
+    location: "Las Vegas, US",
     extendedProps: {
-        department: 'Repeating Event'
+      department: "Repeating Event",
     },
-    description: 'A recurring or repeating event is simply any event that you will occur more than once on your calendar. ',
-},
-{
+    description:
+      "A recurring or repeating event is simply any event that you will occur more than once on your calendar. ",
+  },
+  {
     id: 112,
-    title: 'Meeting With Designer',
+    title: "Meeting With Designer",
     start: new Date(y, m, d, 12, 30),
     allDay: false,
-    className: 'bg-soft-success',
-    location: 'Head Office, US',
+    className: "bg-soft-success",
+    location: "Head Office, US",
     extendedProps: {
-        department: 'Meeting'
+      department: "Meeting",
     },
-    description: 'Tell how to boost website traffic'
-},
-{
+    description: "Tell how to boost website traffic",
+  },
+  {
     id: 113,
-    title: 'Weekly Strategy Planning',
+    title: "Weekly Strategy Planning",
     start: new Date(y, m, d + 9),
     end: new Date(y, m, d + 11),
     allDay: false,
-    className: 'bg-soft-danger',
-    location: 'Head Office, US',
+    className: "bg-soft-danger",
+    location: "Head Office, US",
     extendedProps: {
-        department: 'Lunch'
+      department: "Lunch",
     },
-    description: 'Strategies for Creating Your Weekly Schedule'
-},
-{
+    description: "Strategies for Creating Your Weekly Schedule",
+  },
+  {
     id: 875,
-    title: 'Birthday Party',
+    title: "Tiệc sinh nhật",
     start: new Date(y, m, d + 1, 19, 0),
     allDay: false,
-    className: 'bg-soft-success',
-    location: 'Los Angeles, US',
+    className: "bg-soft-success",
+    location: "Los Angeles, US",
     extendedProps: {
-        department: 'Birthday Party'
+      department: "Tiệc sinh nhật",
     },
-    description: 'Family slumber party – Bring out the blankets and pillows and have a family slumber party! Play silly party games, share special snacks and wind down the fun with a special movie.'
-},
-{
+    description:
+      "Family slumber party – Bring out the blankets and pillows and have a family slumber party! Play silly party games, share special snacks and wind down the fun with a special movie.",
+  },
+  {
     id: 783,
-    title: 'Click for Google',
+    title: "Click for Google",
     start: new Date(y, m, 28),
     end: new Date(y, m, 29),
-    url: 'http://google.com/',
-    className: 'bg-soft-dark',
-},
-{
+    url: "http://google.com/",
+    className: "bg-soft-dark",
+  },
+  {
     id: 456,
-    title: 'Velzon Project Discussion with Team',
+    title: "Velzon Project Discussion with Team",
     start: new Date(y, m, d + 23, 20, 0),
     end: new Date(y, m, d + 24, 16, 0),
     allDay: false,
-    className: 'bg-soft-info',
-    location: 'Head Office, US',
+    className: "bg-soft-info",
+    location: "Head Office, US",
     extendedProps: {
-        department: 'Discussion'
+      department: "Discussion",
     },
-    description: 'Tell how to boost website traffic'
-}
-]
+    description: "Tell how to boost website traffic",
+  },
+];
 
 export function createEventId() {
-  return String(eventGuid++)
+  return String(eventGuid++);
 }
 
 export const categories = [
   {
-      name: 'Danger',
-      value: 'bg-danger'
+    name: "Danger",
+    value: "bg-danger",
   },
   {
-      name: 'Success',
-      value: 'bg-success'
+    name: "Success",
+    value: "bg-success",
   },
   {
-      name: 'Primary',
-      value: 'bg-primary'
+    name: "Primary",
+    value: "bg-primary",
   },
   {
-      name: 'Info',
-      value: 'bg-info'
+    name: "Info",
+    value: "bg-info",
   },
   {
-      name: 'Dark',
-      value: 'bg-dark'
+    name: "Dark",
+    value: "bg-dark",
   },
   {
-      name: 'Warning',
-      value: 'bg-warning'
+    name: "Warning",
+    value: "bg-warning",
   },
 ];
