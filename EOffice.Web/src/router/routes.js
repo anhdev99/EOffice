@@ -83,6 +83,60 @@ export default [
     component: () => import("../pages/thongbao/index.vue"),
   },
   {
+    path: "/lich-cong-tac-lanh-dao",
+    name: "lich-cong-tac-lanh-dao",
+    meta: {
+      title: "Lịch công tác lãnh đạo",
+      authRequired: true,
+    },
+    component: () => import("../pages/lichcongtac/lichcongtaclanhdao/index"),
+  },
+  {
+    path: "/lich-cong-tac-ca-nhan",
+    name: "lich-cong-tac-ca-nhan",
+    meta: {
+      title: "Lịch công tác cá nhân",
+      authRequired: true,
+    },
+    component: () => import("../pages/lichcongtac/lichcongtaccanhan/index.vue"),
+  },
+  {
+    path: "/lich-cong-tac-phong-ban",
+    name: "lich-cong-tac-phong-ban",
+    meta: {
+      title: "Lịch công tác phòng ban",
+      authRequired: true,
+    },
+    component: () => import("../pages/lichcongtac/lichcongtacphongban/index.vue"),
+  },
+  {
+    path: "/lich-ca-nhan",
+    name: "lich-ca-nhan",
+    meta: {
+      title: "Lịch cá nhân",
+      authRequired: true,
+    },
+    component: () => import("../pages/lichcongtac/lichcanhan/index.vue"),
+  },
+  {
+    path: "/de-xuat-lich-cong-tac",
+    name: "de-xuat-lich-cong-tac",
+    meta: {
+      title: "Đề xuất lịch công tác",
+      authRequired: true,
+    },
+    component: () => import("../pages/lichcongtac/dexuatlichcongtac/index.vue"),
+  },
+  {
+    path: "/quan-ly-lich-de-xuat",
+    name: "quan-ly-lich-de-xuat",
+    meta: {
+      title: "Quản lý lịch đề xuất",
+      authRequired: true,
+    },
+    component: () => import("../pages/lichcongtac/quanlylichdexuat/index.vue"),
+  },
+  {
     path: "/co-quan",
     name: "co-quan",
     meta: {
