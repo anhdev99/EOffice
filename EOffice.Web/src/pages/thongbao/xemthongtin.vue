@@ -7,47 +7,25 @@ export default {
 </script>
 
 <template>
-  <h5 class="fs-16">Popover in a Modal</h5>
-  <p class="text-muted">
-    You only need to know a little to make a big
-    <a
-      href="#"
-      class="popover-test fw-medium text-decoration-underline link-success"
-      data-bs-toggle="popover"
-      title="Common Types of Fonts"
-      data-bs-content="They're a good choice for more traditional projects."
-      data-bs-container="body"
-      data-bs-placement="bottom"
-      data-bs-original-title="Popover Title"
-      >Popover on Click</a
-    >
-    you do every day. So let's get started. First, some common types of fonts
-    and what you need to know about them triggers a popover on click.
-  </p>
-  <h5 class="fs-16">Tooltips in a Modal</h5>
-  <p class="text-muted">
-    Opposites attract, and that’s a fact. It’s in our
-    <a
-      href="#"
-      class="tooltip-test text-decoration-underline fw-medium"
-      title="Morton Bayer"
-      data-bs-container="#exampleModalPopovers"
-      data-bs-toggle="tooltip"
-      data-bs-original-title="Tooltip title"
-      >graphic design</a
-    >
-    to be interested in the unusual, and that’s why using
-    <a
-      href="#"
-      class="tooltip-test text-decoration-underline"
-      title="Web Developers"
-      data-bs-toggle="tooltip"
-      data-bs-container="#exampleModalPopovers"
-      data-bs-original-title="Tooltip title"
-      >design</a
-    >
-    contrasting colors in Graphic Design is a must.
-  </p>
+  <div class="row notify-box">
+    <div class="col-md-12">
+      <div class="notify-title mb-2 d-flex">
+        <h5 class="notify-name text-dark fw-bold">
+          Tiêu đề:
+        </h5>
+        <span>Thông báo yêu cầu chuyển khai hệ thống effice</span>
+      </div>
+      <div class="notify-content">
+        <h5 class="text-dark fw-bold">Nội dung:</h5>
+        <span>Nội dung: Triển khai hệ thống giúp doanh nghiệp bạn số hóa tài liệu,
+        văn bản giúp người dùng tìm kiếm và đem
+        đi bất cứ đâu chỉ với một chiếc điện thoại.
+        Công việc được sắp xếp khoa học người dùng dễ nhận biết công việc nào quan trọng và
+        ưu tiên làm trước đề kịp tiến độ dự án. Ngoài ra tăng tính trách nhiệm của nhân viên cũng
+        là tính năng mà một văn phòng điện tử cần có.</span>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style></style>
