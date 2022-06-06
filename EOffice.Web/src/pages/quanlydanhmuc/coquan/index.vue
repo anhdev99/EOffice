@@ -17,7 +17,7 @@ export default {
   },
   data() {
     return {
-      title: "Cơ quan",
+      title: "Đơn vị",
       items: [
         {
           text: "Trang chủ",
@@ -80,7 +80,7 @@ export default {
                 <thead class="table-light">
                   <tr>
                     <th scope="col">#</th>
-                    <th scope="col">Tên cơ quan</th>
+                    <th scope="col">Tên đơn vị</th>
                     <th scope="col">Mô tả</th>
                     <th scope="col">Thao tác</th>
                   </tr>

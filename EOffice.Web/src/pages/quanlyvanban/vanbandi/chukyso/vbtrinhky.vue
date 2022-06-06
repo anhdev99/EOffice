@@ -1,11 +1,10 @@
 <script>
 import PSPDFKitContainer from "./PSPDFKitContainer";
-
 export default {
   components: { PSPDFKitContainer },
   data() {
     return {
-      pdfFile: this.pdfFile || "./DH_GDCT.pdf",
+      pdfFile: this.pdfFile || "/DH_GDCT.pdf",
     };
   },
   methods: {
@@ -16,12 +15,11 @@ export default {
 
     openDocument() {
       // To access the Vue instance data properties, use `this` keyword.
-      console.log("this.pdfFile", this.pdfFile);
+      // console.log("this.pdfFile", imgLink);
       if (this.pdfFile) {
         window.URL.revokeObjectURL(this.pdfFile);
       }
-      this.pdfFile = window.URL.createObjectURL(event.target.files[0]);
-      console.log("event.target.files[0]", event.target.files[0]);
+       this.pdfFile = window.URL.createObjectURL('http://localhost:8080/DH_GDCT.pdf');
     },
   },
 };
@@ -75,11 +73,11 @@ export default {
                 <li class="ks-item mb-2">Ngày cấp: <span>28/03/2022</span></li>
                 <li class="ks-item mb-2">Trạng thái: <span>Trình ký</span></li>
                 <li class="ks-item mb-2">
-                  <p>Trích yếu:</p>
-                  <p class="p-2" style="border: 1px dotted; border-radius: 3px">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Voluptatibus, eum. Eius harum neque,
-                  </p>
+                  <p>Trích yếu: ...</p>
+<!--                  <p class="p-2" style="border: 1px dotted; border-radius: 3px">-->
+<!--                    Lorem ipsum dolor sit amet consectetur adipisicing elit.-->
+<!--                    Voluptatibus, eum. Eius harum neque,-->
+<!--                  </p>-->
                 </li>
                 <li class="ks-item mb-2">
                   <p>Ghi chú:</p>

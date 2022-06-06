@@ -1,11 +1,12 @@
 export const data = [
+
   {
     id: "1",
     userName: "demo",
     fullName: "demo",
     email: "demo@gmail.com",
     phoneNumber: "2648291461782",
-    unit: "đơn vị tư vấn",
+    unit: "Khoa SPTT",
   },
   {
     id: "2",
@@ -13,7 +14,7 @@ export const data = [
     fullName: "demo 1",
     email: "demo2@gmail.com",
     phoneNumber: "2648291461782",
-    unit: "Trung tâm công nghệ thông tin và truyền thông",
+    unit: "Khoa SPTT",
   },
   {
     id: "3",
@@ -21,6 +22,14 @@ export const data = [
     fullName: "demo 2",
     email: "demo2@gmail.com",
     phoneNumber: "2648291461782",
-    unit: "UBND xã thường lạc",
+    unit: "Khoa SPTT",
+  },
+  {
+    id: "4",
+    userName: "admin",
+    fullName: "Quản trị viên",
+    email: "admin@gmail.com",
+    phoneNumber: "2648291461782",
+    unit: "Văn phòng",
   },
 ];

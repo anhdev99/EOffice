@@ -62,7 +62,7 @@ export default {
       })
           .then(response => {
             localStorage.setItem("user","login")
-            this.$router.push("/lich-cong-tac-lanh-dao")
+            this.$router.push("/de-xuat-lich-cong-tac")
           })
           .catch(e => {
 

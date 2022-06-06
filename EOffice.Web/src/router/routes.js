@@ -89,7 +89,7 @@ export default [
       title: "Lịch công tác lãnh đạo",
       authRequired: true,
     },
-    component: () => import("../pages/lichcongtac/lichcongtaclanhdao/index"),
+    component: () => import("../pages/lichcongtac/dexuatlichcongtac/index"),
   },
   {
     path: "/lich-cong-tac-ca-nhan",
