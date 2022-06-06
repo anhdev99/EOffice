@@ -17,57 +17,57 @@ export const INITIAL_EVENTS = [
         extendedProps: {
             department: 'Ngày sự kiện'
         },
-        description: 'An all-day event is an event that lasts an entire day or longer'
+        description: 'Là một ngày co nhiều sự kiện kéo dài'
     },
     {
         id: 136,
-        title: 'Visit Online Course',
+        title: 'Công tác Hà nội',
         start: new Date(y, m, d - 5),
         end: new Date(y, m, d - 2),
         allDay: false,
         className: 'bg-soft-warning',
         extendedProps: {
-            department: 'Long Event'
+            department: 'Công tác'
         },
-        description: 'Long Term Event means an incident that last longer than 12 hours.'
+        description: 'Đi dạy'
     },
     {
         id: 999,
-        title: 'Client Meeting with Alexis',
+        title: 'Công tác Đà Nẵng',
         start: new Date(y, m, d + 22, 20, 0),
         end: new Date(y, m, d + 24, 16, 0),
         allDay: false,
         className: 'bg-soft-danger',
         location: 'California, US',
         extendedProps: {
-            department: 'Meeting with Alexis'
+            department: 'Công tác ĐÃ Nẵng'
         },
-        description: 'A meeting is a gathering of two or more people that has been convened for the purpose of achieving a common goal through verbal interaction, such as sharing information or reaching agreement.'
+        description: 'Công tác tại Thành phố Đã Nẵng'
     },
     {
         id: 991,
-        title: 'Repeating Event',
+        title: 'Họp giao ban',
         start: new Date(y, m, d + 4, 16, 0),
         end: new Date(y, m, d + 9, 16, 0),
         allDay: false,
         className: 'bg-soft-primary',
         location: 'Las Vegas, US',
         extendedProps: {
-            department: 'Repeating Event'
+            department: 'Họp giao ban'
         },
-        description: 'A recurring or repeating event is simply any event that you will occur more than once on your calendar. ',
+        description: 'Họp giao ban ',
     },
     {
         id: 112,
-        title: 'Meeting With Designer',
+        title: 'Công tác nước ngoài',
         start: new Date(y, m, d, 12, 30),
         allDay: false,
         className: 'bg-soft-success',
         location: 'Head Office, US',
         extendedProps: {
-            department: 'Meeting'
+            department: 'Công tác nước ngoài'
         },
-        description: 'Tell how to boost website traffic'
+        description: 'Triển khai hợp tác quốc tế '
     },
     {
         id: 113,
@@ -84,36 +84,28 @@ export const INITIAL_EVENTS = [
     },
     {
         id: 875,
-        title: 'Birthday Party',
+        title: 'Triển khai công tác đôi ngoại',
         start: new Date(y, m, d + 1, 19, 0),
         allDay: false,
         className: 'bg-soft-success',
         location: 'Los Angeles, US',
         extendedProps: {
-            department: 'Birthday Party'
+            department: 'Công tác'
         },
-        description: 'Family slumber party – Bring out the blankets and pillows and have a family slumber party! Play silly party games, share special snacks and wind down the fun with a special movie.'
-    },
-    {
-        id: 783,
-        title: 'Click for Google',
-        start: new Date(y, m, 28),
-        end: new Date(y, m, 29),
-        url: 'http://google.com/',
-        className: 'bg-soft-dark',
+        description: 'Triển khai công tác đối ngoại, đẩy nhanh tiến độ hợp tác quốc tế'
     },
     {
         id: 456,
-        title: 'Velzon Project Discussion with Team',
+        title: 'Công tác',
         start: new Date(y, m, d + 23, 20, 0),
         end: new Date(y, m, d + 24, 16, 0),
         allDay: false,
         className: 'bg-soft-info',
         location: 'Head Office, US',
         extendedProps: {
-            department: 'Discussion'
+            department: 'Công tác'
         },
-        description: 'Tell how to boost website traffic'
+        description: 'Công tác nước ngoài'
     }
 ]
 
