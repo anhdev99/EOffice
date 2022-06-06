@@ -71,12 +71,6 @@ export const menuItems = [
         parentId: "11",
       },
       {
-        id: "14",
-        label: "Loại nguồn vốn",
-        link: "/loai-nguon-von",
-        parentId: "11",
-      },
-      {
         id: "15",
         label: "Loại cơ quan",
         link: "/loai-co-quan",
@@ -87,25 +81,7 @@ export const menuItems = [
         label: "Cấp cơ quan",
         link: "/cap-co-quan",
         parentId: "11",
-      },
-      {
-        id: "17",
-        label: "Nhóm dự án",
-        link: "/nhom-du-an",
-        parentId: "11",
-      },
-      {
-        id: "18",
-        label: "Loại dự án",
-        link: "/loai-du-an",
-        parentId: "11",
-      },
-      {
-        id: "19",
-        label: "Nhóm quản lý dự án",
-        link: "/nhom-quan-ly-du-an",
-        parentId: "11",
-      },
+      }
     ],
   },
   {

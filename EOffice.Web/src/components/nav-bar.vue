@@ -58,6 +58,10 @@ export default {
     this.isCustomDropdown();
   },
   methods: {
+    logout(){
+      localStorage.removeItem("user");
+      this.$router.push('/dang-nhap')
+    },
     isCustomDropdown() {
       //Search bar
       // var searchOptions = document.getElementById("search-close-options");
@@ -186,6 +190,7 @@ export default {
         document.documentElement.setAttribute("data-layout-mode", "dark");
       }
     },
+
   },
   computed: {},
 };
@@ -1111,50 +1116,19 @@ export default {
               <span class="d-flex align-items-center">
                 <img class="rounded-circle header-profile-user" src="@/assets/images/users/avatar-1.jpg" alt="Header Avatar" />
                 <span class="text-start ms-xl-2">
-                  <span class=" d-none d-xl-inline-block ms-1 fw-medium user-name-text">Anna Adame</span>
-                  <span class="d-none d-xl-block ms-1 fs-12 text-muted user-name-sub-text">Founder</span>
+                  <span class=" d-none d-xl-inline-block ms-1 fw-medium user-name-text">Lương Thái Ngọc</span>
+                  <span class="d-none d-xl-block ms-1 fs-12 text-muted user-name-sub-text">Giảng viên</span>
                 </span>
               </span>
             </button>
             <div class="dropdown-menu dropdown-menu-end">
               <!-- item-->
-              <h6 class="dropdown-header">Welcome Anna!</h6>
-              <router-link class="dropdown-item" to="/pages/profile"><i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i>
-                <span class="align-middle">Profile</span></router-link>
-              <router-link class="dropdown-item" to="/chat">
-              <i class=" mdi mdi-message-text-outline text-muted fs-16 align-middle me-1"></i>
-                <span class="align-middle">Messages</span></router-link>
-              <router-link class="dropdown-item" to="/apps/tasks-kanban">
-              <i class="mdi mdi-calendar-check-outline text-muted fs-16 align-middle me-1"></i>
-                <span class="align-middle">Taskboard</span></router-link>
-              <router-link class="dropdown-item" to="/pages/faqs"><i class="mdi mdi-lifebuoy text-muted fs-16 align-middle me-1"></i>
-                <span class="align-middle">Help</span></router-link>
-              <div class="dropdown-divider"></div>
-              <router-link class="dropdown-item" to="/pages/profile"
-                ><i
-                  class="mdi mdi-wallet text-muted fs-16 align-middle me-1"
-                ></i>
-                <span class="align-middle"
-                  >Balance : <b>$5971.67</b></span
-                ></router-link
-              >
-              <router-link class="dropdown-item" to="/pages/profile-setting"
-                ><span class="badge bg-soft-success text-success mt-1 float-end"
-                  >New</span
-                ><i
-                  class="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"
-                ></i>
-                <span class="align-middle">Settings</span></router-link
-              >
-              <router-link class="dropdown-item" to="/auth/lockscreen-basic"
-                ><i class="mdi mdi-lock text-muted fs-16 align-middle me-1"></i>
-                <span class="align-middle">Lock screen</span></router-link
-              >
-              <a class="dropdown-item" href="/logout"
+              <h6 class="dropdown-header">Chào mừng tới EOffice</h6>
+              <a class="dropdown-item" @click="logout"
                 ><i
                   class="mdi mdi-logout text-muted fs-16 align-middle me-1"
                 ></i>
-                <span class="align-middle" data-key="t-logout">Logout</span></a
+                <span class="align-middle" data-key="t-logout">Đăng xuất</span></a
               >
             </div>
           </div>

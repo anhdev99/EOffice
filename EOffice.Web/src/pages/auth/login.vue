@@ -57,12 +57,15 @@ export default {
     postPost() {
       let a = this.email;
       let p = this.password;
-      axios.post(`http://apieoffice.dthu.edu.vn/api/v1/login`, {
+      axios.post(`http://apieoffice.dthu.edu.vn/api/v1/auth/login`, {
         body: {a, p}
       })
-          .then(response => {})
+          .then(response => {
+            localStorage.setItem("user","login")
+            this.$router.push("/lich-cong-tac-lanh-dao")
+          })
           .catch(e => {
-            this.errors.push(e)
+
           })
     },
     tryToLogIn() {
@@ -172,20 +175,20 @@ export default {
                   </h5>
                 </div>
                 <div class="p-2 mt-4">
-                  <b-alert
-                    v-model="isAuthError"
-                    variant="danger"
-                    class="mt-3"
-                    dismissible
-                    >Kiểm tra lại mạng</b-alert
-                  >
+<!--                  <b-alert-->
+<!--                    v-model="isAuthError"-->
+<!--                    variant="danger"-->
+<!--                    class="mt-3"-->
+<!--                    dismissible-->
+<!--                    >Không thể kết nối máy chủg</b-alert-->
+<!--                  >-->
 
-                  <div
-                    v-if="notification.message"
-                    :class="'alert ' + notification.type"
-                  >
-                    Kiểm tra lại mạng
-                  </div>
+<!--                  <div-->
+<!--                    v-if="notification.message"-->
+<!--                    :class="'alert ' + notification.type"-->
+<!--                  >-->
+<!--                    Không thể kết nối máy chủ-->
+<!--                  </div>-->
 
                   <form @submit.prevent="tryToLogIn" ref="formContainer">
                     <div class="mb-3">

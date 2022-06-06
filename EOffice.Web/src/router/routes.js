@@ -62,7 +62,7 @@ export default [
       title: "Dashboard",
       authRequired: true,
     },
-    component: () => import("../views/dashboard/ecommerce/index.vue"),
+    component: () => import("../pages/lichcongtac/dexuatlichcongtac/index.vue"),
   },
   {
     path: "/nguoi-dung",
