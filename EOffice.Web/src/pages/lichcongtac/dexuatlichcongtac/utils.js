@@ -9,17 +9,12 @@ var y = date.getFullYear();
 export const INITIAL_EVENTS = [
     {
         id: 153,
-<<<<<<< Updated upstream
         title: 'Lịch công tác 1',
-=======
-        title: 'Ngày sự kiện',
->>>>>>> Stashed changes
         start: new Date(y, m, 1),
         className: 'bg-soft-primary',
         location: 'San Francisco, US',
         allDay: false,
         extendedProps: {
-<<<<<<< Updated upstream
             department: 'Trường ĐH Đồng Tháp'
         },
         description: 'Nội dung lịch công tác 1'
@@ -30,7 +25,7 @@ export const INITIAL_EVENTS = [
         start: new Date(y, m, 1),
         className: 'bg-soft-primary',
         location: 'San Francisco, US',
-=======
+        extendedProps: {
             department: 'Ngày sự kiện'
         },
         description: 'Là một ngày co nhiều sự kiện kéo dài'
@@ -102,10 +97,8 @@ export const INITIAL_EVENTS = [
         id: 875,
         title: 'Triển khai công tác đôi ngoại',
         start: new Date(y, m, d + 1, 19, 0),
->>>>>>> Stashed changes
         allDay: false,
         extendedProps: {
-<<<<<<< Updated upstream
             department: 'Trường ĐH Đồng Tháp'
         },
         description: 'Nội dung lịch công tác 2'
@@ -115,9 +108,8 @@ export const INITIAL_EVENTS = [
         title: 'Lịch công tác 3',
         start: new Date(y, m, 1),
         className: 'bg-soft-primary',
-        location: 'San Francisco, US',
-=======
-            department: 'Công tác'
+        extendedProps: {
+            department: 'Trường ĐH Đồng Tháp'
         },
         description: 'Triển khai công tác đối ngoại, đẩy nhanh tiến độ hợp tác quốc tế'
     },
@@ -126,19 +118,12 @@ export const INITIAL_EVENTS = [
         title: 'Công tác',
         start: new Date(y, m, d + 23, 20, 0),
         end: new Date(y, m, d + 24, 16, 0),
->>>>>>> Stashed changes
         allDay: false,
         extendedProps: {
-<<<<<<< Updated upstream
-            department: 'Trường ĐH Đồng Tháp'
+            department: 'Trường ĐH Đồng Tháp',
         },
-        description: 'Nội dung lịch công tác 3'
-=======
-            department: 'Công tác'
-        },
-        description: 'Công tác nước ngoài'
->>>>>>> Stashed changes
-    }
+        description: 'Nội dung lịch công tác 2'
+    },
 ]
 
 export function createEventId() {
