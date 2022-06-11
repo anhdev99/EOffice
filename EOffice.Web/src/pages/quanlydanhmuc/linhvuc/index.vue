@@ -2,8 +2,8 @@
 import Layout from "@/layouts/main";
 import PageHeader from "@/components/page-header";
 import appConfig from "../../../../app.config.json";
+import {required} from "vuelidate/lib/validators";
 import { data } from "./data";
-import ThemMoi from "./themmoi.vue";
 import ChinhSua from "./chinhsua.vue";
 
 export default {
@@ -31,11 +31,23 @@ export default {
       data: data,
       form: {
         id: "",
-      }
+      },
+      submitted: false,
+
     };
   },
-  components: { Layout, PageHeader, ThemMoi, ChinhSua },
+  validations: {
+    model: {
+      name: {required},
+      description: {required},
+    }
+  },
+  components: { Layout, PageHeader },
   methods: {
+    HandleSubmit(e){
+      e.preventDefault();
+      console.log("handle submit");
+    },
   },
 };
 </script>
@@ -54,13 +66,13 @@ export default {
               <div
                 class="form-check form-switch form-switch-right form-switch-md"
               >
-                <button
+                <b-button
                   class="btn btn-primary add-btn btn-sm"
                   data-bs-toggle="modal"
                   data-bs-target="#create-and-update"
                 >
                   <i class="ri-add-line align-bottom me-1"></i> Thêm mới
-                </button>
+                </b-button>
               </div>
             </div>
           </div>
@@ -146,58 +158,60 @@ export default {
     </div>
 
     <!-- Modal add -->
-    <div
-      class="modal fade zoomIn"
-      id="create-and-update"
-      tabindex="-1"
-      aria-labelledby="CreateModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content border-0">
-          <div class="modal-header p-3 bg-primary-dark">
-            <h5 class="modal-title" id="CreateModalLabel">Thêm mới lĩnh vực</h5>
-            <div class="d-flex">
-              <button
-                type="button"
-                class="btn btn-sm btn-primary waves-effect waves-light me-2 d-flex align-items-center"
-              >
-                <i class="ri-save-3-fill me-1"></i>
-                Lưu
-              </button>
-
-              <button
-                type="button"
-                class="btn btn-sm btn-danger waves-effect waves-light me-2 d-flex align-items-center"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-                id="close-modal"
-              >
-                <i class="ri-close-line me-1"></i>
-                Đóng
-              </button>
-            </div>
-          </div>
-          <div class="p-3">
-            <them-moi />
-          </div>
-        </div>
-      </div>
-    </div>
-
     <b-modal
         id="create-and-update"
         ref="modal"
+        title="Thông tin lĩnh vực"
+        header-class="bg-primary-dark modal-title p-3"
+        hide-footer
     >
-
+      <form class="" @submit="HandleSubmit">
+        <div class="mb-3">
+          <label for="name" class="form-label">Tên lĩnh vực</label>
+          <input
+              type="text"
+              class="form-control"
+              id="name"
+              v-model.trim="model.name"
+              name="name"
+              :class="{'is-invalid' : submitted && $v.model.name.$error,}"
+          />
+          <div
+              v-if="submitted && !$v.model.name.required"
+              class="invalid-feedback"
+          >
+            Tên lĩnh vực không được bỏ trống.
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="description" class="form-label">Mô tả</label>
+          <textarea
+              type="text"
+              class="form-control"
+              id="description"
+              name="description"
+              rows="2"
+          />
+        </div>
+        <div class="d-flex justify-content-end">
+          <b-button
+              type="button"
+              class="btn btn-danger waves-effect waves-light me-2 d-flex align-items-center"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+              id="close-modal"
+          >
+            Hủy
+          </b-button>
+          <b-button
+              type="submit"
+              class="btn btn-primary waves-effect waves-light me-2 d-flex align-items-center"
+          >
+            Lưu
+          </b-button>
+        </div>
+      </form>
     </b-modal>
-
-    <b-modal
-      id="them-moi"
-    >
-
-    </b-modal>
-
     <!-- Modal edit -->
     <div
       class="modal fade zoomIn"
