@@ -31,7 +31,6 @@ export default {
       data: data,
       form: {
         id: "",
-
       }
     };
   },
@@ -189,7 +188,6 @@ export default {
     <b-modal
         id="create-and-update"
         ref="modal"
-        v-if=""
     >
 
     </b-modal>
