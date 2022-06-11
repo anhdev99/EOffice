@@ -46,6 +46,9 @@ export default {
         "Chỉnh sửa văn bản đi";
       document.getElementById("ChinhSua").style.display = "block";
     },
+    handleSubmit(){
+
+    }
   },
 };
 </script>
@@ -187,7 +190,7 @@ export default {
             </div>
           </div>
           <!-- start content -->
-          <van-ban-di />
+          <van-ban-di :data.sync="data" />
           <!-- end content -->
         </div>
       </div>

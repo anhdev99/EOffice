@@ -9,6 +9,7 @@ import "flatpickr/dist/flatpickr.css";
 
 export default {
   components: { Treeselect, flatPickr },
+  props: ['data'],
   data() {
     return {
       form: {
@@ -193,6 +194,15 @@ export default {
       file: { required },
     },
   },
+  watch:{
+    form: {
+      deep: true,
+          handler(val) {
+        this.update('model')
+        console.log("model", val);
+      }
+    }
+  }
 };
 </script>
 
