@@ -7,7 +7,7 @@ import i18n from './i18n'
 import store from "./state/store";
 import VueLoading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
-
+import "vue3-treeview/dist/style.css";
 import BootstrapVue3 from 'bootstrap-vue-3';
 import vClickOutside from "click-outside-vue3"
 import VueApexCharts from "vue3-apexcharts";

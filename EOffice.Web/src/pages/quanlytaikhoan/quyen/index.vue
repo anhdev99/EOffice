@@ -29,10 +29,18 @@ export default {
         },
       ],
       data: data,
+      item: null,
       tree: [
         {
           text: "text example",
-          children: [ "childrenid1", "childrenid2" ],
+          children: [  {
+            text: "text example",
+            children: [  ],
+            state: {
+              opened: true,
+              disabled: false
+            }
+          } ],
           state: {
             opened: true,
             disabled: false
