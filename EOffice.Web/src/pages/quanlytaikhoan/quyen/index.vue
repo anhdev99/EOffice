@@ -29,10 +29,18 @@ export default {
         },
       ],
       data: data,
+      item: null,
       tree: [
         {
           text: "text example",
-          children: [ "childrenid1", "childrenid2" ],
+          children: [  {
+            text: "text example",
+            children: [  ],
+            state: {
+              opened: true,
+              disabled: false
+            }
+          } ],
           state: {
             opened: true,
             disabled: false
@@ -191,6 +199,7 @@ export default {
             <vue3-tree-vue :items="tree"
                            :isCheckable="true"
                            :hideGuideLines="false"
+                           v-model:checkedItems="item"
                           />
           </div>
         </div>
