@@ -29,10 +29,14 @@ namespace EOffice.WebAPI.Models
         public bool IsVerified { get; set; }
         public bool IsActived { get; set; } = true;
         public bool IsSyncPasswordSuccess { get; set; } = true;
+        public byte[] PrivateKey, PublicKey;
+        public string SignPath, PrivateKey_string, PublicKey_string;
+        public string PIN { get; set; }
         [BsonIgnore]   public bool IsRequireChangePassword { get; set; } = false;
         [BsonIgnore]     public bool IsRequireVerify { get; set; } = false;
         [BsonIgnore] public string Password { get; set; }
         [BsonIgnore] public List<string> Permissions { get; set; }
         [BsonIgnore] public List<NavMenuVM> Menu { get; set; }
     }
+    
 }

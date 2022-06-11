@@ -29,9 +29,19 @@ export default {
         },
       ],
       data: data,
+      tree: [
+        {
+          text: "text example",
+          children: [ "childrenid1", "childrenid2" ],
+          state: {
+            opened: true,
+            disabled: false
+          }
+        }
+      ]
     };
   },
-  components: { Layout, PageHeader, ThemMoi, ChinhSua },
+  components: { Layout, PageHeader, ChinhSua },
   methods: {},
 };
 </script>
@@ -178,7 +188,10 @@ export default {
             </div>
           </div>
           <div class="p-3">
-            <them-moi />
+            <vue3-tree-vue :items="tree"
+                           :isCheckable="true"
+                           :hideGuideLines="false"
+                          />
           </div>
         </div>
       </div>

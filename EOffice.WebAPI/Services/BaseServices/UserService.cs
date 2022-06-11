@@ -115,7 +115,10 @@ namespace EOffice.WebAPI.Services
                 CreatedAt = DateTime.Now,
                 ModifiedAt = DateTime.Now
             };
-
+            
+            // Tao5 khoa
+            SignDigitalService.GeneratSignKey(ref entity);
+            
             if (model.DonVi != default)
             {
                 entity.DonVi = model.DonVi;
@@ -173,7 +176,7 @@ namespace EOffice.WebAPI.Services
             entity.IsVerified = model.IsVerified;
             entity.IsSyncPasswordSuccess = model.IsSyncPasswordSuccess;
             entity.IsActived = model.IsActived;
-
+            
             if (model.DonVi != default)
             {
                 if (model.DonVi.Id != entity.DonVi.Id)
