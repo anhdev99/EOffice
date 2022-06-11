@@ -2,10 +2,8 @@
 import Layout from "@/layouts/main";
 import PageHeader from "@/components/page-header";
 import appConfig from "../../../../app.config.json";
-import {required} from "vuelidate/lib/validators";
-import { data } from "./data";
-import ChinhSua from "./chinhsua.vue";
 import {linhVucModel} from "@/models/linhVucModel";
+import {pagingModel} from "@/models/pagingModel";
 
 export default {
   page: {
@@ -29,12 +27,92 @@ export default {
           active: true,
         },
       ],
-      data: data,
+      showModal: false,
+      showDetail: false,
+      showDeleteModal: false,
+      data: [],
       model: linhVucModel.baseJson(),
+      pagination: pagingModel.baseJson(),
+      totalRows: 1,
+      currentPage: 1,
+      numberOfElement: 1,
+      perPage: 10,
+      pageOptions: [5,10, 25, 50, 100],
+      filter: null,
+      fields: [
+        { key: 'STT',
+          label: 'STT',
+          class: 'text-center',
+          thStyle: {width: '80px', minWidth: '80px'},
+          thClass: 'hidden-sortable'
+        },
+        {
+          key: "ten",
+          label: "Tên",
+          class: 'text-center',
+          sortable: true,
+        },
+        {
+          key: "donVis",
+          label: "Số lượng đơn vị",
+          class: 'text-center',
+          thStyle: {width: '160px', minWidth: '160px'},
+          thClass: 'hidden-sortable'
+        },
+        {
+          key: "thuTu",
+          label: "Thứ tự",
+          class: 'text-center',
+          thStyle: {width: '100px', minWidth: '100px'},
+          thClass: 'hidden-sortable'
+        },
+        {
+          key: 'process',
+          label: 'Xử lý',
+          class: 'text-center',
+          thStyle: {width: '110px', minWidth: '110px'},
+          thClass: 'hidden-sortable'
+        }
+      ],
     };
   },
   components: { Layout, PageHeader },
   methods: {
+    async handleUpdate(id) {
+      await this.$store.dispatch("LinhVucStore/getById", id).then((res) => {
+        if (res.resultCode === 'SUCCESS') {
+          this.model = linhVucModel.fromJson(res.data);
+          this.showModal = true;
+        } else {
+          // this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+          this.$refs.tblList.refresh()
+        }
+      });
+    },
+    async handleDetail(id) {
+      await this.$store.dispatch("LinhVucStore/getById", id).then((res) => {
+        if (res.resultCode === 'SUCCESS') {
+          this.model = linhVucModel.fromJson(res.data);
+          console.log("LOG DETAIL  : " , this.model)
+          this.showDetail = true;
+        }
+      });
+    },
+    async handleDelete() {
+      if (this.model.id != 0 && this.model.id != null && this.model.id) {
+        await this.$store.dispatch("LinhVucStore/delete", this.model.id).then((res) => {
+          if (res.resultCode === 'SUCCESS') {
+            this.showDeleteModal = false;
+            this.$refs.tblList.refresh()
+          }
+          // });
+        });
+      }
+    },
+    handleShowDeleteModal(id) {
+      this.model.id = id;
+      this.showDeleteModal = true;
+    },
     async HandleSubmit(e){
       e.preventDefault();
       console.log("handle submit", this.model);
@@ -62,6 +140,29 @@ export default {
         });
       }
     },
+    myProvider (ctx) {
+      const params = {
+        start: ctx.currentPage,
+        limit: ctx.perPage,
+        content: this.filter,
+        sortBy: ctx.sortBy,
+        sortDesc: ctx.sortDesc,
+      }
+      this.loading = true
+
+      try {
+        let promise =  this.$store.dispatch("linhVucStore/getPagingParams", params)
+        return promise.then(resp => {
+          let items = resp.data.data
+          this.totalRows = resp.data.totalRows
+          this.numberOfElement = resp.data.data.length
+          this.loading = false
+          return items || []
+        })
+      } finally {
+        this.loading = false
+      }
+    }
   },
 };
 </script>
@@ -93,47 +194,64 @@ export default {
           <div class="row">
             <div class="col-12">
               <!--  Table -->
-              <table class="table align-middle table-nowrap mb-0">
-                <thead class="table-light">
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Tên lĩnh vực</th>
-                    <th scope="col">Mô tả</th>
-                    <th scope="col">Thao tác</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-if="data.length <= 0" class="text-center">
-                    <td colspan="6">Không tìm thấy dữ liệu</td>
-                  </tr>
-                  <tr v-else v-for="(item, index) in data" :key="item.id">
-                    <td>{{ ++index }}</td>
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.description }}</td>
-                    <td>
-                      <div class="hstack gap-3 fs-15">
-                        <a href="javascript:void(0);" class="link-info"
-                          ><i class="ri-newspaper-line"></i
-                        ></a>
-                        <a
-                          href="#ChinhSua"
-                          class="link-primary edit-btn"
-                          data-bs-toggle="modal"
-                          data-bs-target="#chinh-sua"
-                          ><i class="ri-edit-2-line"></i
-                        ></a>
-                        <a
-                          href="javascript:void(0);"
-                          class="link-danger"
-                          data-bs-toggle="modal"
-                          data-bs-target="#delete"
-                          ><i class="ri-delete-bin-5-line"></i
-                        ></a>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <b-table
+                  class="table align-middle table-nowrap mb-0"
+                  :items="myProvider"
+                  :fields="fields"
+                  striped
+                  bordered
+                  responsive="sm"
+                  :per-page="perPage"
+                  :current-page="currentPage"
+                  :filter="filter"
+                  ref="tblList"
+                  primary-key="id"
+              >
+                <template v-slot:cell(STT)="data">
+                  {{ data.index + ((currentPage-1)*perPage) + 1  }}
+                </template>
+                <template v-slot:cell(ten)="data">&nbsp;&nbsp;
+                  <div style="text-align: left ; margin-top: -30px ; margin-left: 20px">
+                    {{data.item.ten}}
+                  </div>
+                </template>
+<!--                <template v-slot:cell(donVis)="data">-->
+<!--                  <router-link :to='`/linh-vuc/${data.item.id}`'>-->
+<!--                    <b-button-->
+<!--                        v-if="data.item.donVis.length > 0 " :class="countClassName"-->
+<!--                        variant="outline-success btn-sm"  >{{ data.item.donVis.length}}</b-button>-->
+<!--                    <b-button v-else :class="countClassName" variant="outline-success btn-sm"  >-->
+<!--                      {{0}}-->
+<!--                    </b-button>-->
+<!--                  </router-link>-->
+<!--                </template>-->
+                <template v-slot:cell(process)="data">
+                  <button
+                      type="button"
+                      size="sm"
+                      class="btn btn-outline btn-sm"
+                      data-toggle="tooltip" data-placement="bottom" title="Chi tiết"
+                      v-on:click="handleDetail(data.item.id)">
+                    <i class="fas fa-eye  text-warning me-1"></i>
+                  </button>
+                  <button
+                      type="button"
+                      size="sm"
+                      class="btn btn-outline btn-sm"
+                      data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
+                      v-on:click="handleUpdate(data.item.id)">
+                    <i class="fas fa-pencil-alt text-success me-1"></i>
+                  </button>
+                  <button
+                      type="button"
+                      size="sm"
+                      class="btn btn-outline btn-sm"
+                      data-toggle="tooltip" data-placement="bottom" title="Xóa"
+                      v-on:click="handleShowDeleteModal(data.item.id)">
+                    <i class="fas fa-trash-alt text-danger me-1"></i>
+                  </button>
+                </template>
+              </b-table>
             </div>
           </div>
           <div
@@ -199,7 +317,7 @@ export default {
             <span class="text-danger">*</span>
           </label>
           <input
-              type="text"
+              type="number"
               class="form-control"
               id="so-thu-tu"
               name="so-thu-tu"
