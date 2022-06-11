@@ -5,6 +5,7 @@ import appConfig from "../../../../app.config.json";
 import {required} from "vuelidate/lib/validators";
 import { data } from "./data";
 import ChinhSua from "./chinhsua.vue";
+import {linhVucModel} from "@/models/linhVucModel";
 
 export default {
   page: {
@@ -29,24 +30,37 @@ export default {
         },
       ],
       data: data,
-      form: {
-        id: "",
-      },
-      submitted: false,
-
+      model: linhVucModel.baseJson(),
     };
-  },
-  validations: {
-    model: {
-      name: {required},
-      description: {required},
-    }
   },
   components: { Layout, PageHeader },
   methods: {
-    HandleSubmit(e){
+    async HandleSubmit(e){
       e.preventDefault();
-      console.log("handle submit");
+      console.log("handle submit", this.model);
+      if(
+          this.model.id != 0 &&
+          this.model.id != null &&
+          this.model.id
+      ){
+        //Update model
+        await this.$store.dispatch("linhVucStore/update", this.model).then((res) => {
+          if (res.resultCode === 'SUCCESS') {
+            this.showModal = false;
+            this.model = linhVucModel.baseJson()
+            this.$refs.tblList.refresh()
+          }
+        })
+      }else{
+        //Create model
+        await this.$store.dispatch("linhVucStore/create", linhVucModel.toJson(this.model)).then((res) => {
+          if (res.resultCode === 'SUCCESS') {
+            this.showModal = false;
+            this.model = linhVucModel.baseJson()
+            this.$refs.tblList.refresh()
+          }
+        });
+      }
     },
   },
 };
@@ -56,7 +70,7 @@ export default {
   <Layout>
     <PageHeader :title="title" :items="items" />
 
-    <div class="row page-vanbanden">
+    <div class="row page-linhvuc">
       <div class="col-xl-12">
         <div class="card">
           <div class="card-header align-items-center d-flex">
@@ -167,30 +181,40 @@ export default {
     >
       <form class="" @submit="HandleSubmit">
         <div class="mb-3">
-          <label for="name" class="form-label">Tên lĩnh vực</label>
+          <label for="name" class="form-label">
+            Tên lĩnh vực
+            <span class="text-danger">*</span>
+          </label>
           <input
               type="text"
               class="form-control"
               id="name"
-              v-model.trim="model.name"
               name="name"
-              :class="{'is-invalid' : submitted && $v.model.name.$error,}"
+              v-model="model.ten"
           />
-          <div
-              v-if="submitted && !$v.model.name.required"
-              class="invalid-feedback"
-          >
-            Tên lĩnh vực không được bỏ trống.
-          </div>
+        </div>
+        <div class="mb-3">
+          <label for="name" class="form-label">
+            Số thứ tự
+            <span class="text-danger">*</span>
+          </label>
+          <input
+              type="text"
+              class="form-control"
+              id="so-thu-tu"
+              name="so-thu-tu"
+              v-model="model.thuTu"
+          />
         </div>
         <div class="mb-3">
           <label for="description" class="form-label">Mô tả</label>
           <textarea
               type="text"
               class="form-control"
-              id="description"
-              name="description"
+              id="mo-ta"
+              name="mo-ta"
               rows="2"
+              v-model="model.moTa"
           />
         </div>
         <div class="d-flex justify-content-end">
