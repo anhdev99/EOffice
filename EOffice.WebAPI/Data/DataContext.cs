@@ -29,7 +29,11 @@ namespace EOffice.WebAPI.Data
         private readonly IMongoCollection<Warning> _warning;
         private readonly IMongoCollection<TrangThai> _trangThai;
         private readonly IMongoCollection<ModuleTrangThai> _moduleTrangThai;
-
+        private readonly IMongoCollection<Notify> _notify;
+        private readonly IMongoCollection<VanBanDen> _vanBanDen;
+        private readonly IMongoCollection<VanBanDi> _vanBanDi;
+        private readonly IMongoCollection<LichCongTac> _lichCongTac;
+        
         private readonly IDbSettings _settings;
         public DataContext(IDbSettings settings)
         {
@@ -62,6 +66,10 @@ namespace EOffice.WebAPI.Data
             _warning = _context.GetCollection<Warning>(_settings.WarningCollectionName);
             _trangThai = _context.GetCollection<TrangThai>(_settings.TrangThaiCollectionName);
             _moduleTrangThai = _context.GetCollection<ModuleTrangThai>(_settings.ModuleTrangThaiCollectionName);
+            _notify = _context.GetCollection<Notify>(_settings.NotifyCollectionName);
+            _vanBanDen = _context.GetCollection<VanBanDen>(_settings.VanBanDenCollectionName);
+            _vanBanDi = _context.GetCollection<VanBanDi>(_settings.VanBanDiCollectionName);
+            _lichCongTac = _context.GetCollection<LichCongTac>(_settings.VanBanDiCollectionName);
         }
         
         public IMongoDatabase Database
@@ -92,5 +100,9 @@ namespace EOffice.WebAPI.Data
         public IMongoCollection<Warning> Warning { get => _warning; }
         public IMongoCollection<TrangThai> TrangThai { get => _trangThai; }
         public IMongoCollection<ModuleTrangThai> ModuleTrangThai { get => _moduleTrangThai; }
+        public IMongoCollection<Notify> Notify { get => _notify; }
+        public IMongoCollection<VanBanDen> VanBanDen { get => _vanBanDen; }
+        public IMongoCollection<VanBanDi> VanBanDi { get => _vanBanDi; }
+        public IMongoCollection<LichCongTac> LichCongTac { get => _lichCongTac; }
     }
 }

@@ -23,4 +23,8 @@
     <Folder Include="Files" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="APIs\.DS_Store" />
+  </ItemGroup>
+
 </Project>
