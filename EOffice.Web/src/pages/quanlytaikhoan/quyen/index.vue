@@ -199,6 +199,7 @@ export default {
             <vue3-tree-vue :items="tree"
                            :isCheckable="true"
                            :hideGuideLines="false"
+                           v-model:checkedItems="item"
                           />
           </div>
         </div>

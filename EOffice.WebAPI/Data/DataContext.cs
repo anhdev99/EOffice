@@ -1,3 +1,4 @@
+using System.Security.Authentication;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using EOffice.WebAPI.Models;
@@ -38,8 +39,18 @@ namespace EOffice.WebAPI.Data
         public DataContext(IDbSettings settings)
         {
             _settings = settings;
-            var client = new MongoClient(_settings.ConnectionString);
-            
+
+            MongoClientSettings settings1 = new MongoClientSettings();
+            settings1.Server = new MongoServerAddress("anhdev99.com", 27017);
+            settings1.UseTls = false;
+            settings1.SslSettings = new SslSettings();
+            settings1.SslSettings.EnabledSslProtocols = SslProtocols.Tls12;
+
+            MongoIdentity identity = new MongoInternalIdentity("EOffice", "admin");
+            MongoIdentityEvidence evidence = new PasswordEvidence("DongThap@123");
+
+            settings1.Credential = new MongoCredential("SCRAM-SHA-1", identity, evidence);
+             var client = new MongoClient(settings1);
             if (client != null)
             {
                 _context = client.GetDatabase(_settings.DatabaseName);
