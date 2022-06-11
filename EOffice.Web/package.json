@@ -72,6 +72,7 @@
     "vue3-google-map": "^0.8.3",
     "vue3-loading-overlay": "^0.0.0",
     "vue3-quill": "^0.2.6",
+    "vue3-tree-vue": "^1.0.15",
     "vue3-treeselect": "^0.1.10",
     "vuelidate": "^0.7.7",
     "vuevectormap": "^1.0.8",

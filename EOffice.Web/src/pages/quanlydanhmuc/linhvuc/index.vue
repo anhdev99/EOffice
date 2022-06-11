@@ -33,18 +33,6 @@ export default {
   },
   components: { Layout, PageHeader, ThemMoi, ChinhSua },
   methods: {
-    ThemMoi() {
-      document.getElementById("ThemMoi").reset();
-      document.getElementById("CreateModalLabel").innerHTML =
-        "Thêm mới lĩnh vực";
-      document.getElementById("ThemMoi").style.display = "block";
-    },
-    ChinhSua() {
-      document.getElementById("ChinhSua").reset();
-      document.getElementById("EditModalLabel").innerHTML =
-        "Chỉnh sửa lĩnh vực";
-      document.getElementById("ChinhSua").style.display = "block";
-    },
   },
 };
 </script>
@@ -67,7 +55,7 @@ export default {
                   class="btn btn-primary add-btn btn-sm"
                   data-bs-toggle="modal"
                   href="#ThemMoi"
-                  @click="ThemMoi"
+                  data-bs-target="#them-moi"
                 >
                   <i class="ri-add-line align-bottom me-1"></i> Thêm mới
                 </button>
@@ -103,7 +91,7 @@ export default {
                           href="#ChinhSua"
                           class="link-primary edit-btn"
                           data-bs-toggle="modal"
-                          @click="ChinhSua"
+                          data-bs-target="#chinh-sua"
                           ><i class="ri-edit-2-line"></i
                         ></a>
                         <a
@@ -158,7 +146,7 @@ export default {
     <!-- Modal add -->
     <div
       class="modal fade zoomIn"
-      id="ThemMoi"
+      id="them-moi"
       tabindex="-1"
       aria-labelledby="CreateModalLabel"
       aria-hidden="true"
@@ -198,7 +186,7 @@ export default {
     <!-- Modal edit -->
     <div
       class="modal fade zoomIn"
-      id="ChinhSua"
+      id="chinh-sua"
       tabindex="-1"
       aria-labelledby="EditModalLabel"
       aria-hidden="true"

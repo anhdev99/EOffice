@@ -12,38 +12,38 @@ export default {
 </script>
 
 <template>
-  <form id="addform">
+  <form id="editform">
     <div class="modal-body">
       <ul class="nav nav-tabs mb-3" role="tablist">
         <li class="nav-item">
           <a
-            class="nav-link active"
-            data-bs-toggle="tab"
-            href="#thongtinchinh"
-            role="tab"
-            aria-selected="false"
+              class="nav-link active"
+              data-bs-toggle="tab"
+              href="#thongtinchinh"
+              role="tab"
+              aria-selected="false"
           >
             Thông tin chính
           </a>
         </li>
         <li class="nav-item">
           <a
-            class="nav-link"
-            data-bs-toggle="tab"
-            href="#butphelanhdao"
-            role="tab"
-            aria-selected="false"
+              class="nav-link"
+              data-bs-toggle="tab"
+              href="#butphelanhdao"
+              role="tab"
+              aria-selected="false"
           >
             Bút phê lãnh đạo
           </a>
         </li>
         <li class="nav-item">
           <a
-            class="nav-link"
-            data-bs-toggle="tab"
-            href="#xulyvanban"
-            role="tab"
-            aria-selected="false"
+              class="nav-link"
+              data-bs-toggle="tab"
+              href="#xulyvanban"
+              role="tab"
+              aria-selected="false"
           >
             Đơn vị nhận/ Xử lý văn bản
           </a>

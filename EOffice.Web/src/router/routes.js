@@ -227,6 +227,15 @@ export default [
     component: () => import("../pages/quanlytaikhoan/taikhoan/index"),
   },
   {
+    path: "/menu",
+    name: "menu",
+    meta: {
+      title: "Menu",
+      authRequired: true,
+    },
+    component: () => import("../pages/quanlytaikhoan/menu/index"),
+  },
+  {
     path: "/vai-tro",
     name: "vai-tro",
     meta: {
