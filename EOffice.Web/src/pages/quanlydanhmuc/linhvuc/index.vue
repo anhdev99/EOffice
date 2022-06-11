@@ -77,15 +77,19 @@ export default {
     };
   },
   components: { Layout, PageHeader },
+  created() {
+    this.myProvider()
+  },
   methods: {
     async handleUpdate(id) {
       await this.$store.dispatch("LinhVucStore/getById", id).then((res) => {
         if (res.resultCode === 'SUCCESS') {
           this.model = linhVucModel.fromJson(res.data);
           this.showModal = true;
+          this.myProvider()
         } else {
           // this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
-          this.$refs.tblList.refresh()
+          this.myProvider()
         }
       });
     },
@@ -126,7 +130,7 @@ export default {
           if (res.resultCode === 'SUCCESS') {
             this.showModal = false;
             this.model = linhVucModel.baseJson()
-            this.$refs.tblList.refresh()
+            this.myProvider()
           }
         })
       }else{
@@ -135,29 +139,34 @@ export default {
           if (res.resultCode === 'SUCCESS') {
             this.showModal = false;
             this.model = linhVucModel.baseJson()
-            this.$refs.tblList.refresh()
+            this.myProvider()
           }
         });
       }
     },
     myProvider (ctx) {
       const params = {
-        start: ctx.currentPage,
-        limit: ctx.perPage,
+        start: 0,
+        limit: this.perPage,
         content: this.filter,
-        sortBy: ctx.sortBy,
-        sortDesc: ctx.sortDesc,
+        sortBy: "",
+        sortDesc: false,
       }
       this.loading = true
 
       try {
         let promise =  this.$store.dispatch("linhVucStore/getPagingParams", params)
         return promise.then(resp => {
-          let items = resp.data.data
-          this.totalRows = resp.data.totalRows
-          this.numberOfElement = resp.data.data.length
-          this.loading = false
-          return items || []
+          if(resp.resultCode == "SUCCESS"){
+            console.log(resp.data)
+            let items = resp.data.data
+            this.totalRows = resp.data.totalRows
+            this.numberOfElement = resp.data.data.length
+            this.loading = false
+            this.data = items;
+            return items || []
+          }
+        return [];
         })
       } finally {
         this.loading = false
@@ -196,7 +205,7 @@ export default {
               <!--  Table -->
               <b-table
                   class="table align-middle table-nowrap mb-0"
-                  :items="myProvider"
+                  :items="data"
                   :fields="fields"
                   striped
                   bordered
@@ -259,30 +268,24 @@ export default {
           >
             <div class="col-sm">
               <div class="text-muted">
-                Hiển thị<span class="fw-semibold">4</span> of
-                <span class="fw-semibold">125</span> kết quả
+                Hiển thị<span class="fw-semibold">{{data.length}}</span> of
+                <span class="fw-semibold">{{totalRows}}</span> kết quả
               </div>
             </div>
             <div class="col-sm-auto">
-              <ul
-                class="pagination pagination-separated pagination-sm justify-content-center justify-content-sm-start mb-0"
-              >
-                <li class="page-item disabled">
-                  <a href="#" class="page-link">←</a>
-                </li>
-                <li class="page-item">
-                  <a href="#" class="page-link">1</a>
-                </li>
-                <li class="page-item active">
-                  <a href="#" class="page-link">2</a>
-                </li>
-                <li class="page-item">
-                  <a href="#" class="page-link">3</a>
-                </li>
-                <li class="page-item">
-                  <a href="#" class="page-link">→</a>
-                </li>
-              </ul>
+              <div class="col">
+                <div
+                    class="dataTables_paginate paging_simple_numbers float-end">
+                  <ul class="pagination pagination-rounded mb-0">
+                    <!-- pagination -->
+                    <b-pagination
+                        v-model="currentPage"
+                        :total-rows="totalRows"
+                        :per-page="perPage"
+                    ></b-pagination>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -296,6 +299,7 @@ export default {
         title="Thông tin lĩnh vực"
         header-class="bg-primary-dark modal-title p-3"
         hide-footer
+        v-model="showModal"
     >
       <form class="" @submit="HandleSubmit">
         <div class="mb-3">

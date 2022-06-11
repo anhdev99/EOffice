@@ -133,45 +133,46 @@ export default {
         </div>
       </div>
     </div>
-  </Layout>
-  <!-- modal -->
-  <div
-    class="modal fade zoomIn"
-    id="xem-thong-tin"
-    tabindex="-1"
-    aria-hidden="true"
-  >
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content border-0">
-        <div class="modal-header p-3 bg-primary-dark">
-          <h5 class="modal-title">Xem thông tin</h5>
-          <div class="d-flex">
-            <button
-              type="button"
-              class="btn btn-sm btn-danger waves-effect waves-light me-2 d-flex align-items-center"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-              id="close-modal"
-            >
-              <i class="ri-close-line me-1"></i>
-              Đóng
-            </button>
+    <div
+        class="modal fade zoomIn"
+        id="xem-thong-tin"
+        tabindex="-1"
+        aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0">
+          <div class="modal-header p-3 bg-primary-dark">
+            <h5 class="modal-title">Xem thông tin</h5>
+            <div class="d-flex">
+              <button
+                  type="button"
+                  class="btn btn-sm btn-danger waves-effect waves-light me-2 d-flex align-items-center"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                  id="close-modal"
+              >
+                <i class="ri-close-line me-1"></i>
+                Đóng
+              </button>
+            </div>
           </div>
-        </div>
-        <div class="modal-body">
-          <xem-thong-tin />
-        </div>
-        <div class="modal-footer">
-          <div class="mx-auto">
-            <a href="javascript:void(0);" class="btn btn-link fw-medium">
-              Chuyển tiếp
-              <i class="ri-arrow-right-line ms-1 align-middle"></i>
-            </a>
+          <div class="modal-body">
+            <xem-thong-tin />
+          </div>
+          <div class="modal-footer">
+            <div class="mx-auto">
+              <a href="javascript:void(0);" class="btn btn-link fw-medium">
+                Chuyển tiếp
+                <i class="ri-arrow-right-line ms-1 align-middle"></i>
+              </a>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </Layout>
+  <!-- modal -->
+
 </template>
 <style>
 .modal-title {
