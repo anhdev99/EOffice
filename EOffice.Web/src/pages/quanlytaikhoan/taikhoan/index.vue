@@ -2,6 +2,7 @@
 import Layout from "@/layouts/main";
 import PageHeader from "@/components/page-header";
 import appConfig from "../../../../app.config.json";
+import {required} from "vuelidate/lib/validators";
 import { data } from "./data";
 import ThemMoi from "./themmoi.vue";
 import ChinhSua from "./chinhsua.vue";
@@ -165,7 +166,6 @@ export default {
     <!-- Modal add -->
     <div
       class="modal fade zoomIn"
-      id="them-moi"
       tabindex="-1"
       aria-hidden="true"
     >
@@ -200,6 +200,17 @@ export default {
         </div>
       </div>
     </div>
+
+    <b-modal
+        id="them-moi"
+        ref="modal"
+        title="Thêm mới tài khoản"
+        header-class="bg-primary-dark pb-3 modal-title"
+    >
+      <form ref="form" @submit="HandleSubmit">
+
+      </form>
+    </b-modal>
 
     <!-- Modal edit -->
     <div

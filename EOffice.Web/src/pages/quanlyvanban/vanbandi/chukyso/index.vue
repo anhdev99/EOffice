@@ -34,18 +34,7 @@ export default {
   },
   components: { Layout, PageHeader, KySo, XacThuc },
   methods: {
-    ThemMoi() {
-      document.getElementById("ThemMoi").reset();
-      document.getElementById("CreateModalLabel").innerHTML =
-        "Thêm mới văn bản đi";
-      document.getElementById("ThemMoi").style.display = "block";
-    },
-    KySo() {
-      document.getElementById("KySo").reset();
-      document.getElementById("EditModalLabel").innerHTML =
-        "Chỉnh sửa văn bản đi";
-      document.getElementById("KySo").style.display = "block";
-    },
+
   },
 };
 </script>
@@ -109,10 +98,9 @@ export default {
                           ><i class="ri-download-2-line"></i
                         ></a>
                         <a
-                          href="#KySo"
                           class="link-primary edit-btn"
                           data-bs-toggle="modal"
-                          @click="KySo"
+                          data-bs-target="#ky-so"
                           ><i class="las la-feather-alt"></i
                         ></a>
                         <a href="javascript:void(0);" class="link-danger"
@@ -132,7 +120,7 @@ export default {
     <!-- Edit modal form -->
     <div
       class="modal fade zoomIn"
-      id="KySo"
+      id="ky-so"
       tabindex="-1"
       aria-labelledby="EditModalLabel"
       aria-hidden="true"

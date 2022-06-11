@@ -29,6 +29,10 @@ export default {
         },
       ],
       data: data,
+      form: {
+        id: "",
+
+      }
     };
   },
   components: { Layout, PageHeader, ThemMoi, ChinhSua },
@@ -54,8 +58,7 @@ export default {
                 <button
                   class="btn btn-primary add-btn btn-sm"
                   data-bs-toggle="modal"
-                  href="#ThemMoi"
-                  data-bs-target="#them-moi"
+                  data-bs-target="#create-and-update"
                 >
                   <i class="ri-add-line align-bottom me-1"></i> Thêm mới
                 </button>
@@ -146,7 +149,7 @@ export default {
     <!-- Modal add -->
     <div
       class="modal fade zoomIn"
-      id="them-moi"
+      id="create-and-update"
       tabindex="-1"
       aria-labelledby="CreateModalLabel"
       aria-hidden="true"
@@ -182,6 +185,20 @@ export default {
         </div>
       </div>
     </div>
+
+    <b-modal
+        id="create-and-update"
+        ref="modal"
+        v-if=""
+    >
+
+    </b-modal>
+
+    <b-modal
+      id="them-moi"
+    >
+
+    </b-modal>
 
     <!-- Modal edit -->
     <div

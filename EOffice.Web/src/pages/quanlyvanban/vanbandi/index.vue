@@ -2,8 +2,8 @@
 import Layout from "../../../layouts/main";
 import PageHeader from "@/components/page-header";
 import appConfig from "../../../../app.config.json";
-import { data } from "./data";
-import VanBanDi from "./formvanbandi.vue";
+import {data} from "./data";
+import VanBanDi from "./modalvanbandi.vue";
 import PhanCong from "./phancong.vue";
 
 export default {
@@ -32,22 +32,11 @@ export default {
       data: data,
     };
   },
-  components: { Layout, PageHeader, VanBanDi, PhanCong },
+  components: {Layout, PageHeader, VanBanDi, PhanCong},
   methods: {
-    ThemMoi() {
-      document.getElementById("ThemMoi").reset();
-      document.getElementById("CreateModalLabel").innerHTML =
-        "Thêm mới văn bản đi";
-      document.getElementById("ThemMoi").style.display = "block";
-    },
-    ChinhSua() {
-      document.getElementById("ChinhSua").reset();
-      document.getElementById("EditModalLabel").innerHTML =
-        "Chỉnh sửa văn bản đi";
-      document.getElementById("ChinhSua").style.display = "block";
-    },
-    handleSubmit(){
-
+    HandleSubmit(e){
+      e.preventDefault();
+      console.log("handle submit");
     }
   },
 };
@@ -55,7 +44,7 @@ export default {
 
 <template>
   <Layout>
-    <PageHeader :title="title" :items="items" />
+    <PageHeader :title="title" :items="items"/>
 
     <div class="row page-vanbanden">
       <div class="col-xl-12">
@@ -65,13 +54,12 @@ export default {
 
             <div class="flex-shrink-0">
               <div
-                class="form-check form-switch form-switch-right form-switch-md"
+                  class="form-check form-switch form-switch-right form-switch-md"
               >
                 <button
-                  class="btn btn-primary add-btn btn-sm"
-                  data-bs-toggle="modal"
-                  href="#ThemMoi"
-                  @click="ThemMoi"
+                    class="btn btn-primary add-btn btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#them-moi"
                 >
                   <i class="ri-add-line align-bottom me-1"></i> Thêm mới
                 </button>
@@ -83,69 +71,68 @@ export default {
               <!--  Table -->
               <table class="table align-middle table-nowrap mb-0">
                 <thead class="table-light">
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Số Lưu CV</th>
-                    <th scope="col">Số CB đi</th>
-                    <th scope="col">Trích yếu</th>
-                    <th scope="col">Loại văn bản</th>
-                    <th scope="col">Trạng thái</th>
-                    <th scope="col">Cơ quan nhận</th>
-                    <th scope="col">Ngày nhập</th>
-                    <th scope="col">Thao tác</th>
-                  </tr>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Số Lưu CV</th>
+                  <th scope="col">Số CB đi</th>
+                  <th scope="col">Trích yếu</th>
+                  <th scope="col">Loại văn bản</th>
+                  <th scope="col">Trạng thái</th>
+                  <th scope="col">Cơ quan nhận</th>
+                  <th scope="col">Ngày nhập</th>
+                  <th scope="col">Thao tác</th>
+                </tr>
                 </thead>
                 <tbody>
-                  <tr v-if="data.length <= 0" class="text-center">
-                    <td colspan="6">Không tìm thấy dữ liệu</td>
-                  </tr>
-                  <tr v-else v-for="(item, index) in data" :key="item.id">
-                    <td>{{ ++index }}</td>
-                    <td>{{ item.soLuuCV }}</td>
-                    <td>{{ item.soCVDi }}</td>
-                    <td>{{ item.trichYeu }}</td>
-                    <td>{{ item.loaiVanBan }}</td>
-                    <td v-if="item.trangThai == 0">
+                <tr v-if="data.length <= 0" class="text-center">
+                  <td colspan="6">Không tìm thấy dữ liệu</td>
+                </tr>
+                <tr v-else v-for="(item, index) in data" :key="item.id">
+                  <td>{{ ++index }}</td>
+                  <td>{{ item.soLuuCV }}</td>
+                  <td>{{ item.soCVDi }}</td>
+                  <td>{{ item.trichYeu }}</td>
+                  <td>{{ item.loaiVanBan }}</td>
+                  <td v-if="item.trangThai == 0">
                       <span class="badge badge-soft-secondary"
-                        >Vừa tiếp nhận</span
+                      >Vừa tiếp nhận</span
                       >
-                    </td>
-                    <td v-if="item.trangThai == 1">
-                      <span class="badge badge-soft-primary">Đã tiếp nhận</span>
-                    </td>
-                    <td v-if="item.trangThai == 2">
-                      <span class="badge badge-soft-success">Hoàn thành</span>
-                    </td>
-                    <td>{{ item.coQuanNhan }}</td>
-                    <td>{{ item.ngayNhap }}</td>
-                    <td>
-                      <div class="hstack gap-3 fs-15">
-                        <a href="javascript:void(0);" class="link-info"
-                          ><i class="ri-newspaper-line"></i
-                        ></a>
-                        <a href="javascript:void(0);" class="link-info"
-                          ><i class="ri-download-2-line"></i
-                        ></a>
-                        <a
+                  </td>
+                  <td v-if="item.trangThai == 1">
+                    <span class="badge badge-soft-primary">Đã tiếp nhận</span>
+                  </td>
+                  <td v-if="item.trangThai == 2">
+                    <span class="badge badge-soft-success">Hoàn thành</span>
+                  </td>
+                  <td>{{ item.coQuanNhan }}</td>
+                  <td>{{ item.ngayNhap }}</td>
+                  <td>
+                    <div class="hstack gap-3 fs-15">
+                      <a href="javascript:void(0);" class="link-info"
+                      ><i class="ri-newspaper-line"></i
+                      ></a>
+                      <a href="javascript:void(0);" class="link-info"
+                      ><i class="ri-download-2-line"></i
+                      ></a>
+                      <a
                           href="javascript:void(0);"
                           class="link-info"
                           data-bs-toggle="modal"
                           data-bs-target="#phancong"
-                          ><i class="ri-user-add-line"></i
-                        ></a>
-                        <a
-                          href="#ChinhSua"
+                      ><i class="ri-user-add-line"></i
+                      ></a>
+                      <a
                           class="link-primary edit-btn"
                           data-bs-toggle="modal"
-                          @click="ChinhSua"
-                          ><i class="ri-edit-2-line"></i
-                        ></a>
-                        <a href="javascript:void(0);" class="link-danger"
-                          ><i class="ri-delete-bin-5-line"></i
-                        ></a>
-                      </div>
-                    </td>
-                  </tr>
+                          data-bs-target="#chinh-sua"
+                      ><i class="ri-edit-2-line"></i
+                      ></a>
+                      <a href="javascript:void(0);" class="link-danger"
+                      ><i class="ri-delete-bin-5-line"></i
+                      ></a>
+                    </div>
+                  </td>
+                </tr>
                 </tbody>
               </table>
             </div>
@@ -156,53 +143,55 @@ export default {
 
     <!--  create modal form  -->
     <div
-      class="modal fade zoomIn"
-      id="ThemMoi"
-      tabindex="-1"
-      aria-labelledby="CreateModalLabel"
-      aria-hidden="true"
+        class="modal fade zoomIn"
+        id="them-moi"
+        tabindex="-1"
+        aria-labelledby="CreateModalLabel"
+        aria-hidden="true"
     >
       <div class="modal-dialog modal-dialog-centered modal-fullscreen">
         <div class="modal-content border-0">
-          <div class="modal-header p-3 bg-primary-dark">
-            <h5 class="modal-title" id="CreateModalLabel">
-              Thêm mới văn bản đi
-            </h5>
-            <div class="d-flex">
-              <button
-                type="button"
-                class="btn btn-sm btn-primary waves-effect waves-light me-2 d-flex align-items-center"
-              >
-                <i class="ri-save-3-fill me-1"></i>
-                Lưu
-              </button>
+          <form class="" @submit="HandleSubmit" novalidate>
+            <div class="modal-header p-3 bg-primary-dark">
+              <h5 class="modal-title" id="CreateModalLabel">
+                Thêm mới văn bản đi
+              </h5>
+              <div class="d-flex">
+                <button
+                    type="submit"
+                    class="btn btn-sm btn-primary waves-effect waves-light me-2 d-flex align-items-center"
+                >
+                  <i class="ri-save-3-fill me-1"></i>
+                  Lưu
+                </button>
 
-              <button
-                type="button"
-                class="btn btn-sm btn-danger waves-effect waves-light me-2 d-flex align-items-center"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-                id="close-modal"
-              >
-                <i class="ri-close-line me-1"></i>
-                Đóng
-              </button>
+                <button
+                    type="button"
+                    class="btn btn-sm btn-danger waves-effect waves-light me-2 d-flex align-items-center"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                    id="close-modal"
+                >
+                  <i class="ri-close-line me-1"></i>
+                  Đóng
+                </button>
+              </div>
             </div>
-          </div>
-          <!-- start content -->
-          <van-ban-di :data.sync="data" />
-          <!-- end content -->
+            <!-- start content -->
+            <van-ban-di/>
+            <!-- end content -->
+          </form>
         </div>
       </div>
     </div>
 
     <!-- Edit modal form -->
     <div
-      class="modal fade zoomIn"
-      id="ChinhSua"
-      tabindex="-1"
-      aria-labelledby="EditModalLabel"
-      aria-hidden="true"
+        class="modal fade zoomIn"
+        id="chinh-sua"
+        tabindex="-1"
+        aria-labelledby="EditModalLabel"
+        aria-hidden="true"
     >
       <div class="modal-dialog modal-dialog-centered modal-fullscreen">
         <div class="modal-content border-0">
@@ -212,19 +201,19 @@ export default {
             </h5>
             <div class="d-flex">
               <button
-                type="button"
-                class="btn btn-sm btn-primary waves-effect waves-light me-2 d-flex align-items-center"
+                  type="button"
+                  class="btn btn-sm btn-primary waves-effect waves-light me-2 d-flex align-items-center"
               >
                 <i class="ri-save-3-fill me-1"></i>
                 Lưu
               </button>
 
               <button
-                type="button"
-                class="btn btn-sm btn-danger waves-effect waves-light me-2 d-flex align-items-center"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-                id="close-modal"
+                  type="button"
+                  class="btn btn-sm btn-danger waves-effect waves-light me-2 d-flex align-items-center"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                  id="close-modal"
               >
                 <i class="ri-close-line me-1"></i>
                 Đóng
@@ -232,32 +221,32 @@ export default {
             </div>
           </div>
           <!-- start content -->
-          <van-ban-di />
+          <van-ban-di/>
           <!-- end content -->
         </div>
       </div>
     </div>
     <!-- Modal phân công -->
     <div
-      class="modal fade zoomIn"
-      id="phancong"
-      tabindex="-1"
-      aria-labelledby="phancongLabel"
-      aria-hidden="true"
+        class="modal fade zoomIn"
+        id="phancong"
+        tabindex="-1"
+        aria-labelledby="phancongLabel"
+        aria-hidden="true"
     >
       <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0">
           <div class="modal-header p-3 bg-primary-dark">
             <h5 class="modal-title" id="phancongLabel">Phân công</h5>
             <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
             ></button>
           </div>
           <div class="modal-body p-3">
-            <phan-cong />
+            <phan-cong/>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-light" data-bs-dismiss="modal">
@@ -274,6 +263,7 @@ export default {
 .modal-title {
   color: #fff;
 }
+
 .bg-primary-dark {
   background: linear-gradient(135deg, #06548e, #ffffff);
   box-shadow: 0px 3px 0px #06548e;
