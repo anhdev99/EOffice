@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using MongoDB.Driver;
@@ -151,8 +152,9 @@ namespace EOffice.WebAPI.Services
 
         public async Task<List<ChucVu>> Get()
         {
-            return await _context.ChucVu.Find(x => x.IsDeleted != true).SortByDescending(x => x.ThuTu)
+            var data = await _context.ChucVu.Find(x => x.IsDeleted != true).SortByDescending(x => x.ThuTu)
                 .ToListAsync();
+            return data.Select(x => new ChucVu(x)).ToList();
         }
 
         public async Task<ChucVu> GetById(string id)

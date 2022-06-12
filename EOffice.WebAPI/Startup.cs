@@ -49,10 +49,16 @@ namespace EOffice.WebAPI
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyOrigin()
+                    builder => builder
                         .AllowAnyMethod()
-                        .AllowAnyHeader());
+                        .AllowAnyHeader()
+                        .WithOrigins("http://localhost:8080", 
+                            "https://eoffice2.dthu.edu.vn")
+                        .AllowCredentials()
+                );
             });
+            
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

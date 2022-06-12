@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -127,6 +128,30 @@ namespace EOffice.WebAPI.APIs
                 return Ok(
                     new ResultResponse<PagingModel<ChucVu>>()
                         .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+        
+        [HttpGet]
+        [Route("get-all")]
+        public async Task<IActionResult> GetAll()
+        {
+            try
+            {
+                var data = await _chucVuService.Get();
+
+                return Ok(
+                    new ResultResponse<List<ChucVu>>()
+                        .WithData(data)
                         .WithCode(EResultResponse.SUCCESS.ToString())
                         .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
                 );

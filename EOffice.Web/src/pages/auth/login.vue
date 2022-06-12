@@ -26,12 +26,20 @@ export default {
   },
   data() {
     return {
+      // model:{
+      //   email: "admin",
+      //   password: "DongThap@123",
+      // },
       email: "admin",
-      password: "123456",
+      password: "DThU@123",
       submitted: false,
       authError: null,
       tryingToLogIn: false,
       isAuthError: false,
+      modelAuth:{
+        isAuthError: false,
+        message: null
+      },
     };
   },
   validations: {
@@ -120,6 +128,33 @@ export default {
         }, 1000);
       }
     },
+    async Login(e){
+      e.preventDefault();
+      await this.$store.dispatch("authStore/login",{userName: this.email, password: this.password}).then(async (res) => {
+        if (res.resultCode === 'SUCCESS') {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          localStorage.setItem('auth-user', JSON.stringify(res.data));
+          localStorage.setItem("user-token", JSON.stringify(res.data.token));
+          // Vue.prototype.$auth_token = res.data.token;
+          this.showModal = false;
+          this.model = {};
+          this.modelAuth.isAuthError = false;
+          window.location.href = '/'
+        } else {
+          if(res.code == 400){
+            this.modelAuth.isAuthError = true;
+            this.modelAuth.message = "Lỗi! Hãy kiểm tra kết nối mạng!";
+          }else{
+            this.modelAuth.isAuthError = true;
+            this.modelAuth.message = res.resultString;
+          }
+        }
+
+      })
+          .finally(()=>{
+
+          });
+    }
   },
 };
 </script>
@@ -190,7 +225,7 @@ export default {
 <!--                    Không thể kết nối máy chủ-->
 <!--                  </div>-->
 
-                  <form @submit.prevent="tryToLogIn" ref="formContainer">
+                  <form @submit.prevent="Login" ref="formContainer">
                     <div class="mb-3">
                       <label for="email" class="form-label">Tài khoản</label>
                       <input

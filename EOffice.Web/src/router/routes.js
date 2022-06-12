@@ -233,7 +233,7 @@ export default [
       title: "Tài khoản",
       authRequired: true,
     },
-    component: () => import("../pages/quanlytaikhoan/taikhoan/index"),
+    component: () => import("../pages/taikhoan/index"),
   },
   {
     path: "/menu",

@@ -56,8 +56,8 @@ router.beforeEach((routeTo, routeFrom, next) => {
   } else {
     const publicPages = ['/dang-nhap', '/register', '/forgot-password'];
     const authpage = !publicPages.includes(routeTo.path);
-    const loggeduser = localStorage.getItem('user');
-
+    const loggeduser = localStorage.getItem('user-token');
+    console.log(authpage && !loggeduser)
     if (authpage && !loggeduser) {
       return next('/dang-nhap');
     }
