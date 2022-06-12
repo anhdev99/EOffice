@@ -199,7 +199,7 @@ export default {
           </div>
           <div class="col-12">
             <div class="mb-3">
-              <label class="control-label">Category</label>
+              <label class="control-label">Danh mục</label>
               <select
                   v-model="editevent.editcategory"
                   class="form-control"
