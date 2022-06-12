@@ -164,6 +164,15 @@ export default [
     component: () => import("../pages/quanlydanhmuc/loainguonvon/index"),
   },
   {
+    path: "/chuc-vu",
+    name: "chuc-vu",
+    meta: {
+      title: "Chức vụ",
+      authRequired: true,
+    },
+    component: () => import("../pages/chucVu/index"),
+  },
+  {
     path: "/loai-co-quan",
     name: "loai-co-quan",
     meta: {

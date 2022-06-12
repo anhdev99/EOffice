@@ -11,7 +11,7 @@ using EResultResponse = EOffice.WebAPI.Helpers.EResultResponse;
 namespace EOffice.WebAPI.APIs
 {
     [Route("api/v1/[controller]")]
-    [Authorize]
+    // [Authorize]
     public class ChucVuController : ControllerBase
     {
         private IChucVuService _chucVuService;
