@@ -263,6 +263,15 @@ export default [
     component: () => import("../pages/trangThai/index"),
   },
   {
+    path: "/loai-van-ban",
+    name: "loai-van-ban",
+    meta: {
+      title: "Quản lý loại văn bản",
+      authRequired: true,
+    },
+    component: () => import("../pages/loaiVanBan/index"),
+  },
+  {
     path: "/van-ban-den",
     name: "van-ban-den",
     meta: {

@@ -81,6 +81,11 @@ export const menuItems = [
         link: "/trang-thai",
       },
       {
+        id: "14",
+        label: "Loại văn bản",
+        link: "/loai-van-ban",
+      },
+      {
         id: "15",
         label: "Chức vụ",
         link: "/chuc-vu",

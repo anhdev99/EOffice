@@ -34,6 +34,7 @@ namespace EOffice.WebAPI.Installers
             services.AddScoped<IWarningService, WarningService>();
             services.AddScoped<ITrangThaiService, TrangThaiService>();
             services.AddScoped<IModuleTrangThaiService, ModuleTrangThaiService>();
+            services.AddScoped<ILoaiVanBanService, LoaiVanBanService>();
         }
     }
 }

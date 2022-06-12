@@ -12,6 +12,7 @@ namespace EOffice.WebAPI.Models
         public string MaDonVi { get; set; }
         public string Ten { get; set; }
         public string DonViCha { get; set; }
+        public string TenDonViCha { get; set; }
         public int CapDV { get; set; }
         public string MaLoaiHinhDonVi { get; set; }
         public string TenLoaiHinhDonVi { get; set; }
