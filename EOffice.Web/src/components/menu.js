@@ -74,7 +74,7 @@ export const menuItems = [
         id: "14",
         label: "Đơn vị",
         link: "/don-vi",
-        parentId: "11",
+
       },
       {
         id: "15",
