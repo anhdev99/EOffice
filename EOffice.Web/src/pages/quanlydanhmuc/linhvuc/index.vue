@@ -81,6 +81,16 @@ export default {
   created() {
     this.myProvider()
   },
+  watch:{
+    currentPage: {
+      deep: true,
+      handler(val) {
+        console.log("abc", val)
+        this.myProvider();
+      }
+    },
+  },
+
   methods: {
     async handleUpdate(id) {
       console.log("handleUpdate");
@@ -132,7 +142,7 @@ export default {
           if (res.resultCode === 'SUCCESS') {
             this.showModal = false;
             this.model = linhVucModel.baseJson()
-            this.myProvider() 
+            this.myProvider()
           }
         })
       }else{
@@ -148,7 +158,7 @@ export default {
     },
     myProvider (ctx) {
       const params = {
-        start: 0,
+        start: this.currentPage,
         limit: this.perPage,
         content: this.filter,
         sortBy: "",
@@ -277,6 +287,7 @@ export default {
                     <!-- pagination -->
                     <b-pagination
                         v-model="currentPage"
+                        :model-value.sync="currentPage"
                         :total-rows="totalRows"
                         :per-page="perPage"
                     ></b-pagination>

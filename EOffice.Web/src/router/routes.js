@@ -251,7 +251,7 @@ export default [
       title: "Quản lý vai trò",
       authRequired: true,
     },
-    component: () => import("../pages/quanlytaikhoan/quyen/index"),
+    component: () => import("../pages/role/index"),
   },
   {
     path: "/van-ban-den",

@@ -16,7 +16,7 @@ using EResultResponse = EOffice.WebAPI.Helpers.EResultResponse;
 namespace EOffice.WebAPI.APIs.Identity
 {
     [Route("api/v1/[controller]")]
-    [Authorize]
+    // [Authorize]
     public class RolesController : ControllerBase
     {
         private readonly IRoleService _roleService;
