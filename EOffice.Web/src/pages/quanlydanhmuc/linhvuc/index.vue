@@ -219,7 +219,7 @@ export default {
                   :per-page="perPage"
                   :current-page="currentPage"
                   :filter="filter"
-                  headerBgVariant="#ccc"
+                  headerBgVariant="bg-primary-dark"
                   ref="tblList"
                   primary-key="id"
               >
