@@ -42,36 +42,37 @@ export default {
       fields: [
         { key: 'STT',
           label: 'STT',
-          class: 'text-center',
+          class: 'ps-4',
           thStyle: {width: '80px', minWidth: '80px'},
-          thClass: 'hidden-sortable'
+          thClass: 'hidden-sortable py-2'
         },
         {
           key: "ten",
           label: "Tên",
-          class: 'text-center',
+          class: 'ps-4',
           sortable: true,
+          thClass: 'hidden-sortable py-2'
         },
         {
-          key: "donVis",
-          label: "Số lượng đơn vị",
-          class: 'text-center',
-          thStyle: {width: '160px', minWidth: '160px'},
-          thClass: 'hidden-sortable'
+          key: "moTa",
+          label: "Mô tả",
+          class: 'ps-4',
+          sortable: true,
+          thClass: 'hidden-sortable py-2'
         },
         {
           key: "thuTu",
           label: "Thứ tự",
-          class: 'text-center',
+          class: 'ps-4',
           thStyle: {width: '100px', minWidth: '100px'},
-          thClass: 'hidden-sortable'
+          thClass: 'hidden-sortable py-2'
         },
         {
           key: 'process',
           label: 'Xử lý',
-          class: 'text-center',
+          class: 'ps-4',
           thStyle: {width: '110px', minWidth: '110px'},
-          thClass: 'hidden-sortable'
+          thClass: 'hidden-sortable py-2'
         }
       ],
     };
@@ -82,7 +83,8 @@ export default {
   },
   methods: {
     async handleUpdate(id) {
-      await this.$store.dispatch("LinhVucStore/getById", id).then((res) => {
+      console.log("handleUpdate");
+      await this.$store.dispatch("linhVucStore/getById", id).then((res) => {
         if (res.resultCode === 'SUCCESS') {
           this.model = linhVucModel.fromJson(res.data);
           this.showModal = true;
@@ -94,7 +96,7 @@ export default {
       });
     },
     async handleDetail(id) {
-      await this.$store.dispatch("LinhVucStore/getById", id).then((res) => {
+      await this.$store.dispatch("linhVucStore/getById", id).then((res) => {
         if (res.resultCode === 'SUCCESS') {
           this.model = linhVucModel.fromJson(res.data);
           console.log("LOG DETAIL  : " , this.model)
@@ -104,7 +106,7 @@ export default {
     },
     async handleDelete() {
       if (this.model.id != 0 && this.model.id != null && this.model.id) {
-        await this.$store.dispatch("LinhVucStore/delete", this.model.id).then((res) => {
+        await this.$store.dispatch("linhVucStore/delete", this.model.id).then((res) => {
           if (res.resultCode === 'SUCCESS') {
             this.showDeleteModal = false;
             this.$refs.tblList.refresh()
@@ -193,7 +195,7 @@ export default {
                 <b-button
                   class="btn btn-primary add-btn btn-sm"
                   data-bs-toggle="modal"
-                  data-bs-target="#create-and-update"
+                  @click="showModal = true"
                 >
                   <i class="ri-add-line align-bottom me-1"></i> Thêm mới
                 </b-button>
@@ -204,36 +206,31 @@ export default {
             <div class="col-12">
               <!--  Table -->
               <b-table
-                  class="table align-middle table-nowrap mb-0"
+                  class="table-light align-middle table-nowrap mb-0"
                   :items="data"
+                  small
                   :fields="fields"
-                  striped
-                  bordered
                   responsive="sm"
                   :per-page="perPage"
                   :current-page="currentPage"
                   :filter="filter"
+                  :head-variant="light"
                   ref="tblList"
                   primary-key="id"
               >
                 <template v-slot:cell(STT)="data">
                   {{ data.index + ((currentPage-1)*perPage) + 1  }}
                 </template>
-                <template v-slot:cell(ten)="data">&nbsp;&nbsp;
-                  <div style="text-align: left ; margin-top: -30px ; margin-left: 20px">
+                <template v-slot:cell(ten)="data">
+                  <div class="ps-2">
                     {{data.item.ten}}
                   </div>
                 </template>
-<!--                <template v-slot:cell(donVis)="data">-->
-<!--                  <router-link :to='`/linh-vuc/${data.item.id}`'>-->
-<!--                    <b-button-->
-<!--                        v-if="data.item.donVis.length > 0 " :class="countClassName"-->
-<!--                        variant="outline-success btn-sm"  >{{ data.item.donVis.length}}</b-button>-->
-<!--                    <b-button v-else :class="countClassName" variant="outline-success btn-sm"  >-->
-<!--                      {{0}}-->
-<!--                    </b-button>-->
-<!--                  </router-link>-->
-<!--                </template>-->
+                <template v-slot:cell(moTa)="data">
+                  <div class="ps-2">
+                    {{data.item.moTa}}
+                  </div>
+                </template>
                 <template v-slot:cell(process)="data">
                   <button
                       type="button"
@@ -241,7 +238,7 @@ export default {
                       class="btn btn-outline btn-sm"
                       data-toggle="tooltip" data-placement="bottom" title="Chi tiết"
                       v-on:click="handleDetail(data.item.id)">
-                    <i class="fas fa-eye  text-warning me-1"></i>
+                    <i class="ri-eye-fill  text-warning me-1"></i>
                   </button>
                   <button
                       type="button"
@@ -249,7 +246,7 @@ export default {
                       class="btn btn-outline btn-sm"
                       data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
                       v-on:click="handleUpdate(data.item.id)">
-                    <i class="fas fa-pencil-alt text-success me-1"></i>
+                    <i class="ri-edit-2-fill text-success me-1"></i>
                   </button>
                   <button
                       type="button"
@@ -257,7 +254,7 @@ export default {
                       class="btn btn-outline btn-sm"
                       data-toggle="tooltip" data-placement="bottom" title="Xóa"
                       v-on:click="handleShowDeleteModal(data.item.id)">
-                    <i class="fas fa-trash-alt text-danger me-1"></i>
+                    <i class=" ri-delete-bin-fill text-danger me-1"></i>
                   </button>
                 </template>
               </b-table>
@@ -292,9 +289,8 @@ export default {
       </div>
     </div>
 
-    <!-- Modal add -->
+    <!-- Modal add and edit -->
     <b-modal
-        id="create-and-update"
         ref="modal"
         title="Thông tin lĩnh vực"
         header-class="bg-primary-dark modal-title p-3"
@@ -359,90 +355,38 @@ export default {
       </form>
     </b-modal>
     <!-- Modal edit -->
-    <div
-      class="modal fade zoomIn"
-      id="chinh-sua"
-      tabindex="-1"
-      aria-labelledby="EditModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content border-0">
-          <div class="modal-header p-3 bg-primary-dark">
-            <h5 class="modal-title" id="EditModalLabel">Chỉnh sửa lĩnh vực</h5>
-            <div class="d-flex">
-              <button
-                type="button"
-                class="btn btn-sm btn-primary waves-effect waves-light me-2 d-flex align-items-center"
-              >
-                <i class="ri-save-3-fill me-1"></i>
-                Lưu
-              </button>
-
-              <button
-                type="button"
-                class="btn btn-sm btn-danger waves-effect waves-light me-2 d-flex align-items-center"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-                id="close-modal"
-              >
-                <i class="ri-close-line me-1"></i>
-                Đóng
-              </button>
-            </div>
-          </div>
-          <div class="p-3">
-            <chinh-sua />
-          </div>
-        </div>
-      </div>
-    </div>
     <!-- Modal delete -->
-    <div
-      class="modal fade"
-      id="delete"
-      data-bs-backdrop="static"
-      data-bs-keyboard="false"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="staticBackdropLabel"
-      aria-hidden="true"
+    <b-modal
+        ref="modal"
+        content-class="p-5"
+        hide-header
+        hide-footer
+        v-model="showDeleteModal"
     >
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-body text-center p-5">
-            <lord-icon
-              src="https://cdn.lordicon.com/lupuorrc.json"
-              trigger="loop"
-              colors="primary:#121331,secondary:#08a88a"
-              style="width: 120px; height: 120px"
-            >
-            </lord-icon>
-
-            <div class="mt-4">
-              <div class="mb-3 cl-warning">
-                <i class="ri-alert-line fs-1"></i>
-              </div>
-              <p class="text-muted mb-4">Bạn thật sự muốn xóa dữ liệu.</p>
-              <div class="hstack gap-2 justify-content-center">
-                <a
-                  href="javascript:void(0);"
-                  class="btn btn-link link-danger fw-medium"
-                  data-bs-dismiss="modal"
-                  ><i class="ri-close-line me-1 align-middle"></i> Đóng</a
-                >
-                <a
-                  href="javascript:void(0);"
-                  data-bs-dismiss="modal"
-                  class="btn btn-success"
-                  >Đồng ý</a
-                >
-              </div>
-            </div>
-          </div>
+        <div class="text-center">
+            <i class="ri-error-warning-line text-warning" style="font-size: 100px;"></i>
+            <p class="fs-4">Bạn có chắc muốn xóa không?</p>
         </div>
-      </div>
-    </div>
+        <div class="d-flex justify-content-center">
+          <b-button
+              type="button"
+              class="btn btn-danger waves-effect waves-light me-2 d-flex align-items-center"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+              id="close-modal"
+              @click="showDeleteModal = false"
+          >
+            Hủy
+          </b-button>
+          <b-button
+              type="submit"
+              class="btn btn-primary waves-effect waves-light me-2 d-flex align-items-center"
+              @click="handleDelete"
+          >
+            Xóa
+          </b-button>
+        </div>
+    </b-modal>
   </Layout>
 </template>
 <style>
