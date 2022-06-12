@@ -64,7 +64,7 @@ namespace EOffice.WebAPI.Services
             };
 
             var result = await BaseMongoDb.CreateAsync(entity);
-            
+
             if (result.Entity.Id == default || !result.Success)
                 throw new ResponseMessageException().WithCode(EResultResponse.FAIL.ToString())
                     .WithMessage(DefaultMessage.CREATE_FAILURE);
@@ -97,10 +97,10 @@ namespace EOffice.WebAPI.Services
             if (!result.Success)
                 throw new ResponseMessageException().WithCode(EResultResponse.FAIL.ToString())
                     .WithMessage(DefaultMessage.UPDATE_FAILURE);
-            
+
             return entity;
         }
-        
+
         public async Task Delete(string id)
         {
             if (id == default)
@@ -147,14 +147,56 @@ namespace EOffice.WebAPI.Services
             result.TotalRows = await _context.LoaiVanBan.CountDocumentsAsync(filter);
             result.Data = await _context.LoaiVanBan.Find(filter)
                 .Sort(param.SortDesc
-                ? Builders<LoaiVanBan>
-                .Sort.Ascending(sortBy)    
-                : Builders<LoaiVanBan>
+                    ? Builders<LoaiVanBan>
+                        .Sort.Ascending(sortBy)
+                    : Builders<LoaiVanBan>
                         .Sort.Descending(sortBy))
                 .Skip(param.Skip)
                 .Limit(param.Limit)
                 .ToListAsync();
             return result;
+        }
+
+        public async Task<List<LoaiVanBanTreeVM>> GetTree()
+        {
+            var listDonVi = await _context.DonVis.Find(x => x.IsDeleted == false).SortBy(donVi => donVi.CapDV)
+                .ToListAsync();
+            var parents = listDonVi.Where(x => x.DonViCha == null).ToList();
+            List<DonViTreeVM> list = new List<DonViTreeVM>();
+            foreach (var item in parents)
+            {
+                DonViTreeVM donVi = new DonViTreeVM(item);
+                list.Add(donVi);
+                GetLoopItem(ref list, listDonVi, donVi);
+            }
+
+            return list;
+        }
+        
+        private List<DonViTreeVM> GetLoopItem(ref List<DonViTreeVM> list, List<LoaiVanBan> items, LoaiVanBanTreeVM target)
+        {
+            try
+            {
+                var coquan = items.FindAll((item) => item.DonViCha == target.Id).ToList();
+                if (coquan.Count > 0)
+                {
+                    target.Children = new List<LoaiVanBanTreeVM>();
+                    foreach (var item in coquan)
+                    {
+                        DonViTreeVM itemDV = new DonViTreeVM(item);
+                        target.Children.Add(itemDV);
+                        GetLoopItem(ref list, items, itemDV);
+                    }
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                var message = ex.Message;
+            }
+
+            return null;
         }
     }
 }

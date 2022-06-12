@@ -12,6 +12,8 @@ import flatPickr from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
 import {linhVucModel} from "@/models/linhVucModel";
 
+import PhanCong from "./phancong";
+
 export default {
   page: {
     title: "Văn bản đến",
@@ -110,7 +112,7 @@ export default {
       },
     };
   },
-  components: {Layout, PageHeader, Treeselect, flatPickr},
+  components: {Layout, PageHeader,PhanCong, Treeselect, flatPickr},
   methods: {
     HandleSubmit(e){
       e.preventDefault();
