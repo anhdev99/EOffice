@@ -17,7 +17,6 @@ namespace EOffice.WebAPI.Models
         public string TenLoaiHinhDonVi { get; set; }
         public string MaCapDonVi { get; set; }
         public string TenCapDonVi { get; set; }
-
     }
 
     public class DonViShort 
