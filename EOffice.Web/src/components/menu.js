@@ -72,14 +72,14 @@ export const menuItems = [
       },
       {
         id: "14",
-        label: "Chức vụ",
-        link: "/chuc-vu",
-        parentId: "11",
+        label: "Đơn vị",
+        link: "/don-vi",
+
       },
       {
         id: "15",
-        label: "Loại cơ quan",
-        link: "/loai-co-quan",
+        label: "Chức vụ",
+        link: "/chuc-vu",
         parentId: "11",
       },
       {

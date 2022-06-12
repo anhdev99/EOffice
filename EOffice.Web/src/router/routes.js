@@ -164,6 +164,15 @@ export default [
     component: () => import("../pages/quanlydanhmuc/loainguonvon/index"),
   },
   {
+    path: "/don-vi",
+    name: "don-vi",
+    meta: {
+      title: "Đơn vị",
+      authRequired: true,
+    },
+    component: () => import("../pages/quanlydanhmuc/donvi/index"),
+  },
+  {
     path: "/chuc-vu",
     name: "chuc-vu",
     meta: {
@@ -171,15 +180,6 @@ export default [
       authRequired: true,
     },
     component: () => import("../pages/chucVu/index"),
-  },
-  {
-    path: "/loai-co-quan",
-    name: "loai-co-quan",
-    meta: {
-      title: "Loại cơ quan",
-      authRequired: true,
-    },
-    component: () => import("../pages/quanlydanhmuc/loaicoquan/index"),
   },
   {
     path: "/cap-co-quan",
