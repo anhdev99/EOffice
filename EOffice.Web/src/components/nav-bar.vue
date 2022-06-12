@@ -68,7 +68,8 @@ export default {
   },
   methods: {
     logout(){
-      localStorage.removeItem("user");
+      localStorage.removeItem("user-token");
+      localStorage.removeItem("auth-user");
       this.$router.push('/dang-nhap')
     },
     isCustomDropdown() {
