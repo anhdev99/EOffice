@@ -16,5 +16,6 @@ namespace EOffice.WebAPI.Interfaces
         Task<PagingModel<DonVi>> GetPaging(DonViParam param);
         Task<List<DonViTreeVM>> GetTree();
         List<string> GetListDonViId(string donViId);
+        Task<IEnumerable<DonVi>> GetDonViCha();
     }
 }

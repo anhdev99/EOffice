@@ -79,7 +79,7 @@ namespace EOffice.WebAPI.Services
                 .WithContentLog(DefaultMessage.CREATE_SUCCESS).SaveChanges();
             return entity;
         }
-
+        
         public async Task<DonVi> Update(DonVi model)
         {
             if (model == default)
@@ -165,6 +165,10 @@ namespace EOffice.WebAPI.Services
         public async Task<IEnumerable<DonVi>> Get()
         {
             return await _collection.Find(x => x.IsDeleted != true).ToListAsync();
+        }
+        public async Task<IEnumerable<DonVi>> GetDonViCha()
+        {
+            return await _collection.Find(x => x.DonViCha == null && x.IsDeleted != true).ToListAsync();
         }
         public async Task<DonVi> GetById(string id)
         {

@@ -4,6 +4,9 @@ export const actions = {
     async get({commit}) {
         return apiClient.get(controller +"/get");
     },
+    async getDonViCha({commit}) {
+        return apiClient.get(controller +"/get-donvi-cha");
+    },
     async getPagingParams({commit}, params) {
         return apiClient.post(controller + "/get-paging-params", params);
     },
