@@ -661,6 +661,322 @@ export default {
             </div>
           </div>
           <!-- start content -->
+          <div class="row p-4">
+            <div class="col-md-7">
+              <div class="row">
+                <!-- Loại văn bản -->
+                <div class="col-md-6">
+                  <label
+                      for="validationLoaiVanBan"
+                      class="col-form-label col-form-label-sm"
+                  >Loại văn bản</label
+                  >
+                  <span class="text-danger">*</span>
+                  <treeselect
+                      placeholder="Chọn loại văn bản"
+                      v-model="model.loaiVanBan"
+                      :options="optionLoaiVanBan"
+                  >
+                  </treeselect>
+                  <treeselect-value :value="model.loaiVanBan" />
+                  <div class="valid-feedback">Vui lòng chọn loại văn bản.</div>
+                </div>
+                <!-- Trạng thái -->
+                <div class="col-md-6">
+                  <label
+                      for="validationTrangThai"
+                      class="col-form-label col-form-label-sm"
+                  >Trạng thái</label
+                  >
+                  <span class="text-danger">*</span>
+                  <treeselect
+                      placeholder="Chọn trạng thái"
+                      v-model="model.trangThai"
+                      :options="optionTrangThai"
+                  >
+                  </treeselect>
+                  <treeselect-value :value="model.trangThai" />
+                  <div class="valid-feedback">Vui lòng chọn trạng thái.</div>
+                </div>
+                <!-- số lưu CV-->
+                <div class="col-md-4">
+                  <label
+                      for="validationSoLuuCV"
+                      class="col-form-label col-form-label-sm"
+                  >Số lưu CV</label
+                  >
+                  <input
+                      v-model="model.soLuuCV"
+                      type="text"
+                      class="form-control"
+                      id="validationSoLuuCV"
+                  />
+                </div>
+                <!-- Số CV đi-->
+                <div class="col-md-4">
+                  <label
+                      for="validationSoVanBanDen"
+                      class="col-form-label col-form-label-sm"
+                  >Số VB đến</label
+                  >
+                  <input
+                      v-model="model.soLuuCV"
+                      type="text"
+                      class="form-control"
+                      id="validationSoVanBanDen"
+                      required
+                  />
+                </div>
+                <!--Ngày nhập-->
+                <div class="col-md-4">
+                  <label
+                      for="validationNgayNhap"
+                      class="col-form-label col-form-label-sm"
+                  >Ngày nhập</label
+                  >
+                  <flat-pickr
+                      v-model="model.ngayNhap"
+                      :config="config"
+                      class="form-control"
+                  ></flat-pickr>
+                </div>
+                <!-- Trả lời CV số -->
+                <div class="col-md-4">
+                  <label
+                      for="validationTraLoiCVSo"
+                      class="col-form-label col-form-label-sm"
+                  >Trả lời CV số</label
+                  >
+                  <input
+                      type="text"
+                      class="form-control"
+                      id="validationTraLoiCVSo"
+                      v-model="model.traLoiCVSo"
+                  />
+                </div>
+                <!-- Ngày trả lời -->
+                <div class="col-md-4">
+                  <label
+                      for="validationNgayNhap"
+                      class="col-form-label col-form-label-sm"
+                  >Ngày trả lời</label
+                  >
+                  <flat-pickr
+                      v-model="model.ngayTraLoi"
+                      :config="config"
+                      class="form-control"
+                  ></flat-pickr>
+                </div>
+                <!-- Số bản -->
+                <div class="col-md-4">
+                  <label
+                      for="validationSoBan"
+                      class="col-form-label col-form-label-sm"
+                  >Số bản</label
+                  >
+                  <input
+                      type="number"
+                      class="form-control"
+                      id="validationSoBan"
+                      v-model="model.soBan"
+                  />
+                </div>
+                <!-- Trích yếu  -->
+                <div class="col-md-12">
+                  <label
+                      for="validationTrichYeu"
+                      class="col-form-label col-form-label-sm"
+                  >Trích yếu</label
+                  >
+                  <span class="text-danger">*</span>
+                  <textarea
+                      v-model="model.trichYeu"
+                      class="form-control"
+                      id="validationTrichYeu"
+                      rows="3"
+                      required
+                  />
+                  <div class="valid-feedback">Vui lòng thêm trích yếu.</div>
+                </div>
+                <!-- Khối cơ quan nhận -->
+                <div class="col-md-6">
+                  <label
+                      for="validationKhoiCoQuanNhan"
+                      class="col-form-label col-form-label-sm"
+                  >Khối cơ quan nhận</label
+                  >
+                  <treeselect
+                      placeholder="Chọn khối cơ quan nhận"
+                      v-model="model.khoiCoQuanNhan"
+                      :options="optionDonVi"
+                  >
+                  </treeselect>
+                  <treeselect-value :value="model.khoiCoQuanNhan" />
+                </div>
+                <!-- Cơ quan nhận  -->
+                <div class="col-md-6">
+                  <label
+                      for="validationCoQuanNhan"
+                      class="col-form-label col-form-label-sm"
+                  >Cơ quan nhận</label
+                  >
+                  <treeselect
+                      placeholder="Chọn cơ quan nhận"
+                      v-model="model.coQuanNhan"
+                      :options="optionDonVi"
+                  >
+                  </treeselect>
+                  <treeselect-value :value="model.coQuanNhan" />
+                </div>
+                <!-- file đính kèm-->
+                <div class="col-md-12">
+                  <label
+                      for="validationCoQuanNhan"
+                      class="col-form-label col-form-label-sm"
+                  >File đính kèm</label
+                  >
+                  <div class="input-group">
+                    <button class="btn btn-outline-primary" type="button" id="inputGroupFileAddon03">
+                      <i class=" ri-attachment-2 text-primary"></i>
+                    </button>
+                    <input type="file" class="form-control" id="inputGroupFile03" aria-describedby="inputGroupFileAddon03" aria-label="Upload">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-5">
+              <div class="row">
+                <!-- Đơn vị soạn -->
+                <div class="col-md-12">
+                  <label
+                      for="validationDonViSoan"
+                      class="col-form-label col-form-label-sm"
+                  >Đơn vị soạn</label
+                  >
+                  <treeselect
+                      placeholder="Chọn đơn vị soạn"
+                      v-model="model.donViSoan"
+                      :options="optionDonVi"
+                  >
+                  </treeselect>
+                  <treeselect-value :value="model.donViSoan" />
+                </div>
+                <!-- Cán bộ soạn -->
+                <div class="col-md-12">
+                  <label
+                      for="validationCanBoSoan"
+                      class="col-form-label col-form-label-sm"
+                  >Cán bộ soạn</label
+                  >
+                  <treeselect
+                      placeholder="Chọn cán bộ soạn"
+                      v-model="model.canBoSoan"
+                      :options="optionCanBoSoan"
+                  >
+                  </treeselect>
+                  <treeselect-value :value="model.canBoSoan" />
+                </div>
+                <!-- Hình thức gửi -->
+                <div class="col-md-6">
+                  <label
+                      for="validationHinhThucGui"
+                      class="col-form-label col-form-label-sm"
+                  >Hình thức gửi</label
+                  >
+                  <treeselect
+                      placeholder="Chọn hình thức nhận"
+                      v-model="model.hinhThucGui"
+                      :options="optionHinhThucGui"
+                  >
+                  </treeselect>
+                  <treeselect-value :value="model.hinhThucGui" />
+                </div>
+                <!--        Lĩnh vực-->
+                <div class="col-md-6">
+                  <label
+                      for="validationLinhVuc"
+                      class="col-form-label col-form-label-sm"
+                  >Lĩnh Vực</label
+                  >
+                  <input
+                      v-model="model.linhVuc"
+                      type="text"
+                      class="form-control"
+                      id="validationLinhVuc"
+                  />
+                </div>
+                <!--        Mức độ tính chất-->
+                <div class="col-md-6">
+                  <label
+                      for="validationHinhThucGui"
+                      class="col-form-label col-form-label-sm"
+                  >Mức độ tính chất</label
+                  >
+                  <treeselect
+                      placeholder="Chọn hình thức nhận"
+                      v-model="model.mucDoTinhChat"
+                      :options="optionMucDoTinhChat"
+                  >
+                  </treeselect>
+                  <treeselect-value :value="model.mucDoTinhChat" />
+                </div>
+                <!--        Mức độ bảo mật-->
+                <div class="col-md-6">
+                  <label
+                      for="validationHinhThucGui"
+                      class="col-form-label col-form-label-sm"
+                  >Mức độ bảo mật</label
+                  >
+                  <treeselect
+                      placeholder="Chọn hình thức nhận"
+                      v-model="model.mucDoBaoMat"
+                      :options="optionMucDoBaoMat"
+                  >
+                  </treeselect>
+                  <treeselect-value :value="model.mucDoBaoMat" />
+                </div>
+                <!--        Hồ sơ đơn vị-->
+                <div class="col-md-6">
+                  <label
+                      for="validationHoSoDonVi"
+                      class="col-form-label col-form-label-sm"
+                  >Hồ sơ đơn vị</label
+                  >
+                  <treeselect
+                      placeholder="Chọn hồ sơ đơn vị"
+                      v-model="model.hoSoDonVi"
+                      :options="optionHoSoDonVi"
+                  >
+                  </treeselect>
+                  <treeselect-value :value="model.hoSoDonVi" />
+                </div>
+                <!--        Nơi lưu trữ-->
+                <div class="col-md-6">
+                  <label
+                      for="validationNoiLuuTru"
+                      class="col-form-label col-form-label-sm"
+                  >Nơi lưu trữ</label
+                  >
+                  <span class="text-danger">*</span>
+                  <input
+                      type="text"
+                      class="form-control"
+                      id="validationNoiLuuTru"
+                      v-model="model.noiLuuTru"
+                  />
+                </div>
+                <!-- Nơi lưu trữ -->
+                <div class="col-md-12">
+                  <label
+                      for="validationNoiLuuTru"
+                      class="col-form-label col-form-label-sm"
+                  >Ghi chú</label
+                  >
+                  <textarea v-model="model.ghiChu" rows="2" class="form-control" />
+                </div>
+              </div>
+            </div>
+          </div>
           <!-- end content -->
         </div>
       </div>

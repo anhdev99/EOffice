@@ -157,46 +157,17 @@ namespace EOffice.WebAPI.Services
             return result;
         }
 
-        public async Task<List<LoaiVanBanTreeVM>> GetTree()
+        public async Task<List<DonViTreeVM>> GetTree()
         {
-            var listDonVi = await _context.DonVis.Find(x => x.IsDeleted == false).SortBy(donVi => donVi.CapDV)
-                .ToListAsync();
+            var listDonVi = await _context.DonVis.Find(x  => x.IsDeleted ==false).SortBy(donVi => donVi.CapDV).ToListAsync();
             var parents = listDonVi.Where(x => x.DonViCha == null).ToList();
             List<DonViTreeVM> list = new List<DonViTreeVM>();
             foreach (var item in parents)
             {
                 DonViTreeVM donVi = new DonViTreeVM(item);
                 list.Add(donVi);
-                GetLoopItem(ref list, listDonVi, donVi);
             }
-
             return list;
-        }
-        
-        private List<DonViTreeVM> GetLoopItem(ref List<DonViTreeVM> list, List<LoaiVanBan> items, LoaiVanBanTreeVM target)
-        {
-            try
-            {
-                var coquan = items.FindAll((item) => item.DonViCha == target.Id).ToList();
-                if (coquan.Count > 0)
-                {
-                    target.Children = new List<LoaiVanBanTreeVM>();
-                    foreach (var item in coquan)
-                    {
-                        DonViTreeVM itemDV = new DonViTreeVM(item);
-                        target.Children.Add(itemDV);
-                        GetLoopItem(ref list, items, itemDV);
-                    }
-                }
-
-                return null;
-            }
-            catch (Exception ex)
-            {
-                var message = ex.Message;
-            }
-
-            return null;
         }
     }
 }
