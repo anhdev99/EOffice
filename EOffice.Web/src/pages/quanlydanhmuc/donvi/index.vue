@@ -1,6 +1,9 @@
 <script>
 import Layout from "@/layouts/main";
 import PageHeader from "@/components/page-header";
+
+import Treeselect from "vue3-treeselect";
+
 import appConfig from "../../../../app.config.json";
 import {donViModel} from "@/models/donViModel";
 import {pagingModel} from "@/models/pagingModel";
@@ -77,7 +80,7 @@ export default {
       ],
     };
   },
-  components: { Layout, PageHeader },
+  components: { Layout, PageHeader, Treeselect },
   created() {
     this.myProvider()
   },
@@ -221,14 +224,19 @@ export default {
                 <template v-slot:cell(STT)="data">
                   {{ data.index + ((currentPage-1)*perPage) + 1  }}
                 </template>
+                <template v-slot:cell(maDonVi)="data">
+                  <div class="ps-2">
+                    {{data.item.maDonVi}}
+                  </div>
+                </template>
                 <template v-slot:cell(ten)="data">
                   <div class="ps-2">
                     {{data.item.ten}}
                   </div>
                 </template>
-                <template v-slot:cell(moTa)="data">
+                <template v-slot:cell(donViCha)="data">
                   <div class="ps-2">
-                    {{data.item.moTa}}
+                    {{data.item.donViCha}}
                   </div>
                 </template>
                 <template v-slot:cell(process)="data">
@@ -326,23 +334,20 @@ export default {
         </div>
         <div class="mb-3">
           <label for="donvicha" class="form-label">Đơn vị cha</label>
-          <div>
+          <div class="col-md-4">
+            <label
+                for="validationLoaiVanBan"
+                class="col-form-label col-form-label-sm"
+            >Loại văn bản</label
+            >
             <treeselect
-                :multiple="true"
-                :options="options"
-                :flat="true"
-                :sort-value-by="sortValueBy"
-                :default-expand-level="1"
-                placeholder="Try selecting some options."
-                v-model="value"
-            />
-            <treeselect-value :value="value" />
-            <p><strong>Sort value by:</strong></p>
-            <p class="options">
-              <label><input type="radio" value="ORDER_SELECTED" v-model="sortValueBy">Order selected</label>
-              <label><input type="radio" value="LEVEL" v-model="sortValueBy">Level</label>
-              <label><input type="radio" value="INDEX" v-model="sortValueBy">Index</label>
-            </p>
+                placeholder="Chọn loại văn bản"
+                v-model="model.donViCha"
+                :options="model.donViCha"
+            >
+            </treeselect>
+            <treeselect-value :value="form.loaiVanBan" />
+            <div class="invalid-feedback">Vui lòng chọn loại văn bản</div>
           </div>
         </div>
         <div class="d-flex justify-content-end">
