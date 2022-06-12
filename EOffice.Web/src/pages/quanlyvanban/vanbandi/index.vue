@@ -108,7 +108,7 @@ export default {
       config: {
         wrap: true, // set wrap to true only when using 'input-group'
         altFormat: "M j, Y",
-        dateFormat: "d / m / y",
+        dateFormat: "d/m/Y",
       },
     };
   },
