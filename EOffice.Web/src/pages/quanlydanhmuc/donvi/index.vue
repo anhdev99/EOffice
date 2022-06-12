@@ -96,7 +96,19 @@ export default {
     this.myProvider()
     this.getDonViCha()
   },
+  watch:{
+    currentPage: {
+      deep: true,
+      handler(val) {
+        this.myProvider();
+      }
+    },
+  },
   methods: {
+    handleShowModal(){
+      this.showModal = true;
+      this.model = donViModel.baseJson()
+    },
     async handleUpdate(id) {
       console.log("handleUpdate");
       await this.$store.dispatch("donViStore/getById", id).then((res) => {
@@ -124,6 +136,7 @@ export default {
         await this.$store.dispatch("donViStore/delete", this.model.id).then((res) => {
           if (res.resultCode === 'SUCCESS') {
             this.showDeleteModal = false;
+            this.model = donViModel.baseJson()
             this.myProvider();
           }
           // });
@@ -152,7 +165,7 @@ export default {
         })
       }else{
         //Create model
-        await this.$store.dispatch("donViStore/create", donViModel.toJson(this.model)).then((res) => {
+        await this.$store.dispatch("donViStore/create",this.model).then((res) => {
           if (res.resultCode === 'SUCCESS') {
             this.showModal = false;
             this.model = donViModel.baseJson()
@@ -163,7 +176,7 @@ export default {
     },
     myProvider (ctx) {
       const params = {
-        start: 0,
+        start: this.currentPage,
         limit: this.perPage,
         content: this.filter,
         sortBy: "",
@@ -226,7 +239,7 @@ export default {
                 <b-button
                     class="btn btn-primary add-btn btn-sm"
                     data-bs-toggle="modal"
-                    @click="showModal = true"
+                    @click="handleShowModal"
                 >
                   <i class="ri-add-line align-bottom me-1"></i> Thêm mới
                 </b-button>
@@ -313,6 +326,7 @@ export default {
                     <!-- pagination -->
                     <b-pagination
                         v-model="currentPage"
+                        :model-value="currentPage"
                         :total-rows="totalRows"
                         :per-page="perPage"
                     ></b-pagination>
