@@ -74,7 +74,11 @@ export const menuItems = [
         id: "14",
         label: "Đơn vị",
         link: "/don-vi",
-
+      },
+      {
+        id: "14",
+        label: "Trạng thái",
+        link: "/trang-thai",
       },
       {
         id: "15",

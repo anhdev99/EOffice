@@ -49,7 +49,7 @@ namespace EOffice.WebAPI.Services
             {
                 Code = model.Code,
                 ThuTu = model.ThuTu,
-                TrangThaiNames = model.TrangThaiNames,
+                Ten = model.Ten,
                 CreatedBy = CurrentUserName,
                 ModifiedBy = CurrentUserName,
                 CreatedAt = DateTime.Now,
@@ -94,7 +94,6 @@ namespace EOffice.WebAPI.Services
             
             entity.Code = model.Code;
             entity.ThuTu = model.ThuTu;
-            entity.TrangThaiNames = model.TrangThaiNames;
             entity.ModifiedBy = CurrentUserName;
             entity.ModifiedAt = DateTime.Now;
 

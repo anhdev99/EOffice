@@ -9,8 +9,8 @@ namespace EOffice.WebAPI.Models
         [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
         public string Id { get; set; }
         public string Code { get; set; }
+        public string Ten { get; set; }
         public int ThuTu { get; set; }
-        public List<TrangThaiName> TrangThaiNames { get; set; }
     }
     
     public class TrangThaiName

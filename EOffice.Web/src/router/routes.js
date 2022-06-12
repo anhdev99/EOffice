@@ -254,6 +254,15 @@ export default [
     component: () => import("../pages/role/index"),
   },
   {
+    path: "/trang-thai",
+    name: "trang-thai",
+    meta: {
+      title: "Quản lý trạng thái",
+      authRequired: true,
+    },
+    component: () => import("../pages/trangThai/index"),
+  },
+  {
     path: "/van-ban-den",
     name: "van-ban-den",
     meta: {
