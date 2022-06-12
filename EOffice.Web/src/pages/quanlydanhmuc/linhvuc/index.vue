@@ -132,7 +132,7 @@ export default {
           if (res.resultCode === 'SUCCESS') {
             this.showModal = false;
             this.model = linhVucModel.baseJson()
-            this.myProvider()
+            this.myProvider() 
           }
         })
       }else{
