@@ -83,8 +83,12 @@ export default {
       ],
       optionHinhThucGui: [
         {
-          id: "",
-          label: "",
+          id: "0",
+          label: "Văn bản giấy",
+        },
+        {
+          id: "1",
+          label: "File tài liệu",
         },
       ],
       optionHoSoDonVi: [
@@ -95,11 +99,33 @@ export default {
       ],
       optionMucDoTinhChat: [
         {
-          id: "",
-          label: "",
-        }
+          id: "THAP",
+          label: "Thấp",
+        },
+        {
+          id: "TRUNGBINH",
+          label: "Trung bình",
+        },
+        {
+          id: "CAO",
+          label: "Cao",
+        },
       ],
       optionMucDoBaoMat: [
+        {
+          id: "THAP",
+          label: "Thấp",
+        },
+        {
+          id: "TRUNGBINH",
+          label: "Trung bình",
+        },
+        {
+          id: "CAO",
+          label: "Cao",
+        },
+      ],
+      optionLinhVuc: [
         {
           id: "",
           label: "",
@@ -119,6 +145,7 @@ export default {
     this.getTrangThai()
     this.getDonVi()
     this.getUser()
+    this.getLinhVuc()
   },
   methods: {
     HandleSubmit(e){
@@ -209,6 +236,27 @@ export default {
             let items = resp.data
             this.loading = false
             this.optionCanBoSoan = items;
+          }
+          return [];
+        });
+      } finally {
+        this.loading = false
+      }
+    },
+    getLinhVuc() {
+      try {
+        let promise =  this.$store.dispatch("linhVucStore/get")
+        return promise.then(resp => {
+          if(resp.resultCode == "SUCCESS"){
+            let items = resp.data
+            this.loading = false
+            this.optionLinhVuc = items.map(value => {
+              return {
+                id : value.id,
+                label : value.ten,
+              };
+            });
+            console.log("this.optionLinhVuc", this.optionLinhVuc);
           }
           return [];
         });
@@ -593,12 +641,13 @@ export default {
                         class="col-form-label col-form-label-sm"
                     >Lĩnh Vực</label
                     >
-                    <input
+                    <treeselect
+                        placeholder="Chọn hình thức nhận"
                         v-model="model.linhVuc"
-                        type="text"
-                        class="form-control"
-                        id="validationLinhVuc"
-                    />
+                        :options="optionLinhVuc"
+                    >
+                    </treeselect>
+                    <treeselect-value :value="model.linhVuc" />
                   </div>
                   <!--        Mức độ tính chất-->
                   <div class="col-md-6">

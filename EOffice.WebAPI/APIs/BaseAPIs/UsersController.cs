@@ -215,29 +215,5 @@ namespace EOffice.WebAPI.APIs.Identity
                 );
             }
         }
-        
-        [HttpGet]
-        [Route("getTree")]
-        public async Task<IActionResult> GetTree()
-        {
-            try
-            {
-                var response = await _userService.GetTree();
-
-                return Ok(
-                    new ResultResponse<List<UserTreeVM>>()
-                        .WithData(response)
-                        .WithCode(EResultResponse.SUCCESS.ToString())
-                        .WithMessage(DefaultMessage.UPDATE_SUCCESS)
-                );
-            }
-            catch (ResponseMessageException ex)
-            {
-                return Ok(
-                    new ResultMessageResponse().WithCode(ex.ResultCode)
-                        .WithMessage(ex.ResultString)
-                );
-            }
-        }
     }
 }

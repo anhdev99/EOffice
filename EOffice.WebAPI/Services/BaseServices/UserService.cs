@@ -330,16 +330,6 @@ namespace EOffice.WebAPI.Services
             return await query.FirstOrDefaultAsync();
         }
         
-        public async Task<List<UserTreeVM>> GetTree()
-        {
-            var listUser = await _context.Users.Find(x  => x.IsDeleted ==false).SortBy(x=> x.FullName).ToListAsync();
-            List<UserTreeVM> list = new List<UserTreeVM>();
-            foreach (var item in listUser)
-            {
-                UserTreeVM user = new UserTreeVM(item);
-                list.Add(user);
-            }
-            return list;
-        }
+        
     }
 }
