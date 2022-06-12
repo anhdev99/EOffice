@@ -1,13 +1,14 @@
 <script>
 import Layout from "@/layouts/main";
 import PageHeader from "@/components/page-header";
-import appConfig from "../../../../app.config.json";
+import appConfig from "../../../app.config.json";
 import {linhVucModel} from "@/models/linhVucModel";
 import {pagingModel} from "@/models/pagingModel";
+import {chucVuModel} from "@/models/chucVuModel";
 
 export default {
   page: {
-    title: "Lĩnh vực",
+    title: "Chức vụ",
     meta: [
       {
         content: appConfig.description,
@@ -16,14 +17,14 @@ export default {
   },
   data() {
     return {
-      title: "Lĩnh vực",
+      title: "Chức vụ",
       items: [
         {
           text: "Trang chủ",
           href: "/",
         },
         {
-          text: "Lĩnh vực",
+          text: "Chức vụ",
           active: true,
         },
       ],
@@ -53,13 +54,13 @@ export default {
           sortable: true,
           thClass: 'hidden-sortable py-2'
         },
-        {
-          key: "moTa",
-          label: "Mô tả",
-          class: 'ps-4',
-          sortable: true,
-          thClass: 'hidden-sortable py-2'
-        },
+        // {
+        //   key: "moTa",
+        //   label: "Mô tả",
+        //   class: 'ps-4',
+        //   sortable: true,
+        //   thClass: 'hidden-sortable py-2'
+        // },
         {
           key: "thuTu",
           label: "Thứ tự",
@@ -83,10 +84,9 @@ export default {
   },
   methods: {
     async handleUpdate(id) {
-      console.log("handleUpdate");
-      await this.$store.dispatch("linhVucStore/getById", id).then((res) => {
+      await this.$store.dispatch("chucVuStore/getById", id).then((res) => {
         if (res.resultCode === 'SUCCESS') {
-          this.model = linhVucModel.fromJson(res.data);
+          this.model = res.data;
           this.showModal = true;
           this.myProvider()
         } else {
@@ -96,22 +96,20 @@ export default {
       });
     },
     async handleDetail(id) {
-      await this.$store.dispatch("linhVucStore/getById", id).then((res) => {
+      await this.$store.dispatch("chucVuStore/getById", id).then((res) => {
         if (res.resultCode === 'SUCCESS') {
-          this.model = linhVucModel.fromJson(res.data);
-          console.log("LOG DETAIL  : " , this.model)
+          this.model = res.data;
           this.showDetail = true;
         }
       });
     },
     async handleDelete() {
       if (this.model.id != 0 && this.model.id != null && this.model.id) {
-        await this.$store.dispatch("linhVucStore/delete", this.model.id).then((res) => {
+        await this.$store.dispatch("chucVuStore/delete", this.model.id).then((res) => {
           if (res.resultCode === 'SUCCESS') {
             this.showDeleteModal = false;
-            this.$refs.tblList.refresh()
+            this.myProvider()
           }
-          // });
         });
       }
     },
@@ -121,26 +119,25 @@ export default {
     },
     async HandleSubmit(e){
       e.preventDefault();
-      console.log("handle submit", this.model);
       if(
           this.model.id != 0 &&
           this.model.id != null &&
           this.model.id
       ){
         //Update model
-        await this.$store.dispatch("linhVucStore/update", this.model).then((res) => {
+        await this.$store.dispatch("chucVuStore/update", this.model).then((res) => {
           if (res.resultCode === 'SUCCESS') {
             this.showModal = false;
-            this.model = linhVucModel.baseJson()
-            this.myProvider() 
+            this.model = chucVuModel.baseJson()
+            this.myProvider()
           }
         })
       }else{
         //Create model
-        await this.$store.dispatch("linhVucStore/create", linhVucModel.toJson(this.model)).then((res) => {
+        await this.$store.dispatch("chucVuStore/create",this.model).then((res) => {
           if (res.resultCode === 'SUCCESS') {
             this.showModal = false;
-            this.model = linhVucModel.baseJson()
+            this.model = chucVuModel.baseJson()
             this.myProvider()
           }
         });
@@ -157,7 +154,7 @@ export default {
       this.loading = true
 
       try {
-        let promise =  this.$store.dispatch("linhVucStore/getPagingParams", params)
+        let promise =  this.$store.dispatch("chucVuStore/getPagingParams", params)
         return promise.then(resp => {
           if(resp.resultCode == "SUCCESS"){
             console.log(resp.data)
@@ -168,7 +165,7 @@ export default {
             this.data = items;
             return items || []
           }
-        return [];
+          return [];
         })
       } finally {
         this.loading = false
@@ -190,12 +187,12 @@ export default {
             <!-- Button -->
             <div class="flex-shrink-0">
               <div
-                class="form-check form-switch form-switch-right form-switch-md"
+                  class="form-check form-switch form-switch-right form-switch-md"
               >
                 <b-button
-                  class="btn btn-primary add-btn btn-sm"
-                  data-bs-toggle="modal"
-                  @click="showModal = true"
+                    class="btn btn-primary add-btn btn-sm"
+                    data-bs-toggle="modal"
+                    @click="showModal = true"
                 >
                   <i class="ri-add-line align-bottom me-1"></i> Thêm mới
                 </b-button>
@@ -214,7 +211,7 @@ export default {
                   :per-page="perPage"
                   :current-page="currentPage"
                   :filter="filter"
-                  headerBgVariant="#ccc"
+                  :head-variant="light"
                   ref="tblList"
                   primary-key="id"
               >
@@ -226,11 +223,11 @@ export default {
                     {{data.item.ten}}
                   </div>
                 </template>
-                <template v-slot:cell(moTa)="data">
-                  <div class="ps-2">
-                    {{data.item.moTa}}
-                  </div>
-                </template>
+<!--                <template v-slot:cell(moTa)="data">-->
+<!--                  <div class="ps-2">-->
+<!--                    {{data.item.moTa}}-->
+<!--                  </div>-->
+<!--                </template>-->
                 <template v-slot:cell(process)="data">
                   <button
                       type="button"
@@ -261,7 +258,7 @@ export default {
             </div>
           </div>
           <div
-            class="align-items-center mt-2 row g-3 text-center text-sm-start px-3 mb-3"
+              class="align-items-center mt-2 row g-3 text-center text-sm-start px-3 mb-3"
           >
             <div class="col-sm">
               <div class="text-muted">
@@ -292,7 +289,7 @@ export default {
     <!-- Modal add and edit -->
     <b-modal
         ref="modal"
-        title="Thông tin lĩnh vực"
+        title="Thông tin chức vụ"
         header-class="bg-primary-dark modal-title p-3"
         hide-footer
         v-model="showModal"
@@ -300,7 +297,7 @@ export default {
       <form class="" @submit="HandleSubmit">
         <div class="mb-3">
           <label for="name" class="form-label">
-            Tên lĩnh vực
+            Tên chức vụ
             <span class="text-danger">*</span>
           </label>
           <input
@@ -324,17 +321,17 @@ export default {
               v-model="model.thuTu"
           />
         </div>
-        <div class="mb-3">
-          <label for="description" class="form-label">Mô tả</label>
-          <textarea
-              type="text"
-              class="form-control"
-              id="mo-ta"
-              name="mo-ta"
-              rows="2"
-              v-model="model.moTa"
-          />
-        </div>
+<!--        <div class="mb-3">-->
+<!--          <label for="description" class="form-label">Mô tả</label>-->
+<!--          <textarea-->
+<!--              type="text"-->
+<!--              class="form-control"-->
+<!--              id="mo-ta"-->
+<!--              name="mo-ta"-->
+<!--              rows="2"-->
+<!--              v-model="model.moTa"-->
+<!--          />-->
+<!--        </div>-->
         <div class="d-flex justify-content-end">
           <b-button
               type="button"
@@ -363,29 +360,29 @@ export default {
         hide-footer
         v-model="showDeleteModal"
     >
-        <div class="text-center">
-            <i class="ri-error-warning-line text-warning" style="font-size: 100px;"></i>
-            <p class="fs-4">Bạn có chắc muốn xóa không?</p>
-        </div>
-        <div class="d-flex justify-content-center">
-          <b-button
-              type="button"
-              class="btn btn-danger waves-effect waves-light me-2 d-flex align-items-center"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-              id="close-modal"
-              @click="showDeleteModal = false"
-          >
-            Hủy
-          </b-button>
-          <b-button
-              type="submit"
-              class="btn btn-primary waves-effect waves-light me-2 d-flex align-items-center"
-              @click="handleDelete"
-          >
-            Xóa
-          </b-button>
-        </div>
+      <div class="text-center">
+        <i class="ri-error-warning-line text-warning" style="font-size: 100px;"></i>
+        <p class="fs-4">Bạn có chắc muốn xóa không?</p>
+      </div>
+      <div class="d-flex justify-content-center">
+        <b-button
+            type="button"
+            class="btn btn-danger waves-effect waves-light me-2 d-flex align-items-center"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+            id="close-modal"
+            @click="showDeleteModal = false"
+        >
+          Hủy
+        </b-button>
+        <b-button
+            type="submit"
+            class="btn btn-primary waves-effect waves-light me-2 d-flex align-items-center"
+            @click="handleDelete"
+        >
+          Xóa
+        </b-button>
+      </div>
     </b-modal>
   </Layout>
 </template>

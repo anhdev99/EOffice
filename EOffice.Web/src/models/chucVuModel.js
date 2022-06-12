@@ -1,4 +1,4 @@
-import moment from "moment";
+
 const toJson = (item) => {
     return {
         id: item.id,
@@ -25,7 +25,7 @@ const baseJson = () => {
     return {
         id: null,
         ten: null,
-        thuTu: 0,
+        thuTu: null,
         createdAt: null,
         modifiedAt: null,
         createdBy: null,
@@ -45,6 +45,6 @@ const toListModel = (items) =>{
     return [];
 }
 
-export const linhVucModel = {
+export const chucVuModel = {
     toJson, fromJson, baseJson, toListModel
 }
