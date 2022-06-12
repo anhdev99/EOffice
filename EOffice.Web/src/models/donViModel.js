@@ -23,6 +23,7 @@ const baseJson = () => {
         maDonVi: null,
         ten: null,
         donViCha: null,
+        tenDonViCha: null,
     }
 }
 

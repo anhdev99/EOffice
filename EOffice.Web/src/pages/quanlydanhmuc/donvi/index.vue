@@ -3,6 +3,7 @@ import Layout from "@/layouts/main";
 import PageHeader from "@/components/page-header";
 
 import Treeselect from "vue3-treeselect";
+import "vue3-treeselect/dist/vue3-treeselect.css";
 
 import appConfig from "../../../../app.config.json";
 import {donViModel} from "@/models/donViModel";
@@ -57,14 +58,14 @@ export default {
           thClass: 'hidden-sortable py-2'
         },
         {
-          key: "tenDonVi",
+          key: "ten",
           label: "Tên đơn vị",
           class: 'ps-4',
           sortable: true,
           thClass: 'hidden-sortable py-2'
         },
         {
-          key: "donViCha",
+          key: "tenDonViCha",
           label: "Đơn vị cha",
           class: 'ps-4',
           thStyle: {width: '100px', minWidth: '100px'},
@@ -78,11 +79,22 @@ export default {
           thClass: 'hidden-sortable py-2'
         }
       ],
+      donViCha: [
+        {
+          id: '',
+          label: '',
+          children: [{
+            id: '',
+            label: '',
+          }],
+        }
+      ]
     };
   },
   components: { Layout, PageHeader, Treeselect },
   created() {
     this.myProvider()
+    this.getDonViCha()
   },
   methods: {
     async handleUpdate(id) {
@@ -112,7 +124,7 @@ export default {
         await this.$store.dispatch("donViStore/delete", this.model.id).then((res) => {
           if (res.resultCode === 'SUCCESS') {
             this.showDeleteModal = false;
-            this.$refs.tblList.refresh()
+            this.myProvider();
           }
           // });
         });
@@ -172,7 +184,23 @@ export default {
             return items || []
           }
           return [];
-        })
+        });
+      } finally {
+        this.loading = false
+      }
+    },
+    getDonViCha() {
+      try {
+        let promise =  this.$store.dispatch("donViStore/getDonViCha")
+        return promise.then(resp => {
+          if(resp.resultCode == "SUCCESS"){
+            let items = resp.data
+            this.loading = false
+            console.log("Đơn vị cha",items);
+            this.donViCha = items;
+          }
+          return [];
+        });
       } finally {
         this.loading = false
       }
@@ -234,9 +262,9 @@ export default {
                     {{data.item.ten}}
                   </div>
                 </template>
-                <template v-slot:cell(donViCha)="data">
+                <template v-slot:cell(tenDonViCha)="data">
                   <div class="ps-2">
-                    {{data.item.donViCha}}
+                    {{data.item.tenDonViCha}}
                   </div>
                 </template>
                 <template v-slot:cell(process)="data">
@@ -332,22 +360,18 @@ export default {
               v-model="model.ten"
           />
         </div>
-        <div class="mb-3">
+        <div class="mb-3 h-100">
           <label for="donvicha" class="form-label">Đơn vị cha</label>
-          <div class="col-md-4">
-            <label
-                for="validationLoaiVanBan"
-                class="col-form-label col-form-label-sm"
-            >Loại văn bản</label
-            >
+          <div class="">
             <treeselect
-                placeholder="Chọn loại văn bản"
+                placeholder="Chọn đơn vị cha"
                 v-model="model.donViCha"
-                :options="model.donViCha"
+                :options="donViCha"
+                class="w-100"
             >
             </treeselect>
-            <treeselect-value :value="form.loaiVanBan" />
-            <div class="invalid-feedback">Vui lòng chọn loại văn bản</div>
+            <treeselect-value :value="model.donViCha" />
+            <div class="invalid-feedback">Chọn đơn vị cha.</div>
           </div>
         </div>
         <div class="d-flex justify-content-end">
