@@ -107,6 +107,8 @@ namespace EOffice.WebAPI.Services
                 Email = model.Email,
                 Note = model.Note,
                 Roles = model.Roles,
+                DonVi = model.DonVi,
+                ChucVu = model.ChucVu,
                 IsVerified = model.IsVerified,
                 IsSyncPasswordSuccess = model.IsSyncPasswordSuccess,
                 IsActived = model.IsActived,
@@ -128,7 +130,7 @@ namespace EOffice.WebAPI.Services
             byte[] passwordHash, passwordSalt;
             if (string.IsNullOrEmpty(model.Password))
             {
-                model.Password = "DakNong@123";
+                model.Password = "DThU@123";
             }
             PasswordExtensions.CreatePasswordHash(model.Password, out passwordHash, out passwordSalt);
             entity.PasswordHash = passwordHash;
@@ -172,6 +174,8 @@ namespace EOffice.WebAPI.Services
             entity.Email = model.Email;
             entity.Note = model.Note;
             entity.Roles = model.Roles;
+            entity.      DonVi = model.DonVi;
+            entity.       ChucVu = model.ChucVu;
             entity.ModifiedAt = DateTime.Now;
             entity.IsVerified = model.IsVerified;
             entity.IsSyncPasswordSuccess = model.IsSyncPasswordSuccess;

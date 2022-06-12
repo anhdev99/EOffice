@@ -20,7 +20,8 @@ namespace EOffice.WebAPI.Models
         public string Email { get; set; }
         public string Note { get; set; }
         public Avatar Avatar { get; set; }
-        public DonViShort DonVi { get; set; }
+        public DonVi DonVi { get; set; }
+        public ChucVu ChucVu { get; set; }
         public List<Role> Roles { get; set; }
 
         public List<string> DonViIds { get; set; }

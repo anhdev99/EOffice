@@ -161,7 +161,9 @@ namespace EOffice.WebAPI.Services
 
         public async Task<IEnumerable<Role>> Get()
         {
-            return await _context.Roles.Find(x => x.IsDeleted != true).ToListAsync();
+            var data = (await _context.Roles.Find(x => x.IsDeleted != true).ToListAsync())
+                .Select(x => new Role(x));
+            return data;
         }
 
         public async Task<Role> GetById(string id)
