@@ -57,7 +57,7 @@ export default {
     postPost() {
       let a = this.email;
       let p = this.password;
-      axios.post(`http://apieoffice.dthu.edu.vn/api/v1/auth/login`, {
+      axios.post(`https://apieoffice.dthu.edu.vn/api/v1/auth/login`, {
         body: {a, p}
       })
           .then(response => {

@@ -39,7 +39,7 @@ namespace EOffice.WebAPI.Services
 
         private string GetTenDonViCha(string donViChaId)
         {
-            return _context.DonVis.Find(x => x.DonViCha == donViChaId).FirstOrDefault()?.Ten;
+            return _context.DonVis.Find(x => x.Id == donViChaId).FirstOrDefault()?.Ten;
         }
         public async Task<DonVi> Create(DonVi model)
         {
