@@ -34,6 +34,7 @@ namespace EOffice.WebAPI.Data
         private readonly IMongoCollection<VanBanDen> _vanBanDen;
         private readonly IMongoCollection<VanBanDi> _vanBanDi;
         private readonly IMongoCollection<LichCongTac> _lichCongTac;
+        private readonly IMongoCollection<LoaiVanBan> _loaiVanBan;
         
         private readonly IDbSettings _settings;
         public DataContext(IDbSettings settings)
@@ -81,6 +82,7 @@ namespace EOffice.WebAPI.Data
             _vanBanDen = _context.GetCollection<VanBanDen>(_settings.VanBanDenCollectionName);
             _vanBanDi = _context.GetCollection<VanBanDi>(_settings.VanBanDiCollectionName);
             _lichCongTac = _context.GetCollection<LichCongTac>(_settings.VanBanDiCollectionName);
+            _loaiVanBan = _context.GetCollection<LoaiVanBan>(_settings.LoaiVanBanCollectionName);
         }
         
         public IMongoDatabase Database
@@ -115,5 +117,6 @@ namespace EOffice.WebAPI.Data
         public IMongoCollection<VanBanDen> VanBanDen { get => _vanBanDen; }
         public IMongoCollection<VanBanDi> VanBanDi { get => _vanBanDi; }
         public IMongoCollection<LichCongTac> LichCongTac { get => _lichCongTac; }
+        public IMongoCollection<LoaiVanBan> LoaiVanBan { get => _loaiVanBan; }
     }
 }

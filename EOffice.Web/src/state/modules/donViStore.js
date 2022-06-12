@@ -5,7 +5,7 @@ export const actions = {
         return apiClient.get(controller +"/get");
     },
     async getDonViCha({commit}) {
-        return apiClient.get(controller +"/get-donvi-cha");
+        return apiClient.get(controller +"/getTree");
     },
     async getPagingParams({commit}, params) {
         return apiClient.post(controller + "/get-paging-params", params);

@@ -28,9 +28,10 @@ namespace EOffice.WebAPI.Data
         public string TrangThaiCollectionName { get; set; }
         public string ModuleTrangThaiCollectionName { get; set; }
         public string NotifyCollectionName { get; set; }
-    public    string VanBanDiCollectionName { get; set; }
-    public     string VanBanDenCollectionName { get; set; }
-   public string LichCongTacCollectionName { get; set; }
+        public string VanBanDiCollectionName { get; set; }
+        public string VanBanDenCollectionName { get; set; }
+        public string LichCongTacCollectionName { get; set; }
+        public string LoaiVanBanCollectionName { get; set; }
     }
 
     public interface IDbSettings
@@ -61,5 +62,6 @@ namespace EOffice.WebAPI.Data
         string VanBanDiCollectionName { get; set; }
         string VanBanDenCollectionName { get; set; }
         string LichCongTacCollectionName { get; set; }
+        string LoaiVanBanCollectionName { get; set; }
     }
 }
