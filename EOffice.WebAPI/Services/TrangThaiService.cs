@@ -10,6 +10,7 @@ using EOffice.WebAPI.Helpers;
 using EOffice.WebAPI.Interfaces;
 using EOffice.WebAPI.Models;
 using EOffice.WebAPI.Params;
+using EOffice.WebAPI.ViewModels;
 using EResultResponse = EOffice.WebAPI.Exceptions.EResultResponse;
 
 namespace EOffice.WebAPI.Services
@@ -176,6 +177,18 @@ namespace EOffice.WebAPI.Services
         public async Task<List<TrangThai>> GetAll()
         {
             return _context.TrangThai.Find(x => x.IsDeleted != true).ToList();
+        }
+         
+        public async Task<List<TrangThaiTreeVM>> GetTree()
+        {
+            var listTrangThai = await _context.TrangThai.Find(x  => x.IsDeleted ==false).SortBy(x=> x.Ten).ToListAsync();
+            List<TrangThaiTreeVM> list = new List<TrangThaiTreeVM>();
+            foreach (var item in listTrangThai)
+            {
+                TrangThaiTreeVM trangThai = new TrangThaiTreeVM(item);
+                list.Add(trangThai);
+            }
+            return list;
         }
     }
 }

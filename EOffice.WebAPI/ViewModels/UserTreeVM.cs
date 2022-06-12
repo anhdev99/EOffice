@@ -1,20 +1,18 @@
-﻿using System.Collections.Generic;
-using EOffice.WebAPI.Models;
+﻿using EOffice.WebAPI.Models;
 
 namespace EOffice.WebAPI.ViewModels
 {
-    public class LoaiVanBanTreeVM
+    public class UserTreeVM
     {
-
-        public LoaiVanBanTreeVM(LoaiVanBanTreeVM model)
+        public UserTreeVM(UserTreeVM model)
         {
             this.Id = model.Id;
             this.Label = model.Label;
         }
-        public LoaiVanBanTreeVM(LoaiVanBan model)
+        public UserTreeVM(User model)
         {
             this.Id = model.Id;
-            this.Label = model.Ten;
+            this.Label = model.FullName;
             this.Selected = false;
             this.Opened = false;
         }

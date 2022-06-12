@@ -7,6 +7,9 @@ export const actions = {
     async getPagingParams({commit}, params) {
         return apiClient.post(controller + "/get-paging-params", params);
     },
+    async getTrangThai({commit}) {
+        return apiClient.get(controller +"/getTree");
+    },
     async create({commit}, values) {
         return apiClient.post(controller + "/create", values);
     },

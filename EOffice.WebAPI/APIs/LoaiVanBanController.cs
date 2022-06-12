@@ -5,6 +5,7 @@ using EOffice.WebAPI.Helpers;
 using EOffice.WebAPI.Interfaces;
 using EOffice.WebAPI.Models;
 using EOffice.WebAPI.Params;
+using EOffice.WebAPI.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using EResultResponse = EOffice.WebAPI.Helpers.EResultResponse;
 
@@ -150,6 +151,30 @@ namespace EOffice.WebAPI.APIs
                         .WithData(response)
                         .WithCode(EResultResponse.SUCCESS.ToString())
                         .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+        
+        [HttpGet]
+        [Route("getTree")]
+        public async Task<IActionResult> GetTree()
+        {
+            try
+            {
+                var response = await _loaiVanBanService.GetTree();
+
+                return Ok(
+                    new ResultResponse<List<LoaiVanBanTreeVM>>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.UPDATE_SUCCESS)
                 );
             }
             catch (ResponseMessageException ex)

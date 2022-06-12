@@ -108,11 +108,18 @@ export default {
       config: {
         wrap: true, // set wrap to true only when using 'input-group'
         altFormat: "M j, Y",
-        dateFormat: "d.m.y",
+        dateFormat: "d / m / y",
       },
     };
   },
   components: {Layout, PageHeader,PhanCong, Treeselect, flatPickr},
+  created() {
+    this.myProvider()
+    this.getLoaiVanBan()
+    this.getTrangThai()
+    this.getDonVi()
+    this.getUser()
+  },
   methods: {
     HandleSubmit(e){
       e.preventDefault();
@@ -143,6 +150,9 @@ export default {
     },
     myProvider (ctx) {
 
+
+    },
+    getLoaiVanBan() {
       try {
         let promise =  this.$store.dispatch("loaiVanBanStore/getLoaiVanBan")
         return promise.then(resp => {
@@ -150,14 +160,58 @@ export default {
             let items = resp.data
             this.loading = false
             this.optionLoaiVanBan = items;
-            console.log("loại văn bản", );
-
             return items || []
 
 
           }
           return [];
         })
+      } finally {
+        this.loading = false
+      }
+    },
+    getTrangThai(){
+      try {
+        let promise =  this.$store.dispatch("trangThaiStore/getTrangThai")
+        return promise.then(resp => {
+          if(resp.resultCode == "SUCCESS"){
+            let items = resp.data
+            this.loading = false
+            this.optionTrangThai = items;
+            return items || []
+          }
+          return [];
+        })
+      } finally {
+        this.loading = false
+      }
+    },
+    getDonVi() {
+      try {
+        let promise =  this.$store.dispatch("donViStore/getDonViCha")
+        return promise.then(resp => {
+          if(resp.resultCode == "SUCCESS"){
+            let items = resp.data
+            this.loading = false
+            this.optionDonVi = items;
+          }
+          return [];
+        });
+      } finally {
+        this.loading = false
+      }
+    },
+    getUser() {
+      try {
+        let promise =  this.$store.dispatch("userStore/getUserTree")
+        return promise.then(resp => {
+          if(resp.resultCode == "SUCCESS"){
+            let items = resp.data
+            this.loading = false
+            this.optionCanBoSoan = items;
+          }
+          return [];
+        });
       } finally {
         this.loading = false
       }
@@ -361,7 +415,7 @@ export default {
                     >Số VB đến</label
                     >
                     <input
-                        v-model="model.soLuuCV"
+                        v-model="model.soVBDen"
                         type="text"
                         class="form-control"
                         id="validationSoVanBanDen"
@@ -618,7 +672,6 @@ export default {
                 </div>
               </div>
             </div>
-
             <!-- end content -->
           </form>
         </div>

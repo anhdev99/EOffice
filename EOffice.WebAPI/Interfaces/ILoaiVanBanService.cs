@@ -14,5 +14,6 @@ namespace EOffice.WebAPI.Interfaces
         Task<IEnumerable<LoaiVanBan>> Get();
         Task<LoaiVanBan> GetById(string id);
         Task<PagingModel<LoaiVanBan>> GetPaging(PagingParam param);
+        Task<List<LoaiVanBanTreeVM>> GetTree();
     }
 }

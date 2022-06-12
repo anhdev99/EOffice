@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using EOffice.WebAPI.Models;
 using EOffice.WebAPI.Params;
+using EOffice.WebAPI.ViewModels;
 
 namespace EOffice.WebAPI.Interfaces
 {
@@ -13,5 +14,6 @@ namespace EOffice.WebAPI.Interfaces
         Task<TrangThai> GetById(string id);
         Task<PagingModel<TrangThai>> GetPaging(TrangThaiParam param);
         Task<List<TrangThai>> GetAll();
+        Task<List<TrangThaiTreeVM>> GetTree();
     }
 }

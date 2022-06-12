@@ -2,7 +2,7 @@ import moment from "moment";
 const toJson = (item) => {
     return {
         soLuuCV: item.soLuuCV,
-        soCVDi: item.soCVDi,
+        soVBDen: item.soVBDen,
         loaiVanBan: item.loaiVanBan,
         ngayNhap:item.ngayNhap,
         trangThai: item.trangThai,
@@ -28,7 +28,7 @@ const toJson = (item) => {
 const fromJson = (item) => {
     return {
         soLuuCV: item.soLuuCV,
-        soCVDi: item.soCVDi,
+        soVBDen: item.soVBDen,
         loaiVanBan: item.loaiVanBan,
         ngayNhap:item.ngayNhap,
         trangThai: item.trangThai,
@@ -54,7 +54,7 @@ const fromJson = (item) => {
 const baseJson = () => {
     return {
         soLuuCV: null,
-        soCVDi: null,
+        soVBDen: null,
         loaiVanBan: null,
         ngayNhap: new Date(),
         trangThai: null,

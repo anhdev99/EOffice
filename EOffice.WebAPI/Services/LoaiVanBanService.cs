@@ -157,15 +157,14 @@ namespace EOffice.WebAPI.Services
             return result;
         }
 
-        public async Task<List<DonViTreeVM>> GetTree()
+        public async Task<List<LoaiVanBanTreeVM>> GetTree()
         {
-            var listDonVi = await _context.DonVis.Find(x  => x.IsDeleted ==false).SortBy(donVi => donVi.CapDV).ToListAsync();
-            var parents = listDonVi.Where(x => x.DonViCha == null).ToList();
-            List<DonViTreeVM> list = new List<DonViTreeVM>();
-            foreach (var item in parents)
+            var listLoaiVanBan = await _context.LoaiVanBan.Find(x  => x.IsDeleted ==false).SortBy(x=> x.Ten).ToListAsync();
+            List<LoaiVanBanTreeVM> list = new List<LoaiVanBanTreeVM>();
+            foreach (var item in listLoaiVanBan)
             {
-                DonViTreeVM donVi = new DonViTreeVM(item);
-                list.Add(donVi);
+                LoaiVanBanTreeVM loaiVanBan = new LoaiVanBanTreeVM(item);
+                list.Add(loaiVanBan);
             }
             return list;
         }
