@@ -37,6 +37,10 @@ namespace EOffice.WebAPI.Services
                 .WithUserName(CurrentUserName);
         }
 
+        private string GetTenDonViCha(string donViChaId)
+        {
+            return _context.DonVis.Find(x => x.DonViCha == donViChaId).FirstOrDefault()?.Ten;
+        }
         public async Task<DonVi> Create(DonVi model)
         {
             if (model == default)
@@ -51,7 +55,7 @@ namespace EOffice.WebAPI.Services
                 Id = model.Id,
                 Ten = model.Ten,
                 MaDonVi = model.MaDonVi,
-                TenDonViCha = model.TenDonViCha,
+                TenDonViCha = GetTenDonViCha(model.DonViCha),
                 // MaCapCoQuan = model.MaCapCoQuan,
                 // TenCapCoQuan= model.TenCapCoQuan,
                 MaCapDonVi = model.MaCapDonVi,
@@ -104,7 +108,7 @@ namespace EOffice.WebAPI.Services
             // entity.TenCapCoQuan = model.TenCapCoQuan;
             entity.MaDonVi = model.MaDonVi;
             entity.MaCapDonVi = model.MaCapDonVi;
-            entity.TenDonViCha = model.TenDonViCha;
+            entity.TenDonViCha = GetTenDonViCha(model.DonViCha);
             entity.TenCapDonVi = model.TenCapDonVi;
             entity.CapDV = model.CapDV;
             entity.DonViCha = model.DonViCha;

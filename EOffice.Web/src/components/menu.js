@@ -59,12 +59,6 @@ export const menuItems = [
     icon: "ri-dashboard-2-line",
     subItems: [
       {
-        id: "12",
-        label: "Cơ quan",
-        link: "/co-quan",
-        parentId: "11",
-      },
-      {
         id: "13",
         label: "Lĩnh vực",
         link: "/linh-vuc",
@@ -89,12 +83,6 @@ export const menuItems = [
         id: "15",
         label: "Chức vụ",
         link: "/chuc-vu",
-        parentId: "11",
-      },
-      {
-        id: "16",
-        label: "Cấp cơ quan",
-        link: "/cap-co-quan",
         parentId: "11",
       }
     ],
