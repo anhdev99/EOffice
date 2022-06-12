@@ -85,7 +85,6 @@ export default {
     currentPage: {
       deep: true,
       handler(val) {
-        console.log("abc", val)
         this.myProvider();
       }
     },
@@ -119,9 +118,8 @@ export default {
         await this.$store.dispatch("linhVucStore/delete", this.model.id).then((res) => {
           if (res.resultCode === 'SUCCESS') {
             this.showDeleteModal = false;
-            this.$refs.tblList.refresh()
+            this.myProvider();
           }
-          // });
         });
       }
     },
@@ -131,7 +129,6 @@ export default {
     },
     async HandleSubmit(e){
       e.preventDefault();
-      console.log("handle submit", this.model);
       if(
           this.model.id != 0 &&
           this.model.id != null &&

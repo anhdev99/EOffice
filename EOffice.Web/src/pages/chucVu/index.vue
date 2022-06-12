@@ -82,6 +82,14 @@ export default {
   created() {
     this.myProvider()
   },
+  watch:{
+    currentPage: {
+      deep: true,
+      handler(val) {
+        this.myProvider();
+      }
+    },
+  },
   methods: {
     async handleUpdate(id) {
       await this.$store.dispatch("chucVuStore/getById", id).then((res) => {
@@ -145,7 +153,7 @@ export default {
     },
     myProvider (ctx) {
       const params = {
-        start: 0,
+        start: this.currentPage,
         limit: this.perPage,
         content: this.filter,
         sortBy: "",
@@ -157,7 +165,6 @@ export default {
         let promise =  this.$store.dispatch("chucVuStore/getPagingParams", params)
         return promise.then(resp => {
           if(resp.resultCode == "SUCCESS"){
-            console.log(resp.data)
             let items = resp.data.data
             this.totalRows = resp.data.totalRows
             this.numberOfElement = resp.data.data.length
@@ -274,6 +281,7 @@ export default {
                     <!-- pagination -->
                     <b-pagination
                         v-model="currentPage"
+                        :model-value.sync="currentPage"
                         :total-rows="totalRows"
                         :per-page="perPage"
                     ></b-pagination>
