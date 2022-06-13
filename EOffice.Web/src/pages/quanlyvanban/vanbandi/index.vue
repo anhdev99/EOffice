@@ -5,6 +5,9 @@ import appConfig from "../../../../app.config.json";
 import {data} from "./data";
 import {vanBanDiModel} from "@/models/vanBanDiModel";
 
+import DropZone from 'dropzone-vue';
+import 'dropzone-vue/dist/dropzone-vue.common.css';
+
 import Treeselect from "vue3-treeselect";
 // import the styles
 import "vue3-treeselect/dist/vue3-treeselect.css";
@@ -38,7 +41,7 @@ export default {
         },
       ],
       data: data,
-      model:vanBanDiModel.baseJson(),
+      model: vanBanDiModel.baseJson(),
       optionLoaiVanBan: [
         {
           id: "",
@@ -131,6 +134,17 @@ export default {
           label: "",
         }
       ],
+      url: `${process.env.VUE_APP_API_URL}files/upload`,
+      dropzoneOptions: {
+        url: `${process.env.VUE_APP_API_URL}files/upload`,
+        thumbnailWidth: 300,
+        thumbnailHeight: 160,
+        maxFiles: 4,
+        maxFilesize: 30,
+        headers: { "My-Awesome-Header": "header value" },
+        addRemoveLinks: true,
+        acceptedFiles: ".jpeg,.jpg,.png,.gif,.doc,.docx,.xlsx,.pptx,.pdf",
+      },
       config: {
         wrap: true, // set wrap to true only when using 'input-group'
         altFormat: "M j, Y",
@@ -138,7 +152,7 @@ export default {
       },
     };
   },
-  components: {Layout, PageHeader,PhanCong, Treeselect, flatPickr},
+  components: {Layout, PageHeader, PhanCong, Treeselect, flatPickr, DropZone},
   created() {
     this.myProvider()
     this.getLoaiVanBan()
@@ -148,14 +162,14 @@ export default {
     this.getLinhVuc()
   },
   methods: {
-    HandleSubmit(e){
+    HandleSubmit(e) {
       e.preventDefault();
       console.log("handle submit", this.model);
-      if(
+      if (
           this.model.id != 0 &&
           this.model.id != null &&
           this.model.id
-      ){
+      ) {
         //Update model
         // await this.$store.dispatch("linhVucStore/update", this.model).then((res) => {
         //   if (res.resultCode === 'SUCCESS') {
@@ -164,7 +178,7 @@ export default {
         //     this.myProvider()
         //   }
         // })
-      }else{
+      } else {
         //Create model
         // await this.$store.dispatch("linhVucStore/create", linhVucModel.toJson(this.model)).then((res) => {
         //   if (res.resultCode === 'SUCCESS') {
@@ -175,15 +189,15 @@ export default {
         // });
       }
     },
-    myProvider (ctx) {
+    myProvider(ctx) {
 
 
     },
     getLoaiVanBan() {
       try {
-        let promise =  this.$store.dispatch("loaiVanBanStore/getLoaiVanBan")
+        let promise = this.$store.dispatch("loaiVanBanStore/getLoaiVanBan")
         return promise.then(resp => {
-          if(resp.resultCode == "SUCCESS"){
+          if (resp.resultCode == "SUCCESS") {
             let items = resp.data
             this.loading = false
             this.optionLoaiVanBan = items;
@@ -197,11 +211,11 @@ export default {
         this.loading = false
       }
     },
-    getTrangThai(){
+    getTrangThai() {
       try {
-        let promise =  this.$store.dispatch("trangThaiStore/getTrangThai")
+        let promise = this.$store.dispatch("trangThaiStore/getTrangThai")
         return promise.then(resp => {
-          if(resp.resultCode == "SUCCESS"){
+          if (resp.resultCode == "SUCCESS") {
             let items = resp.data
             this.loading = false
             this.optionTrangThai = items;
@@ -215,9 +229,9 @@ export default {
     },
     getDonVi() {
       try {
-        let promise =  this.$store.dispatch("donViStore/getDonViCha")
+        let promise = this.$store.dispatch("donViStore/getDonViCha")
         return promise.then(resp => {
-          if(resp.resultCode == "SUCCESS"){
+          if (resp.resultCode == "SUCCESS") {
             let items = resp.data
             this.loading = false
             this.optionDonVi = items;
@@ -230,9 +244,9 @@ export default {
     },
     getUser() {
       try {
-        let promise =  this.$store.dispatch("userStore/getUserTree")
+        let promise = this.$store.dispatch("userStore/getUserTree")
         return promise.then(resp => {
-          if(resp.resultCode == "SUCCESS"){
+          if (resp.resultCode == "SUCCESS") {
             let items = resp.data
             this.loading = false
             this.optionCanBoSoan = items;
@@ -245,15 +259,15 @@ export default {
     },
     getLinhVuc() {
       try {
-        let promise =  this.$store.dispatch("linhVucStore/get")
+        let promise = this.$store.dispatch("linhVucStore/get")
         return promise.then(resp => {
-          if(resp.resultCode == "SUCCESS"){
+          if (resp.resultCode == "SUCCESS") {
             let items = resp.data
             this.loading = false
             this.optionLinhVuc = items.map(value => {
               return {
-                id : value.id,
-                label : value.ten,
+                id: value.id,
+                label: value.ten,
               };
             });
             console.log("this.optionLinhVuc", this.optionLinhVuc);
@@ -263,7 +277,19 @@ export default {
       } finally {
         this.loading = false
       }
-    }
+    },
+    addThisFile(items, re ) {
+      console.log("file", items,re);
+      // console.log("response", response);
+      // if (this.model) {
+      //   if (this.model.uploadFiles == null || this.model.uploadFiles.length <= 0)
+      //   {
+      //     this.model.uploadFiles = [];
+      //   }
+      //   let fileSuccess = response.data;
+      //   this.model.uploadFiles.push({fileId: fileSuccess.id,  fileName: fileSuccess.fileName , ext : fileSuccess.ext})
+      // }
+    },
   },
 };
 </script>
@@ -421,7 +447,7 @@ export default {
                         :options="optionLoaiVanBan"
                     >
                     </treeselect>
-                    <treeselect-value :value="model.loaiVanBan" />
+                    <treeselect-value :value="model.loaiVanBan"/>
                     <div class="valid-feedback">Vui lòng chọn loại văn bản.</div>
                   </div>
                   <!-- Trạng thái -->
@@ -438,7 +464,7 @@ export default {
                         :options="optionTrangThai"
                     >
                     </treeselect>
-                    <treeselect-value :value="model.trangThai" />
+                    <treeselect-value :value="model.trangThai"/>
                     <div class="valid-feedback">Vui lòng chọn trạng thái.</div>
                   </div>
                   <!-- số lưu CV-->
@@ -524,6 +550,102 @@ export default {
                         v-model="model.soBan"
                     />
                   </div>
+                  <!-- Khối cơ quan nhận -->
+                  <div class="col-md-6">
+                    <label
+                        for="validationKhoiCoQuanNhan"
+                        class="col-form-label col-form-label-sm"
+                    >Khối cơ quan nhận</label
+                    >
+                    <treeselect
+                        placeholder="Chọn khối cơ quan nhận"
+                        v-model="model.khoiCoQuanNhan"
+                        :options="optionDonVi"
+                    >
+                    </treeselect>
+                    <treeselect-value :value="model.khoiCoQuanNhan"/>
+                  </div>
+                  <!-- Cơ quan nhận  -->
+                  <div class="col-md-6">
+                    <label
+                        for="validationCoQuanNhan"
+                        class="col-form-label col-form-label-sm"
+                    >Cơ quan nhận</label
+                    >
+                    <treeselect
+                        placeholder="Chọn cơ quan nhận"
+                        v-model="model.coQuanNhan"
+                        :options="optionDonVi"
+                    >
+                    </treeselect>
+                    <treeselect-value :value="model.coQuanNhan"/>
+                  </div>
+                  <!-- file đính kèm-->
+                  <div class="col-md-12">
+                  <label
+                      for="validationCoQuanNhan"
+                      class="col-form-label col-form-label-sm"
+                  >File đính kèm</label
+                  >
+<!--                  <div class="input-group">-->
+<!--                    <button class="btn btn-outline-primary" type="button" id="inputGroupFileAddon03">-->
+<!--                      <i class=" ri-attachment-2 text-primary"></i>-->
+<!--                    </button>-->
+<!--                    <input type="file" class="form-control" id="inputGroupFile03"-->
+<!--                           aria-describedby="inputGroupFileAddon03" aria-label="Upload">-->
+<!--                  </div>-->
+                    <!--  start vue dropzone-->
+                    <DropZone
+                        :maxFiles="Number(10000000000)"
+                        ref="dropzone"
+                        :uploadOnDrop="true"
+                        :multipleUpload="true"
+                        :parallelUpload="2"
+                        :url="url"
+                        @addedFile="addThisFile"
+                    />
+                    <ul class="list-unstyled mb-0" id="dropzone-preview">
+                      <div
+                          class="border rounded"
+                          v-for="(file, index) of files"
+                          :key="index"
+                      >
+                        <div class="d-flex p-2">
+                          <div class="flex-grow-1">
+                            <div class="pt-1">
+                              <h5 class="fs-14 mb-1" data-dz-name="">
+                                {{ file.name }}
+                              </h5>
+                              <p class="fs-13 text-muted mb-0" data-dz-size="">
+                                <strong>{{ file.size / 1024 }}</strong> KB
+                              </p>
+                              <strong
+                                  class="error text-danger"
+                                  data-dz-errormessage=""
+                              ></strong>
+                            </div>
+                          </div>
+                          <div class="flex-shrink-0 ms-3">
+                            <button
+                                data-dz-remove=""
+                                class="btn btn-sm btn-danger"
+                                @click="deleteRecord"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </ul>
+                </div>
+
+
+                  <!--  end vue dropzone -->
+
+                </div>
+              </div>
+              <div class="col-md-5">
+                <div class="row">
                   <!-- Trích yếu  -->
                   <div class="col-md-12">
                     <label
@@ -541,54 +663,6 @@ export default {
                     />
                     <div class="valid-feedback">Vui lòng thêm trích yếu.</div>
                   </div>
-                  <!-- Khối cơ quan nhận -->
-                  <div class="col-md-6">
-                    <label
-                        for="validationKhoiCoQuanNhan"
-                        class="col-form-label col-form-label-sm"
-                    >Khối cơ quan nhận</label
-                    >
-                    <treeselect
-                        placeholder="Chọn khối cơ quan nhận"
-                        v-model="model.khoiCoQuanNhan"
-                        :options="optionDonVi"
-                    >
-                    </treeselect>
-                    <treeselect-value :value="model.khoiCoQuanNhan" />
-                  </div>
-                  <!-- Cơ quan nhận  -->
-                  <div class="col-md-6">
-                    <label
-                        for="validationCoQuanNhan"
-                        class="col-form-label col-form-label-sm"
-                    >Cơ quan nhận</label
-                    >
-                    <treeselect
-                        placeholder="Chọn cơ quan nhận"
-                        v-model="model.coQuanNhan"
-                        :options="optionDonVi"
-                    >
-                    </treeselect>
-                    <treeselect-value :value="model.coQuanNhan" />
-                  </div>
-                  <!-- file đính kèm-->
-                  <div class="col-md-12">
-                    <label
-                        for="validationCoQuanNhan"
-                        class="col-form-label col-form-label-sm"
-                    >File đính kèm</label
-                    >
-                    <div class="input-group">
-                      <button class="btn btn-outline-primary" type="button" id="inputGroupFileAddon03">
-                        <i class=" ri-attachment-2 text-primary"></i>
-                      </button>
-                      <input type="file" class="form-control" id="inputGroupFile03" aria-describedby="inputGroupFileAddon03" aria-label="Upload">
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-5">
-                <div class="row">
                   <!-- Đơn vị soạn -->
                   <div class="col-md-12">
                     <label
@@ -602,7 +676,7 @@ export default {
                         :options="optionDonVi"
                     >
                     </treeselect>
-                    <treeselect-value :value="model.donViSoan" />
+                    <treeselect-value :value="model.donViSoan"/>
                   </div>
                   <!-- Cán bộ soạn -->
                   <div class="col-md-12">
@@ -617,7 +691,7 @@ export default {
                         :options="optionCanBoSoan"
                     >
                     </treeselect>
-                    <treeselect-value :value="model.canBoSoan" />
+                    <treeselect-value :value="model.canBoSoan"/>
                   </div>
                   <!-- Hình thức gửi -->
                   <div class="col-md-6">
@@ -632,7 +706,7 @@ export default {
                         :options="optionHinhThucGui"
                     >
                     </treeselect>
-                    <treeselect-value :value="model.hinhThucGui" />
+                    <treeselect-value :value="model.hinhThucGui"/>
                   </div>
                   <!--        Lĩnh vực-->
                   <div class="col-md-6">
@@ -647,7 +721,7 @@ export default {
                         :options="optionLinhVuc"
                     >
                     </treeselect>
-                    <treeselect-value :value="model.linhVuc" />
+                    <treeselect-value :value="model.linhVuc"/>
                   </div>
                   <!--        Mức độ tính chất-->
                   <div class="col-md-6">
@@ -662,7 +736,7 @@ export default {
                         :options="optionMucDoTinhChat"
                     >
                     </treeselect>
-                    <treeselect-value :value="model.mucDoTinhChat" />
+                    <treeselect-value :value="model.mucDoTinhChat"/>
                   </div>
                   <!--        Mức độ bảo mật-->
                   <div class="col-md-6">
@@ -677,7 +751,7 @@ export default {
                         :options="optionMucDoBaoMat"
                     >
                     </treeselect>
-                    <treeselect-value :value="model.mucDoBaoMat" />
+                    <treeselect-value :value="model.mucDoBaoMat"/>
                   </div>
                   <!--        Hồ sơ đơn vị-->
                   <div class="col-md-6">
@@ -692,7 +766,7 @@ export default {
                         :options="optionHoSoDonVi"
                     >
                     </treeselect>
-                    <treeselect-value :value="model.hoSoDonVi" />
+                    <treeselect-value :value="model.hoSoDonVi"/>
                   </div>
                   <!--        Nơi lưu trữ-->
                   <div class="col-md-6">
@@ -716,7 +790,7 @@ export default {
                         class="col-form-label col-form-label-sm"
                     >Ghi chú</label
                     >
-                    <textarea v-model="model.ghiChu" rows="2" class="form-control" />
+                    <textarea v-model="model.ghiChu" rows="2" class="form-control"/>
                   </div>
                 </div>
               </div>
@@ -780,7 +854,7 @@ export default {
                       :options="optionLoaiVanBan"
                   >
                   </treeselect>
-                  <treeselect-value :value="model.loaiVanBan" />
+                  <treeselect-value :value="model.loaiVanBan"/>
                   <div class="valid-feedback">Vui lòng chọn loại văn bản.</div>
                 </div>
                 <!-- Trạng thái -->
@@ -797,7 +871,7 @@ export default {
                       :options="optionTrangThai"
                   >
                   </treeselect>
-                  <treeselect-value :value="model.trangThai" />
+                  <treeselect-value :value="model.trangThai"/>
                   <div class="valid-feedback">Vui lòng chọn trạng thái.</div>
                 </div>
                 <!-- số lưu CV-->
@@ -913,7 +987,7 @@ export default {
                       :options="optionDonVi"
                   >
                   </treeselect>
-                  <treeselect-value :value="model.khoiCoQuanNhan" />
+                  <treeselect-value :value="model.khoiCoQuanNhan"/>
                 </div>
                 <!-- Cơ quan nhận  -->
                 <div class="col-md-6">
@@ -928,7 +1002,7 @@ export default {
                       :options="optionDonVi"
                   >
                   </treeselect>
-                  <treeselect-value :value="model.coQuanNhan" />
+                  <treeselect-value :value="model.coQuanNhan"/>
                 </div>
                 <!-- file đính kèm-->
                 <div class="col-md-12">
@@ -941,7 +1015,8 @@ export default {
                     <button class="btn btn-outline-primary" type="button" id="inputGroupFileAddon03">
                       <i class=" ri-attachment-2 text-primary"></i>
                     </button>
-                    <input type="file" class="form-control" id="inputGroupFile03" aria-describedby="inputGroupFileAddon03" aria-label="Upload">
+                    <input type="file" class="form-control" id="inputGroupFile03"
+                           aria-describedby="inputGroupFileAddon03" aria-label="Upload">
                   </div>
                 </div>
               </div>
@@ -961,7 +1036,7 @@ export default {
                       :options="optionDonVi"
                   >
                   </treeselect>
-                  <treeselect-value :value="model.donViSoan" />
+                  <treeselect-value :value="model.donViSoan"/>
                 </div>
                 <!-- Cán bộ soạn -->
                 <div class="col-md-12">
@@ -976,7 +1051,7 @@ export default {
                       :options="optionCanBoSoan"
                   >
                   </treeselect>
-                  <treeselect-value :value="model.canBoSoan" />
+                  <treeselect-value :value="model.canBoSoan"/>
                 </div>
                 <!-- Hình thức gửi -->
                 <div class="col-md-6">
@@ -991,7 +1066,7 @@ export default {
                       :options="optionHinhThucGui"
                   >
                   </treeselect>
-                  <treeselect-value :value="model.hinhThucGui" />
+                  <treeselect-value :value="model.hinhThucGui"/>
                 </div>
                 <!--        Lĩnh vực-->
                 <div class="col-md-6">
@@ -1020,7 +1095,7 @@ export default {
                       :options="optionMucDoTinhChat"
                   >
                   </treeselect>
-                  <treeselect-value :value="model.mucDoTinhChat" />
+                  <treeselect-value :value="model.mucDoTinhChat"/>
                 </div>
                 <!--        Mức độ bảo mật-->
                 <div class="col-md-6">
@@ -1035,7 +1110,7 @@ export default {
                       :options="optionMucDoBaoMat"
                   >
                   </treeselect>
-                  <treeselect-value :value="model.mucDoBaoMat" />
+                  <treeselect-value :value="model.mucDoBaoMat"/>
                 </div>
                 <!--        Hồ sơ đơn vị-->
                 <div class="col-md-6">
@@ -1050,7 +1125,7 @@ export default {
                       :options="optionHoSoDonVi"
                   >
                   </treeselect>
-                  <treeselect-value :value="model.hoSoDonVi" />
+                  <treeselect-value :value="model.hoSoDonVi"/>
                 </div>
                 <!--        Nơi lưu trữ-->
                 <div class="col-md-6">
@@ -1074,7 +1149,7 @@ export default {
                       class="col-form-label col-form-label-sm"
                   >Ghi chú</label
                   >
-                  <textarea v-model="model.ghiChu" rows="2" class="form-control" />
+                  <textarea v-model="model.ghiChu" rows="2" class="form-control"/>
                 </div>
               </div>
             </div>

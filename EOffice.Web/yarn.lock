@@ -1653,6 +1653,13 @@
   dependencies:
     fast-deep-equal "^3.1.3"
 
+"@grapoza/vue-tree@^4.0.3":
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/@grapoza/vue-tree/-/vue-tree-4.0.3.tgz#98d31f93e5457c28e406d8e9eea5a3c25ad5396f"
+  integrity sha512-KP1UGkO6VlGbuJSiCj7D7JirAh67HFPwOj+C7Db9otzQvym9q3kbfR/paGGTJ+LHN7g4NPOp6veDFo3+J+TuFw==
+  dependencies:
+    vue "^3.2.6"
+
 "@grpc/grpc-js@^1.3.2":
   version "1.5.7"
   resolved "https://registry.npmjs.org/@grpc/grpc-js/-/grpc-js-1.5.7.tgz"
@@ -1756,6 +1763,11 @@
   resolved "https://registry.npmjs.org/@j-t-mcc/vue3-chartjs/-/vue3-chartjs-1.2.0.tgz"
   integrity sha512-YFf5XpIXt+qPqW0S/RetEV/Dic7DvPoz+2BMrswDvXe4n0q83aanf6Lo0ae5wvwBwBzDXRQ2FSs8x9oecxQkeA==
 
+"@jobinsjp/vue3-datatable@^1.0.15":
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/@jobinsjp/vue3-datatable/-/vue3-datatable-1.0.15.tgz#ecfac18e3c1d95625f573c46f3aa96dc50ee8f65"
+  integrity sha512-9qAyEiuCy3kHWjJhOcZxAUQJg1xc5pO977DujG0Vghv3jOEW1FXzsd1usvSgmvMVEWF7guH2PKbewjYN+fmi9A==
+
 "@jridgewell/resolve-uri@^3.0.3":
   version "3.0.5"
   resolved "https://registry.npmjs.org/@jridgewell/resolve-uri/-/resolve-uri-3.0.5.tgz"
@@ -1791,6 +1803,15 @@
   version "1.1.3"
   resolved "https://registry.npmjs.org/@nodelib/fs.stat/-/fs.stat-1.1.3.tgz"
   integrity sha512-shAmDyaQC4H92APFoIaVDHCx5bStIocgvbwQyxPRrbUY20V1EYTbSDchWbuwlMG3V17cprZhA6+78JfB+3DTPw==
+
+"@nuxt/opencollective@^0.3.2":
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/@nuxt/opencollective/-/opencollective-0.3.3.tgz#80ff0eb8f6fca1d0ed5a089b9688f41bff2dd8ab"
+  integrity sha512-6IKCd+gP0HliixqZT/p8nW3tucD6Sv/u/eR2A9X4rxT/6hXlMzA4GZQzq4d2qnBAwSwGpmKyzkyTjNjrhaA25A==
+  dependencies:
+    chalk "^4.1.0"
+    consola "^2.15.0"
+    node-fetch "^2.6.7"
 
 "@pdftron/webviewer@^8.5.0":
   version "8.5.0"
@@ -2580,10 +2601,10 @@
   resolved "https://registry.npmjs.org/@vue/web-component-wrapper/-/web-component-wrapper-1.3.0.tgz"
   integrity sha512-Iu8Tbg3f+emIIMmI2ycSI8QcEuAUgPTgHwesDU1eKMLE4YC/c/sFbGc70QgMq31ijRftV0R7vCm9co6rldCeOA==
 
-"@vueform/multiselect@^2.3.1":
-  version "2.3.1"
-  resolved "https://registry.npmjs.org/@vueform/multiselect/-/multiselect-2.3.1.tgz"
-  integrity sha512-JyOfVOanRZHDWzdgrbO05KvSu4WOH4aPPa2sajMxu4C4QjZp2NeezW6Bdt588IuFfVn34n0s0w8w/bxtuH4KRQ==
+"@vueform/multiselect@^2.4.2":
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/@vueform/multiselect/-/multiselect-2.4.2.tgz#580a7f84f1eb8c5b2c9d4ac26c54c57f748b815b"
+  integrity sha512-5VVk4Mwn4cva+MbBjAXaEunmGWLAp98PcI4okaT95qYCfBckn2N/9ws18O0OStVe8WskFFUj/kF0goH/Xc2aTw==
 
 "@vueform/slider@^2.0.8":
   version "2.0.8"
@@ -3268,6 +3289,22 @@ bootstrap-vue-3@^0.1.3:
   dependencies:
     core-js "3.x.x"
 
+bootstrap-vue@^2.22.0:
+  version "2.22.0"
+  resolved "https://registry.yarnpkg.com/bootstrap-vue/-/bootstrap-vue-2.22.0.tgz#2b3d7926d24af0bd289ddce7ba76b07000aab3e5"
+  integrity sha512-denjR/ae0K7Jrcqud3TrZWw0p/crtyigeGUNunWQ4t+KFi+7rzJ6j6lx1W5/gpUtSSUgNbWrXcHH4lIWXzXOOQ==
+  dependencies:
+    "@nuxt/opencollective" "^0.3.2"
+    bootstrap "^4.6.1"
+    popper.js "^1.16.1"
+    portal-vue "^2.1.7"
+    vue-functional-data-merge "^3.1.0"
+
+bootstrap@^4.6.1:
+  version "4.6.1"
+  resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-4.6.1.tgz#bc25380c2c14192374e8dec07cf01b2742d222a2"
+  integrity sha512-0dj+VgI9Ecom+rvvpNZ4MUZJz8dcX7WCX+eTID9+/8HgOkv3dsRzi8BGeZJCQU6flWQVYxwTQnEZFrmJSEO7og==
+
 bootstrap@^5.1.3:
   version "5.1.3"
   resolved "https://registry.npmjs.org/bootstrap/-/bootstrap-5.1.3.tgz"
@@ -3940,6 +3977,11 @@ connect-history-api-fallback@^1.6.0:
   resolved "https://registry.npmjs.org/connect-history-api-fallback/-/connect-history-api-fallback-1.6.0.tgz"
   integrity sha512-e54B99q/OUoH64zYYRf3HBP5z24G38h5D3qXu23JGRoigpX5Ss4r9ZnDk3g0Z8uQC2x2lPaJ+UlWBc1ZWBWdLg==
 
+consola@^2.15.0:
+  version "2.15.3"
+  resolved "https://registry.yarnpkg.com/consola/-/consola-2.15.3.tgz#2e11f98d6a4be71ff72e0bdf07bd23e12cb61550"
+  integrity sha512-9vAdYbHj6x2fLKC4+oPH0kFzY/orMZyG2Aj+kNylHxKGJ/Ed4dpNyAQYwJOdqO4zdM7XpVHmyejQDcQHrnuXbw==
+
 console-browserify@^1.1.0:
   version "1.2.0"
   resolved "https://registry.npmjs.org/console-browserify/-/console-browserify-1.2.0.tgz"
@@ -4608,6 +4650,16 @@ dotenv@^8.2.0:
   version "8.6.0"
   resolved "https://registry.npmjs.org/dotenv/-/dotenv-8.6.0.tgz"
   integrity sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==
+
+dropzone-vue@^0.1.11:
+  version "0.1.11"
+  resolved "https://registry.yarnpkg.com/dropzone-vue/-/dropzone-vue-0.1.11.tgz#673b950b7eda51d268008b81edeb6a31adb16da8"
+  integrity sha512-+XZfKbE2n8FpEoxSTYl9Us4z4qRcRrX24+/uMQxhh4mQuEV1OFAD7v3X2/10ulrRab6wYf5Nv/8pBYchc1ZQyQ==
+
+dropzone@^5.5.1:
+  version "5.9.3"
+  resolved "https://registry.yarnpkg.com/dropzone/-/dropzone-5.9.3.tgz#b3070ae090fa48cbc04c17535635537ca72d70d6"
+  integrity sha512-Azk8kD/2/nJIuVPK+zQ9sjKMRIpRvNyqn9XwbBHNq+iNuSccbJS6hwm1Woy0pMST0erSo0u4j+KJaodndDk4vA==
 
 duplexer@^0.1.1:
   version "0.1.2"
@@ -7197,9 +7249,9 @@ no-case@^2.2.0:
   dependencies:
     lower-case "^1.1.1"
 
-node-fetch@2.6.7:
+node-fetch@2.6.7, node-fetch@^2.6.7:
   version "2.6.7"
-  resolved "https://registry.npmjs.org/node-fetch/-/node-fetch-2.6.7.tgz"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz#24de9fba827e3b4ae44dc8b20256a379160052ad"
   integrity sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==
   dependencies:
     whatwg-url "^5.0.0"
@@ -7828,6 +7880,16 @@ pnp-webpack-plugin@^1.6.4:
   integrity sha512-2Rb3vm+EXble/sMXNSu6eoBx8e79gKqhNq9F5ZWW6ERNCTE/Q0wQNne5541tE5vKjfM8hpNCYL+LGc1YTfI0dg==
   dependencies:
     ts-pnp "^1.1.6"
+
+popper.js@^1.16.1:
+  version "1.16.1"
+  resolved "https://registry.yarnpkg.com/popper.js/-/popper.js-1.16.1.tgz#2a223cb3dc7b6213d740e40372be40de43e65b1b"
+  integrity sha512-Wb4p1J4zyFTbM+u6WuO4XstYx4Ky9Cewe4DWrel7B0w6VVICvPwdOpotjzcf6eD8TsckVnIMNONQyPIUFOUbCQ==
+
+portal-vue@^2.1.7:
+  version "2.1.7"
+  resolved "https://registry.yarnpkg.com/portal-vue/-/portal-vue-2.1.7.tgz#ea08069b25b640ca08a5b86f67c612f15f4e4ad4"
+  integrity sha512-+yCno2oB3xA7irTt0EU5Ezw22L2J51uKAacE/6hMPMoO/mx3h4rXFkkBkT4GFsMDv/vEe8TNKC3ujJJ0PTwb6g==
 
 portfinder@^1.0.26:
   version "1.0.28"
@@ -10127,6 +10189,11 @@ vue-flatpickr-component@^9.0.5:
   dependencies:
     flatpickr "^4.6.9"
 
+vue-functional-data-merge@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/vue-functional-data-merge/-/vue-functional-data-merge-3.1.0.tgz#08a7797583b7f35680587f8a1d51d729aa1dc657"
+  integrity sha512-leT4kdJVQyeZNY1kmnS1xiUlQ9z1B/kdBFCILIjYYQDqZgLqCLa0UhjSSeRX6c3mUe6U5qYeM8LrEqkHJ1B4LA==
+
 vue-hot-reload-api@^2.3.0:
   version "2.3.4"
   resolved "https://registry.npmjs.org/vue-hot-reload-api/-/vue-hot-reload-api-2.3.4.tgz"
@@ -10166,6 +10233,11 @@ vue-loading-overlay@^5.0.3:
   version "5.0.3"
   resolved "https://registry.yarnpkg.com/vue-loading-overlay/-/vue-loading-overlay-5.0.3.tgz#2838297fe9c7e8b2a1e1ce3415c115487885933a"
   integrity sha512-6JWZalwlHF4do3HXsFZGt6PcWYseAI5FuNKpveEkljkzqskDWRr7rYmYHVx2kKu4qIvK0vLpL25T/hpFMNoevQ==
+
+vue-multiselect@^2.1.6:
+  version "2.1.6"
+  resolved "https://registry.yarnpkg.com/vue-multiselect/-/vue-multiselect-2.1.6.tgz#5be5d811a224804a15c43a4edbb7485028a89c7f"
+  integrity sha512-s7jmZPlm9FeueJg1RwJtnE9KNPtME/7C8uRWSfp9/yEN4M8XcS/d+bddoyVwVnvFyRh9msFo0HWeW0vTL8Qv+w==
 
 vue-pdf@^4.3.0:
   version "4.3.0"
@@ -10211,10 +10283,22 @@ vue-template-es2015-compiler@^1.9.0:
   resolved "https://registry.npmjs.org/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz"
   integrity sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==
 
+vue2-dropzone@^3.6.0:
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/vue2-dropzone/-/vue2-dropzone-3.6.0.tgz#b4bb4b64de1cbbb3b88f04b24878e06780a51546"
+  integrity sha512-YXC1nCWIZvfa98e/i6h+EshZCkFSxFEh0Sxr9ODfThAPPDVhAzLLlz/4XIx0NGO1QeSy6htwSstte47R7vVhLQ==
+  dependencies:
+    dropzone "^5.5.1"
+
 vue3-apexcharts@^1.4.1:
   version "1.4.1"
   resolved "https://registry.npmjs.org/vue3-apexcharts/-/vue3-apexcharts-1.4.1.tgz"
   integrity sha512-96qP8JDqB9vwU7bkG5nVU+E0UGQn7yYQVqUUCLQMYWDuQyu2vE77H/UFZ1yI+hwzlSTBKT9BqnNG8JsFegB3eg==
+
+vue3-blocks-tree@^0.6.1:
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/vue3-blocks-tree/-/vue3-blocks-tree-0.6.1.tgz#0334cf6b876bb67e213bf946b47c57e247323612"
+  integrity sha512-/B+a0801YyxKlUH+glPVyOlxTrpLjjRkpfRaiOZWsXCkDdFfW8LVkmAawrFEAUd/F1HFZlx5C1PtnfyYNAPZfQ==
 
 vue3-component-base@^0.0.9:
   version "0.0.9"
@@ -10265,6 +10349,13 @@ vue3-quill@^0.2.6:
     quill "^1.3.7"
     vue "^3.0.11"
 
+vue3-table-lite@^1.2.3:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/vue3-table-lite/-/vue3-table-lite-1.2.3.tgz#12dedf47f019863f00a99d520637328c8ed67aec"
+  integrity sha512-2MpDZ+di75oLz7wBXkgSsP1L7IoiqLzq1L6NgHPzvHXcZQrIQI3MIqzfugmB5QITT0/jnn1SszOz60lqX6/Nzw==
+  dependencies:
+    vue "^3.0.0"
+
 vue3-tree-vue@^1.0.15:
   version "1.0.15"
   resolved "https://registry.yarnpkg.com/vue3-tree-vue/-/vue3-tree-vue-1.0.15.tgz#a0170d46d4adeb3d740ed557fd330891f0bd0240"
@@ -10283,23 +10374,12 @@ vue3-treeview@^0.3.8:
     lodash-es "^4.17.21"
     vue "^3.1.2"
 
-vue@3, vue@^3.0.0-beta.20, vue@^3.0.11, vue@^3.2.26:
-  version "3.2.30"
-  resolved "https://registry.npmjs.org/vue/-/vue-3.2.30.tgz"
-  integrity sha512-ZmTFWVJUX2XADkuOB8GcLTuxnBLogjJBTNVrM7WsTnjqRQ+VR8bLNrvNsbn8vj/LaP5+0WFAPrpngOYE2x+e+Q==
-  dependencies:
-    "@vue/compiler-dom" "3.2.30"
-    "@vue/compiler-sfc" "3.2.30"
-    "@vue/runtime-dom" "3.2.30"
-    "@vue/server-renderer" "3.2.30"
-    "@vue/shared" "3.2.30"
-
 vue@^2.6.14:
   version "2.6.14"
   resolved "https://registry.npmjs.org/vue/-/vue-2.6.14.tgz"
   integrity sha512-x2284lgYvjOMj3Za7kqzRcUSxBboHqtgRE2zlos1qWaOye5yUmHn42LB1250NJBLRwEcdrB0JRwyPTEPhfQjiQ==
 
-vue@^3.1.2:
+vue@^3.0.0, vue@^3.1.2, vue@^3.2.37, vue@^3.2.6:
   version "3.2.37"
   resolved "https://registry.yarnpkg.com/vue/-/vue-3.2.37.tgz#da220ccb618d78579d25b06c7c21498ca4e5452e"
   integrity sha512-bOKEZxrm8Eh+fveCqS1/NkG/n6aMidsI6hahas7pa0w/l7jkbssJVsRhVDs07IdDq7h9KHswZOgItnwJAgtVtQ==
@@ -10309,6 +10389,17 @@ vue@^3.1.2:
     "@vue/runtime-dom" "3.2.37"
     "@vue/server-renderer" "3.2.37"
     "@vue/shared" "3.2.37"
+
+vue@^3.0.0-beta.20, vue@^3.0.11, vue@^3.2.26:
+  version "3.2.30"
+  resolved "https://registry.npmjs.org/vue/-/vue-3.2.30.tgz"
+  integrity sha512-ZmTFWVJUX2XADkuOB8GcLTuxnBLogjJBTNVrM7WsTnjqRQ+VR8bLNrvNsbn8vj/LaP5+0WFAPrpngOYE2x+e+Q==
+  dependencies:
+    "@vue/compiler-dom" "3.2.30"
+    "@vue/compiler-sfc" "3.2.30"
+    "@vue/runtime-dom" "3.2.30"
+    "@vue/server-renderer" "3.2.30"
+    "@vue/shared" "3.2.30"
 
 vuelidate@^0.7.7:
   version "0.7.7"
