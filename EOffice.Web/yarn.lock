@@ -1913,6 +1913,11 @@
   resolved "https://registry.npmjs.org/@soda/get-current-script/-/get-current-script-1.0.2.tgz"
   integrity sha512-T7VNNlYVM1SgQ+VsMYhnDkcGmWhQdL0bDyGm5TlQ3GBXnJscEClUUOKduWTmm2zCnvNLC1hc3JpuXjs/nFOc5w==
 
+"@swc/helpers@^0.2.13":
+  version "0.2.14"
+  resolved "https://registry.yarnpkg.com/@swc/helpers/-/helpers-0.2.14.tgz#20288c3627442339dd3d743c944f7043ee3590f0"
+  integrity sha512-wpCQMhf5p5GhNg2MmGKXzUNwxe7zRiCsmqYsamez2beP7mKPCSiu+BjZcdN95yYSzO857kr0VfQewmGpS77nqA==
+
 "@types/body-parser@*":
   version "1.19.2"
   resolved "https://registry.npmjs.org/@types/body-parser/-/body-parser-1.19.2.tgz"
@@ -4661,6 +4666,14 @@ dropzone@^5.5.1:
   resolved "https://registry.yarnpkg.com/dropzone/-/dropzone-5.9.3.tgz#b3070ae090fa48cbc04c17535635537ca72d70d6"
   integrity sha512-Azk8kD/2/nJIuVPK+zQ9sjKMRIpRvNyqn9XwbBHNq+iNuSccbJS6hwm1Woy0pMST0erSo0u4j+KJaodndDk4vA==
 
+dropzone@^6.0.0-beta.2:
+  version "6.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/dropzone/-/dropzone-6.0.0-beta.2.tgz#098be8fa84bdc08674cf0b74f4c889e2679083d6"
+  integrity sha512-k44yLuFFhRk53M8zP71FaaNzJYIzr99SKmpbO/oZKNslDjNXQsBTdfLs+iONd0U0L94zzlFzRnFdqbLcs7h9fQ==
+  dependencies:
+    "@swc/helpers" "^0.2.13"
+    just-extend "^5.0.0"
+
 duplexer@^0.1.1:
   version "0.1.2"
   resolved "https://registry.npmjs.org/duplexer/-/duplexer-0.1.2.tgz"
@@ -6648,6 +6661,11 @@ jszip@^3.6.0:
     pako "~1.0.2"
     readable-stream "~2.3.6"
     set-immediate-shim "~1.0.1"
+
+just-extend@^5.0.0:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/just-extend/-/just-extend-5.1.1.tgz#4f33b1fc719964f816df55acc905776694b713ab"
+  integrity sha512-b+z6yF1d4EOyDgylzQo5IminlUmzSeqR1hs/bzjBNjuGras4FXq/6TrzjxfN0j+TmI0ltJzTNlqXUMCniciwKQ==
 
 killable@^1.0.1:
   version "1.0.1"
@@ -10282,6 +10300,13 @@ vue-template-es2015-compiler@^1.9.0:
   version "1.9.1"
   resolved "https://registry.npmjs.org/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz"
   integrity sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==
+
+vue2-dropzone-vue3@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/vue2-dropzone-vue3/-/vue2-dropzone-vue3-1.0.1.tgz#f37f8aeaf799a6ecacc66ca4ad08900fd4ebceaf"
+  integrity sha512-SiURuCfVEOYH4Pudrtd4DubwSx0QbiiDa3b0BPpvpCzI00DEeldkLi4pXA0GR/vGZ8/5ynnklUrmEUPpmiP8GQ==
+  dependencies:
+    dropzone "^6.0.0-beta.2"
 
 vue2-dropzone@^3.6.0:
   version "3.6.0"

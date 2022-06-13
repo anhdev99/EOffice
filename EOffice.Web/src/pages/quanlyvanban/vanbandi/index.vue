@@ -14,6 +14,7 @@ import "vue3-treeselect/dist/vue3-treeselect.css";
 import flatPickr from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
 import {linhVucModel} from "@/models/linhVucModel";
+import vueDropzone from 'vue2-dropzone-vue3'
 
 import PhanCong from "./phancong";
 
@@ -152,7 +153,7 @@ export default {
       },
     };
   },
-  components: {Layout, PageHeader, PhanCong, Treeselect, flatPickr, DropZone},
+  components: {Layout, PageHeader, PhanCong, Treeselect, flatPickr,vueDropzone},
   created() {
     this.myProvider()
     this.getLoaiVanBan()
@@ -595,14 +596,21 @@ export default {
 <!--                           aria-describedby="inputGroupFileAddon03" aria-label="Upload">-->
 <!--                  </div>-->
                     <!--  start vue dropzone-->
-                    <DropZone
-                        :maxFiles="Number(10000000000)"
-                        ref="dropzone"
-                        :uploadOnDrop="true"
-                        :multipleUpload="true"
-                        :parallelUpload="2"
-                        :url="url"
-                        @addedFile="addThisFile"
+<!--                    <DropZone-->
+<!--                        :maxFiles="Number(10000000000)"-->
+<!--                        ref="dropzone"-->
+<!--                        :uploadOnDrop="true"-->
+<!--                        :multipleUpload="true"-->
+<!--                        :parallelUpload="2"-->
+<!--                        :url="url"-->
+<!--                        @sending="addThisFile"-->
+
+<!--                    />-->
+                    <vue-dropzone
+                        ref="myVueDropzone"
+                        id="dropzone"
+                        :options="dropzoneOptions"
+                        v-on:vdropzone-success="addThisFile"
                     />
                     <ul class="list-unstyled mb-0" id="dropzone-preview">
                       <div
