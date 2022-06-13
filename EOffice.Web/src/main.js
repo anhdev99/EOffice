@@ -7,12 +7,13 @@ import i18n from './i18n'
 import store from "./state/store";
 import VueLoading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
-import "vue3-treeview/dist/style.css";
-import BootstrapVue3 from 'bootstrap-vue-3';
+import BootstrapVue3 from 'bootstrap-vue-3'
+//  import BootstrapVue from 'bootstrap-vue'
 import vClickOutside from "click-outside-vue3"
 import VueApexCharts from "vue3-apexcharts";
 import Maska from 'maska';
-
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue-3/dist/bootstrap-vue-3.css'
 import VueFeather from 'vue-feather';
 import Particles from "particles.vue3";
 
@@ -21,7 +22,8 @@ import '@vueform/slider/themes/default.css';
 
 import { initFirebaseBackend } from './authUtils'
 import { configureFakeBackend } from './helpers/fake-backend';
-
+import VueBlocksTree from 'vue3-blocks-tree';
+import 'vue3-blocks-tree/dist/vue3-blocks-tree.css';
 const firebaseConfig = {
     apiKey: process.env.VUE_APP_APIKEY,
     authDomain: process.env.VUE_APP_AUTHDOMAIN,
@@ -38,7 +40,7 @@ if (process.env.VUE_APP_DEFAULT_AUTH === "firebase") {
 } else {
     configureFakeBackend();
 }
-
+let defaultoptions = {treeName:'blocks-tree'}
 
 AOS.init({
     easing: 'ease-out-back',
@@ -49,10 +51,12 @@ createApp(App)
     .use(store)
     .use(router)
     .use(VueApexCharts)
+     // .use(BootstrapVue)
     .use(BootstrapVue3)
     .component(VueFeather.type, VueFeather)
     .use(Maska)
     .use(Particles)
+    .use(VueBlocksTree,defaultoptions)
     .use(i18n)
     .use(VueLoading,{
             canCancel: false,
