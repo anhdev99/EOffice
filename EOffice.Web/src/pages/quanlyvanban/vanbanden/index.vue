@@ -192,21 +192,6 @@ export default {
         this.loading = false
       }
     },
-    // getUser() {
-    //   try {
-    //     let promise = this.$store.dispatch("userStore/getUserTree")
-    //     return promise.then(resp => {
-    //       if (resp.resultCode == "SUCCESS") {
-    //         let items = resp.data
-    //         this.loading = false
-    //         this.optionCanBoSoan = items;
-    //       }
-    //       return [];
-    //     });
-    //   } finally {
-    //     this.loading = false
-    //   }
-    // },
     getUser() {
       try {
         let promise = this.$store.dispatch("userStore/getAll")
@@ -214,13 +199,13 @@ export default {
           if (resp.resultCode == "SUCCESS") {
             let items = resp.data
             this.loading = false
+
             this.optionUser = items.map(value => {
               return {
                 id: value.id,
-                label: value.ten,
+                label: value.fullName,
               };
             });
-            console.log("this.optionLinhVuc", this.optionLinhVuc);
           }
           return [];
         });
@@ -580,9 +565,10 @@ export default {
                           >Người ký</label
                           >
                           <treeselect
+                              :multiple="true"
                               placeholder="Chọn người ký"
                               v-model="model.nguoiKy"
-                              :options="optionNguoiKy"
+                              :options="optionUser"
                           >
                           </treeselect>
                           <treeselect-value :value="model.nguoiKy" />
@@ -813,7 +799,56 @@ export default {
                   </div>
                 </div>
                 <div class="tab-pane" id="butphelanhdao" role="tabpanel">
-                  <form-but-phe-lanh-dao/>
+                  <div class="row card-body">
+                    <div class="col-md-12">
+                      <!-- Bút phê -->
+                      <div>
+                        <label for="validationButPhe" class="col-form-label col-form-label-sm"
+                        >Bút phê</label
+                        >
+                        <span class="text-danger">*</span>
+                        <textarea
+                            type="text"
+                            class="form-control form-control-sm"
+                            id="validationButPhe"
+                            v-model="model.butphe"
+                            required
+                        />
+                        <div class="valid-feedback">Vui lòng thêm bút phê.</div>
+                      </div>
+                      <!-- Ngày bút phê -->
+                      <div>
+                        <label
+                            for="validationNgayButPhe"
+                            class="col-form-label col-form-label-sm"
+                        >Ngày ban hành</label
+                        >
+                        <span class="text-danger">*</span>
+                        <flat-pickr
+                            v-model="model.ngayButPhe"
+                            :config="config"
+                            class="form-control form-control-sm"
+                        ></flat-pickr>
+                        <div class="valid-feedback">Vui lòng thêm ngày bút phê.</div>
+                      </div>
+                      <!-- Lãnh đạo bút phê -->
+                      <div>
+                        <label
+                            for="validationLoaiVanBan"
+                            class="col-form-label col-form-label-sm"
+                        >Lãnh đạo bút phê</label
+                        >
+                        <treeselect
+                            placeholder="Chọn lãnh đạo bút phê"
+                            v-model="model.nguoiButPhe"
+                            :options="optionUser"
+                        >
+                        </treeselect>
+                        <treeselect-value :value="model.loaiVanBan" />
+                        <div class="invalid-feedback">Vui lòng chọn lãnh đạo bút phê.</div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <div class="tab-pane" id="xulyvanban" role="tabpanel">
                   <for-xu-ly-van-ban/>

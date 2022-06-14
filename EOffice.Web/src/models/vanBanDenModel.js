@@ -48,6 +48,9 @@ const fromJson = (item) => {
         congVanChiDoc: item.congVanChiDoc,
         banChinh: item.banChinh,
         thongBao: item.thongBao,
+        butphe: item.butphe,
+        ngayButPhe: item.ngayButPhe,
+        nguoiButPhe: item.nguoiButPhe,
     }
 }
 
@@ -74,6 +77,10 @@ const baseJson = () => {
         congVanChiDoc: null,
         banChinh: null,
         thongBao: null,
+    //  bút phê lãnh đạo
+        butphe: null,
+        ngayButPhe: new Date(),
+        nguoiButPhe: null,
     }
 }
 
