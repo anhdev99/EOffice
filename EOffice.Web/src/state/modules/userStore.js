@@ -41,7 +41,8 @@ export const actions = {
     async changeProfile({commit, dispatch}, values) {
         return apiClient.put(controller + "/change-profile", values);
     },
-    async getUserTree({commit}) {
-        return apiClient.get(controller +"/getTree");
+    async getUserByIdDonVi({commit}, id) {
+        console.log("idDonVi", id);
+        return apiClient.get(controller +"/get-user-by-id-don-vi/" + id);
     },
 };

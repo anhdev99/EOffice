@@ -119,6 +119,30 @@ namespace EOffice.WebAPI.APIs.Identity
                 );
             }
         }
+        
+        [HttpGet]
+        [Route("get-user-by-id-don-vi/{id}")]
+        public async Task<IActionResult> GetUserByIdDonVi(string id)
+        {
+            try
+            {
+                var data = await _userService.GetUserByIdDonVi(id);
+
+                return Ok(
+                    new ResultResponse<User>()
+                        .WithData(data)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
 
         [HttpGet]
         [Route("get-all")]
