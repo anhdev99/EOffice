@@ -17,11 +17,8 @@ export const httpClient = axios.create({
 
 class ApiClient{
     getInstance(){
-        // if(!Vue.prototype.$auth_token){
-        //     let token = JSON.parse(localStorage.getItem("user-token"));
-        //     Vue.prototype.$auth_token = token;
-        // }
-        // httpClient.defaults.headers.common['Authorization'] = `Bearer ${Vue.prototype.$auth_token}`
+        let token = JSON.parse(localStorage.getItem("user-token"));
+        httpClient.defaults.headers.common['Authorization'] = `Bearer ${token}`
         return httpClient;
     }
     async get(url, config = null) {

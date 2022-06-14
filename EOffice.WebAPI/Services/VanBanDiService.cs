@@ -20,28 +20,28 @@ namespace EOffice.WebAPI.Services
     public class VanBanDiService : BaseService, IQuestionService
     {
         private readonly DataContext _context;
-        private readonly BaseMongoDb<Question, string> BaseMongoDb;
-        private readonly IMongoCollection<Question> _collection;
+        private readonly BaseMongoDb<VanBanDi, string> BaseMongoDb;
+        private readonly IMongoCollection<VanBanDi> _collection;
         private readonly IDbSettings _settings;
         private ILoggingService _logger;
-        private readonly HistoryQuestionService _history;
+        private readonly HistoryVanBanDiService _history;
         private List<String> filePicture = new List<string>() {".jpeg", ".jpg" , ".gif",".png"};
         private List<String> fileOffice = new List<string>() {".docx",".doc", ".csv" , ".xlsx",".pptx",".pdf"};
-        public VanBanDiService(HistoryQuestionService history, ILoggingService logger, IDbSettings settings,
+        public VanBanDiService(HistoryVanBanDiService history, ILoggingService logger, IDbSettings settings,
             DataContext context,
             IHttpContextAccessor contextAccessor)
             : base(context, contextAccessor)
         {
             _context = context;
-            BaseMongoDb = new BaseMongoDb<Question, string>(_context.Questions);
-            _collection = context.Questions;
+            BaseMongoDb = new BaseMongoDb<VanBanDi, string>(_context.VanBanDi);
+            _collection = context.VanBanDi;
             _settings = settings;
-            _logger = logger.WithCollectionName(_settings.QuestionCollectionName)
+            _logger = logger.WithCollectionName(_settings.VanBanDiCollectionName)
                 .WithDatabaseName(_settings.DatabaseName)
                 .WithUserName(CurrentUserName);
             _history = history;
         }
-        public async Task<Question> Create(Question model)
+        public async Task<VanBanDi> Create(VanBanDi model)
         {
             if (model == default)
             {
@@ -49,51 +49,50 @@ namespace EOffice.WebAPI.Services
                     .WithCode(EResultResponse.FAIL.ToString())
                     .WithMessage(DefaultMessage.DATA_NOT_EMPTY);
             }
-            var entity = new Question()
+            var entity = new VanBanDi()
             {
                 Id = BsonObjectId.GenerateNewId().ToString(),
-                Title = model.Title,
-                Content = model.Content,
-                LinhVuc = model.LinhVuc,
-                Huyen = model.Huyen,
-                Xa = model.Xa,
-                Note = model.Note,
-                LastedStatus = model.LastedStatus,
-                Address = model.Address,
-                IsPrivate = model.IsPrivate,
+                Version = 1,
+                Number = 0,
+                SoLuuCV = model.SoLuuCV,
+                SoVBDen = model.SoVBDen,
+                NgayNhap = model.NgayNhap,
+                NgayTraLoi = model.NgayTraLoi,
+                TraLoiCVSo = model.TraLoiCVSo,
+                SoBan = model.SoBan,
+                TrichYeu = model.TrichYeu,
+                NoiLuuTru = model.NoiLuuTru,
                 CreatedBy = CurrentUserName,
                 ModifiedBy = CurrentUserName,
                 CreatedAt = DateTime.Now,
-                ModifiedAt = DateTime.Now,
-                UserName = CurrentUserName
+                ModifiedAt = DateTime.Now
             };
-            entity.LastedStatus.StatusCode = "VTN";
-            // entity.LastedStatus.StatusName = "Chờ duyệt";
-            entity.IdOwner = "624515a7af32dc0ade78092d";
-            if (model.UploadFiles != default && model.UploadFiles.Count > 0)
+            
+            
+            if (model.UploadFiles != default )
             {
-                foreach (var file in model.UploadFiles)
-                {
-                    var newFile = new FileShort();
-                    newFile.FileId = file.FileId;
-                    newFile.FileName = file.FileName;
-                    newFile.Ext = file.Ext;
-                    if (fileOffice.Contains(file.Ext))
-                    {
-                        entity.FileOffice.Add(newFile);
-                    }
-                    else if (filePicture.Contains(file.Ext))
-                    {
-                        entity.FileImage.Add(newFile);
-                    }
-                    // if (entity.FileManagers == default)
-                    // {
-                    //     entity.FileManagers = new List<FileShort>();
-                    // }
-                    entity.FileManagers.Add(newFile);
-                }
+                var newFile = new FileShort();
+                newFile.FileId = model.UploadFiles.FileId;
+                newFile.FileName = model.UploadFiles.FileName;
+                newFile.Ext = model.UploadFiles.Ext;
+                entity.File = newFile;
             }
 
+            var donVi = _context.DonVis.Find(x => x.IsDeleted != true).ToList();
+            entity.DonViSoanTen = donVi.Find(x => x.Id == model.DonViSoan)?.Ten;
+            entity.DonViSoanTen = model.DonViSoan;
+            
+            entity.CoQuanNhanTen = donVi.Find(x => x.Id == model.CoQuanNhan)?.Ten;
+            entity.CoQuanNhan = model.CoQuanNhan;
+            
+            entity.KhoiCoQuanNhanTen = donVi.Find(x => x.Id == model.KhoiCoQuanNhan)?.Ten;
+            entity.KhoiCoQuanNhan = model.KhoiCoQuanNhan;
+
+            var canBo = _context.Users.Find(x => x.Id == model.CanBoSoan).FirstOrDefault();
+            entity.CanBoSoan = model.CanBoSoan;
+            entity.CanBoSoanTen = canBo?.UserName  +"-" + canBo?.FullName;
+
+            entity.HinhThucGui = 
             var result = await BaseMongoDb.CreateAsync(entity);
             if (result.Entity.Id == default || !result.Success)
             {

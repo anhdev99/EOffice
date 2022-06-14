@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace EOffice.WebAPI.Models
@@ -16,5 +17,13 @@ namespace EOffice.WebAPI.Models
         DAXULYXONG,
         [Display(Name = "ĐÃ TRẢ LỜI NGƯỜI DÂN")]
         DATRALOINGUOIDAN,
+    }
+
+    public enum EHinhThucGui
+    {
+        [Description("Văn bản giấy")]
+        VANBANGIAY,
+        [Description("File tài liệu")]
+        FILETAILIEU
     }
 }
