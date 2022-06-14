@@ -166,70 +166,7 @@ export default {
 </script>
 
 <template>
-  <div>
-    <div class="row page-lctld">
-      <div class="col-xl-12">
-        <div class="card card-h-100">
-          <FullCalendar :options="calendarOptions"/>
-        </div>
-      </div>
-    </div>
 
-    <!--    Modal detail -->
-    <b-modal
-        v-model="eventModal"
-        title="Thông tin chi tiết"
-        title-class="text-black font-18"
-        hide-footer
-        body-class="p-3"
-    >
-      <form @submit.prevent="editSubmit">
-        <div class="row">
-          <div class="col-12">
-            <div class="mb-3">
-              <label for="name">Tiêu đề</label>
-              <input
-                  id="name1"
-                  v-model="editevent.editTitle"
-                  type="text"
-                  class="form-control"
-                  placeholder="Nhập tiêu đề"
-              />
-            </div>
-          </div>
-          <div class="col-12">
-            <div class="mb-3">
-              <label class="control-label">Danh mục</label>
-              <select
-                  v-model="editevent.editcategory"
-                  class="form-control"
-                  name="category"
-              >
-                <option
-                    v-for="option in categories"
-                    :key="option.backgroundColor"
-                    :value="`${option.value}`"
-                >
-                  {{ option.name }}
-                </option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <div class="text-end p-3">
-          <b-button variant="light" @click="closeModal">Đóng</b-button>
-          <b-button class="ms-1" variant="danger" @click="confirm"
-          >Xóa
-          </b-button
-          >
-          <b-button class="ms-1" variant="success" @click="editSubmit"
-          >Lưu
-          </b-button
-          >
-        </div>
-      </form>
-    </b-modal>
-  </div>
 
 </template>
 

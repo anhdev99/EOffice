@@ -35,6 +35,7 @@ export default {
         },
         themeSystem: "bootstrap",
         headerToolbar: {
+          title: "Lịch công tác 2",
           left: "prev,next today",
           center: "title",
           right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth",
@@ -82,6 +83,9 @@ export default {
         return "dayGridMonth";
       }
     },
+
+    //Model open for add event
+
     dateClicked(info) {
       this.newEventData = info;
       this.showModal = true;
@@ -174,6 +178,76 @@ export default {
         </div>
       </div>
     </div>
+
+    <!--    Modal add -->
+    <b-modal
+        v-model="showModal"
+        title="Thêm lịch công tác"
+        title-class="text-black font-18"
+        body-class="p-3"
+        hide-footer
+    >
+      <form @submit.prevent="handleSubmit">
+        <div class="row">
+          <div class="col-12">
+            <div class="mb-3">
+              <label for="name">Event Name</label>
+              <input
+                  id="name"
+                  v-model="event.title"
+                  type="text"
+                  class="form-control"
+                  placeholder="Insert Event name"
+                  :class="{ 'is-invalid': submitted && v$.event.title.$error }"
+              />
+              <div
+                  v-if="submitted && v$.event.title.$error"
+                  class="invalid-feedback"
+              >
+                <span v-if="v$.event.title.required.$message">{{
+                    v$.event.title.required.$message
+                  }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="mb-3">
+              <label class="control-label">Category</label>
+              <select
+                  v-model="event.category"
+                  class="form-control"
+                  name="category"
+                  :class="{ 'is-invalid': submitted && v$.event.category.errors }"
+              >
+                <option
+                    v-for="option in categories"
+                    :key="option.backgroundColor"
+                    :value="`${option.value}`"
+                >
+                  {{ option.name }}
+                </option>
+              </select>
+
+              <div
+                  v-if="submitted && v$.event.category.$error"
+                  class="invalid-feedback"
+              >
+                <span v-if="v$.event.category.required.$message">{{
+                    v$.event.category.required.$message
+                  }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-end pt-5 mt-3">
+          <b-button variant="light" @click="hideModal">Close</b-button>
+          <b-button type="submit" variant="success" class="ms-1"
+          >Create event</b-button
+          >
+        </div>
+      </form>
+    </b-modal>
 
     <!--    Modal detail -->
     <b-modal
