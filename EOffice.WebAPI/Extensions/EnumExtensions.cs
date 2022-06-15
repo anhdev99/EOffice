@@ -44,13 +44,19 @@ namespace EOffice.WebAPI.Extensions
             return source.ToString();
         }
 
-        public static (string,string) GetValue(this Enum source, string name)
-        {
-            if (source.GetDisplayName() == name)
-            {
-                return source.GetEnumData();
-            }
-            return ("")
-        }
+        // public static (string,string) GetValue(this source, string name)
+        // {
+        //     
+        //     foreach (var VARIABLE in source)
+        //     {
+        //         if (VARIABLE.GetDisplayName() == name)
+        //         {
+        //             return VARIABLE.GetEnumData();
+        //         }
+        //     }
+        //
+        //
+        //     return ("", "");
+        // }
     }
 }

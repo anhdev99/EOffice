@@ -17,6 +17,8 @@ namespace EOffice.WebAPI.Models
         public string Action { get; set; }
         public HistoryAction HistoryAction { get; set; }
         public StatusQuestion StatusQuestion { get; set; }
+        public string TrangThai { get; set; }
+        public string TrangThaiTen { get; set; }
         public string UserName { get; set; }
         public string UserFullName { get; set; }
         public string DepartmentId { get; set; }

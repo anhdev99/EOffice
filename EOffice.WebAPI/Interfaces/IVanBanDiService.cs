@@ -5,7 +5,7 @@ using EOffice.WebAPI.Params;
 
 namespace EOffice.WebAPI.Interfaces
 {
-    public interface VanBanDiService
+    public interface IVanBanDiService
     {
         Task<VanBanDi> Create(VanBanDi model);  
         Task<VanBanDi> Update(VanBanDi model);
@@ -13,12 +13,12 @@ namespace EOffice.WebAPI.Interfaces
         Task<List<VanBanDi>> Get();
         Task<VanBanDi> GetById(string id);
         Task<PagingModel<VanBanDi>> GetPaging(VanBanDiParam param);
-        Task ChangeStatusQuestion(StatusVanBan model);
-        
-        Task<PagingModel<VanBanDi>>   GetPagingReceive (VanBanDiParam param);
-        Task<PagingModel<VanBanDi>>   GetPagingHandle (VanBanDiParam param);
-        
-        Task<VanBanDi> QuestionNavigation(VanBanDi model);    
-        Task<VanBanDi> NotApprove(VanBanDi model);   
+        // Task ChangeStatusQuestion(StatusVanBan model);
+        //
+        // Task<PagingModel<VanBanDi>>   GetPagingReceive (VanBanDiParam param);
+        // Task<PagingModel<VanBanDi>>   GetPagingHandle (VanBanDiParam param);
+        //
+        // Task<VanBanDi> QuestionNavigation(VanBanDi model);    
+        // Task<VanBanDi> NotApprove(VanBanDi model);   
     }
 }

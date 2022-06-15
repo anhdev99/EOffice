@@ -15,7 +15,7 @@ namespace EOffice.WebAPI.Models
         public string TrangThai { get; set; }
         public string TrangThaiTen { get; set; }
         public string SoLuuCV { get; set; }
-        public string SoVBDen { get; set; }
+        public string SoVBDi { get; set; }
         public DateTime? NgayNhap { get; set; }
         public DateTime? NgayTraLoi { get; set; }
         public string TraLoiCVSo { get; set; }
@@ -33,6 +33,8 @@ namespace EOffice.WebAPI.Models
         public string MucDoBaoMatTen { get; set; }
         public string MucDoTinhChat { get; set; }
         public string MucDoTinhChatTen { get; set; }
+        public string HoSoDonVi { get; set; }
+        public string HoSoDonViTen { get; set; }
         public string NoiLuuTru { get; set; }
         public string CoQuanNhan { get; set; }
         public string CoQuanNhanTen { get; set; }

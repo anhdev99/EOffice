@@ -14,13 +14,12 @@ namespace EOffice.WebAPI.APIs
             
         }
 
-        [HttpGet]
-        [Route("enum")]
-        public async Task<IActionResult> TestEnumGetDisplay()
-        {
-            var data = EHinhThucGui.VANBANGIAY.Description();
-            var data1 = EHinhThucGui.VANBANGIAY.Name();
-            return Ok(new {data,data1}); 
-        }
+        // [HttpGet]
+        // [Route("enum")]
+        // public async Task<IActionResult> TestEnumGetDisplay()
+        // {
+        //     var data = EnumExtensions.GetValue(EHinhThucGui, "Thap");
+        //     return Ok(new {data,data1}); 
+        // }
     }
 }

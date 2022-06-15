@@ -61,11 +61,12 @@ namespace EOffice.WebAPI.Services
 
             return this;
         }
-        public HistoryVanBanDiService WithStatus(StatusQuestion status)
+        public HistoryVanBanDiService WithStatus(string trangThai, string trangThaiTen)
         {
-            if (status != default)
+            if (trangThai != default)
             {
-                history.StatusQuestion = status;
+                history.TrangThai = trangThai;
+                history.TrangThaiTen = trangThaiTen;
             }
 
             return this;

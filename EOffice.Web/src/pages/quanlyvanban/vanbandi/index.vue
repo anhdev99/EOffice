@@ -280,7 +280,7 @@ export default {
       }
     },
     addThisFile(items, re ) {
-      console.log("file", items,re);
+      console.log("file", items, re);
       // console.log("response", response);
       // if (this.model) {
       //   if (this.model.uploadFiles == null || this.model.uploadFiles.length <= 0)
@@ -290,6 +290,11 @@ export default {
       //   let fileSuccess = response.data;
       //   this.model.uploadFiles.push({fileId: fileSuccess.id,  fileName: fileSuccess.fileName , ext : fileSuccess.ext})
       // }
+    },
+    normalizer(node){
+      if(node.children == null || node.children == 'null'){
+        delete node.children;
+      }
     },
   },
 };
@@ -682,6 +687,7 @@ export default {
                         placeholder="Chọn đơn vị soạn"
                         v-model="model.donViSoan"
                         :options="optionDonVi"
+                        :normalizer="normalizer"
                     >
                     </treeselect>
                     <treeselect-value :value="model.donViSoan"/>
