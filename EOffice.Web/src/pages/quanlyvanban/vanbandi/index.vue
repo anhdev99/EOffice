@@ -67,6 +67,18 @@ export default {
           label: "",
         },
       ],
+      optionUser: [
+        {
+          id: "",
+          label: "",
+          children: [
+            {
+              id: "",
+              label: "",
+            }
+          ]
+        }
+      ],
       optionDonVi: [
         {
           id: "",
@@ -192,7 +204,6 @@ export default {
     },
     myProvider(ctx) {
 
-
     },
     getLoaiVanBan() {
       try {
@@ -245,12 +256,19 @@ export default {
     },
     getUser() {
       try {
-        let promise = this.$store.dispatch("userStore/getUserTree")
+        let promise = this.$store.dispatch("userStore/getAll")
         return promise.then(resp => {
           if (resp.resultCode == "SUCCESS") {
             let items = resp.data
             this.loading = false
-            this.optionCanBoSoan = items;
+
+            this.optionUser = items.map(value => {
+              return {
+                id: value.id,
+                label: value.fullName,
+              };
+            });
+            console.log("this.optionUser", this.optionUser);
           }
           return [];
         });
@@ -271,7 +289,6 @@ export default {
                 label: value.ten,
               };
             });
-            console.log("this.optionLinhVuc", this.optionLinhVuc);
           }
           return [];
         });
@@ -593,24 +610,6 @@ export default {
                       class="col-form-label col-form-label-sm"
                   >File đính kèm</label
                   >
-<!--                  <div class="input-group">-->
-<!--                    <button class="btn btn-outline-primary" type="button" id="inputGroupFileAddon03">-->
-<!--                      <i class=" ri-attachment-2 text-primary"></i>-->
-<!--                    </button>-->
-<!--                    <input type="file" class="form-control" id="inputGroupFile03"-->
-<!--                           aria-describedby="inputGroupFileAddon03" aria-label="Upload">-->
-<!--                  </div>-->
-                    <!--  start vue dropzone-->
-<!--                    <DropZone-->
-<!--                        :maxFiles="Number(10000000000)"-->
-<!--                        ref="dropzone"-->
-<!--                        :uploadOnDrop="true"-->
-<!--                        :multipleUpload="true"-->
-<!--                        :parallelUpload="2"-->
-<!--                        :url="url"-->
-<!--                        @sending="addThisFile"-->
-
-<!--                    />-->
                     <vue-dropzone
                         ref="myVueDropzone"
                         id="dropzone"
@@ -702,7 +701,7 @@ export default {
                     <treeselect
                         placeholder="Chọn cán bộ soạn"
                         v-model="model.canBoSoan"
-                        :options="optionCanBoSoan"
+                        :options="optionUser"
                     >
                     </treeselect>
                     <treeselect-value :value="model.canBoSoan"/>

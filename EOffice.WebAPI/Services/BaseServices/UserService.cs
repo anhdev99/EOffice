@@ -50,6 +50,11 @@ namespace EOffice.WebAPI.Services
         {
             return await _context.Users.Find(x => x.Id == id && x.IsDeleted != true).FirstOrDefaultAsync();
         }
+        
+        public async Task<User> GetUserByIdDonVi(string id)
+        {
+            return await _context.Users.Find(x => x.DonVi.Id == id && x.IsDeleted != true).FirstOrDefaultAsync();
+        }
 
         public async Task<PagingModel<User>> GetPaging(PagingParam param)
         {

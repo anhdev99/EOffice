@@ -132,27 +132,27 @@ export function createEventId() {
 
 export const categories = [
     {
-        name: 'Danger',
+        name: 'Màu đỏ',
         value: 'bg-danger'
     },
     {
-        name: 'Success',
+        name: 'Xanh lá',
         value: 'bg-success'
     },
     {
-        name: 'Primary',
+        name: 'Xanh biển đậm',
         value: 'bg-primary'
     },
     {
-        name: 'Info',
+        name: 'Xanh biển nhạc',
         value: 'bg-info'
     },
     {
-        name: 'Dark',
+        name: 'Màu xám',
         value: 'bg-dark'
     },
     {
-        name: 'Warning',
+        name: 'Màu cam',
         value: 'bg-warning'
     },
 ];

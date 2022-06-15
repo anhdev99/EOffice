@@ -14,6 +14,7 @@ namespace EOffice.WebAPI.Interfaces
         Task Delete(string id);
         Task<IEnumerable<User>> Get();
         Task<User> GetById(string id);
+        Task<User> GetUserByIdDonVi(string id);
         Task<PagingModel<User>> GetPaging(PagingParam param);
         Task<User> GetByUserName(string userName);  
         Task<User> ChangePassword(UserVM model);

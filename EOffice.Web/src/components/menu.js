@@ -16,33 +16,9 @@ export const menuItems = [
     icon: "ri-dashboard-2-line",
     subItems: [
       {
-        id: "4",
-        label: "Lịch công tác lãnh đạo",
-        link: "/lich-cong-tac-lanh-dao",
-        parentId: "3",
-      },
-      {
-        id: "5",
-        label: "Lịch công tác cá nhân",
-        link: "/lich-cong-tac-ca-nhan",
-        parentId: "3",
-      },
-      {
-        id: "6",
-        label: "Lịch công tác phòng ban",
-        link: "/lich-cong-tac-phong-ban",
-        parentId: "3",
-      },
-      {
         id: "7",
         label: "Lịch cá nhân",
         link: "/lich-ca-nhan",
-        parentId: "3",
-      },
-      {
-        id: "8",
-        label: "Đề xuất lịch công tác",
-        link: "/de-xuat-lich-cong-tac",
         parentId: "3",
       },
       {
