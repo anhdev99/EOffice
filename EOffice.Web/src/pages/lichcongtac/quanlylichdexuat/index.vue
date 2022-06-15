@@ -217,7 +217,7 @@ export default {
 
     editSubmit(e) {
       this.submit = true;
-      const editTitle = this.editevent.editTitle;
+      const editTitle = this.editevent.tieuDe;
       const editcategory = this.editevent.editcategory;
 
       this.edit.setProp("title", editTitle);
@@ -242,7 +242,7 @@ export default {
       if (this.v$.$invalid) {
         return;
       } else {
-        const title = this.event.title;
+        const title = this.event.tieuDe;
         const category = this.event.category;
         let calendarApi = this.newEventData.view.calendar;
 
@@ -275,6 +275,16 @@ export default {
           this.deleteEvent();
           Swal.fire("Deleted!", "Event has been deleted.", "success");
         }
+      });
+    },
+
+    successmsg() {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Event has been saved",
+        showConfirmButton: false,
+        timer: 1000,
       });
     },
   }
