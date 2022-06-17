@@ -3,16 +3,20 @@ import Layout from "../../../layouts/main";
 import PageHeader from "@/components/page-header";
 import appConfig from "../../../../app.config.json";
 import {data} from "./data";
-import {vanBanDenModel} from '@/models/vanBanDenModel';
-import Suavanbanden from "./suavanbanden.vue";
-// import the component
+import {vanBanDiModel} from "@/models/vanBanDiModel";
+
+import DropZone from 'dropzone-vue';
+import 'dropzone-vue/dist/dropzone-vue.common.css';
+
 import Treeselect from "vue3-treeselect";
 // import the styles
 import "vue3-treeselect/dist/vue3-treeselect.css";
 import flatPickr from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
-import 'dropzone-vue/dist/dropzone-vue.common.css';
+import {linhVucModel} from "@/models/linhVucModel";
 import vueDropzone from 'vue2-dropzone-vue3'
+
+import {userModel} from "@/models/userModel";
 
 export default {
   page: {
@@ -26,48 +30,46 @@ export default {
   },
   data() {
     return {
-      title: "Văn bản đến",
+      title: "Văn bản dến",
       items: [
         {
-          text: "Quản lý văn bản đến",
+          text: "Quản lý văn bản đi",
           href: "/",
         },
         {
-          text: "Văn bản đến",
+          text: "Văn bản đi",
           active: true,
         },
       ],
       data: data,
-      model: vanBanDenModel.baseJson(),
+      showModal: false,
+      model: vanBanDiModel.baseJson(),
+      currentPage: 1,
       optionLoaiVanBan: [
         {
           id: "",
           label: "",
-        }
+        },
       ],
       optionTrangThai: [
         {
           id: "",
           label: "",
-        }
+        },
       ],
-      optionDonVi: [
+      showDeleteModal: false,
+      showPhanCongModal: false,
+      optionKhoiCoQuanNhan: [
         {
           id: "",
           label: "",
-          children: [
-            {
-              id: "",
-              label: "",
-            }
-          ]
-        }
+        },
       ],
-      optionLinhVuc: [
+      optionCoQuanNhan: [
         {
           id: "",
           label: "",
-        }
+        },
       ],
       optionUser: [
         {
@@ -81,14 +83,48 @@ export default {
           ]
         }
       ],
+      optionDonVi: [
+        {
+          id: "",
+          label: "",
+        },
+      ],
+      optionCanBoSoan: [
+        {
+          id: "",
+          label: "",
+          children: [
+            {
+              id: "",
+              label: "",
+            },
+          ],
+        },
+      ],
+      optionHinhThucGui: [
+        {
+          id: "0",
+          label: "Văn bản giấy",
+        },
+        {
+          id: "1",
+          label: "File tài liệu",
+        },
+      ],
+      optionHoSoDonVi: [
+        {
+          id: "",
+          label: "",
+        },
+      ],
       optionMucDoTinhChat: [
         {
           id: "THAP",
           label: "Thấp",
         },
         {
-          id: "TRUNG BINH",
-          label: "Trung Bình",
+          id: "TRUNGBINH",
+          label: "Trung bình",
         },
         {
           id: "CAO",
@@ -101,28 +137,26 @@ export default {
           label: "Thấp",
         },
         {
-          id: "TRUNG BINH",
-          label: "Trung Bình",
+          id: "TRUNGBINH",
+          label: "Trung bình",
         },
         {
           id: "CAO",
           label: "Cao",
         },
       ],
-      optionHinhThucNhan: [
+      optionLinhVuc: [
         {
-          id: "1",
-          label: "Trực tiếp",
-        },
-        {
-          id: "2",
-          label: "Nhận qua file",
-        },
+          id: "",
+          label: "",
+        }
       ],
+      apiUrl: process.env.VUE_APP_API_URL,
+      url: `${process.env.VUE_APP_API_URL}files/upload`,
       dropzoneOptions: {
         url: `${process.env.VUE_APP_API_URL}files/upload`,
-        thumbnailWidth: 100,
-        thumbnailHeight: 100,
+        thumbnailWidth: 300,
+        thumbnailHeight: 160,
         maxFiles: 4,
         maxFilesize: 30,
         headers: { "My-Awesome-Header": "header value" },
@@ -134,17 +168,107 @@ export default {
         altFormat: "M j, Y",
         dateFormat: "d/m/Y",
       },
+      tempPhanCongData: []
     };
   },
-  components: {Layout, PageHeader, Suavanbanden, Treeselect, flatPickr, vueDropzone},
+  components: {Layout, PageHeader, Treeselect, flatPickr,vueDropzone},
   created() {
+    this.myProvider()
     this.getLoaiVanBan()
     this.getTrangThai()
     this.getDonVi()
     this.getUser()
     this.getLinhVuc()
+    this.myProvider();
+  },
+  watch: {
+    tempPhanCongData: {
+      deep: true,
+      handler(val) {
+        console.log("sdafs");
+      }
+    },
   },
   methods: {
+    async handleUpdate(id) {
+      await this.$store.dispatch("vanBanDenStore/getById", id).then((res) => {
+        if (res.resultCode == "SUCCESS") {
+          console.log("res", res.data)
+          this.model = res.data;
+          this.showModal = true;
+        } else {
+          // this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+        }
+      });
+    },
+    handleShowDeleteModal(id) {
+      this.model.id = id;
+      this.showDeleteModal = true;
+    },
+    async handleDelete() {
+      if (this.model.id != 0 && this.model.id != null && this.model.id) {
+        await this.$store.dispatch("vanBanDenStore/delete", this.model.id).then((res) => {
+          if (res.resultCode === 'SUCCESS') {
+            this.showDeleteModal = false;
+            this.myProvider()
+          }
+        });
+      }
+    },
+    myProvider (ctx) {
+      const params = {
+        start: this.currentPage - 1,
+        limit: this.perPage,
+        content: "",
+        sortBy: "",
+        sortDesc: false,
+      }
+      this.loading = true
+
+      try {
+        let promise =  this.$store.dispatch("vanBanDenStore/getPagingParams", params)
+        return promise.then(resp => {
+          if(resp.resultCode == "SUCCESS"){
+            let items = resp.data.data
+            this.totalRows = resp.data.totalRows
+            this.numberOfElement = resp.data.data.length
+            this.loading = false
+            this.data = items;
+            return items || []
+          }
+          return [];
+        })
+      } finally {
+        this.loading = false
+      }
+    },
+    async HandleSubmit(e) {
+      e.preventDefault();
+      console.log("handle submit", this.model);
+      if (
+          this.model.id != 0 &&
+          this.model.id != null &&
+          this.model.id
+      ) {
+        //Update model
+        await this.$store.dispatch("vanBanDenStore/update", this.model).then((res) => {
+          if (res.resultCode === 'SUCCESS') {
+            this.showModal = false;
+            this.model = vanBanDiModel.baseJson()
+            this.myProvider()
+          }
+        })
+      } else {
+        //Create model
+        await this.$store.dispatch("vanBanDenStore/create", this.model).then((res) => {
+          if (res.resultCode === 'SUCCESS') {
+            this.showModal = false;
+            this.model = vanBanDiModel.baseJson()
+            this.myProvider()
+          }
+        });
+      }
+    },
     getLoaiVanBan() {
       try {
         let promise = this.$store.dispatch("loaiVanBanStore/getLoaiVanBan")
@@ -154,6 +278,8 @@ export default {
             this.loading = false
             this.optionLoaiVanBan = items;
             return items || []
+
+
           }
           return [];
         })
@@ -206,6 +332,7 @@ export default {
                 label: value.fullName,
               };
             });
+            console.log("this.optionUser", this.optionUser);
           }
           return [];
         });
@@ -234,7 +361,7 @@ export default {
       }
     },
     addThisFile(items, re ) {
-      console.log("file", items,re);
+      console.log("file", items, re);
       // console.log("response", response);
       // if (this.model) {
       //   if (this.model.uploadFiles == null || this.model.uploadFiles.length <= 0)
@@ -245,14 +372,66 @@ export default {
       //   this.model.uploadFiles.push({fileId: fileSuccess.id,  fileName: fileSuccess.fileName , ext : fileSuccess.ext})
       // }
     },
-    removeHinhAnh(file, error, xhr){
-      let fileHinhAnh = JSON.parse( file.xhr.response);
-      if(fileHinhAnh.data && fileHinhAnh.data.id){
-        let idFile = fileHinhAnh.data.id;
-        let resultData =   this.model.uploadFilesHinhAnh.filter(x => {
-          return x.fileId != idFile;
+    removeCommentFile(file, error, xhr) {
+      let fileCongViec = JSON.parse(file.xhr.response);
+      if (fileCongViec.data && fileCongViec.data.id) {
+        let idFile = fileCongViec.data.id;
+        let resultData = this.model.uploadFiles =  null;
+        this.model.uploadFiles= resultData;
+      }
+    },
+    addCommentFile(file, response) {
+      if (this.model) {
+        if (this.model.uploadFiles == null || this.model.length <= 0)
+        {
+          this.model.uploadFiles = [];
+        }
+        let fileSuccess = response.data;
+        this.model.uploadFiles = {fileId: fileSuccess.id,  fileName: fileSuccess.fileName , ext : fileSuccess.ext}
+      }
+    },
+    normalizer(node){
+      if(node.children == null || node.children == 'null'){
+        delete node.children;
+      }
+    },
+    addTempPhanCong() {
+      if(!this.tempPhanCongData )
+        this.tempPhanCongData = []
+      this.tempPhanCongData.push({ userId: null, Ten: null, ghiChu: null });
+      this.model.nguoiPhanCong =  this.tempPhanCongData;
+    },
+    deleteTempPhanCong(index) {
+      this.tempPhanCongData.splice(index, 1);
+      this.model.nguoiPhanCong =  this.tempPhanCongData;
+    },
+    async handlePhanCong(id){
+      await this.$store.dispatch("vanBanDenStore/getById", id).then((res) => {
+        if (res.resultCode == "SUCCESS") {
+          this.model = res.data;
+          this.tempPhanCongData = res.data.nguoiPhanCong;
+          this.showPhanCongModal = true;
+        } else {
+          // this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+        }
+      });
+    },
+    async handleSubmitPhanCong(e) {
+
+      console.log("handle submit", this.model);
+      if (
+          this.model.id != 0 &&
+          this.model.id != null &&
+          this.model.id
+      ) {
+        //Update model
+        await this.$store.dispatch("vanBanDenStore/phanCong", this.model).then((res) => {
+          if (res.resultCode === 'SUCCESS') {
+            this.showModal = false;
+            this.model = vanBanDiModel.baseJson()
+            this.myProvider()
+          }
         })
-        this.model.uploadFilesHinhAnh= resultData;
       }
     },
   },
@@ -275,8 +454,8 @@ export default {
               >
                 <button
                     class="btn btn-primary add-btn btn-sm"
-                    data-bs-toggle="modal"
-                    data-bs-target="#them-moi"
+
+                    @click="showModal = true"
                 >
                   <i class="ri-add-line align-bottom me-1"></i> Thêm mới
                 </button>
@@ -290,11 +469,13 @@ export default {
                 <thead class="table-light">
                 <tr>
                   <th scope="col">#</th>
-                  <th scope="col">Số Lưu</th>
-                  <th scope="col">Số VB đến</th>
+                  <th scope="col">Số Lưu CV</th>
+                  <th scope="col">Số CB đi</th>
                   <th scope="col">Trích yếu</th>
-                  <th scope="col">Hạn xử lý</th>
-                  <th scope="col">Trạng thái VB</th>
+                  <th scope="col">Loại văn bản</th>
+                  <th scope="col">Trạng thái</th>
+                  <th scope="col">Cơ quan nhận</th>
+                  <th scope="col">Ngày nhập</th>
                   <th scope="col">Thao tác</th>
                 </tr>
                 </thead>
@@ -304,37 +485,36 @@ export default {
                 </tr>
                 <tr v-else v-for="(item, index) in data" :key="item.id">
                   <td>{{ ++index }}</td>
-                  <td>{{ item.soluu }}</td>
-                  <td>{{ item.sovanbanden }}</td>
-                  <td>{{ item.trichyeu }}</td>
+                  <td>{{ item.soLuuCV }}</td>
+                  <td>{{ item.soVBDi }}</td>
+                  <td>{{ item.trichYeu }}</td>
+                  <td>{{ item.loaiVanBanTen }}</td>
                   <td>
-                      <span class="badge badge-soft-danger">{{
-                          item.hanxuxly
-                        }}</span>
+                    <span class="badge badge-soft-success">{{item.trangThaiTen}}</span>
                   </td>
-                  <td v-if="item.trangthaivanban == 0">
-                      <span class="badge badge-soft-secondary"
-                      >Vừa tiếp nhận</span
-                      >
-                  </td>
-                  <td v-if="item.trangthaivanban == 1">
-                    <span class="badge badge-soft-primary">Đã tiếp nhận</span>
-                  </td>
-                  <td v-if="item.trangthaivanban == 2">
-                    <span class="badge badge-soft-success">Hoàn thành</span>
-                  </td>
+                  <td>{{ item.coQuanNhanTen }}</td>
+                  <td>{{ item.ngayNhap }}</td>
                   <td>
                     <div class="hstack gap-3 fs-15">
                       <a href="javascript:void(0);" class="link-info"
                       ><i class="ri-newspaper-line"></i
                       ></a>
+                      <a v-if="item.file"  :href="`${apiUrl}files/view/${item.file.fileId}`" class="link-info"
+                      ><i class="ri-download-2-line"></i
+                      ></a>
+                      <a
+                          href="javascript:void(0);"
+                          class="link-info"
+                          @click="handlePhanCong(item.id)"
+                      ><i class="ri-user-add-line"></i
+                      ></a>
                       <a
                           class="link-primary edit-btn"
-                          data-bs-toggle="modal"
-                          data-bs-target="#chinh-sua"
+                          @click="handleUpdate(item.id)"
                       ><i class="ri-edit-2-line"></i
                       ></a>
                       <a href="javascript:void(0);" class="link-danger"
+                         @click="handleShowDeleteModal(item.id)"
                       ><i class="ri-delete-bin-5-line"></i
                       ></a>
                     </div>
@@ -349,516 +529,414 @@ export default {
     </div>
 
     <!--  create modal form  -->
-    <div
+    <b-modal
         class="modal fade zoomIn"
         id="them-moi"
         tabindex="-1"
         aria-labelledby="CreateModalLabel"
         aria-hidden="true"
+        v-model="showModal"
+        size="xl"
+        hide-footer
+        hide-header
+        body-class="modal-body"
+        no-close-on-backdrop
     >
-      <div class="modal-dialog modal-dialog-centered modal-fullscreen">
-        <div class="modal-content border-0">
+      <!--      <div class="modal-dialog modal-dialog-centered modal-fullscreen">-->
+      <!--        <div class="modal-content border-0">-->
+      <!--      -->
+      <!--        </div>-->
+      <!--      </div>-->
+      <form class="" @submit.prevent="HandleSubmit"
+            ref="formContainer"
+      >
+        <div class="modal-header p-3 bg-primary-dark">
+          <h5 class="modal-title" id="CreateModalLabel">
+            Thông tin văn bản đến
+          </h5>
+          <div class="d-flex">
+            <button
+                type="submit"
+                class="btn btn-sm btn-primary waves-effect waves-light me-2 d-flex align-items-center"
+            >
+              <i class="ri-save-3-fill me-1"></i>
+              Lưu
+            </button>
 
-          <form action="">
-            <!--  ./start header -->
-            <div class="modal-header p-3 bg-primary-dark">
-              <h5 class="modal-title" id="CreateModalLabel">
-                Thêm mới văn bản đến
-              </h5>
-              <div class="d-flex">
-                <button
-                    type="button"
-                    class="btn btn-sm btn-primary waves-effect waves-light me-2 d-flex align-items-center"
-                >
-                  <i class="ri-save-3-fill me-1"></i>
-                  Lưu
-                </button>
-
-                <button
-                    type="button"
-                    class="btn btn-sm btn-danger waves-effect waves-light me-2 d-flex align-items-center"
-                    data-bs-dismiss="modal"
-                    aria-label="Close"
-                    id="close-modal"
-                >
-                  <i class="ri-close-line me-1"></i>
-                  Đóng
-                </button>
-              </div>
-            </div>
-            <!--  ./end header -->
-            <div class="modal-body">
-              <ul class="nav nav-tabs mb-3" role="tablist">
-                <li class="nav-item">
-                  <a
-                      class="nav-link active"
-                      data-bs-toggle="tab"
-                      href="#thongtinchinh"
-                      role="tab"
-                      aria-selected="false"
-                  >
-                    Thông tin chính
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a
-                      class="nav-link"
-                      data-bs-toggle="tab"
-                      href="#butphelanhdao"
-                      role="tab"
-                      aria-selected="false"
-                  >
-                    Bút phê lãnh đạo
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a
-                      class="nav-link"
-                      data-bs-toggle="tab"
-                      href="#xulyvanban"
-                      role="tab"
-                      aria-selected="false"
-                  >
-                    Đơn vị nhận/ Xử lý văn bản
-                  </a>
-                </li>
-              </ul>
-
-              <!--  tabs panes -->
-
-              <div class="tab-content text-muted">
-                <div class="tab-pane active" id="thongtinchinh" role="tabpanel">
-                  <div class="row">
-                    <div class="col-md-7">
-                      <div class="row">
-                        <!-- số lưu-->
-                        <div class="col-md-3">
-                          <label
-                              for="validationSoLuu"
-                              class="col-form-label col-form-label-sm"
-                          >Số lưu</label
-                          >
-                          <span class="text-danger">*</span>
-                          <input
-                              type="text"
-                              class="form-control form-control-sm"
-                              id="validationSoLuu"
-                              v-model="model.soLuuCV"
-                              required
-                          />
-                          <div class="valid-feedback">Vui lòng thêm số lưu.</div>
-                        </div>
-                        <!-- số văn bản đến-->
-                        <div class="col-md-5">
-                          <label
-                              for="validationSoVanBanDen"
-                              class="col-form-label col-form-label-sm"
-                          >Số VB đến</label
-                          >
-                          <span class="text-danger">*</span>
-                          <input
-                              type="text"
-                              class="form-control form-control-sm"
-                              id="validationSoVanBanDen"
-                              v-model="model.soVBDen"
-                              required
-                          />
-                          <div class="valid-feedback">Vui lòng thêm số văn bản đến.</div>
-                        </div>
-                        <!--loai văn bản-->
-                        <div class="col-md-4">
-                          <label
-                              for="validationLoaiVanBan"
-                              class="col-form-label col-form-label-sm"
-                          >Loại văn bản</label
-                          >
-                          <treeselect
-                              placeholder="Chọn loại văn bản"
-                              v-model="model.loaiVanBan"
-                              :options="optionLoaiVanBan"
-                          >
-                          </treeselect>
-                          <treeselect-value :value="model.loaiVanBan" />
-                          <div class="invalid-feedback">Vui lòng chọn loại văn bản</div>
-                        </div>
-                        <!-- trích yếu-->
-                        <div class="col-md-12">
-                          <label
-                              for="validationTrichYeu"
-                              class="col-form-label col-form-label-sm"
-                          >Trích yếu</label
-                          >
-                          <span class="text-danger">*</span>
-                          <textarea
-                              class="form-control form-control-sm"
-                              id="validationTrichYeu"
-                              rows="4"
-                              v-model="model.trichYeu"
-                              required
-                          />
-                          <div class="valid-feedback">Vui lòng thêm trích yếu.</div>
-                        </div>
-                        <!--          Ngày ban hành-->
-                        <div class="col-md-6">
-                          <label
-                              for="validationNgayBanHanh"
-                              class="col-form-label col-form-label-sm"
-                          >Ngày ban hành</label
-                          >
-                          <span class="text-danger">*</span>
-                          <flat-pickr
-                              v-model="model.ngayBanHanh"
-                              :config="config"
-                              class="form-control form-control-sm"
-                          ></flat-pickr>
-                          <div class="valid-feedback">Vui lòng thêm ngày ban hành.</div>
-                        </div>
-                        <!--          Ngày nhận-->
-                        <div class="col-md-6">
-                          <label
-                              for="validationNgayNhan"
-                              class="col-form-label col-form-label-sm"
-                          >Ngày nhận</label
-                          >
-                          <span class="text-danger">*</span>
-                          <flat-pickr
-                              v-model="model.ngayNhan"
-                              :config="config"
-                              class="form-control form-control-sm"
-                          ></flat-pickr>
-                          <div class="valid-feedback">Vui lòng thêm ngày nhận</div>
-                        </div>
-                        <!--          Trạng thái-->
-                        <div class="col-md-6">
-                          <label
-                              for="validationTrangThai"
-                              class="col-form-label col-form-label-sm"
-                          >Trạng thái văn bản</label
-                          >
-                          <treeselect
-                              placeholder="Chọn loại văn bản"
-                              v-model="model.trangThaiVanBan"
-                              :options="optionTrangThai"
-                          >
-                          </treeselect>
-                          <treeselect-value :value="model.trangThaiVanBan" />
-                        </div>
-                        <!--          Ngày ký-->
-                        <div class="col-md-6">
-                          <label
-                              for="validationNgayKy"
-                              class="col-form-label col-form-label-sm"
-                          >Ngày ký</label
-                          >
-                          <span class="text-danger">*</span>
-                          <flat-pickr
-                              v-model="model.ngayKy"
-                              :config="config"
-                              class="form-control form-control-sm"
-                          ></flat-pickr>
-                        </div>
-                        <!--          Người ký-->
-                        <div class="col-md-6">
-                          <label
-                              for="validationTrangThai"
-                              class="col-form-label col-form-label-sm"
-                          >Người ký</label
-                          >
-                          <treeselect
-                              :multiple="true"
-                              placeholder="Chọn người ký"
-                              v-model="model.nguoiKy"
-                              :options="optionUser"
-                          >
-                          </treeselect>
-                          <treeselect-value :value="model.nguoiKy" />
-                        </div>
-                        <!--          Thời hạn xử lý-->
-                        <div class="col-md-6">
-                          <label
-                              for="validationThoiHanXuLy"
-                              class="col-form-label col-form-label-sm"
-                          >Thời hạn xử lý</label
-                          >
-                          <span class="text-danger">*</span>
-                          <flat-pickr
-                              v-model="model.thoiHanXuLy"
-                              :config="config"
-                              class="form-control form-control-sm"
-                          ></flat-pickr>
-                        </div>
-                        <!--          fiel đính kèm-->
-                        <div class="col-md-12">
-                          <label
-                              for="validationCoQuanNhan"
-                              class="col-form-label col-form-label-sm"
-                          >File đính kèm</label
-                          >
-                          <vue-dropzone
-                              ref="myVueDropzone"
-                              id="dropzone"
-                              :use-custom-slot="true"
-                              :options="dropzoneOptions"
-                              v-on:vdropzone-success="addThisFile"
-                              v-on:vdropzone-removed-file="removeHinhAnh"
-                          />
-                          <ul class="list-unstyled mb-0" id="dropzone-preview">
-                            <div
-                                class="border rounded"
-                                v-for="(file, index) of files"
-                                :key="index"
-                            >
-                              <div class="d-flex p-2">
-                                <div class="flex-grow-1">
-                                  <div class="pt-1">
-                                    <h5 class="fs-14 mb-1" data-dz-name="">
-                                      {{ file.name }}
-                                    </h5>
-                                    <p class="fs-13 text-muted mb-0" data-dz-size="">
-                                      <strong>{{ file.size / 1024 }}</strong> KB
-                                    </p>
-                                    <strong
-                                        class="error text-danger"
-                                        data-dz-errormessage=""
-                                    ></strong>
-                                  </div>
-                                </div>
-                                <div class="flex-shrink-0 ms-3">
-                                  <button
-                                      data-dz-remove=""
-                                      class="btn btn-sm btn-danger"
-                                      @click="deleteRecord"
-                                  >
-                                    Delete
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-md-5">
-                      <div class="row">
-                        <!--        Khối cơ quan gửi-->
-                        <div class="col-md-6">
-                          <label
-                              for="validationKhoiCoQuanGui"
-                              class="col-form-label col-form-label-sm"
-                          >Khối cơ quan gửi</label
-                          >
-                          <treeselect
-                              placeholder="Chọn khối cơ quan gửi"
-                              v-model="model.khoiCoQuanGui"
-                              :options="optionDonVi"
-                          >
-                          </treeselect>
-                          <treeselect-value :value="model.khoiCoQuanGui" />
-                        </div>
-                        <!--        Cơ quan gửi-->
-                        <div class="col-md-6">
-                          <label
-                              for="validationCoQuanGui"
-                              class="col-form-label col-form-label-sm"
-                          >Cơ quan gửi</label
-                          >
-                          <treeselect
-                              placeholder="Chọn cơ quan gửi"
-                              v-model="model.coQuanGui"
-                              :options="optionDonVi"
-                          >
-                          </treeselect>
-                          <treeselect-value :value="model.coQuanGui" />
-                        </div>
-                        <!--        Hình thức nhận-->
-                        <div class="col-md-6">
-                          <label
-                              for="validationHinhThucNhan"
-                              class="col-form-label col-form-label-sm"
-                          >Hình thức nhận</label
-                          >
-                          <treeselect
-                              placeholder="Chọn hình thức nhận"
-                              v-model="model.hinhThucNhan"
-                              :options="optionHinhThucNhan"
-                          >
-                          </treeselect>
-                          <treeselect-value :value="model.hinhThucNhan" />
-                        </div>
-                        <!--        Lĩnh vực-->
-                        <div class="col-md-6">
-                          <label
-                              for="validationLinhVuc"
-                              class="col-form-label col-form-label-sm"
-                          >Lĩnh Vực</label
-                          >
-                          <span class="text-danger">*</span>
-                          <treeselect
-                              placeholder="Chọn hình thức nhận"
-                              v-model="model.linhVuc"
-                              :options="optionLinhVuc"
-                          >
-                          </treeselect>
-                          <treeselect-value :value="model.linhVuc" />
-                        </div>
-                        <!--        Mức độ tính chất-->
-                        <div class="col-md-12">
-                          <label for="mucDoTinhChat" class="col-form-label col-form-label-sm"
-                          >Mức độ tính chất</label
-                          >
-                          <treeselect
-                              placeholder="Chọn hình thức nhận"
-                              v-model="model.mucDoTinhChat"
-                              :options="optionMucDoTinhChat"
-                          >
-                          </treeselect>
-                          <treeselect-value :value="model.mucDoTinhChat" />
-                        </div>
-                        <!--        Mức độ bảo mật-->
-                        <div class="col-md-12">
-                          <label for="mucDoBaoMat" class="col-form-label col-form-label-sm"
-                          >Mức độ bảo mật</label
-                          >
-                          <treeselect
-                              placeholder="Chọn hình thức nhận"
-                              v-model="model.mucDoBaoMat"
-                              :options="optionMucDoBaoMat"
-                          >
-                          </treeselect>
-                          <treeselect-value :value="model.mucDoBaoMat" />
-                        </div>
-                        <!--        Hồ sơ đơn vị-->
-                        <div class="col-md-12">
-                          <label
-                              for="validationHoSoDonVi"
-                              class="col-form-label col-form-label-sm"
-                          >Hồ sơ đơn vị</label
-                          >
-                          <treeselect
-                              placeholder="Chọn hồ sơ đơn vị"
-                              v-model="model.hoSoDonVi"
-                              :options="optionHoSoDonVi"
-                          >
-                          </treeselect>
-                          <treeselect-value :value="model.hoSoDonVi" />
-                        </div>
-                        <!--        Nơi lưu trữ-->
-                        <div class="col-md-12">
-                          <label
-                              for="validationNoiLuuTru"
-                              class="col-form-label col-form-label-sm"
-                          >Nơi lưu trữ</label
-                          >
-                          <span class="text-danger">*</span>
-                          <input
-                              type="text"
-                              class="form-control form-control-sm"
-                              id="validationNoiLuuTru"
-                              v-model="model.noiLuuTru"
-                              required
-                          />
-                        </div>
-                        <div class="col-md-12 mt-3">
-                          <div class="form-check form-switch">
-                            <input
-                                class="form-check-input"
-                                type="checkbox"
-                                role="switch"
-                                id="congVanChiDoc"
-                                v-model="model.congVanChiDoc"
-                            />
-                            <label class="form-check-label" for="congVanChiDoc"
-                            >Là công văn chỉ đọc</label
-                            >
-                          </div>
-                          <div class="form-check form-switch">
-                            <input
-                                class="form-check-input"
-                                type="checkbox"
-                                role="switch"
-                                id="banChinh"
-                                v-model="model.banChinh"
-                            />
-                            <label class="form-check-label" for="banChinh">Bản chính</label>
-                          </div>
-                          <div class="form-check form-switch">
-                            <input
-                                class="form-check-input"
-                                type="checkbox"
-                                role="switch"
-                                id="thongBao"
-                                v-model="model.thongBao"
-                            />
-                            <label class="form-check-label" for="thongBao"
-                            >Hiện thị mục thông báo</label
-                            >
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="tab-pane" id="butphelanhdao" role="tabpanel">
-                  <div class="row card-body">
-                    <div class="col-md-12">
-                      <!-- Bút phê -->
-                      <div>
-                        <label for="validationButPhe" class="col-form-label col-form-label-sm"
-                        >Bút phê</label
-                        >
-                        <span class="text-danger">*</span>
-                        <textarea
-                            type="text"
-                            class="form-control form-control-sm"
-                            id="validationButPhe"
-                            v-model="model.butphe"
-                            required
-                        />
-                        <div class="valid-feedback">Vui lòng thêm bút phê.</div>
-                      </div>
-                      <!-- Ngày bút phê -->
-                      <div>
-                        <label
-                            for="validationNgayButPhe"
-                            class="col-form-label col-form-label-sm"
-                        >Ngày ban hành</label
-                        >
-                        <span class="text-danger">*</span>
-                        <flat-pickr
-                            v-model="model.ngayButPhe"
-                            :config="config"
-                            class="form-control form-control-sm"
-                        ></flat-pickr>
-                        <div class="valid-feedback">Vui lòng thêm ngày bút phê.</div>
-                      </div>
-                      <!-- Lãnh đạo bút phê -->
-                      <div>
-                        <label
-                            for="validationLoaiVanBan"
-                            class="col-form-label col-form-label-sm"
-                        >Lãnh đạo bút phê</label
-                        >
-                        <treeselect
-                            placeholder="Chọn lãnh đạo bút phê"
-                            v-model="model.nguoiButPhe"
-                            :options="optionUser"
-                        >
-                        </treeselect>
-                        <treeselect-value :value="model.loaiVanBan" />
-                        <div class="invalid-feedback">Vui lòng chọn lãnh đạo bút phê.</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="tab-pane" id="xulyvanban" role="tabpanel">
-                  <for-xu-ly-van-ban/>
-                </div>
-              </div>
-            </div>
-          </form>
+            <button
+                type="button"
+                class="btn btn-sm btn-danger waves-effect waves-light me-2 d-flex align-items-center"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                id="close-modal"
+                @click="showModal = false"
+            >
+              <i class="ri-close-line me-1"></i>
+              Đóng
+            </button>
+          </div>
         </div>
-      </div>
-    </div>
+        <!-- start content -->
+        <div class="row p-4">
+          <div class="col-md-7">
+            <div class="row">
+              <!-- Loại văn bản -->
+              <div class="col-md-6">
+                <label
+                    for="validationLoaiVanBan"
+                    class="col-form-label col-form-label-sm"
+                >Loại văn bản</label
+                >
+                <span class="text-danger">*</span>
+                <treeselect
+                    placeholder="Chọn loại văn bản"
+                    v-model="model.loaiVanBan"
+                    :options="optionLoaiVanBan"
+                    track-by="id"
+                >
+                </treeselect>
+                <treeselect-value :value="model.loaiVanBan"/>
+                <div class="valid-feedback">Vui lòng chọn loại văn bản.</div>
+              </div>
+              <!-- Trạng thái -->
+              <div class="col-md-6">
+                <label
+                    for="validationTrangThai"
+                    class="col-form-label col-form-label-sm"
+                >Trạng thái</label
+                >
+                <span class="text-danger">*</span>
+                <treeselect
+                    placeholder="Chọn trạng thái"
+                    v-model="model.trangThai"
+                    :options="optionTrangThai"
+                >
+                </treeselect>
+                <treeselect-value :value="model.trangThai"/>
+                <div class="valid-feedback">Vui lòng chọn trạng thái.</div>
+              </div>
+              <!-- số lưu CV-->
+              <div class="col-md-4">
+                <label
+                    for="validationSoLuuCV"
+                    class="col-form-label col-form-label-sm"
+                >Số lưu CV</label
+                >
+                <input
+                    v-model="model.soLuuCV"
+                    type="text"
+                    class="form-control"
+                    id="validationSoLuuCV"
+                />
+              </div>
+              <!-- Số CV đi-->
+              <div class="col-md-4">
+                <label
+                    for="validationSoVanBanDen"
+                    class="col-form-label col-form-label-sm"
+                >Số VB đến</label
+                >
+                <input
+                    v-model="model.soVBDi"
+                    type="text"
+                    class="form-control"
+                    id="validationSoVanBanDen"
+                    required
+                />
+              </div>
+              <!--Ngày nhập-->
+              <div class="col-md-4">
+                <label
+                    for="validationNgayNhap"
+                    class="col-form-label col-form-label-sm"
+                >Ngày nhập</label
+                >
+                <flat-pickr
+                    v-model="model.ngayNhap"
+                    :config="config"
+                    class="form-control"
+                ></flat-pickr>
+              </div>
+              <!-- Trả lời CV số -->
+              <div class="col-md-4">
+                <label
+                    for="validationTraLoiCVSo"
+                    class="col-form-label col-form-label-sm"
+                >Trả lời CV số</label
+                >
+                <input
+                    type="text"
+                    class="form-control"
+                    id="validationTraLoiCVSo"
+                    v-model="model.traLoiCVSo"
+                />
+              </div>
+              <!-- Ngày trả lời -->
+              <div class="col-md-4">
+                <label
+                    for="validationNgayNhap"
+                    class="col-form-label col-form-label-sm"
+                >Ngày trả lời</label
+                >
+                <flat-pickr
+                    v-model="model.ngayTraLoi"
+                    :config="config"
+                    class="form-control"
+                ></flat-pickr>
+              </div>
+              <!-- Số bản -->
+              <div class="col-md-4">
+                <label
+                    for="validationSoBan"
+                    class="col-form-label col-form-label-sm"
+                >Số bản</label
+                >
+                <input
+                    type="number"
+                    class="form-control"
+                    id="validationSoBan"
+                    v-model="model.soBan"
+                />
+              </div>
+              <!-- Khối cơ quan nhận -->
+              <div class="col-md-6">
+                <label
+                    for="validationKhoiCoQuanNhan"
+                    class="col-form-label col-form-label-sm"
+                >Khối cơ quan nhận</label
+                >
+                <treeselect
+                    placeholder="Chọn khối cơ quan nhận"
+                    v-model="model.khoiCoQuanNhan"
+                    :options="optionDonVi"
+                >
+                </treeselect>
+                <treeselect-value :value="model.khoiCoQuanNhan"/>
+              </div>
+              <!-- Cơ quan nhận  -->
+              <div class="col-md-6">
+                <label
+                    for="validationCoQuanNhan"
+                    class="col-form-label col-form-label-sm"
+                >Cơ quan nhận</label
+                >
+                <treeselect
+                    placeholder="Chọn cơ quan nhận"
+                    v-model="model.coQuanNhan"
+                    :options="optionDonVi"
+                >
+                </treeselect>
+                <treeselect-value :value="model.coQuanNhan"/>
+              </div>
+              <!-- file đính kèm-->
+              <div class="col-md-12">
+                <label
+                    for="validationCoQuanNhan"
+                    class="col-form-label col-form-label-sm"
+                >File đính kèm</label
+                >
+                <vue-dropzone
+                    ref="myVueDropzone"
+                    id="dropzone"
+                    :options="dropzoneOptions"
+                    v-on:vdropzone-removed-file="removeCommentFile"
+                    v-on:vdropzone-success="addCommentFile"
+                />
+                <ul class="list-unstyled mb-0" id="dropzone-preview">
+                  <div
+                      class="border rounded"
+                      v-for="(file, index) of files"
+                      :key="index"
+                  >
+                    <div class="d-flex p-2">
+                      <div class="flex-grow-1">
+                        <div class="pt-1">
+                          <h5 class="fs-14 mb-1" data-dz-name="">
+                            {{ file.name }}
+                          </h5>
+                          <p class="fs-13 text-muted mb-0" data-dz-size="">
+                            <strong>{{ file.size / 1024 }}</strong> KB
+                          </p>
+                          <strong
+                              class="error text-danger"
+                              data-dz-errormessage=""
+                          ></strong>
+                        </div>
+                      </div>
+                      <div class="flex-shrink-0 ms-3">
+                        <button
+                            data-dz-remove=""
+                            class="btn btn-sm btn-danger"
+                            @click="deleteRecord"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </ul>
+              </div>
+
+
+              <!--  end vue dropzone -->
+
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="row">
+              <!-- Trích yếu  -->
+              <div class="col-md-12">
+                <label
+                    for="validationTrichYeu"
+                    class="col-form-label col-form-label-sm"
+                >Trích yếu</label
+                >
+                <span class="text-danger">*</span>
+                <textarea
+                    v-model="model.trichYeu"
+                    class="form-control"
+                    id="validationTrichYeu"
+                    rows="3"
+                    required
+                />
+                <div class="valid-feedback">Vui lòng thêm trích yếu.</div>
+              </div>
+              <!-- Đơn vị soạn -->
+              <div class="col-md-12">
+                <label
+                    for="validationDonViSoan"
+                    class="col-form-label col-form-label-sm"
+                >Đơn vị soạn</label
+                >
+                <treeselect
+                    placeholder="Chọn đơn vị soạn"
+                    v-model="model.donViSoan"
+                    :options="optionDonVi"
+                    :normalizer="normalizer"
+                >
+                </treeselect>
+                <treeselect-value :value="model.donViSoan"/>
+              </div>
+              <!-- Cán bộ soạn -->
+              <div class="col-md-12">
+                <label
+                    for="validationCanBoSoan"
+                    class="col-form-label col-form-label-sm"
+                >Cán bộ soạn</label
+                >
+                <treeselect
+                    placeholder="Chọn cán bộ soạn"
+                    v-model="model.canBoSoan"
+                    :options="optionUser"
+                >
+                </treeselect>
+                <treeselect-value :value="model.canBoSoan"/>
+              </div>
+              <!-- Hình thức gửi -->
+              <div class="col-md-6">
+                <label
+                    for="validationHinhThucGui"
+                    class="col-form-label col-form-label-sm"
+                >Hình thức gửi</label
+                >
+                <treeselect
+                    placeholder="Chọn hình thức nhận"
+                    v-model="model.hinhThucGui"
+                    :options="optionHinhThucGui"
+                >
+                </treeselect>
+                <treeselect-value :value="model.hinhThucGui"/>
+              </div>
+              <!--        Lĩnh vực-->
+              <div class="col-md-6">
+                <label
+                    for="validationLinhVuc"
+                    class="col-form-label col-form-label-sm"
+                >Lĩnh Vực</label
+                >
+                <treeselect
+                    placeholder="Chọn hình thức nhận"
+                    v-model="model.linhVuc"
+                    :options="optionLinhVuc"
+                >
+                </treeselect>
+                <treeselect-value :value="model.linhVuc"/>
+              </div>
+              <!--        Mức độ tính chất-->
+              <div class="col-md-6">
+                <label
+                    for="validationHinhThucGui"
+                    class="col-form-label col-form-label-sm"
+                >Mức độ tính chất</label
+                >
+                <treeselect
+                    placeholder="Chọn hình thức nhận"
+                    v-model="model.mucDoTinhChat"
+                    :options="optionMucDoTinhChat"
+                >
+                </treeselect>
+                <treeselect-value :value="model.mucDoTinhChat"/>
+              </div>
+              <!--        Mức độ bảo mật-->
+              <div class="col-md-6">
+                <label
+                    for="validationHinhThucGui"
+                    class="col-form-label col-form-label-sm"
+                >Mức độ bảo mật</label
+                >
+                <treeselect
+                    placeholder="Chọn hình thức nhận"
+                    v-model="model.mucDoBaoMat"
+                    :options="optionMucDoBaoMat"
+                >
+                </treeselect>
+                <treeselect-value :value="model.mucDoBaoMat"/>
+              </div>
+              <!--        Hồ sơ đơn vị-->
+              <div class="col-md-6">
+                <label
+                    for="validationHoSoDonVi"
+                    class="col-form-label col-form-label-sm"
+                >Hồ sơ đơn vị</label
+                >
+                <treeselect
+                    placeholder="Chọn hồ sơ đơn vị"
+                    v-model="model.hoSoDonVi"
+                    :options="optionHoSoDonVi"
+                >
+                </treeselect>
+                <treeselect-value :value="model.hoSoDonVi"/>
+              </div>
+              <!--        Nơi lưu trữ-->
+              <div class="col-md-6">
+                <label
+                    for="validationNoiLuuTru"
+                    class="col-form-label col-form-label-sm"
+                >Nơi lưu trữ</label
+                >
+                <span class="text-danger">*</span>
+                <input
+                    type="text"
+                    class="form-control"
+                    id="validationNoiLuuTru"
+                    v-model="model.noiLuuTru"
+                />
+              </div>
+              <!-- Nơi lưu trữ -->
+              <div class="col-md-12">
+                <label
+                    for="validationNoiLuuTru"
+                    class="col-form-label col-form-label-sm"
+                >Ghi chú</label
+                >
+                <textarea v-model="model.ghiChu" rows="2" class="form-control"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- end content -->
+      </form>
+    </b-modal>
 
     <!-- Edit modal form -->
     <div
@@ -872,7 +950,7 @@ export default {
         <div class="modal-content border-0">
           <div class="modal-header p-3 bg-primary-dark">
             <h5 class="modal-title" id="EditModalLabel">
-              Chỉnh sửa văn bản đến
+              Chỉnh sửa văn bản đi
             </h5>
             <div class="d-flex">
               <button
@@ -895,10 +973,456 @@ export default {
               </button>
             </div>
           </div>
-          <suavanbanden/>
+          <!-- start content -->
+          <div class="row p-4">
+            <div class="col-md-7">
+              <div class="row">
+                <!-- Loại văn bản -->
+                <div class="col-md-6">
+                  <label
+                      for="validationLoaiVanBan"
+                      class="col-form-label col-form-label-sm"
+                  >Loại văn bản</label
+                  >
+                  <span class="text-danger">*</span>
+                  <treeselect
+                      placeholder="Chọn loại văn bản"
+                      v-model="model.loaiVanBan"
+                      :options="optionLoaiVanBan"
+                  >
+                  </treeselect>
+                  <treeselect-value :value="model.loaiVanBan"/>
+                  <div class="valid-feedback">Vui lòng chọn loại văn bản.</div>
+                </div>
+                <!-- Trạng thái -->
+                <div class="col-md-6">
+                  <label
+                      for="validationTrangThai"
+                      class="col-form-label col-form-label-sm"
+                  >Trạng thái</label
+                  >
+                  <span class="text-danger">*</span>
+                  <treeselect
+                      placeholder="Chọn trạng thái"
+                      v-model="model.trangThai"
+                      :options="optionTrangThai"
+                  >
+                  </treeselect>
+                  <treeselect-value :value="model.trangThai"/>
+                  <div class="valid-feedback">Vui lòng chọn trạng thái.</div>
+                </div>
+                <!-- số lưu CV-->
+                <div class="col-md-4">
+                  <label
+                      for="validationSoLuuCV"
+                      class="col-form-label col-form-label-sm"
+                  >Số lưu CV</label
+                  >
+                  <input
+                      v-model="model.soLuuCV"
+                      type="text"
+                      class="form-control"
+                      id="validationSoLuuCV"
+                  />
+                </div>
+                <!-- Số CV đi-->
+                <div class="col-md-4">
+                  <label
+                      for="validationSoVanBanDen"
+                      class="col-form-label col-form-label-sm"
+                  >Số VB đến</label
+                  >
+                  <input
+                      v-model="model.soLuuCV"
+                      type="text"
+                      class="form-control"
+                      id="validationSoVanBanDen"
+                      required
+                  />
+                </div>
+                <!--Ngày nhập-->
+                <div class="col-md-4">
+                  <label
+                      for="validationNgayNhap"
+                      class="col-form-label col-form-label-sm"
+                  >Ngày nhập</label
+                  >
+                  <flat-pickr
+                      v-model="model.ngayNhap"
+                      :config="config"
+                      class="form-control"
+                  ></flat-pickr>
+                </div>
+                <!-- Trả lời CV số -->
+                <div class="col-md-4">
+                  <label
+                      for="validationTraLoiCVSo"
+                      class="col-form-label col-form-label-sm"
+                  >Trả lời CV số</label
+                  >
+                  <input
+                      type="text"
+                      class="form-control"
+                      id="validationTraLoiCVSo"
+                      v-model="model.traLoiCVSo"
+                  />
+                </div>
+                <!-- Ngày trả lời -->
+                <div class="col-md-4">
+                  <label
+                      for="validationNgayNhap"
+                      class="col-form-label col-form-label-sm"
+                  >Ngày trả lời</label
+                  >
+                  <flat-pickr
+                      v-model="model.ngayTraLoi"
+                      :config="config"
+                      class="form-control"
+                  ></flat-pickr>
+                </div>
+                <!-- Số bản -->
+                <div class="col-md-4">
+                  <label
+                      for="validationSoBan"
+                      class="col-form-label col-form-label-sm"
+                  >Số bản</label
+                  >
+                  <input
+                      type="number"
+                      class="form-control"
+                      id="validationSoBan"
+                      v-model="model.soBan"
+                  />
+                </div>
+                <!-- Trích yếu  -->
+                <div class="col-md-12">
+                  <label
+                      for="validationTrichYeu"
+                      class="col-form-label col-form-label-sm"
+                  >Trích yếu</label
+                  >
+                  <span class="text-danger">*</span>
+                  <textarea
+                      v-model="model.trichYeu"
+                      class="form-control"
+                      id="validationTrichYeu"
+                      rows="3"
+                      required
+                  />
+                  <div class="valid-feedback">Vui lòng thêm trích yếu.</div>
+                </div>
+                <!-- Khối cơ quan nhận -->
+                <div class="col-md-6">
+                  <label
+                      for="validationKhoiCoQuanNhan"
+                      class="col-form-label col-form-label-sm"
+                  >Khối cơ quan nhận</label
+                  >
+                  <treeselect
+                      placeholder="Chọn khối cơ quan nhận"
+                      v-model="model.khoiCoQuanNhan"
+                      :options="optionDonVi"
+                  >
+                  </treeselect>
+                  <treeselect-value :value="model.khoiCoQuanNhan"/>
+                </div>
+                <!-- Cơ quan nhận  -->
+                <div class="col-md-6">
+                  <label
+                      for="validationCoQuanNhan"
+                      class="col-form-label col-form-label-sm"
+                  >Cơ quan nhận</label
+                  >
+                  <treeselect
+                      placeholder="Chọn cơ quan nhận"
+                      v-model="model.coQuanNhan"
+                      :options="optionDonVi"
+                  >
+                  </treeselect>
+                  <treeselect-value :value="model.coQuanNhan"/>
+                </div>
+                <!-- file đính kèm-->
+                <div class="col-md-12">
+                  <label
+                      for="validationCoQuanNhan"
+                      class="col-form-label col-form-label-sm"
+                  >File đính kèm</label
+                  >
+                  <div class="input-group">
+                    <button class="btn btn-outline-primary" type="button" id="inputGroupFileAddon03">
+                      <i class=" ri-attachment-2 text-primary"></i>
+                    </button>
+                    <input type="file" class="form-control" id="inputGroupFile03"
+                           aria-describedby="inputGroupFileAddon03" aria-label="Upload">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-5">
+              <div class="row">
+                <!-- Đơn vị soạn -->
+                <div class="col-md-12">
+                  <label
+                      for="validationDonViSoan"
+                      class="col-form-label col-form-label-sm"
+                  >Đơn vị soạn</label
+                  >
+                  <treeselect
+                      placeholder="Chọn đơn vị soạn"
+                      v-model="model.donViSoan"
+                      :options="optionDonVi"
+                  >
+                  </treeselect>
+                  <treeselect-value :value="model.donViSoan"/>
+                </div>
+                <!-- Cán bộ soạn -->
+                <div class="col-md-12">
+                  <label
+                      for="validationCanBoSoan"
+                      class="col-form-label col-form-label-sm"
+                  >Cán bộ soạn</label
+                  >
+                  <treeselect
+                      placeholder="Chọn cán bộ soạn"
+                      v-model="model.canBoSoan"
+                      :options="optionCanBoSoan"
+                  >
+                  </treeselect>
+                  <treeselect-value :value="model.canBoSoan"/>
+                </div>
+                <!-- Hình thức gửi -->
+                <div class="col-md-6">
+                  <label
+                      for="validationHinhThucGui"
+                      class="col-form-label col-form-label-sm"
+                  >Hình thức gửi</label
+                  >
+                  <treeselect
+                      placeholder="Chọn hình thức nhận"
+                      v-model="model.hinhThucGui"
+                      :options="optionHinhThucGui"
+                  >
+                  </treeselect>
+                  <treeselect-value :value="model.hinhThucGui"/>
+                </div>
+                <!--        Lĩnh vực-->
+                <div class="col-md-6">
+                  <label
+                      for="validationLinhVuc"
+                      class="col-form-label col-form-label-sm"
+                  >Lĩnh Vực</label
+                  >
+                  <input
+                      v-model="model.linhVuc"
+                      type="text"
+                      class="form-control"
+                      id="validationLinhVuc"
+                  />
+                </div>
+                <!--        Mức độ tính chất-->
+                <div class="col-md-6">
+                  <label
+                      for="validationHinhThucGui"
+                      class="col-form-label col-form-label-sm"
+                  >Mức độ tính chất</label
+                  >
+                  <treeselect
+                      placeholder="Chọn hình thức nhận"
+                      v-model="model.mucDoTinhChat"
+                      :options="optionMucDoTinhChat"
+                  >
+                  </treeselect>
+                  <treeselect-value :value="model.mucDoTinhChat"/>
+                </div>
+                <!--        Mức độ bảo mật-->
+                <div class="col-md-6">
+                  <label
+                      for="validationHinhThucGui"
+                      class="col-form-label col-form-label-sm"
+                  >Mức độ bảo mật</label
+                  >
+                  <treeselect
+                      placeholder="Chọn hình thức nhận"
+                      v-model="model.mucDoBaoMat"
+                      :options="optionMucDoBaoMat"
+                  >
+                  </treeselect>
+                  <treeselect-value :value="model.mucDoBaoMat"/>
+                </div>
+                <!--        Hồ sơ đơn vị-->
+                <div class="col-md-6">
+                  <label
+                      for="validationHoSoDonVi"
+                      class="col-form-label col-form-label-sm"
+                  >Hồ sơ đơn vị</label
+                  >
+                  <treeselect
+                      placeholder="Chọn hồ sơ đơn vị"
+                      v-model="model.hoSoDonVi"
+                      :options="optionHoSoDonVi"
+                  >
+                  </treeselect>
+                  <treeselect-value :value="model.hoSoDonVi"/>
+                </div>
+                <!--        Nơi lưu trữ-->
+                <div class="col-md-6">
+                  <label
+                      for="validationNoiLuuTru"
+                      class="col-form-label col-form-label-sm"
+                  >Nơi lưu trữ</label
+                  >
+                  <span class="text-danger">*</span>
+                  <input
+                      type="text"
+                      class="form-control"
+                      id="validationNoiLuuTru"
+                      v-model="model.noiLuuTru"
+                  />
+                </div>
+                <!-- Nơi lưu trữ -->
+                <div class="col-md-12">
+                  <label
+                      for="validationNoiLuuTru"
+                      class="col-form-label col-form-label-sm"
+                  >Ghi chú</label
+                  >
+                  <textarea v-model="model.ghiChu" rows="2" class="form-control"/>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- end content -->
         </div>
       </div>
     </div>
+    <!-- Modal phân công -->
+    <b-modal
+        class="modal fade zoomIn"
+        id="phancong"
+        v-model="showPhanCongModal"
+        hide-header
+        hide-footer
+
+    >
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0">
+          <div class="modal-header p-3 bg-primary-dark">
+            <h5 class="modal-title" id="phancongLabel">Phân công</h5>
+          </div>
+          <div class="modal-body p-3">
+            <from
+                ref="formContainer">
+              <div class="row">
+                <div class="col-12">
+                  <div class="inner-repeater mb-4">
+                    <div class="inner mb-3">
+                      <div
+                          v-for="(data, index) in tempPhanCongData"
+                          :key="index"
+                          class="inner mb-3 row"
+                      >
+                        <div class="col-md-11">
+                          <!-- Người thực hiện -->
+                          <div class="row mb-2">
+                            <div class="col-lg-3">
+                              <label class="form-label">Người thực hiện</label>
+                            </div>
+                            <div class="col-lg-9">
+                              <treeselect
+                                  placeholder="Chọn lãnh đạo bút phê"
+                                  v-model="data.userId"
+                                  :options="optionUser"
+                              >
+                              </treeselect>
+                              <treeselect-value :value="data.userId" />
+                            </div>
+                          </div>
+                          <!-- Ghi chú -->
+                          <div class="row mb-2">
+                            <div class="col-lg-3">
+                              <label for="" class="form-label">Ghi chú</label>
+                            </div>
+                            <div class="col-lg-9">
+                    <textarea
+                        v-model="data.ghiChu"
+                        placeholder="Nhập ghi chú..."
+                        name="note"
+                        id="note"
+                        rows="2"
+                        class="form-control"
+                    >
+                    </textarea>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-1 d-flex align-items-center">
+                          <div class="d-grid">
+                            <button
+                                type="button"
+                                class="btn btn-outline-danger btn-icon waves-effect waves-light border-0"
+                                @click="deleteTempPhanCong(index)"
+                            >
+                              <i class="ri-delete-bin-line"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                      <button
+                          type="button"
+                          class="btn rounded-pill waves-effect waves-light btn-add p-0"
+                          @click="addTempPhanCong"
+                      >
+                        <i class="ri-add-circle-fill fs-1 me-2"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+                  Đóng
+                </button>
+                <button type="button" @click="handleSubmitPhanCong" class="btn btn-primary">Lưu</button>
+              </div>
+            </from>
+          </div>
+
+        </div>
+      </div>
+    </b-modal>
+    <b-modal
+        ref="modal"
+        content-class="p-5"
+        hide-header
+        hide-footer
+        v-model="showDeleteModal"
+    >
+      <div class="text-center">
+        <i class="ri-error-warning-line text-warning" style="font-size: 100px;"></i>
+        <p class="fs-4">Bạn có chắc muốn xóa không?</p>
+      </div>
+      <div class="d-flex justify-content-center">
+        <b-button
+            type="button"
+            class="btn btn-danger waves-effect waves-light me-2 d-flex align-items-center"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+            id="close-modal"
+            @click="showDeleteModal = false"
+        >
+          Hủy
+        </b-button>
+        <b-button
+            type="submit"
+            class="btn btn-primary waves-effect waves-light me-2 d-flex align-items-center"
+            @click="handleDelete"
+        >
+          Xóa
+        </b-button>
+      </div>
+    </b-modal>
   </Layout>
 </template>
 <style>
@@ -910,27 +1434,7 @@ export default {
   background: linear-gradient(135deg, #06548e, #ffffff);
   box-shadow: 0px 3px 0px #06548e;
 }
-
-.vue-treeselect__control {
-  height: 26px;
-  border-radius: 3px;
-  border-color: #ced4da;
-  font-size: 12px;
-}
-
-.vue-treeselect__single-value {
-  margin-top: -5px;
-}
-
-.vue-treeselect__placeholder {
-  margin-top: -5px;
-}
-
-.dropzone {
-  height: 100px;
-  min-height: 0px !important;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+.modal-body{
+  padding: 0px;
 }
 </style>

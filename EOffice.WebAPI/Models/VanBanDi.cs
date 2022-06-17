@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace EOffice.WebAPI.Models
@@ -41,6 +42,7 @@ namespace EOffice.WebAPI.Models
         public string KhoiCoQuanNhan { get; set; }
         public string KhoiCoQuanNhanTen { get; set; }
         public FileShort File { get; set; }
+        public List<NguoiPhanCong> NguoiPhanCong { get; set; }
         [BsonIgnore]
         public FileShort UploadFiles{ get; set; }
     }

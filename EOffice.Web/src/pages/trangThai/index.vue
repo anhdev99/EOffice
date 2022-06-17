@@ -211,7 +211,7 @@ export default {
               <!--  Table -->
               <b-table
                   class="table-light align-middle table-nowrap mb-0"
-                  :items="data"
+                  :items="provider"
                   small
                   :fields="fields"
                   responsive="sm"

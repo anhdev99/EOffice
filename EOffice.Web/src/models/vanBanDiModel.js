@@ -55,6 +55,7 @@ const fromJson = (item) => {
 
 const baseJson = () => {
     return {
+        id: null,
         soLuuCV: null,
         soVBDen: null,
         loaiVanBan: null,

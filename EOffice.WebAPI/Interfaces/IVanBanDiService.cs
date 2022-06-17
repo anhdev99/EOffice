@@ -13,6 +13,9 @@ namespace EOffice.WebAPI.Interfaces
         Task<List<VanBanDi>> Get();
         Task<VanBanDi> GetById(string id);
         Task<PagingModel<VanBanDi>> GetPaging(VanBanDiParam param);
+        Task<PagingModel<VanBanDi>> GetPagingUser(VanBanDiParam param);
+
+        Task<VanBanDi> PhanCong(VanBanDi model);
         // Task ChangeStatusQuestion(StatusVanBan model);
         //
         // Task<PagingModel<VanBanDi>>   GetPagingReceive (VanBanDiParam param);

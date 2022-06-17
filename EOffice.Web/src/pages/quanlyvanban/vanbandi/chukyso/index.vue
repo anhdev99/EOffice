@@ -30,11 +30,41 @@ export default {
       ],
       data: data,
       modalShow: false,
+      currentPage: 0
     };
+  },
+  created() {
+    this.myProvider()
   },
   components: { Layout, PageHeader, KySo, XacThuc },
   methods: {
+    myProvider (ctx) {
+      const params = {
+        start: this.currentPage - 1,
+        limit: this.perPage,
+        content: "",
+        sortBy: "",
+        sortDesc: false,
+      }
+      this.loading = true
 
+      try {
+        let promise =  this.$store.dispatch("vanBanDiStore/getPagingParamsUser", params)
+        return promise.then(resp => {
+          if(resp.resultCode == "SUCCESS"){
+            let items = resp.data.data
+            this.totalRows = resp.data.totalRows
+            this.numberOfElement = resp.data.data.length
+            this.loading = false
+            this.data = items;
+            return items || []
+          }
+          return [];
+        })
+      } finally {
+        this.loading = false
+      }
+    },
   },
 };
 </script>
@@ -47,7 +77,7 @@ export default {
       <div class="col-xl-12">
         <div class="card">
           <div class="card-header align-items-center d-flex">
-            <h4 class="card-title mb-0 flex-grow-1">Danh sách văn bản đến</h4>
+            <h4 class="card-title mb-0 flex-grow-1">Danh sách văn bản đi</h4>
           </div>
           <div class="row">
             <div class="col-12">
@@ -75,19 +105,11 @@ export default {
                     <td>{{ item.soLuuCV }}</td>
                     <td>{{ item.soCVDi }}</td>
                     <td>{{ item.trichYeu }}</td>
-                    <td>{{ item.loaiVanBan }}</td>
-                    <td v-if="item.trangThai == 0">
-                      <span class="badge badge-soft-secondary"
-                        >Vừa tiếp nhận</span
-                      >
+                    <td>{{ item.loaiVanBanTen }}</td>
+                    <td >
+                      {{item.trangThaiTen}}
                     </td>
-                    <td v-if="item.trangThai == 1">
-                      <span class="badge badge-soft-primary">Đã tiếp nhận</span>
-                    </td>
-                    <td v-if="item.trangThai == 2">
-                      <span class="badge badge-soft-success">Hoàn thành</span>
-                    </td>
-                    <td>{{ item.coQuanNhan }}</td>
+                    <td>{{ item.coQuanNhanTen }}</td>
                     <td>{{ item.ngayNhap }}</td>
                     <td>
                       <div class="hstack gap-3 fs-15">
