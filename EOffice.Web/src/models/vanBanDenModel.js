@@ -22,6 +22,16 @@ const toJson = (item) => {
         congVanChiDoc: item.congVanChiDoc,
         banChinh: item.banChinh,
         thongBao: item.thongBao,
+        nguoiPhuTrach: item.nguoiPhuTrach,
+        nguoiChuTri: item.nguoiChuTri,
+        nguoiPhoiHopXuLy: item.nguoiPhoiHopXuLy,
+        nguoiXemDeBiet: item.nguoiXemDeBiet,
+        donViXuLy: item.donViXuLy,
+        donViPhoiHop: item.donViPhoiHop,
+        duyetVanBan: item.duyetVanBan,
+        nguoiDuyetVanBan: item.nguoiDuyetVanBan,
+        ngayDuyetVanBan: item.ngayDuyetVanBan,
+        ghiChu: item.ghiChu,
     }
 }
 
@@ -51,6 +61,16 @@ const fromJson = (item) => {
         butphe: item.butphe,
         ngayButPhe: item.ngayButPhe,
         nguoiButPhe: item.nguoiButPhe,
+        nguoiPhuTrach: item.nguoiPhuTrach,
+        nguoiChuTri: item.nguoiChuTri,
+        nguoiPhoiHopXuLy: item.nguoiPhoiHopXuLy,
+        nguoiXemDeBiet: item.nguoiXemDeBiet,
+        donViXuLy: item.donViXuLy,
+        donViPhoiHop: item.donViPhoiHop,
+        duyetVanBan: item.duyetVanBan,
+        nguoiDuyetVanBan: item.nguoiDuyetVanBan,
+        ngayDuyetVanBan: item.ngayDuyetVanBan,
+        ghiChu: item.ghiChu,
     }
 }
 
@@ -81,6 +101,16 @@ const baseJson = () => {
         butphe: null,
         ngayButPhe: new Date(),
         nguoiButPhe: null,
+        nguoiPhuTrach: null,
+        nguoiChuTri: null,
+        nguoiPhoiHopXuLy: null,
+        nguoiXemDeBiet: null,
+        donViXuLy: null,
+        donViPhoiHop: null,
+        duyetVanBan: null,
+        nguoiDuyetVanBan: null,
+        ngayDuyetVanBan: new Date(),
+        ghiChu: null,
     }
 }
 

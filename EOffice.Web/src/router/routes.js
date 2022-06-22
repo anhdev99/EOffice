@@ -62,7 +62,7 @@ export default [
       title: "Dashboard",
       authRequired: true,
     },
-    component: () => import("../pages/lichcongtac/dexuatlichcongtac/index.vue"),
+    component: () => import("../pages/thongbao/index"),
   },
   {
     path: "/nguoi-dung",
@@ -71,7 +71,7 @@ export default [
       title: "Người dùng",
       authRequired: true,
     },
-    component: () => import("../pages/user/index.vue"),
+    component: () => import("../pages/user/index"),
   },
   {
     path: "/thong-bao",
@@ -83,49 +83,13 @@ export default [
     component: () => import("../pages/thongbao/index.vue"),
   },
   {
-    path: "/lich-cong-tac-lanh-dao",
-    name: "lich-cong-tac-lanh-dao",
-    meta: {
-      title: "Lịch công tác lãnh đạo",
-      authRequired: true,
-    },
-    component: () => import("../pages/lichcongtac/dexuatlichcongtac/index"),
-  },
-  {
-    path: "/lich-cong-tac-ca-nhan",
-    name: "lich-cong-tac-ca-nhan",
-    meta: {
-      title: "Lịch công tác cá nhân",
-      authRequired: true,
-    },
-    component: () => import("../pages/lichcongtac/lichcongtaccanhan/index.vue"),
-  },
-  {
-    path: "/lich-cong-tac-phong-ban",
-    name: "lich-cong-tac-phong-ban",
-    meta: {
-      title: "Lịch công tác phòng ban",
-      authRequired: true,
-    },
-    component: () => import("../pages/lichcongtac/lichcongtacphongban/index.vue"),
-  },
-  {
     path: "/lich-ca-nhan",
     name: "lich-ca-nhan",
     meta: {
       title: "Lịch cá nhân",
       authRequired: true,
     },
-    component: () => import("../pages/lichcongtac/lichcanhan/index.vue"),
-  },
-  {
-    path: "/de-xuat-lich-cong-tac",
-    name: "de-xuat-lich-cong-tac",
-    meta: {
-      title: "Đề xuất lịch công tác",
-      authRequired: true,
-    },
-    component: () => import("../pages/lichcongtac/dexuatlichcongtac/index.vue"),
+    component: () => import("../pages/lichcanhan/index.vue"),
   },
   {
     path: "/quan-ly-lich-de-xuat",
@@ -134,7 +98,7 @@ export default [
       title: "Quản lý lịch đề xuất",
       authRequired: true,
     },
-    component: () => import("../pages/lichcongtac/quanlylichdexuat/index.vue"),
+    component: () => import("../pages/quanlylichdexuat/index.vue"),
   },
   {
     path: "/co-quan",
@@ -143,7 +107,7 @@ export default [
       title: "Cơ quan",
       authRequired: true,
     },
-    component: () => import("../pages/quanlydanhmuc/coquan/index"),
+    component: () => import("../pages/dmcoquan/index"),
   },
   {
     path: "/linh-vuc",
@@ -152,16 +116,7 @@ export default [
       title: "Lĩnh vực",
       authRequired: true,
     },
-    component: () => import("../pages/quanlydanhmuc/linhvuc/index"),
-  },
-  {
-    path: "/loai-nguon-von",
-    name: "loai-nguon-von",
-    meta: {
-      title: "Loại nguồn vốn",
-      authRequired: true,
-    },
-    component: () => import("../pages/quanlydanhmuc/loainguonvon/index"),
+    component: () => import("../pages/dmlinhvuc/index"),
   },
   {
     path: "/don-vi",
@@ -170,7 +125,7 @@ export default [
       title: "Đơn vị",
       authRequired: true,
     },
-    component: () => import("../pages/quanlydanhmuc/donvi/index"),
+    component: () => import("../pages/dmdonvi/index"),
   },
   {
     path: "/chuc-vu",
@@ -188,34 +143,7 @@ export default [
       title: "Cấp cơ quan",
       authRequired: true,
     },
-    component: () => import("../pages/quanlydanhmuc/capcoquan/index"),
-  },
-  {
-    path: "/nhom-du-an",
-    name: "nhom-du-an",
-    meta: {
-      title: "Nhóm dự án",
-      authRequired: true,
-    },
-    component: () => import("../pages/quanlydanhmuc/nhomduan/index"),
-  },
-  {
-    path: "/loai-du-an",
-    name: "loai-du-an",
-    meta: {
-      title: "Loại dự án",
-      authRequired: true,
-    },
-    component: () => import("../pages/quanlydanhmuc/loaiduan/index"),
-  },
-  {
-    path: "/nhom-quan-ly-du-an",
-    name: "nhom-quan-ly-du-an",
-    meta: {
-      title: "Nhóm quản lý dự án",
-      authRequired: true,
-    },
-    component: () => import("../pages/quanlydanhmuc/nhomquanlyduan/index"),
+    component: () => import("../pages/dmcapcoquan/index"),
   },
   {
     path: "/nhom-quyen",
@@ -224,7 +152,7 @@ export default [
       title: "Nhóm quyền",
       authRequired: true,
     },
-    component: () => import("../pages/quanlytaikhoan/nhomquyen/index"),
+    component: () => import("../pages/nhomquyen/index"),
   },
   {
     path: "/tai-khoan",
@@ -242,7 +170,7 @@ export default [
       title: "Menu",
       authRequired: true,
     },
-    component: () => import("../pages/quanlytaikhoan/menu/index"),
+    component: () => import("../pages/menu/index"),
   },
   {
     path: "/vai-tro",
@@ -278,7 +206,16 @@ export default [
       title: "Văn bản đến",
       authRequired: true,
     },
-    component: () => import("../pages/quanlyvanban/vanbanden/index"),
+    component: () => import("../pages/vanbanden/index"),
+  },
+  {
+    path: "/xu-ly-van-ban-den",
+    name: "/xu-ly-van-ban-den",
+    meta: {
+      title: "Xử lý văn bản đến",
+      authRequired: true,
+    },
+    component: () => import("../pages/vanbandenXL/index"),
   },
   {
     path: "/van-ban-den/nhan-xu-ly",
@@ -287,7 +224,7 @@ export default [
       title: "Văn bản đến",
       authRequired: true,
     },
-    component: () => import("../pages/quanlyvanban/vanbanden/nhanxuly/index"),
+    component: () => import("../pages/vanbandenXL"),
   },
   {
     path: "/van-ban-den/phan-quyen-xu-ly",
@@ -297,7 +234,7 @@ export default [
       authRequired: true,
     },
     component: () =>
-      import("../pages/quanlyvanban/vanbanden/phanquyenxuly/index"),
+      import("../pages/vanbanden/phanquyenxuly/index"),
   },
   {
     path: "/van-ban-di",
@@ -306,7 +243,7 @@ export default [
       title: "Văn bản đi",
       authRequired: true,
     },
-    component: () => import("../pages/quanlyvanban/vanbandi/index"),
+    component: () => import("../pages/vanbandi/index"),
   },
   {
     path: "/chu-ky-so",
@@ -315,7 +252,7 @@ export default [
       title: "Chữ ký số",
       authRequired: true,
     },
-    component: () => import("../pages/quanlyvanban/vanbandi/chukyso/index"),
+    component: () => import("../pages/vanbandi/chukyso/index"),
   },
 
   {

@@ -122,12 +122,6 @@ export const menuItems = [
         link: "/van-ban-den/phan-quyen-xu-ly",
         parentId: "26",
       },
-      {
-        id: "30",
-        label: "Văn bản đến - nhận xử lý",
-        link: "/van-ban-den/nhan-xu-ly",
-        parentId: "26",
-      },
     ],
   },
   {
