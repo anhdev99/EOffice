@@ -11,7 +11,6 @@ export const actions = {
         return apiClient.post(controller + "/get-paging-params-user", params);
     },
     async create({commit}, values) {
-        console.log("handleSubmitValueStore", values);
         return apiClient.post(controller + "/create", values);
     },
     async phanCong({commit}, values) {
