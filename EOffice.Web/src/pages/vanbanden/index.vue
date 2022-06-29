@@ -526,7 +526,7 @@ export default {
                       ></a>
                       <a
                           class="link-primary edit-btn"
-                          @click="handleUpdate(item.id)"
+                          @click="showModal = true"
                       ><i class="ri-edit-2-line"></i
                       ></a>
                       <a href="javascript:void(0);" class="link-danger"
