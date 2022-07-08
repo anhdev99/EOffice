@@ -24,6 +24,10 @@ import { initFirebaseBackend } from './authUtils'
 import { configureFakeBackend } from './helpers/fake-backend';
 import VueBlocksTree from 'vue3-blocks-tree';
 import 'vue3-blocks-tree/dist/vue3-blocks-tree.css';
+
+//Toast
+import Toaster from '@meforma/vue-toaster';
+
 const firebaseConfig = {
     apiKey: process.env.VUE_APP_APIKEY,
     authDomain: process.env.VUE_APP_AUTHDOMAIN,
@@ -58,6 +62,10 @@ createApp(App)
     .use(Particles)
     .use(VueBlocksTree,defaultoptions)
     .use(i18n)
+    .use(Toaster,{
+        position: 'top-right',
+        duration : 3000,
+    })
     .use(VueLoading,{
             canCancel: false,
             color: '#000000',
@@ -69,3 +77,4 @@ createApp(App)
             zIndex: 999,
         }, {})
     .use(vClickOutside).mount('#app')
+

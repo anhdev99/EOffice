@@ -11,3 +11,10 @@ export default {
   }
 }
 </script>
+
+<style>
+.c-toast {
+  padding: 20px 60px !important;
+  font-size: 16px;
+}
+</style>

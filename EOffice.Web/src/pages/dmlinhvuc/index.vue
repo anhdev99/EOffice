@@ -4,8 +4,11 @@ import PageHeader from "@/components/page-header";
 import appConfig from "../../../app.config.json";
 import {linhVucModel} from "@/models/linhVucModel";
 import {pagingModel} from "@/models/pagingModel";
+import {notifyModel} from "@/models/notifyModel";
+
 
 export default {
+  components: { Layout, PageHeader },
   page: {
     title: "Lĩnh vực",
     meta: [
@@ -77,7 +80,6 @@ export default {
       ],
     };
   },
-  components: { Layout, PageHeader },
   created() {
     this.myProvider()
   },
@@ -98,9 +100,9 @@ export default {
           this.showModal = true;
           this.myProvider()
         } else {
-          // this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
           this.myProvider()
         }
+        this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
       });
     },
     async handleDetail(id) {
@@ -118,6 +120,7 @@ export default {
             this.showDeleteModal = false;
             this.myProvider();
           }
+          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
         });
       }
     },
@@ -139,6 +142,8 @@ export default {
             this.model = linhVucModel.baseJson()
             this.myProvider()
           }
+          console.log("res", res);
+          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
         })
       }else{
         //Create model
@@ -148,6 +153,7 @@ export default {
             this.model = linhVucModel.baseJson()
             this.myProvider()
           }
+          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
         });
       }
     },
