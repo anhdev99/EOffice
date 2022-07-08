@@ -245,7 +245,6 @@ export default {
     },
    async HandleSubmit(e) {
       e.preventDefault();
-      console.log("handle submit", this.model);
       if (
           this.model.id != 0 &&
           this.model.id != null &&

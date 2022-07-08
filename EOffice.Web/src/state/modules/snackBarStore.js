@@ -1,3 +1,7 @@
+import { createToaster } from "@meforma/vue-toaster";
+
+const toaster = createToaster({ /* options */ });
+
 
 const options = {
     timeout: 10000
@@ -19,12 +23,12 @@ export const actions = {
         console.log("data", data);
         if (data.resultCode === 'SUCCESS') {
             console.log("data.resultString", data.resultString );
-            this.$toast.success(data.resultString, options);
+            toaster.success(data.resultString);
         } else if (data.resultCode === 'NAME_EXIST') {
-            this.$toast.warning(data.resultString, options);
+            toaster.warning(data.resultString, options);
         }
         else {
-            this.$toast.error(data.resultString, options);
+            toaster.error(data.resultString, options);
         }
     },
     async addNotification({commit}, data = {resultString: null, resultCode: null, isShow: false, code: null}){
