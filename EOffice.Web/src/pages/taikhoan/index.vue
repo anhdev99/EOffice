@@ -620,6 +620,7 @@ import Multiselect from '@vueform/multiselect'
 import Treeselect from "vue3-treeselect";
 import "vue3-treeselect/dist/vue3-treeselect.css";
 import "@vueform/multiselect/themes/default.css";
+import {notifyModel} from "@/models/notifyModel";
 
 export default {
   page: {
@@ -772,7 +773,7 @@ export default {
             this.myProvider()
             this.showDeleteModal = false;
           }
-          // this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
         });
       }
     },
@@ -793,7 +794,7 @@ export default {
             this.showModal = false;
             this.myProvider()
           }
-          // this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res))
+          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res))
         });
       } else {
         // Create model
@@ -803,7 +804,7 @@ export default {
             this.showModal = false;
             this.model={}
           }
-          // this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res))
+          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res))
         });
       }
     },
@@ -815,8 +816,9 @@ export default {
           this.model = userModel.toJson(res.data);
           this.showModal = true;
         } else {
-          // this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
         }
+        this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
       });
     },
     addCoQuanToModel(node, instanceId ){

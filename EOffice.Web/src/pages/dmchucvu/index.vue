@@ -5,6 +5,7 @@ import appConfig from "../../../app.config.json";
 import {linhVucModel} from "@/models/linhVucModel";
 import {pagingModel} from "@/models/pagingModel";
 import {chucVuModel} from "@/models/chucVuModel";
+import {notifyModel} from "@/models/notifyModel";
 
 export default {
   page: {
@@ -98,9 +99,9 @@ export default {
           this.showModal = true;
           this.myProvider()
         } else {
-          // this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
           this.myProvider()
         }
+        this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
       });
     },
     async handleDetail(id) {
@@ -118,6 +119,7 @@ export default {
             this.showDeleteModal = false;
             this.myProvider()
           }
+          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
         });
       }
     },
@@ -139,6 +141,7 @@ export default {
             this.model = chucVuModel.baseJson()
             this.myProvider()
           }
+          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
         })
       }else{
         //Create model
@@ -148,6 +151,7 @@ export default {
             this.model = chucVuModel.baseJson()
             this.myProvider()
           }
+          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
         });
       }
     },

@@ -4,7 +4,8 @@ const toaster = createToaster({ /* options */ });
 
 
 const options = {
-    timeout: 10000
+    timeout: 10000,
+    position: "top-right"
 }
 
 const initialNotify =  {resultString: null, resultCode: null};
@@ -23,7 +24,7 @@ export const actions = {
         console.log("data", data);
         if (data.resultCode === 'SUCCESS') {
             console.log("data.resultString", data.resultString );
-            toaster.success(data.resultString);
+            toaster.success(data.resultString, options);
         } else if (data.resultCode === 'NAME_EXIST') {
             toaster.warning(data.resultString, options);
         }

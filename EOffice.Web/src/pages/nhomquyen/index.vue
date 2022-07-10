@@ -5,6 +5,10 @@ import appConfig from "../../../app.config.json";
 import { data } from "./data";
 import ThemMoi from "./themmoi.vue";
 import ChinhSua from "./chinhsua.vue";
+import Vue3TreeVue from 'vue3-tree-vue';
+import {ref} from "@vue/reactivity";
+import { defineComponent } from "@vue/runtime-core";
+import "vue3-tree-vue/dist/style.css";
 
 export default {
   page: {
@@ -29,9 +33,83 @@ export default {
         },
       ],
       data: data,
+      selectedItem: ref(),
+      selectedItems: ref(),
+      isCheckable: ref(true),
+      item: [
+        {
+          "name": "Rejection Emails",
+          "id": 1,
+          "type": "emails",
+          "children": [
+            {
+              "name": "List of Rejection Emails",
+              "id": 2,
+              "type": ".excel"
+            },
+            {
+              "name": "Handling Rejection Through Open-sourcing User Guide",
+              "id": 3,
+              "type": ".doc"
+            },
+            {
+              "name": "Leet Code Tracking Sheet",
+              "id": 4,
+              "type": "folder",
+              "children": [
+                {
+                  "name": "Solved Problems (30)",
+                  "type": ".excel",
+                  "id": 5
+                },
+                {
+                  "name": "Unsolved Problems (5000)",
+                  "type": "folder",
+                  "id": 6,
+
+                  "children": [
+                    {
+                      "name": "Inverting a linked list (lol)",
+                      "id": 7,
+                      "type": ".playlist"
+                    },
+                    {
+                      "name": "Decoding hieroglyphs",
+                      "id": 8,
+                      "type": ".playlist"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "System Design Playlist",
+          "id": 9,
+          "type": ".playlist",
+          "children": [
+            {
+              "name": "Space Station Design",
+              "id": 10,
+              "type": ".playlist"
+            },
+            {
+              "name": "Gabbage Collector Design",
+              "id": 11,
+              "type": ".playlist"
+            },
+            {
+              "name": "Design Extra-Terrestrial Life Support",
+              "type": ".playlist",
+              "id": 12
+            }
+          ]
+        }
+      ],
     };
   },
-  components: { Layout, PageHeader, ThemMoi, ChinhSua },
+  components: { Layout, PageHeader, ThemMoi, ChinhSua, Vue3TreeVue },
   methods: {},
 };
 </script>
@@ -39,6 +117,46 @@ export default {
 <template>
   <Layout>
     <PageHeader :title="title" :items="items" />
+    <!-- Default makes items selectable (one at a time) -->
+    <input type="checkbox" v-model="isCheckable" />
+    <hr>
+    <div class="d-flex">
+      <vue3-tree-vue :items="item"
+                     :isCheckable="isCheckable"
+                     :hideGuideLines="false"
+                     :selectedItem="selectedItem"
+                     :checkedItems="selectedItems"
+                     @onSelect="onItemSelected"
+                     @onCheck="onItemChecked"
+                     :expandAll="true"
+                     style="width: 500px; display: block; border-right: 1px solid gray">
+        <template v-slot:item-prepend-icon="treeViewItem" >
+          <img src="@/assets/images/folder.svg" alt="folder"
+               v-if="treeViewItem.type === 'folder'"
+               height="20" width="20">
+
+          <img src="@/assets/images/word.svg"
+               v-if="treeViewItem.type === '.doc'"
+               height="20" width="20">
+
+          <img src="@/assets/images/excel.svg"
+               v-if="treeViewItem.type === '.excel'"
+               height="20" width="20">
+
+
+          <img src="@/assets/images/playlist.svg"
+               v-if="treeViewItem.type === '.playlist'"
+               height="20" width="20">
+
+          <img src="@/assets/images/email.png"
+               v-if="treeViewItem.type === 'emails'"
+               height="20" width="20">
+        </template>
+        <template v-slot:item-prepend>
+          <div style="background: blue; height: 18px; width: 18px; margin-right: 0.2em" ></div>
+        </template>
+      </vue3-tree-vue>
+      </div>
 
     <div class="row page-vanbanden">
       <div class="col-xl-12">
@@ -264,7 +382,7 @@ export default {
     </div>
   </Layout>
 </template>
-<style>
+<style scoped>
 .modal-title {
   color: #fff;
 }
@@ -276,4 +394,10 @@ export default {
 .cl-warning {
   color: rgb(253, 216, 123);
 }
+
+* {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 14px;
+}
 </style>
+

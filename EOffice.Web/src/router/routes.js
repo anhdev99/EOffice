@@ -134,7 +134,7 @@ export default [
       title: "Chức vụ",
       authRequired: true,
     },
-    component: () => import("../pages/chucVu/index"),
+    component: () => import("../pages/dmchucvu/index"),
   },
   {
     path: "/cap-co-quan",
@@ -197,7 +197,7 @@ export default [
       title: "Quản lý loại văn bản",
       authRequired: true,
     },
-    component: () => import("../pages/loaiVanBan/index"),
+    component: () => import("../pages/dmloaivanban/index"),
   },
   {
     path: "/van-ban-den",

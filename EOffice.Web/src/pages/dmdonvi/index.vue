@@ -8,6 +8,7 @@ import "vue3-treeselect/dist/vue3-treeselect.css";
 import appConfig from "../../../app.config.json";
 import {donViModel} from "@/models/donViModel";
 import {pagingModel} from "@/models/pagingModel";
+import {notifyModel} from "@/models/notifyModel";
 
 export default {
   page: {
@@ -117,9 +118,9 @@ export default {
           this.showModal = true;
           this.myProvider()
         } else {
-          // this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
           this.myProvider()
         }
+        this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
       });
     },
     async handleDetail(id) {
@@ -139,7 +140,7 @@ export default {
             this.model = donViModel.baseJson()
             this.myProvider();
           }
-          // });
+          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
         });
       }
     },
@@ -162,6 +163,7 @@ export default {
             this.model = donViModel.baseJson()
             this.myProvider()
           }
+          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
         })
       }else{
         //Create model
@@ -171,6 +173,7 @@ export default {
             this.model = donViModel.baseJson()
             this.myProvider()
           }
+          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
         });
       }
     },
