@@ -63,7 +63,7 @@ export default {
     <Sidebar :type="leftSidebarType" :width="layoutWidth" />
     <div class="main-content">
       <div class="page-content">
-        <div class="container-fluid">
+        <div class="container-fluid" style="padding: 10px 0px">
           <slot />
         </div>
       </div>

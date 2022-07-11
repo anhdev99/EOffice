@@ -3,10 +3,9 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
-          © {{new Date().getFullYear()}} Veltrix
+          © {{new Date().getFullYear()}}
           <span class="d-none d-sm-inline-block">
-            - Crafted with
-            <i class="mdi mdi-heart text-danger"></i> by Themesbrand.
+            Trường Đại học Đồng Tháp
           </span>
         </div>
       </div>
