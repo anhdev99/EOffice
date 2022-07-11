@@ -146,6 +146,15 @@ export default [
     component: () => import("../pages/dmcapcoquan/index"),
   },
   {
+    path: "/hinh-thuc-gui",
+    name: "hinh-thuc-gui",
+    meta: {
+      title: "Hình thức gửi",
+      authRequired: true,
+    },
+    component: () => import("../pages/dmhinhthucgui/index"),
+  },
+  {
     path: "/nhom-quyen",
     name: "nhom-quyen",
     meta: {
@@ -254,7 +263,6 @@ export default [
     },
     component: () => import("../pages/vanbandi/chukyso/index"),
   },
-
   {
     path: "/logout",
     name: "logout",

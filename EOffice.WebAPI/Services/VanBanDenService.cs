@@ -27,6 +27,7 @@ namespace EOffice.WebAPI.Services
         private readonly HistoryVanBanDiService _history;
         private List<String> filePicture = new List<string>() {".jpeg", ".jpg", ".gif", ".png"};
         private List<String> fileOffice = new List<string>() {".docx", ".doc", ".csv", ".xlsx", ".pptx", ".pdf"};
+        private IVanBanDenService _vanBanDenServiceImplementation;
 
         public VanBanDenService(HistoryVanBanDiService history, ILoggingService logger, IDbSettings settings,
             DataContext context,
@@ -289,8 +290,7 @@ namespace EOffice.WebAPI.Services
                 .FirstOrDefaultAsync();
             return model;
         }
-
-        public async Task<PagingModel<VanBanDen>> GetPaging(VanBanDiParam param)
+        public async Task<PagingModel<VanBanDen>> GetPaging(VanBanDenParam param)
         {
             var result = new PagingModel<VanBanDen>();
             var builder = Builders<VanBanDen>.Filter;
@@ -371,7 +371,7 @@ namespace EOffice.WebAPI.Services
             return entity;
         }
         
-        public async Task<PagingModel<VanBanDen>> GetPagingUser(VanBanDiParam param)
+        public async Task<PagingModel<VanBanDen>> GetPagingUser(VanBanDenParam param)
         {
             var result = new PagingModel<VanBanDen>();
             var builder = Builders<VanBanDen>.Filter;

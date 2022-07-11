@@ -12,6 +12,6 @@ namespace EOffice.WebAPI.Interfaces
         Task Delete(string id);
         Task<List<VanBanDen>> Get();
         Task<VanBanDen> GetById(string id);
-        Task<PagingModel<VanBanDen>> GetPaging(VanBanDiParam param);
+        Task<PagingModel<VanBanDen>> GetPaging(VanBanDenParam param);
     }
 }

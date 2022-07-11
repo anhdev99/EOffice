@@ -41,7 +41,7 @@ export default {
           active: true,
         },
       ],
-      data: data,
+      data: [],
       showModal: false,
       model: vanBanDenModel.baseJson(),
       currentPage: 1,
@@ -171,6 +171,59 @@ export default {
       tempPhanCongData: [],
       showModelButPhe: false,
       showModelXuLy: false,
+      fields: [
+        { key: 'STT', label: 'STT', class: 'td-stttt', sortable: false,thClass: 'hidden-sortable', },
+        {
+          key: "soLuuCV",
+          label: "Số lưu CV",
+          class: 'td-soluucv',
+          sortable: true,
+          thStyle:"text-align:center"
+        },
+        {
+          key: "soVBDi",
+          label: "Số VB đi",
+          class: 'td-sovbdi',
+          sortable: true,
+        },
+        {
+          key: "trichYeu",
+          label: "Trích yếu",
+          class: 'td-trichyeu',
+          sortable: true,
+        },
+        {
+          key: "loaiVanBan",
+          label: "Loại văn bản",
+          class: 'td-loaivanban',
+          sortable: true
+        },
+        {
+          key: "trangThai",
+          label: "Trạng thái",
+          class: 'td-trangthai',
+          sortable: true,
+        },
+        {
+          key: "coQuanNhan",
+          label: "Cơ quan nhận",
+          class: 'td-coquannhan',
+          sortable: true,
+        },
+        {
+          key: "ngayNhap",
+          label: "Ngày Nhập",
+          class: 'td-ngaynhap',
+          sortable: true,
+        },
+        {
+          key: 'process',
+          label: 'Xử lý',
+          class: 'td-xuly',
+          thClass: 'hidden-sortable',
+          sortable: false
+        }
+      ],
     };
   },
   components: {Layout, PageHeader, Treeselect, flatPickr, vueDropzone},
@@ -221,7 +274,7 @@ export default {
       const params = {
         start: this.currentPage - 1,
         limit: this.perPage,
-        content: "",
+        content: this.filter,
         sortBy: "",
         sortDesc: false,
       }
@@ -232,6 +285,7 @@ export default {
         return promise.then(resp => {
           if (resp.resultCode == "SUCCESS") {
             let items = resp.data.data
+            console.log("item", items);
             this.totalRows = resp.data.totalRows
             this.numberOfElement = resp.data.data.length
             this.loading = false
@@ -261,6 +315,7 @@ export default {
           }
         })
       } else {
+        console.log("this.model-create", this.model);
         //Create model
         await this.$store.dispatch("vanBanDenStore/create", this.model).then((res) => {
           if (res.resultCode === 'SUCCESS') {
@@ -466,78 +521,112 @@ export default {
               </div>
             </div>
           </div>
-          <div class="row">
+          <div class="row px-3">
             <div class="col-12">
-              <!--  Table -->
-              <table class="table align-middle table-nowrap mb-0">
-                <thead class="table-light">
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Số Lưu CV</th>
-                  <th scope="col">Số CB đi</th>
-                  <th scope="col">Trích yếu</th>
-                  <th scope="col">Loại văn bản</th>
-                  <th scope="col">Trạng thái</th>
-                  <th scope="col">Cơ quan nhận</th>
-                  <th scope="col">Ngày nhập</th>
-                  <th scope="col">Thao tác</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-if="data.length <= 0" class="text-center">
-                  <td colspan="6">Không tìm thấy dữ liệu</td>
-                </tr>
-                <tr v-else v-for="(item, index) in data" :key="item.id">
-                  <td>{{ ++index }}</td>
-                  <td>{{ item.soLuuCV }}</td>
-                  <td>{{ item.soVBDi }}</td>
-                  <td>{{ item.trichYeu }}</td>
-                  <td>{{ item.loaiVanBanTen }}</td>
-                  <td>
-                    <span class="badge badge-soft-success">{{ item.trangThaiTen }}</span>
-                  </td>
-                  <td>{{ item.coQuanNhanTen }}</td>
-                  <td>{{ item.ngayNhap }}</td>
-                  <td>
-                    <div class="hstack gap-3 fs-15">
-                      <a href="javascript:void(0);" class="link-info"
-                      ><i class="ri-newspaper-line"></i
-                      ></a>
-                      <a v-if="item.file" :href="`${apiUrl}files/view/${item.file.fileId}`" class="link-info"
-                      ><i class="ri-download-2-line"></i
-                      ></a>
-                      <a
-                          href="javascript:void(0);"
-                          class="link-info"
-                          @click="handlePhanCong(item.id)"
-                      ><i class="ri-user-add-line"></i
-                      ></a>
-                      <a
-                          href="javascript:void(0);"
-                          class="link-info"
-                          @click="HandleShowModelXuLy(item.id)"
-                      ><i class="ri-folder-shared-line"></i
-                      ></a>
-                      <a
-                          href="javascript:void(0);"
-                          class="link-info"
-                          @click="HandleModelButPhe(item.id)"
-                      ><i class="las la-feather-alt"></i
-                      ></a>
-                      <a
-                          class="link-primary edit-btn"
-                          @click="showModal = true"
-                      ><i class="ri-edit-2-line"></i
-                      ></a>
-                      <a href="javascript:void(0);" class="link-danger"
-                         @click="handleShowDeleteModal(item.id)"
-                      ><i class="ri-delete-bin-5-line"></i
-                      ></a>
-                    </div>
-                  </td>
-                </tr>
-                </tbody>
-              </table>
+              <div class="row mt-4">
+                <div class="col-sm-12 col-md-6">
+                  <div id="tickets-table_length" class="dataTables_length">
+                    <label class="d-inline-flex align-items-center">
+                      Hiện
+                      <b-form-select
+                          class="form-select form-select-sm"
+                          v-model="perPage"
+                          size="sm"
+                          :options="pageOptions"
+                      ></b-form-select
+                      >&nbsp;mục
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="table-responsive mb-0">
+                <b-table
+                    class="datatables"
+                    :items="data"
+                    :fields="fields"
+                    striped
+                    bordered
+                    responsive="sm"
+                    :per-page="perPage"
+                    :current-page="currentPage"
+                    :sort-by.sync="sortBy"
+                    :sort-desc.sync="sortDesc"
+                    :filter="filter"
+                    :filter-included-fields="filterOn"
+                    ref="tblList"
+                    primary-key="id"
+                >
+                  <template v-slot:cell(STT)="data">
+                    {{ data.index + ((currentPage-1)*perPage) + 1  }}
+                  </template>
+                  <template v-slot:cell(donVi)="data">
+                      <span v-if="data.item.donVi!=null">
+                        {{data.item.donVi.ten}}
+                      </span>
+                  </template>
+                  <template v-slot:cell(process)="data">
+                    <button
+                        type="button"
+                        size="sm"
+                        class="btn btn-outline btn-sm"
+                        data-toggle="tooltip" data-placement="bottom" title="Chi tiết"
+                        v-on:click="handlePhanCong(data.item.id)">
+                      <i class="ri-user-add-line"></i>
+                    </button>
+                    <button
+                        type="button"
+                        size="sm"
+                        class="btn btn-outline btn-sm"
+                        data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
+                        v-on:click="HandleShowModelXuLy(data.item.id)">
+                      <i class="ri-folder-shared-line"></i>
+                    </button>
+                    <button
+                        type="button"
+                        size="sm"
+                        class="btn btn-outline btn-sm"
+                        data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
+                        v-on:click="HandleModelButPhe(data.item.id)">
+                      <i class="las la-feather-alt"></i>
+                    </button>
+                    <button
+                        type="button"
+                        size="sm"
+                        class="btn btn-outline btn-sm"
+                        data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
+                        @click="showModal = true">
+                      <i class="ri-edit-2-fill text-success me-1"></i>
+                    </button>
+                    <button
+                        type="button"
+                        size="sm"
+                        class="btn btn-outline btn-sm"
+                        data-toggle="tooltip" data-placement="bottom" title="Xóa"
+                        v-on:click="handleShowDeleteModal(data.item.id)">
+                      <i class=" ri-delete-bin-fill text-danger me-1"></i>
+                    </button>
+                  </template>
+                </b-table>
+              </div>
+              <div class="row">
+                <b-col>
+                  <div>Hiển thị {{numberOfElement}} trên tổng số {{totalRows}} dòng</div>
+                </b-col>
+                <div class="col">
+                  <div
+                      class="dataTables_paginate paging_simple_numbers float-end">
+                    <ul class="pagination pagination-rounded mb-0">
+                      <!-- pagination -->
+                      <b-pagination
+                          v-model="currentPage"
+                          :total-rows="totalRows"
+                          :per-page="perPage"
+                      ></b-pagination>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>

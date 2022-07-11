@@ -24,6 +24,7 @@ namespace EOffice.WebAPI.APIs
 
         [HttpPost]
         [Route("create")]
+        [AllowAnonymous]
         public async Task<IActionResult> Create([FromBody] VanBanDen model)
         {
             try
@@ -143,7 +144,7 @@ namespace EOffice.WebAPI.APIs
 
         [HttpPost]
         [Route("get-paging-params")]
-        public async Task<IActionResult> GetPagingParam([FromBody] VanBanDiParam param)
+        public async Task<IActionResult> GetPagingParam([FromBody] VanBanDenParam param)
         {
             try
             {

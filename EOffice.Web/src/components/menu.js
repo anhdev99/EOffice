@@ -46,19 +46,25 @@ export const menuItems = [
         link: "/don-vi",
       },
       {
-        id: "14",
+        id: "15",
         label: "Trạng thái",
         link: "/trang-thai",
       },
       {
-        id: "14",
+        id: "16",
         label: "Loại văn bản",
         link: "/loai-van-ban",
       },
       {
-        id: "15",
+        id: "17",
         label: "Chức vụ",
         link: "/chuc-vu",
+        parentId: "11",
+      },
+      {
+        id: "18",
+        label: "Hình thức gửi",
+        link: "/hinh-thuc-gui",
         parentId: "11",
       }
     ],

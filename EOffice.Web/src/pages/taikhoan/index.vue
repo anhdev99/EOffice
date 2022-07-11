@@ -1171,14 +1171,14 @@ export default {
                   <div class="col-sm-12 col-md-6">
                     <div id="tickets-table_length" class="dataTables_length">
                       <label class="d-inline-flex align-items-center">
-                        Show&nbsp;
+                        Hiện
                         <b-form-select
                             class="form-select form-select-sm"
                             v-model="perPage"
                             size="sm"
                             :options="pageOptions"
                         ></b-form-select
-                        >&nbsp;entries
+                        >&nbsp;mục
                       </label>
                     </div>
                   </div>
