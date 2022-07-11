@@ -31,6 +31,7 @@ export default {
   data() {
     return {
       numberOfElement: 0,
+      pageOptions: [5,10,25,50,100],
       totalRows: 0,
       title: "Văn bản dến",
       items: [
@@ -226,6 +227,7 @@ export default {
           sortable: false
         }
       ],
+
     };
   },
   components: {Layout, PageHeader, Treeselect, flatPickr, vueDropzone},
@@ -532,7 +534,7 @@ export default {
                       Hiện
                       <b-form-select
                           class="form-select form-select-sm"
-                          v-model="perPage"
+                          v-model="numberOfElement"
                           size="sm"
                           :options="pageOptions"
                       ></b-form-select
@@ -549,7 +551,7 @@ export default {
                     striped
                     bordered
                     responsive="sm"
-                    :per-page="perPage"
+                    :per-page="numberOfElement"
                     :current-page="currentPage"
                     :sort-by.sync="sortBy"
                     :sort-desc.sync="sortDesc"
@@ -1480,7 +1482,7 @@ export default {
 }
 
 .bg-primary-dark {
-  background: linear-gradient(135deg, #06548e, #ffffff);
+  background: linear-gradient(100deg, #405189, #405189);
   box-shadow: 0px 3px 0px #06548e;
 }
 
