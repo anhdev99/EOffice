@@ -59,7 +59,7 @@ namespace EOffice.WebAPI.Services
                 Version = 1,
                 Number = 0,
                 SoLuuCV = model.SoLuuCV,
-                SoVBDi = model.SoVBDi,
+                SoVBDen = model.SoVBDen,
                 NgayNhap = model.NgayNhap,
                 NgayTraLoi = model.NgayTraLoi,
                 TraLoiCVSo = model.TraLoiCVSo,
@@ -163,7 +163,7 @@ namespace EOffice.WebAPI.Services
             entity.Version = model.Version;
             entity.Number = model.Number;
             entity.SoLuuCV = model.SoLuuCV;
-            entity.SoVBDi = model.SoVBDi;
+            entity.SoVBDen = model.SoVBDen;
             entity.NgayNhap = model.NgayNhap;
             entity.NgayTraLoi = model.NgayTraLoi;
             entity.TraLoiCVSo = model.TraLoiCVSo;
