@@ -418,7 +418,7 @@ export default {
             </div>
             <div class="row">
               <div class="col-12">
-                    <div class="row mb-4">
+                    <div class="row mb-3">
                       <div class="col-sm-12 col-md-6">
                         <div id="tickets-table_length" class="dataTables_length">
                           <label class="d-inline-flex align-items-center">
@@ -526,16 +526,20 @@ export default {
                 Dữ liệu xóa sẽ không được phục hồi!
               </p>
               <template #modal-footer>
-                <button v-b-modal.modal-close_visit
-                        class="btn btn-outline-info m-1"
+                <b-button v-b-modal.modal-close_visit
+                          size="sm"
+                        class="btn btn-outline-info w-md"
                         v-on:click="showDeleteModal = false">
                   Đóng
-                </button>
-                <button v-b-modal.modal-close_visit
-                        class="btn btn-danger btn m-1"
+                </b-button>
+                <b-button v-b-modal.modal-close_visit
+                        size="sm"
+                        variant="danger"
+                        type="button"
+                        class="w-md"
                         v-on:click="handleDelete">
                   Xóa
-                </button>
+                </b-button>
               </template>
             </b-modal>
           </div>
