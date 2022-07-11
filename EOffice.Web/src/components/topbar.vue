@@ -60,10 +60,10 @@ export default {
 
           <router-link to="/" class="logo logo-light">
             <span class="logo-sm">
-              <img src="@/assets/images/logo-sm.png" alt height="22" />
+              <img src="@/assets/images/DTHU.png" alt height="30" />
             </span>
             <span class="logo-lg">
-              <img src="@/assets/images/logo-light.png" alt height="18" />
+              <img src="@/assets/images/logo-eoffice.png" alt height="35" />
             </span>
           </router-link>
         </div>
@@ -76,6 +76,9 @@ export default {
         >
           <i class="mdi mdi-menu" style="color: white"></i>
         </button>
+        <div class="d-none d-sm-block">
+          <h5 class="pt-4 d-inline-block text-white">Hệ thống EOffice - Đại học Đồng Tháp</h5>
+        </div>
 
 <!--        <div class="d-none d-sm-block">-->
 <!--          <b-dropdown variant="white" class="pt-3 d-inline-block">-->
@@ -93,6 +96,7 @@ export default {
       </div>
 
       <div class="d-flex">
+
 <!--        <b-dropdown-->
 <!--          variant="white"-->
 <!--          class="d-inline-block"-->

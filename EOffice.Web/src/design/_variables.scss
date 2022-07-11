@@ -4,20 +4,20 @@
 // custom-variables
 //
 // Vertical Sidebar - Dark
-$sidebar-dark-bg: #333547; //2c313a
-$sidebar-dark-menu-item-color: #8699ad;
-$sidebar-dark-menu-sub-item-color: #8699ad;
-$sidebar-dark-menu-item-icon-color: #8699ad;
-$sidebar-dark-menu-item-hover-color: #b4c9de;
-$sidebar-dark-menu-item-active-color: #b4c9de;
-$sidebar-dark-menu-item-active-bg: #383b4e;
+$sidebar-dark-bg: #045E90; //2c313a
+$sidebar-dark-menu-item-color: #ffffff;
+$sidebar-dark-menu-sub-item-color: #ced8e3;
+$sidebar-dark-menu-item-icon-color: #ffffff;
+$sidebar-dark-menu-item-hover-color: #ffffff;
+$sidebar-dark-menu-item-active-color: #dce1e7;
+$sidebar-dark-menu-item-active-bg: #00568C;
 $sidebar-width:  240px;
 $sidebar-collapsed-width:  70px;
 $sidebar-width-sm:  160px;
 
 // Vertical Sidebar - Light
 
-$sidebar-bg: #ffffff;
+$sidebar-bg: #045E90;
 $sidebar-menu-item-color: #66676d;
 $sidebar-menu-sub-item-color: #464b50;
 $sidebar-menu-item-icon-color: #464b50;
@@ -41,7 +41,7 @@ $header-bg: #ececf1;
 $header-item-color: #525f80;
 
 // Topbar - Dark
-$header-dark-bg: #333547;
+$header-dark-bg: #045E90;
 $header-dark-item-color: #bfbfc5;
 
 // Topbar Search
@@ -53,7 +53,7 @@ $footer-bg: #f2f2f5;
 $footer-color: #74788d;
 
 // Horizontal nav
-$topnav-bg:   #333547;
+$topnav-bg:   #045E90;
 
 $menu-item-color: #a1a2ab;
 $menu-subitem-color: #66676d;
