@@ -11,7 +11,7 @@ export default [{
     {
         path: '/login',
         name: 'login',
-        component: () => import('./views/account/login'),
+        component: () => import('../pages/auth/auth'),
         meta: {
             beforeResolve(routeTo, routeFrom, next) {
                 // If the user is already logged in
@@ -136,6 +136,7 @@ export default [{
             authRequired: true,
         }
     },
+
     {
         path: '/ui/buttons',
         name: 'Buttons',
@@ -578,6 +579,14 @@ export default [{
         path: '/maps/google',
         name: 'Google map',
         component: () => import('./views/maps/google'),
+        meta: {
+            authRequired: true,
+        }
+    },
+    {
+        path: '/linh-vuc',
+        name: 'LinhVuc',
+        component: () => import('../pages/linhvuc'),
         meta: {
             authRequired: true,
         }
