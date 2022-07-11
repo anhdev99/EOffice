@@ -30,6 +30,8 @@ export default {
   },
   data() {
     return {
+      numberOfElement: 0,
+      totalRows: 0,
       title: "Văn bản dến",
       items: [
         {
@@ -111,12 +113,12 @@ export default {
           label: "File tài liệu",
         },
       ],
-      optionHoSoDonVi: [
-        {
-          id: "",
-          label: "",
-        },
-      ],
+      // optionHoSoDonVi: [
+      //   {
+      //     id: "",
+      //     label: "",
+      //   },
+      // ],
       optionMucDoTinhChat: [
         {
           id: "THAP",
@@ -181,8 +183,8 @@ export default {
           thStyle:"text-align:center"
         },
         {
-          key: "soVBDi",
-          label: "Số VB đi",
+          key: "SoVBDen",
+          label: "Số VB đến",
           class: 'td-sovbdi',
           sortable: true,
         },
@@ -285,7 +287,7 @@ export default {
         return promise.then(resp => {
           if (resp.resultCode == "SUCCESS") {
             let items = resp.data.data
-            console.log("item", items);
+            console.log("item", items,resp.data.data.length, resp.data.totalRows);
             this.totalRows = resp.data.totalRows
             this.numberOfElement = resp.data.data.length
             this.loading = false
@@ -557,7 +559,7 @@ export default {
                     primary-key="id"
                 >
                   <template v-slot:cell(STT)="data">
-                    {{ data.index + ((currentPage-1)*perPage) + 1  }}
+                    {{ data.index + ((currentPage-1)* numberOfElement) + 1  }}
                   </template>
                   <template v-slot:cell(donVi)="data">
                       <span v-if="data.item.donVi!=null">
@@ -620,7 +622,7 @@ export default {
                       <b-pagination
                           v-model="currentPage"
                           :total-rows="totalRows"
-                          :per-page="perPage"
+                          :per-page="numberOfElement"
                       ></b-pagination>
                     </ul>
                   </div>
@@ -734,23 +736,23 @@ export default {
                 >Số VB đến</label
                 >
                 <input
-                    v-model="model.soVBDi"
+                    v-model="model.soVBDen"
                     type="text"
                     class="form-control"
                 />
               </div>
               <!--Ngày nhập-->
-              <div class="col-md-4">
-                <label
-                    class="col-form-label col-form-label-sm"
-                >Ngày nhập</label
-                >
-                <flat-pickr
-                    v-model="model.ngayNhap"
-                    :config="config"
-                    class="form-control"
-                ></flat-pickr>
-              </div>
+<!--              <div class="col-md-4">-->
+<!--                <label-->
+<!--                    class="col-form-label col-form-label-sm"-->
+<!--                >Ngày nhập</label-->
+<!--                >-->
+<!--                <flat-pickr-->
+<!--                    v-model="model.ngayNhap"-->
+<!--                    :config="config"-->
+<!--                    class="form-control"-->
+<!--                ></flat-pickr>-->
+<!--              </div>-->
               <!-- Trích yếu  -->
               <div class="col-md-12">
                 <label
@@ -976,20 +978,20 @@ export default {
                 <treeselect-value :value="model.mucDoBaoMat"/>
               </div>
               <!-- Hồ sơ đơn vị-->
-              <div class="col-md-6">
-                <label
-                    for=""
-                    class="col-form-label col-form-label-sm"
-                >Hồ sơ đơn vị</label
-                >
-                <treeselect
-                    placeholder="Chọn hồ sơ đơn vị"
-                    v-model="model.hoSoDonVi"
-                    :options="optionHoSoDonVi"
-                >
-                </treeselect>
-                <treeselect-value :value="model.hoSoDonVi"/>
-              </div>
+<!--              <div class="col-md-6">-->
+<!--                <label-->
+<!--                    for=""-->
+<!--                    class="col-form-label col-form-label-sm"-->
+<!--                >Hồ sơ đơn vị</label-->
+<!--                >-->
+<!--                <treeselect-->
+<!--                    placeholder="Chọn hồ sơ đơn vị"-->
+<!--                    v-model="model.hoSoDonVi"-->
+<!--                    :options="optionHoSoDonVi"-->
+<!--                >-->
+<!--                </treeselect>-->
+<!--                <treeselect-value :value="model.hoSoDonVi"/>-->
+<!--              </div>-->
               <!-- Nơi lưu trữ-->
               <div class="col-md-6">
                 <label

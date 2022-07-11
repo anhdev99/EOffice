@@ -16,7 +16,7 @@ namespace EOffice.WebAPI.Models
         public string TrangThai { get; set; }
         public string TrangThaiTen { get; set; }
         public string SoLuuCV { get; set; }
-        public string SoVBDi { get; set; }
+        public string SoVBDen{ get; set; }
         public DateTime? NgayNhap { get; set; }
         public DateTime? NgayTraLoi { get; set; }
         public string TraLoiCVSo { get; set; }
