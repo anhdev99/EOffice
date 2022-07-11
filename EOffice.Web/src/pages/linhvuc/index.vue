@@ -195,7 +195,6 @@ export default {
       this.submitted = false;
     },
     myProvider (ctx) {
-      console.log("LOG MY PROVIDER : " , ctx.perPage)
       const params = {
         start: ctx.currentPage,
         limit: ctx.perPage,
@@ -208,9 +207,10 @@ export default {
         let promise =  this.$store.dispatch("dmLinhVucStore/getPagingParams", params)
         return promise.then(resp => {
           if(resp.resultCode == CONSTANTS.SUCCESS){
-            let items = resp.data
-            this.totalRows = resp.totalRows
-            this.numberOfElement = resp.data.length
+            let data = resp.data;
+            this.totalRows = data.totalRows
+            let items = data.data
+            this.numberOfElement = items.length
             this.loading = false
             return items || []
           }else{
@@ -248,8 +248,9 @@ export default {
               <div class="col-sm-8">
                 <div class="text-sm-end">
                   <b-button
+                      variant="primary"
                       type="button"
-                      class="btn btn-success btn-rounded w-md"
+                      class="btn w-md btn-primary"
                       @click="showModal = true"
                       size="sm"
                   >
@@ -320,10 +321,10 @@ export default {
                         </div>
                       </div>
                       <div class="text-end pt-2 mt-3">
-                        <b-button variant="light" @click="showModal = false">
+                        <b-button variant="light" class="w-md" size="sm" @click="showModal = false">
                           Đóng
                         </b-button>
-                        <b-button type="submit" variant="success" class="ms-1">
+                        <b-button type="submit" variant="primary" size="sm" class="ms-1 w-md">
                           Lưu
                         </b-button>
                       </div>

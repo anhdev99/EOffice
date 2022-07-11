@@ -23,7 +23,7 @@ export default {
   <!-- start page title -->
   <div class="row align-items-center">
     <div class="col-sm-12">
-      <div class="page-title-box" style="display: flex; justify-content: space-between">
+      <div class="page-title-box" style="display: flex; justify-content: space-between; padding-top: 10px; padding-bottom: 10px">
         <h4 class="font-size-18">{{ title }}</h4>
         <div class="page-title-right">
           <b-breadcrumb :items="items" class="m-0"></b-breadcrumb>

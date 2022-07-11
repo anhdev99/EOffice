@@ -1,5 +1,5 @@
 import {apiClient} from "@/state/modules/apiClient";
-const controller = "DMLinhVuc";
+const controller = "LinhVuc";
 export const actions = {
     async get({commit}) {
         return apiClient.get(controller +"/get");
