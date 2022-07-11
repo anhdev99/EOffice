@@ -69,9 +69,8 @@ class ApiClient{
             return response.data;
         } catch (e) {
             return {
-                success: false,
-                code: CLIENT_ERROR_CODE,
-                message: e.toString(),
+                resultString: e.toString(),
+                resultCode: CONSTANTS.ERROR,
             };
         }
     }
@@ -87,9 +86,19 @@ class ApiClient{
             return response.data;
         } catch (e) {
             return {
-                success: false,
-                code: CLIENT_ERROR_CODE,
-                message: e.toString(),
+                resultString: e.toString(),
+                resultCode: CONSTANTS.ERROR,
+            };
+        }
+    }
+    async deleteObject(url,data, config = null) {
+        try {
+            const response = await this.getInstance().post(path + url , data);
+            return response.data;
+        } catch (e) {
+            return {
+                resultString: e.toString(),
+                resultCode: CONSTANTS.ERROR,
             };
         }
     }

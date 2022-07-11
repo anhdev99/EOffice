@@ -16,8 +16,7 @@ using EResultResponse = EOffice.WebAPI.Helpers.EResultResponse;
 namespace EOffice.WebAPI.APIs.Identity
 {
     [Route("api/v1/[controller]")]
-    [Authorize]
-    public class ModuleController : ControllerBase
+ public class ModuleController : ControllerBase
     {
         private IModuleService _moduleService;
 

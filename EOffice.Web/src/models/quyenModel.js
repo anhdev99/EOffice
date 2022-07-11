@@ -43,7 +43,17 @@ const toListModel = (items) =>{
     }
     return [];
 }
-
+const toConvert = (item, id) => {
+    return {
+        id: item.id,
+        name: item.name,
+        sort: item.sort,
+        action: item.action,
+        idModule: id,
+        tenModule: item.tenModule,
+        isView: item.isView,
+    }
+}
 export const quyenModel = {
-    toJson, fromJson, baseJson, toListModel
+    toJson, fromJson, baseJson, toListModel,  toConvert
 }

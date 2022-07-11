@@ -591,4 +591,41 @@ export default [{
             authRequired: true,
         }
     },
+    {
+        path: "/nhom-quyen",
+        name: "NhomQuyen",
+        meta: {
+            authRequired: true,
+        },
+        component: () => import("../pages/module"),
+    },
+    {
+        path: "/nhom-quyen/action/:id?",
+        name: "Hành động",
+        // meta: {},
+        component: () => import("../pages/module/action"),
+    },
+    {
+        path: "/menu",
+        name: "Menu",
+         meta: {          authRequired: true, },
+        component: () => import("../pages/menu"),
+    },
+    {
+        path: "/vai-tro",
+        name: "Quyền",
+        meta: {can: 'viewpage-roles'},
+        component: () => import("../pages/role"),
+    },
+    {
+        path: "/vai-tro/thiet-lap-quyen/:id?",
+        name: "Vai trò",
+        meta: {can: 'viewpage-roles' },
+        component: () => import("../pages/role/addPermissions01"),
+    },
+    {
+        path: "/add-permissions",
+        name: "Test ",
+        component: () => import("../pages/role/addPermissions"),
+    },
 ]

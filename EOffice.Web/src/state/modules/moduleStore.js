@@ -1,9 +1,14 @@
 import {apiClient} from "@/state/modules/apiClient";
-
 const controller = "module";
 export const actions = {
+    async getTreeModule({commit}) {
+        return apiClient.get(controller + "/get-tree-module");
+    },
     async getAll({commit}) {
         return apiClient.get(controller + "/get-all");
+    },
+    async getPagingParams({commit}, params) {
+        return apiClient.post(controller + "/get-paging-params", params);
     },
     async create({commit}, values) {
         return apiClient.post(controller + "/create", values);
@@ -21,7 +26,10 @@ export const actions = {
         return apiClient.post(controller + "/createPermission", values);
     },
     async deletePermission({commit}, values) {
-        console.log("deletePermission", values)
-        return apiClient.post(controller + "/deletePermission", values);
+        return apiClient.deleteObject(controller + "/deletePermission", values);
+    },
+    async getPermissionById({commit}, values) {
+        return apiClient.deleteObject(controller + "/GetPermissionById", values);
     }
+
 };

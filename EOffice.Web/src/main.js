@@ -9,7 +9,13 @@ import VueApexCharts from 'vue-apexcharts'
 import router from './router/index'
 import store from '@/state/store'
 import vco from "v-click-outside"
-
+// Toast
+import Toast from "vue-toastification";
+import "vue-toastification/dist/index.css";
+import VueLoading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/vue-loading.css';
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+import VJstree from 'vue-jstree'
 import "@/design/index.scss";
 
 import Sparkline from 'vue-sparklines'
@@ -34,16 +40,32 @@ if (process.env.VUE_APP_DEFAULT_AUTH === "firebase") {
   configureFakeBackend();
 }
 
-Vue.use(BootstrapVue);
 
 Vue.config.productionTip = false
+const options = {
+  // You can set your default options here
+};
 
+Vue.use(Toast, options);
+
+Vue.use(BootstrapVue);
+Vue.use(VJstree)
 Vue.use(Vuelidate);
 Vue.use(VueMask)
 Vue.use(VueSweetalert2)
 Vue.use(require('vue-chartist'))
 Vue.use(vco)
 Vue.use(Sparkline)
+Vue.use(VueLoading, {
+  canCancel: false,
+  color: '#000000',
+  loader: 'spinner',
+  width: 30,
+  height: 30,
+  backgroundColor: '#ffffff',
+  opacity: 0.7,
+  zIndex: 999,
+}, {});
 Vue.use(VueGoogleMaps, {
   load: {
     key: 'AIzaSyAbvyBxmMbFhrzP9Z8moyYr6dCr-pzjhBE',

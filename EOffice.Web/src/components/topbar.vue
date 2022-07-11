@@ -48,7 +48,7 @@ export default {
     <div class="navbar-header" style="background-color: #005990">
       <div class="d-flex">
         <!-- LOGO -->
-        <div class="navbar-brand-box">
+        <div class="navbar-brand-box" style="background-color: #005990">
           <router-link to="/" class="logo logo-dark">
             <span class="logo-sm">
               <img src="@/assets/images/logo-sm.png" alt height="22" />
@@ -77,7 +77,7 @@ export default {
           <i class="mdi mdi-menu" style="color: white"></i>
         </button>
         <div class="d-none d-sm-block">
-          <h5 class="pt-4 d-inline-block text-white">Hệ thống EOffice - Đại học Đồng Tháp</h5>
+          <h5 class="pt-4 d-inline-block text-white">Hệ thống EOffice</h5>
         </div>
 
 <!--        <div class="d-none d-sm-block">-->
