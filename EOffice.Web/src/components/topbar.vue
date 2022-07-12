@@ -40,6 +40,17 @@ export default {
     toggleRightSidebar() {
       this.$parent.toggleRightSidebar();
     },
+    logoutUser() {
+      // eslint-disable-next-line no-unused-vars
+      var userLocalStorage = localStorage.getItem("user-token");
+      if (userLocalStorage) {
+        localStorage.removeItem("user-token");
+        localStorage.removeItem("auth-user");
+        localStorage.removeItem("TabData");
+        this.$router.push("/dang-nhap");
+        return;
+      }
+    },
   },
 };
 </script>
@@ -375,7 +386,7 @@ export default {
              Thông tin cá nhân
           </b-dropdown-item>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item text-danger" href="/logout">
+          <a class="dropdown-item text-danger" v-on:click="logoutUser">
             <i
               class="bx bx-power-off font-size-17 align-middle me-1 text-danger"
             ></i>

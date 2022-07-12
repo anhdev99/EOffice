@@ -5,7 +5,6 @@ import {numeric, required} from "vuelidate/lib/validators";
 import appConfig from "@/app.config";
 import {notifyModel} from "@/models/notifyModel";
 import {pagingModel} from "@/models/pagingModel";
-import Pagination from "@/components/pagination";
 import Multiselect from "vue-multiselect";
 import {userModel} from "@/models/userModel";
 import Treeselect from '@riophae/vue-treeselect'
@@ -262,10 +261,10 @@ export default {
                 <div class="text-sm-end">
                   <b-button
                       type="button"
-                      class="btn btn-success btn-rounded mb-2 me-2"
+                      variant="primary"
+                      class="w-md"
                       size="sm"
                       @click="showModal = true"
-                      v-if="$can('create-taikhoan')"
                   >
                     <i class="mdi mdi-plus me-1"></i> Tạo tài khoản
                   </b-button>
@@ -455,11 +454,11 @@ export default {
                         </div>
 
                       </div>
-                      <div class="text-end pt-2 mt-3">
-                        <b-button variant="light" @click="showModal = false">
+                      <div class="text-end pt-2">
+                        <b-button variant="light" class="w-md" @click="showModal = false">
                           Đóng
                         </b-button>
-                        <b-button  type="submit" variant="success" class="ms-1">Lưu
+                        <b-button  type="submit" variant="primary" class="ms-1 w-md">Lưu
                         </b-button>
                       </div>
                     </form>
@@ -469,18 +468,18 @@ export default {
             </div>
             <div class="row">
               <div class="col-12">
-                <div class="row mt-4">
+                <div class="row mb-3">
                   <div class="col-sm-12 col-md-6">
                     <div id="tickets-table_length" class="dataTables_length">
                       <label class="d-inline-flex align-items-center">
-                        Show&nbsp;
+                        Hiện
                         <b-form-select
                             class="form-select form-select-sm"
                             v-model="perPage"
                             size="sm"
                             :options="pageOptions"
                         ></b-form-select
-                        >&nbsp;entries
+                        >&nbsp;dòng
                       </label>
                     </div>
                   </div>
@@ -517,7 +516,6 @@ export default {
                     </template>
                     <template v-slot:cell(process)="data">
                       <button
-                          v-if="$can('edit-taikhoan')"
                           type="button"
                           size="sm"
                           class="btn btn-outline btn-sm"
@@ -525,7 +523,6 @@ export default {
                         <i class="fas fa-pencil-alt text-success me-1"></i>
                       </button>
                       <button
-                          v-if="$can('delete-taikhoan')"
                           type="button"
                           size="sm"
                           class="btn btn-outline btn-sm"

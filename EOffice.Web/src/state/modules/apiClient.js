@@ -46,7 +46,6 @@ class ApiClient{
     async post(url, data, config = null) {
         try {
             const response = await this.getInstance().post(path + url, data);
-            console.log("abc")
             return response.data;
         } catch (e) {
             return {

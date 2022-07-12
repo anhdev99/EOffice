@@ -6,10 +6,10 @@ export default [{
             authRequired: true
         },
         name: 'home',
-        component: () => import('./views/home'),
+        component: () => import('../pages/dashboard/index'),
     },
     {
-        path: '/login',
+        path: '/dang-nhap',
         name: 'login',
         component: () => import('../pages/auth/auth'),
         meta: {
@@ -17,9 +17,7 @@ export default [{
                 // If the user is already logged in
                 if (store.getters['auth/loggedIn']) {
                     // Redirect to the home page instead
-                    next({
-                        name: 'home'
-                    })
+                    next({name: "default"});
                 } else {
                     // Continue to the login page
                     next()
@@ -627,5 +625,25 @@ export default [{
         path: "/add-permissions",
         name: "Test ",
         component: () => import("../pages/role/addPermissions"),
+    },
+    {
+        path: "/tai-khoan",
+        name: "Tài khoản",
+        meta: {
+            can: 'viewpage-user',
+        },
+        component: () => import("../pages/user"),
+    },
+    {
+        path: "/tai-khoan/doi-mat-khau",
+        name: "Đổi mật khẩu",
+        meta: {can: 'viewpage-user', },
+        component: () => import("../pages/user/ChangePass"),
+    },
+    {
+        path: "/don-vi",
+        name: "Đơn vị",
+        meta: { },
+        component: () => import("../pages/donVi"),
     },
 ]

@@ -171,7 +171,7 @@ namespace EOffice.WebAPI.Services
             return await _context.Roles.Find(x => x.Id == id && x.IsDeleted != true).FirstOrDefaultAsync();
         }
 
-        public async Task<PagingModel<Role>> GetPaging(PagingParam param)
+        public async Task<PagingModel<Role>> GetPaging(RoleParam param)
         {
             PagingModel<Role> result = new PagingModel<Role>();
             var builder = Builders<Role>.Filter;

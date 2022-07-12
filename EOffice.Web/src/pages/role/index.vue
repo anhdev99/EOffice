@@ -185,8 +185,6 @@ export default {
       this.submitted = false;
     },
     myProvider (ctx) {
-      console.log(ctx.currentPage);
-      console.log(ctx.perPage);
       const params = {
         start: ctx.currentPage,
         limit: ctx.perPage,
@@ -194,6 +192,7 @@ export default {
         sortBy: ctx.sortBy,
         sortDesc: ctx.sortDesc,
       }
+
       this.loading = true
       try {
         let promise =  this.$store.dispatch("roleStore/getPagingParams", params)

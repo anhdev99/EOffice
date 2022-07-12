@@ -8,6 +8,7 @@ import {
   notificationMethods,
 } from "@/state/helpers";
 import appConfig from "@/app.config";
+import Vue from "vue";
 
 /**
  * Login component
@@ -19,13 +20,14 @@ export default {
   },
   components: {},
   validations: {
-    email: {
-      required,
-      email,
-    },
-    password: {
-      required,
-    },
+    model:{
+      userName: {
+        required,
+      },
+      password: {
+        required
+      }
+    }
   },
   data() {
     return {
@@ -35,63 +37,64 @@ export default {
       authError: null,
       tryingToLogIn: false,
       isAuthError: false,
+      modelAuth:{
+        isAuthError: false,
+        message: null
+      },
+      model:{
+        userName: "admin",
+        password: "DThU@123"
+      },
     };
   },
-  computed: {
-    ...mapState("authfack", ["status"]),
-    notification() {
-      return this.$store ? this.$store.state.notification : null;
-    },
-  },
   methods: {
-    ...authMethods,
-    ...authFackMethods,
-    ...notificationMethods,
-    // Try to log the user in with the username
-    // and password they provided.
-    tryToLogIn() {
+    async Login(e) {
+      e.preventDefault();
       this.submitted = true;
-      // stop here if form is invalid
       this.$v.$touch();
       if (this.$v.$invalid) {
         return;
       } else {
-        if (process.env.VUE_APP_DEFAULT_AUTH === "firebase") {
-          this.tryingToLogIn = true;
-          // Reset the authError if it existed.
-          this.authError = null;
-          return (
-              this.logIn({
-                email: this.email,
-                password: this.password,
-              })
-                  // eslint-disable-next-line no-unused-vars
-                  .then((token) => {
-                    this.tryingToLogIn = false;
-                    this.isAuthError = false;
-                    // Redirect to the originally requested page, or to the home page
-                    this.$router.push(
-                        this.$route.query.redirectFrom || { name: "home" }
-                    );
-                  })
-                  .catch((error) => {
-                    this.tryingToLogIn = false;
-                    this.authError = error ? error : "";
-                    this.isAuthError = true;
-                  })
-          );
-        } else if (process.env.VUE_APP_DEFAULT_AUTH === "fakebackend") {
-          const { email, password } = this;
-          if (email && password) {
-            this.login({
-              email,
-              password,
-            });
+        let loader = this.$loading.show({
+          container: this.$refs.formContainer,
+        });
+        // await setTimeout(function () {
+        //  }, 5000);
+        await this.$store.dispatch("authStore/login", this.model).then(async (res) => {
+          if (res.resultCode === 'SUCCESS') {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            localStorage.setItem('auth-user', JSON.stringify(res.data));
+            localStorage.setItem("user-token", JSON.stringify(res.data.token));
+
+            if (res.data.user) {
+              if (res.data.user.menuItems) {
+                localStorage.setItem("menuItems", JSON.stringify(res.data.user.menuItems));
+              }
+            }
+            Vue.prototype.$auth_token = res.data.token;
+            this.showModal = false;
+            this.model = {};
+            this.modelAuth.isAuthError = false;
+            window.location.href = '/'
+          } else {
+            if (res.code == 400) {
+              this.modelAuth.isAuthError = true;
+              this.modelAuth.message = "Lỗi! Hãy kiểm tra kết nối mạng!";
+            } else {
+              this.modelAuth.isAuthError = true;
+              this.modelAuth.message = res.resultString;
+            }
+            loader.hide();
           }
-        }
+
+        })
+            .finally(() => {
+              loader.hide();
+            });
       }
+      this.submitted = false;
     },
-  },
+  }
 };
 </script>
 
@@ -117,21 +120,14 @@ export default {
             <div class="card-body p-4">
               <div class="p-3">
                 <b-alert
-                    v-model="isAuthError"
+                    v-model="modelAuth.isAuthError"
                     variant="danger"
-                    class="mt-3"
+                    class="mt-4"
                     dismissible
-                >{{ authError }}</b-alert
+                >{{ modelAuth.message }}</b-alert
                 >
-                <div
-                    v-if="notification.message"
-                    :class="'alert ' + notification.type"
-                >
-                  {{ notification.message }}
-                </div>
-
                 <b-form
-                    @submit.prevent="tryToLogIn"
+                    @submit.prevent="Login"  ref="formContainer"
                     class="form-horizontal mt-4"
                 >
                   <b-form-group
@@ -143,19 +139,16 @@ export default {
                   >
                     <b-form-input
                         id="input-1"
-                        :class="{ 'is-invalid': submitted && $v.email.$error }"
-                        v-model="email"
-                        type="email"
-                        placeholder="Enter email"
+                        v-model="model.userName"
+                        type="text"
+                        placeholder="Nhập tài khoản"
+                        :class="{ 'is-invalid': submitted && $v.model.userName.$error }"
                     ></b-form-input>
                     <div
-                        v-if="submitted && $v.email.$error"
+                        v-if="submitted && $v.model.userName.$error"
                         class="invalid-feedback"
                     >
-                      <span v-if="!$v.email.required">Email is required.</span>
-                      <span v-if="!$v.email.email"
-                      >Please enter valid email.</span
-                      >
+                      <span v-if="!$v.model.userName.required">Tài khoản không được trống.</span>
                     </div>
                   </b-form-group>
 
@@ -168,16 +161,16 @@ export default {
                   >
                     <b-form-input
                         id="input-2"
-                        v-model="password"
+                        v-model="model.password"
                         type="password"
-                        placeholder="Enter password"
-                        :class="{ 'is-invalid': submitted && $v.password.$error }"
+                        placeholder="Nhập mật khẩu"
+                        :class="{ 'is-invalid': submitted && $v.model.password.$error }"
                     ></b-form-input>
                     <div
-                        v-if="submitted && !$v.password.required"
+                        v-if="submitted && !$v.model.password.required"
                         class="invalid-feedback"
                     >
-                      Password is required.
+                      Mật khẩu không được trống.
                     </div>
                   </b-form-group>
 

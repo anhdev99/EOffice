@@ -44,14 +44,6 @@ export default {
           <p class="mb-0">{{subText}}</p>
         </div>
       </div>
-      <div class="pt-2">
-        <div class="float-end">
-          <a href="#" class="text-white-50">
-            <i class="mdi mdi-arrow-right h5"></i>
-          </a>
-        </div>
-        <p class="text-white-50 mb-0 mt-1">Since last month</p>
-      </div>
     </div>
   </div>
 </template>

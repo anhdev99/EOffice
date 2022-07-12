@@ -9,7 +9,7 @@ const toJson = (item) => {
         email: item.email,
         note: item.note,
         avatar: item.avatar,
-        coQuan: item.coQuan,
+        donVi: item.donVi,
         roles: item.roles,
         permissions: item.permissions,
         menu: item.menu
@@ -27,7 +27,7 @@ const fromJson = (item) => {
         email: item.email,
         note: item.note,
         avatar: item.avatar,
-        coQuan: item.coQuan,
+        donVi: item.donVi,
         roles: item.roles,
         permissions: item.permissions,
         menu: item.menu
@@ -45,7 +45,7 @@ const baseJson = () => {
         email: null,
         note: null,
         avatar: null,
-        coQuan: {id: null, ten: null},
+        donVi: {id: null, ten: null},
         roles: null
     }
 }

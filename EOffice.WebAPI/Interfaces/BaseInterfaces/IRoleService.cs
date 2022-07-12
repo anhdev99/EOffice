@@ -13,7 +13,7 @@ namespace EOffice.WebAPI.Interfaces.Identity
         Task Delete(string id);
         Task<IEnumerable<Role>> Get();
         Task<Role> GetById(string id);
-        Task<PagingModel<Role>> GetPaging(PagingParam param);
+        Task<PagingModel<Role>> GetPaging(RoleParam param);
         Task<List<NavMenuVM>> GetMenuForUser(string userName);
         Task<List<string>> GetPermissionForCurrentUer(string userName);
     }

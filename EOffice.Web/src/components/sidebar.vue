@@ -27,6 +27,14 @@ export default {
   components: {
     simplebar,
   },
+  created() {
+    var currentUser = localStorage.getItem("auth-user");
+    if(currentUser ){
+      let data = JSON.parse(currentUser)
+      if( data && data.user.menu)
+      this.menuItems = data.user.menu;
+    }
+  },
   mounted: function() {
     // eslint-disable-next-line no-unused-vars
     var menuRef = new MetisMenu("#side-menu");

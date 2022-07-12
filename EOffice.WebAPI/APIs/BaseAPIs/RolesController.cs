@@ -143,7 +143,7 @@ namespace EOffice.WebAPI.APIs.Identity
 
         [HttpPost]
         [Route("get-paging-params")]
-        public async Task<IActionResult> GetPagingParam(PagingParam param)
+        public async Task<IActionResult> GetPagingParam([FromBody]RoleParam param)
         {
             try
             {

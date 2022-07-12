@@ -134,14 +134,15 @@ export default {
   <Layout>
     <PageHeader   :title="title" :items="items"/>
      <div class="row">
-       <div class="col-lg-11">
+       <div class="col-lg-10">
        </div>
-       <div class="col-1">
+       <div class="col-lg-2">
          <b-button
-             style="background-color: #28883B"
-             type="button "
-             class="btn-label mb-3 me-2"
-             @click="handleSubmitRole" size="xl"
+             type="button"
+             variant="primary"
+             class="w-md"
+             style="float: right; margin-bottom: 10px"
+             @click="handleSubmitRole" size="sm"
          >
            <i class="mdi mdi-plus me-1 label-icon"></i> Lưu
          </b-button>
@@ -152,7 +153,10 @@ export default {
         <div class="card">
           <div class="card-body">
             <div class="font-weight-bold text-success" style="margin-bottom: 5px" >
-              {{this.model.ten}}
+              <template v-if="model">
+                {{model.ten}}
+              </template>
+
             </div>
             <v-jstree  :data = "treeView"  text-field-name = "name" @item-click="itemClick"></v-jstree>
           </div>
@@ -170,7 +174,7 @@ export default {
                 bordered
                 responsive="sm">
             <template v-slot:cell(STT)="data">
-              {{ data.index + ((currentPage-1)*perPage) + 1  }}
+              {{ data.index + 1 }}
             </template>
               <template v-slot:cell(process)="data">
                 <div class="form-check form-check-success">

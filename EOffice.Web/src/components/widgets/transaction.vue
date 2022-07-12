@@ -19,11 +19,10 @@ export default {
     <table class="table table-hover table-centered table-nowrap">
       <thead>
         <tr>
-          <th scope="col">(#) Id</th>
-          <th scope="col">Name</th>
-          <th scope="col">Date</th>
-          <th scope="col">Amount</th>
-          <th scope="col" colspan="2">Status</th>
+          <th scope="col">(#)</th>
+          <th scope="col"> Tên văn bản</th>
+          <th scope="col"> Hạn xử lý</th>
+          <th scope="col" colspan="2"> Trạng thái</th>
         </tr>
       </thead>
       <tbody>
@@ -31,12 +30,10 @@ export default {
           <th scope="row">{{data.id}}</th>
           <td>
             <div>
-              <img :src="`${data.image}`" alt class="avatar-xs rounded-circle me-2" />
               {{data.name}}
             </div>
           </td>
           <td>{{data.date}}</td>
-          <td>{{data.amount}}</td>
           <td>
             <span
               class="badge"
@@ -49,7 +46,7 @@ export default {
           </td>
           <td>
             <div>
-              <a href="#" class="btn btn-primary btn-sm">Edit</a>
+              <a href="javascript:void(0)" class="btn btn-primary btn-sm"> Xử lý</a>
             </div>
           </td>
         </tr>
