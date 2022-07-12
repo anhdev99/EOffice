@@ -289,15 +289,15 @@ export default {
                 </div>
               </div>
               <div class="text-end pt-2 mt-3">
-                <b-button v-if="model.id" type="button" variant="warning" class="ms-1"
+                <b-button  size="sm"  v-if="model.id" type="button" variant="warning" class="ms-1 w-md"
                           v-on:click="handleResetForm"
                 > Đặt lại
                 </b-button>
-                  <b-button v-if="model.id" type="button" variant="danger" class="ms-1"
+                  <b-button  size="sm"  v-if="model.id" type="button" variant="danger" class="ms-1 w-md"
                             v-on:click="handleShowDeleteModal(model.id)"
                   > Xóa
                   </b-button>
-                <b-button type="submit" variant="primary" class="ms-1 w-md"
+                <b-button type="submit" size="sm" variant="primary" class="ms-1 w-md"
                 >Lưu
                 </b-button>
               </div>

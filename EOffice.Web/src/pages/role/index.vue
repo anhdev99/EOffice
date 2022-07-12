@@ -243,9 +243,9 @@ export default {
               </div>
               <div class="col-sm-8">
                 <div class="text-sm-end">
-                  <b-button type="button" class="btn-label btn-success mb-2 me-2" @click="showModal = true" size="sm"
+                  <b-button type="button" variant="primary" class="btn-label w-md"  @click="showModal = true" size="sm"
                   >
-                    <i class="mdi mdi-plus me-1 label-icon"></i> Thêm
+                    <i class="mdi mdi-plus me-1 label-icon"></i> Thêm vai trò
                   </b-button>
                   <b-modal
                       v-model="showModal"
