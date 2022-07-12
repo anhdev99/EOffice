@@ -12,6 +12,6 @@ namespace EOffice.WebAPI.Models
         public string Ten { get; set; }
         public string MoTa { get; set; }
         public int ThuTu { get; set; }
-        public string KhoiCoQuanId { get; set; }
+        public KhoiCoQuanShort KhoiCoQuan { get; set; }
     }
 }

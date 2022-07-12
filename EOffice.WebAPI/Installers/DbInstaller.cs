@@ -40,6 +40,9 @@ namespace EOffice.WebAPI.Installers
             services.AddScoped<IVanBanDenService, VanBanDenService>();
             services.AddScoped<IVanBanDiService, VanBanDiService>();
             services.AddScoped<IHinhThucGuiService, HinhThucGuiService>();
+            services.AddScoped<IHinhThucGuiService, HinhThucGuiService>();
+            services.AddScoped<IKhoiCoQuanService, KhoiCoQuanService>();
+            services.AddScoped<ICoQuanService, CoQuanService>();
             services.AddScoped<HistoryVanBanDiService>();
         }
     }
