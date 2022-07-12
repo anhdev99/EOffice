@@ -87,7 +87,7 @@ export default {
   validations: {
     model: {
       ten: {required},
-      sort: {required},
+      thuTu: {required},
       code: {required},
     },
   },
@@ -309,7 +309,7 @@ export default {
                             <input type="hidden" v-model="model.id"/>
                             <input
                                 id="thuTu"
-                                v-model="model.sort"
+                                v-model="model.thuTu"
                                 type="number"
                                 min="0"
                                 oninput="validity.valid||(value='');"
@@ -317,11 +317,11 @@ export default {
                                 placeholder="Nhập thứ tự"
                                 :class="{
                                 'is-invalid':
-                                  submitted && $v.model.sort.$error,
+                                  submitted && $v.model.thuTu.$error,
                               }"
                             />
                             <div
-                                v-if="submitted && !$v.model.sort.required"
+                                v-if="submitted && !$v.model.thuTu.required"
                                 class="invalid-feedback"
                             >
                               Thứ tự không được để trống.
