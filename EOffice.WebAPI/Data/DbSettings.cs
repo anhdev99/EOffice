@@ -34,6 +34,8 @@ namespace EOffice.WebAPI.Data
         public string LoaiVanBanCollectionName { get; set; }
         public string HoSoDonViCollectionName { get; set; }
         public string HinhThucGuiCollectionName { get; set; }
+        public string CoQuanCollectionName { get; set; }
+        public string KhoiCoQuanCollectionName { get; set; }
     }
 
     public interface IDbSettings
@@ -67,5 +69,7 @@ namespace EOffice.WebAPI.Data
         string LoaiVanBanCollectionName { get; set; }
         string HoSoDonViCollectionName { get; set; }
         string HinhThucGuiCollectionName { get; set; }
+        string CoQuanCollectionName { get; set; }
+        string KhoiCoQuanCollectionName { get; set; }
     }
 }
