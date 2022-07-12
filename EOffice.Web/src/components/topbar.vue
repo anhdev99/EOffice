@@ -103,7 +103,7 @@ export default {
           <i class="mdi mdi-menu" style="color: white"></i>
         </button>
         <div class="d-none d-sm-block">
-          <h5 class="pt-4 d-inline-block text-white">Hệ thống EOffice</h5>
+          <h5 class="pt-4 d-inline-block text-white"> Trường Đại học Đồng Tháp</h5>
         </div>
 
 <!--        <div class="d-none d-sm-block">-->
