@@ -29,28 +29,28 @@ export default {
         {
           title: " Văn bản đến",
           image: require("@/assets/images/services-icon/01.png"),
-          value: "1,685",
+          value: "185",
           subText: "VBD",
           color: "success"
         },
         {
           title: " Văn bản đi",
           image: require("@/assets/images/services-icon/02.png"),
-          value: "52,368",
+          value: "68",
           subText: "VBD",
           color: "danger"
         },
         {
           title: " Văn bản đã xử lý",
           image: require("@/assets/images/services-icon/03.png"),
-          value: "15.8",
+          value: "15",
           subText: "VBDXL",
           color: "info"
         },
         {
           title: " Hộp thư",
           image: require("@/assets/images/services-icon/04.png"),
-          value: "2436",
+          value: "243",
           subText: "HT",
           color: "warning"
         }
@@ -60,37 +60,37 @@ export default {
           id: "#14256",
           name: " Văn bản test ",
           date: "15/1/2018",
-          status: "Delivered"
+          status: "Xử lý xong"
         },
         {
           id: "#14257",
           name: " Văn bản test ",
           date: "16/1/2019",
-          status: "Pending"
+          status: "Đang xử lý"
         },
         {
           id: "#14258",
           name: " Văn bản test ",
           date: "17/1/2019",
-          status: "Delivered"
+          status: "Xử lý xong"
         },
         {
           id: "#14259",
           name: " Văn bản test ",
           date: "18/1/2019",
-          status: "Cancel"
+          status: "Xử lý xong"
         },
         {
           id: "#14260",
           name: " Văn bản test ",
           date: "15/1/2018",
-          status: "Delivered"
+          status: "Từ chối"
         },
         {
           id: "#14261",
           name: " Văn bản test ",
           date: "15/1/2018",
-          status: "Pending"
+          status: "Đang xử lý"
         }
       ],
       chatMessages: [

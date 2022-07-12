@@ -38,7 +38,6 @@ export default {
         <h5 class="font-size-16 text-uppercase mt-0 text-white-50">{{title}}</h5>
         <h4 class="fw-medium font-size-24">
           {{value}}
-          <i class="mdi mdi-arrow-up text-success ms-2"></i>
         </h4>
         <div :class="`mini-stat-label bg-${color}`">
           <p class="mb-0">{{subText}}</p>

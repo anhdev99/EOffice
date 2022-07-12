@@ -38,9 +38,9 @@ export default {
             <span
               class="badge"
               :class="{
-              'bg-danger': data.status === 'Cancel',
-              'bg-warning': data.status === 'Pending',
-              'bg-success': data.status === 'Delivered'
+              'bg-danger': data.status === 'Từ chối',
+              'bg-warning': data.status === 'Đang xử lý',
+              'bg-success': data.status === 'Xử lý xong'
           }"
             >{{data.status}}</span>
           </td>
