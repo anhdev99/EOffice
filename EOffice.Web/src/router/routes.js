@@ -682,4 +682,10 @@ export default [{
         // meta: {},
         component: () => import("../pages/hinhThucGui"),
     },
+    {
+        path: "/khoi-co-quan",
+        name: "Khối cơ quan",
+        // meta: {},
+        component: () => import("../pages/khoiCoQuan"),
+    },
 ]
