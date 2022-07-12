@@ -658,4 +658,28 @@ export default [{
         // meta: {},
         component: () => import("../pages/auth/profile"),
     },
+    {
+        path: "/chuc-vu",
+        name: "Chức vụ",
+        // meta: {},
+        component: () => import("../pages/chucVu"),
+    },
+    {
+        path: "/loai-van-ban",
+        name: "Loại văn bản",
+        // meta: {},
+        component: () => import("../pages/loaiVanBan"),
+    },
+    {
+        path: "/trang-thai",
+        name: "Trạng thái",
+        // meta: {},
+        component: () => import("../pages/trangThai"),
+    },
+    {
+        path: "/hinh-thuc-gui",
+        name: "Hình thức gửi",
+        // meta: {},
+        component: () => import("../pages/hinhThucGui"),
+    },
 ]

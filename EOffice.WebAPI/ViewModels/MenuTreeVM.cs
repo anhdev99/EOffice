@@ -21,6 +21,8 @@ namespace EOffice.WebAPI.ViewModels
             this.Link = model.Path ?? "";
             this.Icon = model.Icon ?? "";
             this.ParentId = model.ParentId;
+            this.State.Expanded = true;
+            this.Opened = true;
         }
         public string Id { get; set; }
         public string Label { get; set; }

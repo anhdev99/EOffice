@@ -205,8 +205,8 @@ export default {
 <!--              </div>-->
               <div class="col-sm-12" style="float: right">
                 <div class="text-sm-end">
-                  <b-button type="button" class="btn-label btn-success mb-2 me-2" @click="showModal = true" size="sm">
-                    <i class="mdi mdi-plus me-1 label-icon"></i> Thêm
+                  <b-button type="button" variant="primary" class="mb-2 me-2 w-md" @click="showModal = true" size="sm">
+                    <i class="mdi mdi-plus me-1 label-icon"></i> Thêm quyền
                   </b-button>
                   <b-modal
                       v-model="showModal"
@@ -318,12 +318,12 @@ export default {
                         </div>
                       </div>
                       <div class="text-end pt-2 mt-3">
-                        <b-button variant="light" @click="showModal = false">
+                        <b-button variant="light" @click="showModal = false" class="w-md" size="sm">
                           Đóng
                         </b-button>
                         <b-button
                             v-if="!isDetail"
-                            type="submit" variant="success" class="ms-1">Lưu
+                            type="submit" variant="primary" class="ms-1 w-md" size="sm">Lưu
                         </b-button>
                       </div>
                     </form>
