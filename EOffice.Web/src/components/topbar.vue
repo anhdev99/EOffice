@@ -4,9 +4,24 @@
  */
 export default {
   data() {
-    return {};
+    return {
+      currentUserAuth: null,
+      url:  process.env.VUE_APP_API_URL + 'files/view/' ,
+    };
+  },
+  created() {
+    let authUser = localStorage.getItem("auth-user");
+    if(authUser){
+      let jsonUserCurrent = JSON.parse(authUser);
+      this.currentUserAuth = jsonUserCurrent.user;
+    }
   },
   methods: {
+    handleThongTinCaNhan(){
+      if (this.$route.path != '/thong-tin-ca-nhan') {
+        this.$router.push("/thong-tin-ca-nhan");
+      }
+    },
     initFullScreen() {
       document.body.classList.toggle("fullscreen-enable");
       if (
@@ -371,19 +386,60 @@ export default {
           toggle-class="header-item"
           variant="white"
           menu-class="dropdown-menu-end"
+
         >
-          <template v-slot:button-content>
-            <img
-              class="rounded-circle header-profile-user"
-              src="@/assets/images/users/user-4.jpg"
-              alt="Header Avatar"
-            />
+<!--          <template v-slot:button-content>-->
+<!--            <img-->
+<!--              class="rounded-circle header-profile-user"-->
+<!--              src="@/assets/images/users/user-4.jpg"-->
+<!--              alt="Header Avatar"-->
+<!--            />-->
+
+<!--          </template>-->
+          <template v-slot:button-content >
+           <div style="display:flex; justify-content:center; align-content:center">
+                         <span>
+              <span v-if="currentUserAuth.avatar" >
+                <b-img
+                    :src=" url + `${currentUserAuth.avatar.fileId}`"
+                    alt="Avatar"
+                    class="rounded-circle header-profile-user"
+                >
+                </b-img>
+              </span>
+              <span v-else>
+                <img
+                    class="rounded-circle header-profile-user"
+                    src="@/assets/images/users/user-4.jpg"
+                    alt="Avatar"
+                />
+              </span>
+            </span>&nbsp;
+             <span class="d-none d-xl-inline-block ms-1">
+              <div v-if="currentUserAuth" style="font-size: 10px;">
+                <div style="font-size: 12px; color: white">
+                  {{currentUserAuth.fullName}}
+                  <i class="mdi mdi-chevron-down d-none d-xl-inline "></i>
+                </div>
+                <div class="text-start text-white">
+                  @{{currentUserAuth.userName}}
+                </div>
+              </div>
+              <div v-else>
+               AnhDev99
+              </div>
+              </span
+              >
+           </div>
+
           </template>
           <b-dropdown-item>
-            <i
-              class="mdi mdi-account-circle font-size-17 align-middle me-1"
-            ></i>
-             Thông tin cá nhân
+            <a v-on:click="handleThongTinCaNhan">
+              <i
+                  class="mdi mdi-account-circle font-size-17 align-middle me-1"
+              ></i>
+              Thông tin cá nhân
+            </a>
           </b-dropdown-item>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item text-danger" v-on:click="logoutUser">

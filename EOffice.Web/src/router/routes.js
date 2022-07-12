@@ -646,4 +646,16 @@ export default [{
         meta: { },
         component: () => import("../pages/donVi"),
     },
+    {
+        path: "/loggings",
+        name: "Loggings",
+        meta: {},
+        component: () => import("../pages/loggings"),
+    },
+    {
+        path: "/thong-tin-ca-nhan",
+        name: "Thông tin cá nhân",
+        // meta: {},
+        component: () => import("../pages/auth/profile"),
+    },
 ]

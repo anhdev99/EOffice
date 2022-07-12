@@ -5,7 +5,7 @@ import {required} from "vuelidate/lib/validators";
 import appConfig from "@/app.config";
 import {notifyModel} from "@/models/notifyModel";
 import {pagingModel} from "@/models/pagingModel";
-import {chucVuModel} from "@/models/chucVuModel";
+
 export default {
   page: {
     title: "Quản Lý Logging",
@@ -14,7 +14,7 @@ export default {
   components: {Layout, PageHeader},
   data() {
     return {
-      title: "Logging",
+      title: "Lịch sử thao tác",
       items: [
         {
           text: "Logging",
@@ -97,9 +97,7 @@ export default {
         // this.saveValueToLocalStorage()
       }
     },
-    showModal(status) {
-      if (status == false) this.model = chucVuModel.baseJson();
-    },
+
     showDeleteModal(val) {
       if (val == false) {
         this.model.id = null;
@@ -154,24 +152,24 @@ export default {
                 </div>
               </div>
             </div>
-            <div class="row" style="margin-top: -20px">
+            <div class="row">
               <div class="col-12">
-                    <div class="row mt-4">
-                      <div class="col-sm-12 col-md-6">
-                        <div id="tickets-table_length" class="dataTables_length">
-                          <label class="d-inline-flex align-items-center">
-                            Show&nbsp;
-                            <b-form-select
-                                class="form-select form-select-sm"
-                                v-model="perPage"
-                                size="sm"
-                                :options="pageOptions"
-                            ></b-form-select
-                            >&nbsp;entries
-                          </label>
-                        </div>
-                      </div>
+                <div class="row mb-3">
+                  <div class="col-sm-12 col-md-6">
+                    <div id="tickets-table_length" class="dataTables_length">
+                      <label class="d-inline-flex align-items-center">
+                        Hiện
+                        <b-form-select
+                            class="form-select form-select-sm"
+                            v-model="perPage"
+                            size="sm"
+                            :options="pageOptions"
+                        ></b-form-select
+                        >&nbsp;dòng
+                      </label>
                     </div>
+                  </div>
+                </div>
                     <div class="table-responsive-sm">
                       <b-table
                           class="datatables"

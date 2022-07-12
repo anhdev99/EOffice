@@ -117,7 +117,7 @@ export default {
                 </a>
               </div>
             </div>
-            <div class="card-body p-4">
+            <div class="card-body" style="padding: 15px 5px;">
               <div class="p-3">
                 <b-alert
                     v-model="modelAuth.isAuthError"
