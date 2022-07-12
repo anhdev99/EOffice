@@ -688,4 +688,10 @@ export default [{
         // meta: {},
         component: () => import("../pages/khoiCoQuan"),
     },
+    {
+        path: "/co-quan",
+        name: "Cơ quan",
+        // meta: {},
+        component: () => import("../pages/coQuan"),
+    }
 ]

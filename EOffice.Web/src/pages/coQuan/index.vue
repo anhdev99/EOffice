@@ -5,22 +5,22 @@ import {required} from "vuelidate/lib/validators";
 import appConfig from "@/app.config";
 import {notifyModel} from "@/models/notifyModel";
 import {pagingModel} from "@/models/pagingModel";
-import {khoiCoQuanModel} from "@/models/khoiCoQuanModel";
 import {CONSTANTS} from "@/helpers/constants";
+import {coQuanModel} from "@/models/coQuanModel";
 
 export default {
   page: {
-    title: "Khối cơ quan",
+    title: "Cơ quan",
     meta: [{name: "description", content: appConfig.description}],
   },
   components: {Layout, PageHeader},
   data() {
     return {
-      title: "Khối cơ quan",
+      title: "Cơ quan",
       items: [
         {
-          text: "Khối cơ quan",
-          href: "/khoi-co-quan",
+          text: "Cơ quan",
+          href: "/co-quan",
           // active: true,
         },
         {
@@ -33,7 +33,7 @@ export default {
       showDetail: false,
       showDeleteModal: false,
       submitted: false,
-      model: khoiCoQuanModel.baseJson(),
+      model: coQuanModel.baseJson(),
       listCoQuan: [],
       listRole: [],
       pagination: pagingModel.baseJson(),
@@ -68,8 +68,8 @@ export default {
           thStyle: "text-align:center",
         },
         {
-          key: "permissions",
-          label: "Số lượng",
+          key: "KhoiCoQuan",
+          label: "Khối cơ quan",
           class: "text-center",
           thStyle: {width: '110px', minWidth: '110px'},
           thClass: 'hidden-sortable'
@@ -102,7 +102,7 @@ export default {
       }
     },
     showModal(status) {
-      if (status == false) this.model = khoiCoQuanModel.baseJson();
+      if (status == false) this.model = coQuanModel.baseJson();
     },
     showDeleteModal(val) {
       if (val == false) {
@@ -112,9 +112,9 @@ export default {
   },
   methods: {
     async handleUpdate(id) {
-      await this.$store.dispatch("khoiCoQuanStore/getById", id).then((res) => {
+      await this.$store.dispatch("coQuanStore/getById", id).then((res) => {
         if (res.resultCode === 'SUCCESS') {
-          this.model = khoiCoQuanModel.fromJson(res.data);
+          this.model = coQuanModel.fromJson(res.data);
           this.showModal = true;
         } else {
           this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
@@ -123,9 +123,9 @@ export default {
       });
     },
     async handleDetail(id) {
-      await this.$store.dispatch("khoiCoQuanStore/getById", id).then((res) => {
+      await this.$store.dispatch("coQuanStore/getById", id).then((res) => {
         if (res.resultCode === 'SUCCESS') {
-          this.model = khoiCoQuanModel.fromJson(res.data);
+          this.model = coQuanModel.fromJson(res.data);
           this.showDetail = true;
         } else {
           this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
@@ -134,7 +134,7 @@ export default {
     },
     async handleDelete() {
       if (this.model.id != 0 && this.model.id != null && this.model.id) {
-        await this.$store.dispatch("khoiCoQuanStore/delete", this.model.id).then((res) => {
+        await this.$store.dispatch("coQuanStore/delete", this.model.id).then((res) => {
           if (res.resultCode === 'SUCCESS') {
             this.showDeleteModal = false;
             this.$refs.tblList.refresh()
@@ -164,7 +164,7 @@ export default {
             this.model.id
         ) {
           // Update model
-          await this.$store.dispatch("khoiCoQuanStore/update", this.model).then((res) => {
+          await this.$store.dispatch("coQuanStore/update", this.model).then((res) => {
             if (res.resultCode === 'SUCCESS') {
               this.showModal = false;
               this.$refs.tblList.refresh()
@@ -173,7 +173,7 @@ export default {
           });
         } else {
           // Create model
-          await this.$store.dispatch("khoiCoQuanStore/create", khoiCoQuanModel.toJson(this.model)).then((res) => {
+          await this.$store.dispatch("coQuanStore/create", coQuanModel.toJson(this.model)).then((res) => {
             if (res.resultCode === 'SUCCESS') {
               this.showModal = false;
               this.$refs.tblList.refresh()
@@ -196,7 +196,7 @@ export default {
       }
       this.loading = true
       try {
-        let promise = this.$store.dispatch("khoiCoQuanStore/getPagingParams", params)
+        let promise = this.$store.dispatch("coQuanStore/getPagingParams", params)
         return promise.then(resp => {
           if(resp.resultCode == CONSTANTS.SUCCESS){
             let data = resp.data;
@@ -213,11 +213,6 @@ export default {
         this.loading = false
       }
     },
-    // todoFiltered(filteredItems) {
-    //   // Trigger pagination to update the number of buttons/pages due to filtering
-    //   this.todoTotalRows = filteredItems.length;
-    //   this.todocurrentPage = 1;
-    // }
   }
 }
 </script>
@@ -245,11 +240,11 @@ export default {
               <div class="col-sm-8">
                 <div class="text-sm-end">
                   <b-button type="button" variant="primary" class="w-md" @click="showModal = true" size="sm">
-                    <i class="mdi mdi-plus me-1 label-icon"></i> Thêm khối cơ quan
+                    <i class="mdi mdi-plus me-1 label-icon"></i> Thêm cơ quan
                   </b-button>
                   <b-modal
                       v-model="showModal"
-                      title="Thông tin khối cơ quan"
+                      title="Thông tin cơ quan"
                       title-class="text-black font-18"
                       body-class="p-3"
                       hide-footer
@@ -279,13 +274,13 @@ export default {
                                 v-if="submitted && !$v.model.code.required"
                                 class="invalid-feedback"
                             >
-                              Tên khối cơ quan không được để trống.
+                              Tên cơ quan không được để trống.
                             </div>
                           </div>
                         </div>
                         <div class="col-12">
                           <div class="mb-3">
-                            <label class="text-left">Tên khối cơ quan</label>
+                            <label class="text-left">Tên cơ quan</label>
                             <span style="color: red">&nbsp;*</span>
                             <input type="hidden" v-model="model.id"/>
                             <input
@@ -303,7 +298,7 @@ export default {
                                 v-if="submitted && !$v.model.ten.required"
                                 class="invalid-feedback"
                             >
-                              Tên khối cơ quan không được để trống.
+                              Tên cơ quan không được để trống.
                             </div>
                           </div>
                         </div>
@@ -346,7 +341,7 @@ export default {
                   </b-modal>
                   <b-modal
                       v-model="showDetail"
-                      title="Thông tin chi tiết khối cơ quan"
+                      title="Thông tin chi tiết cơ quan"
                       title-class="text-black font-18"
                       body-class="p-3"
                       hide-footer
@@ -471,17 +466,17 @@ export default {
                         {{ row.value }}
                       </div>
                     </template>
-<!--                    <template v-slot:cell(permissions)="data">-->
-<!--                      <router-link :to='`/nhom-quyen/action/${data.item.id}`'>-->
-<!--                        <b-button-->
-<!--                            v-if="data.item.permissions.length > 0 "-->
-<!--                            variant="outline-success btn-sm">{{ data.item.permissions.length }}-->
-<!--                        </b-button>-->
-<!--                        <b-button v-else  variant="outline-success btn-sm">-->
-<!--                          {{ 0 }}-->
-<!--                        </b-button>-->
-<!--                      </router-link>-->
-<!--                    </template>-->
+                    <!--                    <template v-slot:cell(permissions)="data">-->
+                    <!--                      <router-link :to='`/nhom-quyen/action/${data.item.id}`'>-->
+                    <!--                        <b-button-->
+                    <!--                            v-if="data.item.permissions.length > 0 "-->
+                    <!--                            variant="outline-success btn-sm">{{ data.item.permissions.length }}-->
+                    <!--                        </b-button>-->
+                    <!--                        <b-button v-else  variant="outline-success btn-sm">-->
+                    <!--                          {{ 0 }}-->
+                    <!--                        </b-button>-->
+                    <!--                      </router-link>-->
+                    <!--                    </template>-->
                     <template v-slot:cell(process)="data">
                       <button
                           type="button"

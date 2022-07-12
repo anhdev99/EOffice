@@ -16,7 +16,7 @@ namespace EOffice.WebAPI.ViewModels
             this.Id = model.Id;
             this.Label = model.Ten;
             this.Selected = false;
-            this.Opened = false;
+            this.Opened = true;
         }
         public string Id { get; set; }
         public string Label { get; set; }
