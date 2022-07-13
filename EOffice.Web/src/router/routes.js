@@ -700,4 +700,10 @@ export default [{
         //meta: { },
         component: () => import("../pages/vanbandenXL"),
     },
+    {
+        path: "/thong-bao",
+        name: " Thông báo",
+        // meta: {},
+        component: () => import("../pages/thongBao"),
+    }
 ]

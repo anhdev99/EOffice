@@ -23,11 +23,13 @@ namespace EOffice.WebAPI.Services
         private IDonViService _donViService;
         private ILoggingService _logger;
         private IDbSettings _settings;
+        private INotifyService _notifyService;
         public UserService(
             ILoggingService logger,
             IDbSettings settings,
             IDonViService donViService,
             DataContext context,
+            INotifyService notifyService,
             IHttpContextAccessor contextAccessor) :
             base(context, contextAccessor)
         {
@@ -35,6 +37,7 @@ namespace EOffice.WebAPI.Services
             BaseMongoDb = new BaseMongoDb<User, string>(_context.Users);
             _collectionUser = context.Users;
             _donViService = donViService;
+            _notifyService = notifyService;
             _settings = settings;
             _logger = logger.WithCollectionName(_settings.UserCollectionName)
                 .WithDatabaseName(_settings.DatabaseName)
@@ -150,6 +153,23 @@ namespace EOffice.WebAPI.Services
 
             await _logger.WithAction(nameof(this.Create)).WithActionResult(EResultResponse.SUCCESS.ToString())
                 .WithContentLog($"Tạo tài khoản: {entity.UserName}").SaveChanges();
+            
+            try
+            {
+                var notify = new Notify()
+                {
+                    Title =
+                        $"Xử lý văn bản đến",
+                    Content =
+                        $"Có một văn bản đến cần xỷ lý trước ngày {DateTime.Now.ToShortDateString()}"
+                };
+
+                await  _notifyService.WithNotify(notify).WithRecipients(new List<string>(){CurrentUser?.Id}).PushNotify();
+            }
+            catch (Exception e)
+            {
+            }
+            
             return entity;
         }
 

@@ -171,10 +171,10 @@ namespace EOffice.WebAPI.Services
             return resultResponse;
         }
 
-        public async Task<ResultResponse<Notify>> ChangeStatus(Notify model)
+        public async Task<ResultResponse<Notify>> ChangeStatus(string id)
         {
             ResultResponse<Notify> resultResponse = new ResultResponse<Notify>();
-            if (model.Id == null || model.Id == "")
+            if (id == null || id == "")
             {
                 resultResponse.ResultCode = EResultResponse.FAIL.ToString();
                 resultResponse.ResultString = "Dữ liệu không được để trống.";
@@ -182,7 +182,7 @@ namespace EOffice.WebAPI.Services
             }
             try
             {
-                var entity = await _collection.Find(x => x.Id == model.Id).FirstOrDefaultAsync();
+                var entity = await _collection.Find(x => x.Id == id).FirstOrDefaultAsync();
                 if (entity == default)
                 {
                     resultResponse.ResultCode = EResultResponse.NOT_EXIST.ToString();

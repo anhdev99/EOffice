@@ -17,6 +17,6 @@ namespace EOffice.WebAPI.Interfaces
         Task<PagingModel<Notify>> GetPaging(NotifyParam param);
         Task<Notify> GetById(string id);
         Task<ResultResponse<NotifyVM>> GetListNotify();
-        Task<ResultResponse<Notify>> ChangeStatus(Notify model);
+        Task<ResultResponse<Notify>> ChangeStatus(string id);
     }
 }
