@@ -57,27 +57,33 @@ export default {
   methods: {
     myProvider(ctx) {
       const params = {
-        start: ctx.currentPage,
-        limit: ctx.perPage,
+        start: this.currentPage,
+        limit: this.perPage,
         content: this.filter,
-        sortBy: ctx.sortBy,
-        sortDesc: ctx.sortDesc,
+        sortBy: this.sortBy,
+        sortDesc: this.sortDesc,
       }
       console.log('Log param', params)
       this.loading = true
       try {
         this.$store.dispatch("notificationStore/getPagingParams", params)
         .then(resp => {
-          if(resp.resultCode == CONSTANTS.SUCCESS){
-            let data = resp.data;
-            this.totalRows = data.totalRows
-            let items = data.data
-            this.numberOfElement = items.length
-            this.loading = false
-            return items || []
-          }else{
-            return [];
-          }
+          // if(resp.resultCode == CONSTANTS.SUCCESS){
+          //   let data = resp.data;
+          //   this.totalRows = data.totalRows
+          //   let items = data.data
+          //   this.numberOfElement = items.length
+          //   this.loading = false
+          //   console.log(items)
+          //   this.data = items;
+          //   return items || []
+          // }else{
+          //   return [];
+          // }
+          let items = resp.data
+          this.totalRows = resp.totalRows
+          this.numberOfElement = resp.data.length
+          this.data= items
         })
       } finally {
         this.loading = false
@@ -205,51 +211,51 @@ export default {
           </div>
 
         </div>
-        <div class="table-responsive p-0">
-          <b-table
-              class="datatables"
-              :items="myProvider"
-              bordered
-              outlined
-              responsive="sm"
-              :per-page="perPage"
-              :current-page="currentPage"
-              :sort-by.sync="sortBy"
-              :sort-desc.sync="sortDesc"
-              :filter="filter"
-              :filter-included-fields="filterOn"
-              ref="tblList"
-              primary-key="id"
-          >
-            <!--                      <template v-slot:cell(STT)="data">-->
-            <!--                        {{ data.index + ((currentPage - 1) * perPage) + 1 }}-->
-            <!--                      </template>-->
-            <!--                      <template v-slot:cell(process)="data">-->
-            <!--                        <button-->
-            <!--                            type="button"-->
-            <!--                            size="sm"-->
-            <!--                            class="btn btn-outline btn-sm"-->
-            <!--                            data-toggle="tooltip" data-placement="bottom" title="Xem thông báo"-->
-            <!--                            v-on:click="handleDetail(data.item.id)">-->
-            <!--                          <i class="fas fa-eye  text-warning me-1"></i>-->
-            <!--                        </button>-->
-            <!--                      </template>-->
-            <!--                      <template v-slot:cell(read)="data">-->
-            <!--                      <span-->
-            <!--                          class="badge font-size-small min-width-30 p-2 btn-xs"-->
-            <!--                          :class="{-->
-            <!--                        'badge-soft-success font-weight-semibold':`${data.item.read}` === true,-->
+<!--        <div class="table-responsive p-0">-->
+<!--          <b-table-->
+<!--              class="datatables"-->
+<!--              :items="myProvider"-->
+<!--              bordered-->
+<!--              outlined-->
+<!--              responsive="sm"-->
+<!--              :per-page="perPage"-->
+<!--              :current-page="currentPage"-->
+<!--              :sort-by.sync="sortBy"-->
+<!--              :sort-desc.sync="sortDesc"-->
+<!--              :filter="filter"-->
+<!--              :filter-included-fields="filterOn"-->
+<!--              ref="tblList"-->
+<!--              primary-key="id"-->
+<!--          >-->
+<!--            &lt;!&ndash;                      <template v-slot:cell(STT)="data">&ndash;&gt;-->
+<!--            &lt;!&ndash;                        {{ data.index + ((currentPage - 1) * perPage) + 1 }}&ndash;&gt;-->
+<!--            &lt;!&ndash;                      </template>&ndash;&gt;-->
+<!--            &lt;!&ndash;                      <template v-slot:cell(process)="data">&ndash;&gt;-->
+<!--            &lt;!&ndash;                        <button&ndash;&gt;-->
+<!--            &lt;!&ndash;                            type="button"&ndash;&gt;-->
+<!--            &lt;!&ndash;                            size="sm"&ndash;&gt;-->
+<!--            &lt;!&ndash;                            class="btn btn-outline btn-sm"&ndash;&gt;-->
+<!--            &lt;!&ndash;                            data-toggle="tooltip" data-placement="bottom" title="Xem thông báo"&ndash;&gt;-->
+<!--            &lt;!&ndash;                            v-on:click="handleDetail(data.item.id)">&ndash;&gt;-->
+<!--            &lt;!&ndash;                          <i class="fas fa-eye  text-warning me-1"></i>&ndash;&gt;-->
+<!--            &lt;!&ndash;                        </button>&ndash;&gt;-->
+<!--            &lt;!&ndash;                      </template>&ndash;&gt;-->
+<!--            &lt;!&ndash;                      <template v-slot:cell(read)="data">&ndash;&gt;-->
+<!--            &lt;!&ndash;                      <span&ndash;&gt;-->
+<!--            &lt;!&ndash;                          class="badge font-size-small min-width-30 p-2 btn-xs"&ndash;&gt;-->
+<!--            &lt;!&ndash;                          :class="{&ndash;&gt;-->
+<!--            &lt;!&ndash;                        'badge-soft-success font-weight-semibold':`${data.item.read}` === true,&ndash;&gt;-->
 
-            <!--                        'badge-soft-warning  font-weight-semibold': `${data.item.read}` === false,-->
+<!--            &lt;!&ndash;                        'badge-soft-warning  font-weight-semibold': `${data.item.read}` === false,&ndash;&gt;-->
 
-            <!--                      }"-->
-            <!--                      >-->
-            <!--                        <span v-if="data.item.read" class="badge-soft-success font-weight-semibold">Đã xem</span>-->
-            <!--                        <span v-else class="badge-soft-warning  font-weight-semibold">Chưa xem</span>-->
-            <!--                      </span>-->
-            <!--                      </template>-->
-          </b-table>
-        </div>
+<!--            &lt;!&ndash;                      }"&ndash;&gt;-->
+<!--            &lt;!&ndash;                      >&ndash;&gt;-->
+<!--            &lt;!&ndash;                        <span v-if="data.item.read" class="badge-soft-success font-weight-semibold">Đã xem</span>&ndash;&gt;-->
+<!--            &lt;!&ndash;                        <span v-else class="badge-soft-warning  font-weight-semibold">Chưa xem</span>&ndash;&gt;-->
+<!--            &lt;!&ndash;                      </span>&ndash;&gt;-->
+<!--            &lt;!&ndash;                      </template>&ndash;&gt;-->
+<!--          </b-table>-->
+<!--        </div>-->
       </div>
     </div>
     <b-modal
