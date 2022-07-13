@@ -41,9 +41,60 @@ namespace EOffice.WebAPI.Models
         public string CoQuanNhanTen { get; set; }
         public string KhoiCoQuanNhan { get; set; }
         public string KhoiCoQuanNhanTen { get; set; }
+        public string HanXuLy { get; set; }
+        public string CongVanChiDoc { get; set; }
+        public string BanChinh { get; set; }
+        public string HienThiThongBao { get; set; }
         public FileShort File { get; set; }
         [BsonIgnore]
         public FileShort UploadFiles{ get; set; }
         public List<NguoiPhanCong> NguoiPhanCong { get; set; }
+        
+        public ButPhe ButPhe { get; set; }
+        public List<DonViXuLy> DonViXuLy { get; set; }
+        
+        public List<PhanCong> PhanCong { get; set; }
+
+    }
+
+    public class ButPhe
+    {
+        public string NoiDungButPhe { get; set; }
+        public string NguoiButPhe { get; set; }
+        public string NgayButPhe { get; set; }
+        public FileShort File { get; set; }
+        [BsonIgnore]
+        public FileShort UploadFiles{ get; set; }
+        public string MucDoQuanTrong { get; set; }
+        public string NguoiPhuTrach { get; set; }
+        public string NguoiChuTri { get; set; }
+        public string NguoiPhoiHopXuLy { get; set; }
+        public string DonViXuLy { get; set; }
+        public string DonViPhoiHop { get; set; }
+        public string NguoiXemDeBiet { get; set; }
+    }
+
+    public class DonViXuLy
+    {
+        public string NguoiPhuTrach { get; set; }
+        public string NguoiChuTri { get; set; }
+        public string NguoiPhoiHopXuLy { get; set; }
+        public string NguoiXemDeBiet { get; set; }
+        public string DonViNhanXuLy { get; set; }
+        public string DonViPhoiHop { get; set; }
+        public string TrangThaiDuyetVB { get; set; }
+        public string NguoiDuyetVB { get; set; }
+        public DateTime?NgayDuyetVB { get; set; }
+        public string GhiChu { get; set; }
+    }
+
+    public class PhanCong
+    {
+        public string YKienChiDao { get; set; }
+        public string NguoiButPhe { get; set; }
+        public string NguoiNhanXuLy { get; set; }
+        public FileShort File { get; set; }
+        [BsonIgnore]
+        public FileShort UploadFiles{ get; set; }
     }
 }

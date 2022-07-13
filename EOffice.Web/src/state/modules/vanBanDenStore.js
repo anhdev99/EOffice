@@ -1,11 +1,8 @@
 import {apiClient} from "@/state/modules/apiClient";
-const controller = "LoaiVanBan";
+const controller = "VanBanDen";
 export const actions = {
     async get({commit}) {
         return apiClient.get(controller +"/get");
-    },
-    async getAll({commit}) {
-        return apiClient.get(controller +"/get-all");
     },
     async getPagingParams({commit}, params) {
         return apiClient.post(controller + "/get-paging-params", params);
