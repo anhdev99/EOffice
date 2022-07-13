@@ -693,5 +693,11 @@ export default [{
         name: "Cơ quan",
         // meta: {},
         component: () => import("../pages/coQuan"),
+    },
+    {
+        path: "/thong-bao",
+        name: " Thông báo",
+        // meta: {},
+        component: () => import("../pages/thongBao"),
     }
 ]
