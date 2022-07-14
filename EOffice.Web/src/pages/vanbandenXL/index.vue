@@ -1246,6 +1246,16 @@ export default {
                             ></multiselect>
                           </div>
                         </div>
+                        <div class="col-md-12">
+                          <div class="mb-2">
+                            <label for="">File đính kèm</label>
+                            <vue-dropzone
+                                id="dropzone"
+                                ref="myVueDropzone"
+                                :options="dropzoneOptions"
+                            ></vue-dropzone>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
