@@ -6,10 +6,12 @@ const toJson = (item) => {
         number: item.number,
         loaiVanBan: item.loaiVanBan,
         loaiVanBanTen: item.loaiVanBanTen,
+        trangThai: item.trangThai,
         trangThaiTen: item.trangThaiTen,
         soLuuCV: item.soLuuCV,
         soVBDen: item.soVBDen,
         ngayNhap: item.ngayNhap,
+        ngayBanHanh: item.ngayBanHanh,
         ngayTraLoi: item.ngayTraLoi,
         traLoiCVso: item.traLoiCVso,
         soBan: item.soBan,
@@ -38,6 +40,11 @@ const toJson = (item) => {
         congVanChiDoc: item.congVanChiDoc,
         banChinh: item.banChinh,
         hienThiThongBao: item.hienThiThongBao,
+        ngayNhan: item.ngayNhan,
+        coQuanGui: item.coQuanGui,
+        khoiCoQuanGui: item.khoiCoQuanGui,
+        hinhThucNhan: item.hinhThucNhan,
+        nguoiKy: item.nguoiKy,
     }
 }
 const fromJson = (item) => {
@@ -47,11 +54,13 @@ const fromJson = (item) => {
         number: item.number,
         loaiVanBan: item.loaiVanBan,
         loaiVanBanTen: item.loaiVanBanTen,
+        trangThai: item.trangThai,
         trangThaiTen: item.trangThaiTen,
         soLuuCV: item.soLuuCV,
         soVBDen: item.soVBDen,
         ngayNhap: item.ngayNhap,
         ngayTraLoi: item.ngayTraLoi,
+        ngayBanHanh: item.ngayBanHanh,
         traLoiCVso: item.traLoiCVso,
         soBan: item.soBan,
         trichYeu: item.trichYeu,
@@ -79,6 +88,11 @@ const fromJson = (item) => {
         congVanChiDoc: item.congVanChiDoc,
         banChinh: item.banChinh,
         hienThiThongBao: item.hienThiThongBao,
+        ngayNhan: item.ngayNhan,
+        coQuanGui: item.coQuanGui,
+        khoiCoQuanGui: item.khoiCoQuanGui,
+        hinhThucNhan: item.hinhThucNhan,
+        nguoiKy: item.nguoiKy,
     }
 }
 
@@ -89,11 +103,13 @@ const baseJson = () => {
         number: 0,
         loaiVanBan: null,
         loaiVanBanTen: null,
+        trangThai: null,
         trangThaiTen: null,
         soLuuCV: null,
         soVBDen: null,
         ngayNhap: new Date(),
         ngayTraLoi: new Date(),
+        ngayBanHanh: new Date(),
         traLoiCVso: null,
         soBan: null,
         trichYeu: null,
@@ -103,6 +119,7 @@ const baseJson = () => {
         canBoSoanTen: null,
         hinhThucGui: null,
         hinhThucGuiTen: null,
+        hinhThucNhan: null,
         hanXuLy: new Date(),
         linhVuc: null,
         linhVucTen: null,
@@ -121,6 +138,10 @@ const baseJson = () => {
         congVanChiDoc: false,
         banChinh: false,
         hienThiThongBao: false,
+        ngayNhan: new Date(),
+        coQuanGui: null,
+        khoiCoQuanGui: null,
+        nguoiKy: null,
     }
 }
 

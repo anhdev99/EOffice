@@ -123,6 +123,21 @@ export default {
         this.loading = false
       }
     },
+    getHinhThuc() {
+      try {
+        let promise = this.$store.dispatch("hinhThucGuiStore/get")
+        return promise.then(resp => {
+          if (resp.resultCode == "SUCCESS") {
+            let items = resp.data
+            this.loading = false
+            this.options = items;
+          }
+          return [];
+        });
+      } finally {
+        this.loading = false
+      }
+    },
     addTempPhanCong() {
       this.tempPhanCongData.push({nguoiThucHien: "", ghiChu: ""});
     },

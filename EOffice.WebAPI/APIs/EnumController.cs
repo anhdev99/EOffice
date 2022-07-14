@@ -1,12 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using EOffice.WebAPI.Exceptions;
 using EOffice.WebAPI.Helpers;
 using EOffice.WebAPI.Interfaces;
 using EOffice.WebAPI.Models;
+using Microsoft.AspNetCore.Mvc;
 using EResultResponse = EOffice.WebAPI.Helpers.EResultResponse;
 
 namespace EOffice.WebAPI.APIs
@@ -15,24 +13,24 @@ namespace EOffice.WebAPI.APIs
     // [Authorize]
     public class EnumController : ControllerBase
     {
-        private IDefineStatusService _defineStatusService;
+        private IEnumService _enumService;
 
-        public  EnumController(IDefineStatusService enumService)
+        public  EnumController(IEnumService enumService)
         {
-            _defineStatusService = enumService;
+            _enumService = enumService;
+            
         }
-
-
+        
         [HttpGet]
-        [Route("get-status-question")]
-        public async Task<IActionResult> GetStatusQuestion()
+        [Route("get-muc-do")]
+        public async Task<IActionResult> GetMucDo()
         {
             try
             {
-                var response = await _defineStatusService.GetStatusQuestion();
+                var response = await _enumService.GetMucDo();
 
                 return Ok(
-                    new ResultResponse<List<StatusQuestion>>()
+                    new ResultResponse<List<EnumModel>>()
                         .WithData(response)
                         .WithCode(EResultResponse.SUCCESS.ToString())
                         .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
@@ -46,11 +44,6 @@ namespace EOffice.WebAPI.APIs
                 );
             }
         }
-        
-        
-        
-        
-        
         
     }
 }

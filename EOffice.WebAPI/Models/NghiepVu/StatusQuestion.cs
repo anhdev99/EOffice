@@ -16,4 +16,10 @@ namespace EOffice.WebAPI.Models
         public string StatusCode { get; set; }
         public string StatusName { get; set; }
     }
+    
+    public class EnumModel
+    {
+        public string Code { get; set; }
+        public string Name { get; set; }
+    }
 }

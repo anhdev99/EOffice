@@ -18,6 +18,8 @@ namespace EOffice.WebAPI.Models
         public string SoLuuCV { get; set; }
         public string SoVBDen{ get; set; }
         public DateTime? NgayNhap { get; set; }
+        public DateTime? NgayNhan { get; set; }
+        public DateTime? NgayBanHanh { get; set; }
         public DateTime? NgayTraLoi { get; set; }
         public string TraLoiCVSo { get; set; }
         public string SoBan { get; set; }
@@ -39,12 +41,19 @@ namespace EOffice.WebAPI.Models
         public string NoiLuuTru { get; set; }
         public string CoQuanNhan { get; set; }
         public string CoQuanNhanTen { get; set; }
+        
         public string KhoiCoQuanNhan { get; set; }
         public string KhoiCoQuanNhanTen { get; set; }
+        
+        public string CoQuanGui { get; set; }
+        public string CoQuanGuiTen { get; set; }
+        public string KhoiCoQuanGui { get; set; }
+        public string KhoiCoQuanGuiTen { get; set; }
         public string HanXuLy { get; set; }
         public string CongVanChiDoc { get; set; }
         public string BanChinh { get; set; }
         public string HienThiThongBao { get; set; }
+        public string NguoiKy { get; set; }
         public FileShort File { get; set; }
         [BsonIgnore]
         public FileShort UploadFiles{ get; set; }
