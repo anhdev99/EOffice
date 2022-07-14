@@ -34,9 +34,6 @@ const toJson = (item) => {
         noiLuuTru: item.noiLuuTru,
         coQuanNhan: item.coQuanNhan,
         coQuanNhanTen: item.coQuanNhanTen,
-        butPhe: item.butPhe,
-        donViXuLy: item.donViXuLy,
-        phanCong: item.phanCong,
         congVanChiDoc: item.congVanChiDoc,
         banChinh: item.banChinh,
         hienThiThongBao: item.hienThiThongBao,
@@ -45,6 +42,10 @@ const toJson = (item) => {
         khoiCoQuanGui: item.khoiCoQuanGui,
         hinhThucNhan: item.hinhThucNhan,
         nguoiKy: item.nguoiKy,
+
+        butphe: item.butphe,
+        donViNhanXuLy: item.donViNhanXuLy,
+        phanCong: item.phanCong,
     }
 }
 const fromJson = (item) => {
@@ -82,9 +83,6 @@ const fromJson = (item) => {
         noiLuuTru: item.noiLuuTru,
         coQuanNhan: item.coQuanNhan,
         coQuanNhanTen: item.coQuanNhanTen,
-        butPhe: item.butPhe,
-        donViXuLy: item.donViXuLy,
-        phanCong: item.phanCong,
         congVanChiDoc: item.congVanChiDoc,
         banChinh: item.banChinh,
         hienThiThongBao: item.hienThiThongBao,
@@ -93,6 +91,10 @@ const fromJson = (item) => {
         khoiCoQuanGui: item.khoiCoQuanGui,
         hinhThucNhan: item.hinhThucNhan,
         nguoiKy: item.nguoiKy,
+
+        butphe: item.butphe,
+        donViNhanXuLy: item.donViNhanXuLy,
+        phanCong: item.phanCong,
     }
 }
 
@@ -134,7 +136,6 @@ const baseJson = () => {
         coQuanNhanTen: null,
         butPhe: null,
         donViXuLy: null,
-        phanCong: null,
         congVanChiDoc: false,
         banChinh: false,
         hienThiThongBao: false,
@@ -142,6 +143,10 @@ const baseJson = () => {
         coQuanGui: null,
         khoiCoQuanGui: null,
         nguoiKy: null,
+
+        butphe: null,
+        donViNhanXuLy: null,
+        phanCong: null,
     }
 }
 

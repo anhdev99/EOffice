@@ -505,4 +505,8 @@ export default {
   background: linear-gradient(135deg, #06548e, #ffffff);
   box-shadow: 0px 3px 0px #06548e;
 }
+.customAddElement {
+  position: absolute;
+  left: -25px;
+}
 </style>

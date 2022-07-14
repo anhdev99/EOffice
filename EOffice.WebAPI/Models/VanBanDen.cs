@@ -101,7 +101,7 @@ namespace EOffice.WebAPI.Models
     {
         public string YKienChiDao { get; set; }
         public string NguoiButPhe { get; set; }
-        public string NguoiNhanXuLy { get; set; }
+        public string NguoiNhanXuLy { get; set; }   
         public FileShort File { get; set; }
         [BsonIgnore]
         public FileShort UploadFiles{ get; set; }
