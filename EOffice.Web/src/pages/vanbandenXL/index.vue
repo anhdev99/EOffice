@@ -14,6 +14,7 @@ import Switches from "vue-switches";
  */
 import CKEditor from "@ckeditor/ckeditor5-vue";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import vue2Dropzone from "vue2-dropzone";
 
 /**
  * Advanced table component
@@ -23,7 +24,7 @@ export default {
     title: "Văn bản đến",
     meta: [{name: "description", content: appConfig.description}]
   },
-  components: {Layout, PageHeader, Multiselect, ckeditor: CKEditor.component, Switches, DatePicker},
+  components: {Layout, PageHeader, Multiselect, ckeditor: CKEditor.component, Switches, DatePicker, vueDropzone: vue2Dropzone},
   data() {
     return {
       title: "Văn bản đến",
@@ -568,6 +569,21 @@ export default {
                                 ></date-picker>
                               </div>
                             </div>
+
+                            <!--                            file đính kèm-->
+                            <div class="col-md-12">
+                              <label for="">File đính kèm</label>
+                              <vue-dropzone
+                                  id="dropzone"
+                                  ref="myVueDropzone"
+                                  :options="dropzoneOptions"
+                              ></vue-dropzone>
+                            </div>
+                          </div>
+
+                        </div>
+                        <div class="col-md-5">
+                          <div class="row">
                             <!--                            Ngày Ký-->
                             <div class="col-md-6">
                               <div class="mb-2">
@@ -626,16 +642,6 @@ export default {
                                 ></multiselect>
                               </div>
                             </div>
-                            <!--                            file đính kèm-->
-                            <div class="col-md-12">
-                              <label for="">File đính kèm</label>
-                            </div>
-                          </div>
-
-                        </div>
-                        <div class="col-md-5">
-                          <div class="row">
-
                             <!--                            Khối cơ quan gửi-->
                             <div class="col-md-6">
                               <div class="mb-2">
@@ -683,7 +689,6 @@ export default {
                                     selectLabel="Nhấn enter để chọn"
                                     selectedLabel="Đã chọn"
                                 ></multiselect>
-
                               </div>
                             </div>
                             <!--                            Lĩnh vực-->
@@ -708,7 +713,6 @@ export default {
                               <div class="mb-2">
                                 <label class="form-label" for="validationCustom01">Mức độ tính chất</label>
 
-
                               </div>
                             </div>
                             <!--                            Mức độ bảo mật-->
@@ -723,16 +727,24 @@ export default {
                             <div class="col-md-6">
                               <div class="mb-2">
                                 <label class="form-label" for="validationCustom01">Hồ sơ đơn vị</label>
-
-
+                                <input
+                                    v-model="model.hoSoDonVi"
+                                    type="text"
+                                    class="form-control"
+                                    placeholder=""
+                                />
                               </div>
                             </div>
                             <!--                            Nơi lưu trữ-->
                             <div class="col-md-6">
                               <div class="mb-2">
                                 <label class="form-label" for="validationCustom01">Nơi lưu trữ</label>
-
-
+                                <input
+                                    v-model="model.noiLuuTru"
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="Nhập nơi lưu trữ"
+                                />
                               </div>
                             </div>
                             <!--                            Điều kiện-->
@@ -965,4 +977,6 @@ export default {
 .ck-content {
   height: 100px !important;
 }
+
+
 </style>
