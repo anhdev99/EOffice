@@ -152,7 +152,7 @@ export default {
                           <label :for="`chk-${item.id}`"></label>
                         </div>
                         <span :class="`star-toggle far fa-star text-${item.id}`"></span>
-                        <a href="#" class="title" style="font-weight: bold; width: 280px" v-on:click="handleDetail(item.id),handleDetailUser(item.senderId)">{{ item.sender }}</a>
+                        <a href="#" class="title" style="font-weight: bold; width: 280px" v-on:click="handleDetail(item.id), handleDetailUser(item.senderId)">{{ item.sender }}</a>
                       </div>
                       <div class="col-mail col-mail-2" style="position: absolute;
                                 top: 0;
