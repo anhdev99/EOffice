@@ -11,7 +11,7 @@ namespace EOffice.WebAPI.Models
         public string Id { get; set; }
         public int Version { get; set; }
         public int Number { get; set; }
-        public string LoaiVanBan { get; set; }
+        public LoaiVanBan LoaiVanBan { get; set; }
         public string LoaiVanBanTen { get; set; }
         public string TrangThai { get; set; }
         public string TrangThaiTen { get; set; }
@@ -49,10 +49,10 @@ namespace EOffice.WebAPI.Models
         public string CoQuanGuiTen { get; set; }
         public string KhoiCoQuanGui { get; set; }
         public string KhoiCoQuanGuiTen { get; set; }
-        public string HanXuLy { get; set; }
-        public string CongVanChiDoc { get; set; }
-        public string BanChinh { get; set; }
-        public string HienThiThongBao { get; set; }
+        public DateTime? HanXuLy { get; set; }
+        public bool CongVanChiDoc { get; set; }
+        public bool BanChinh { get; set; }
+        public bool HienThiThongBao { get; set; }
         public string NguoiKy { get; set; }
         public FileShort File { get; set; }
         [BsonIgnore]

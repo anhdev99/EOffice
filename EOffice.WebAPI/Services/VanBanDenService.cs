@@ -112,7 +112,7 @@ namespace EOffice.WebAPI.Services
 
             if (model.LoaiVanBan != default)
             {
-                var loaiVanBan = _context.LoaiVanBan.Find(x => x.Id == model.LoaiVanBan).FirstOrDefault();
+                var loaiVanBan = _context.LoaiVanBan.Find(x => x.Id == model.LoaiVanBan.Id).FirstOrDefault();
                 entity.LoaiVanBan = model.LoaiVanBan;
                 entity.LoaiVanBanTen = loaiVanBan?.Ten;
             }
@@ -213,7 +213,7 @@ namespace EOffice.WebAPI.Services
 
             if (model.LoaiVanBan != default)
             {
-                var loaiVanBan = _context.LoaiVanBan.Find(x => x.Id == model.LoaiVanBan).FirstOrDefault();
+                var loaiVanBan = _context.LoaiVanBan.Find(x => x.Id == model.LoaiVanBan.Id).FirstOrDefault();
                 entity.LoaiVanBan = model.LoaiVanBan;
                 entity.LoaiVanBanTen = loaiVanBan?.Ten;
             }

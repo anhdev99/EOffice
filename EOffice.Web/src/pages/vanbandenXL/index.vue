@@ -538,9 +538,7 @@ export default {
                                     track-by="id"
                                     label="ten"
                                     placeholder="Chọn trạng thái"
-                                    deselect-label="Không thể xoá "
-                                    selectLabel="Nhấn enter để chọn"
-                                    selectedLabel="Đã chọn"
+
                                 ></multiselect>
                                 <div
                                     v-if="submitted && $v.model.soVBDen.$error"
