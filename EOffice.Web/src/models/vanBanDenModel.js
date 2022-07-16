@@ -101,6 +101,8 @@ const fromJson = (item) => {
 const baseJson = (items) => {
     return {
         version: 1,
+        id: null,
+        version: 0,
         number: 0,
         loaiVanBan: null,
         loaiVanBanTen: null,
@@ -108,11 +110,10 @@ const baseJson = (items) => {
         trangThaiTen: null,
         soLuuCV: null,
         soVBDen: null,
-        ngayNhap: new Date(),
-        ngayNhan: new Date(),
-        ngayBanHanh: new Date(),
-        ngayTraLoi: new Date(),
-        traLoiCVSo: null,
+        ngayNhap: null,
+        ngayTraLoi: null,
+        ngayBanHanh: null,
+        traLoiCVso: null,
         soBan: null,
         trichYeu: null,
         donViSoan: null,
@@ -123,6 +124,7 @@ const baseJson = (items) => {
         hinhThucNhantTen: null,
         hinhThucGui: null,
         hinhThucGuiTen: null,
+        hanXuLy: null,
         linhVuc: null,
         linhVucTen: null,
         mucDoBaoMat: null,
@@ -134,23 +136,19 @@ const baseJson = (items) => {
         noiLuuTru: null,
         coQuanNhan: null,
         coQuanNhanTen: null,
-        khoiCoQuanNhan: null,
-        khoiCoQuanNhanTen: null,
-        coQuanGui: null,
-        coQuanGuiTen: null,
-        khoiCoQuanGui: null,
-        khoiCoQuanGuiTen: null,
-        hanXuLy: new Date(),
+
+        donViXuLy: null,
         congVanChiDoc: false,
         banChinh: false,
         hienThiThongBao: false,
+        ngayNhan: null,
+        coQuanGui: null,
+        khoiCoQuanGui: null,
         nguoiKy: null,
         ngayKy: new Date(),
         file: null,
         uploadFiles: null,
         nguoiPhanCong: null,
-
-
     }
 }
 
