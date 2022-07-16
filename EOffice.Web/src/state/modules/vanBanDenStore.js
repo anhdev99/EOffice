@@ -8,6 +8,7 @@ export const actions = {
         return apiClient.post(controller + "/get-paging-params", params);
     },
     async create({commit}, values) {
+        console.log("createVanBanDen", values);
         return apiClient.post(controller + "/create", values);
     },
     async update({commit, dispatch}, values) {

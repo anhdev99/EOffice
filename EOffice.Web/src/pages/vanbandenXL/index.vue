@@ -219,7 +219,8 @@ export default {
         })
       } else {
         console.log("this.model-create", this.model);
-        //Create model
+        //Create modelhandleSubmit
+        this.model.version = 1;
         await this.$store.dispatch("vanBanDenStore/create", this.model).then((res) => {
           if (res.resultCode === 'SUCCESS') {
             this.showModal = false;
@@ -360,17 +361,25 @@ export default {
         console.log("optionsMucDo", this.optionsMucDo);
       });
     },
-    addThisFile(items, re) {
-      console.log("file", items, re);
-      // console.log("response", response);
-      // if (this.model) {
-      //   if (this.model.uploadFiles == null || this.model.uploadFiles.length <= 0)
-      //   {
-      //     this.model.uploadFiles = [];
-      //   }
-      //   let fileSuccess = response.data;
-      //   this.model.uploadFiles.push({fileId: fileSuccess.id,  fileName: fileSuccess.fileName , ext : fileSuccess.ext})
-      // }
+    removeThisFile(file, error, xhr) {
+      let fileCongViec = JSON.parse(file.xhr.response);
+      if (fileCongViec.data && fileCongViec.data.id) {
+        let idFile = fileCongViec.data.id;
+        let resultData = this.model.uploadFiles.filter(x => {
+          return x.fileId != idFile;
+        })
+        this.model.uploadFiles = resultData;
+      }
+    },
+    addThisFile(file, response) {
+      if (this.model) {
+        if (this.model.uploadFiles == null || this.model.uploadFiles.length <= 0) {
+          this.model.uploadFiles = [];
+        }
+        console.log("LOG ADD THIS FILE ", response)
+        let fileSuccess = response.data;
+        this.model.uploadFiles.push({fileId: fileSuccess.id, fileName: fileSuccess.fileName, ext: fileSuccess.ext})
+      }
     },
     removeCommentFile(file, error, xhr) {
       let fileCongViec = JSON.parse(file.xhr.response);
@@ -597,8 +606,21 @@ export default {
                               <vue-dropzone
                                   id="dropzone"
                                   ref="myVueDropzone"
+                                  :use-custom-slot="true"
                                   :options="dropzoneOptions"
-                              ></vue-dropzone>
+                                  v-on:vdropzone-removed-file="removeThisFile"
+                                  v-on:vdropzone-success="addThisFile"
+                              >
+                                <div class="dropzone-custom-content">
+                                  <i
+                                      class="display-1 text-muted bx bxs-cloud-upload"
+                                      style="font-size: 70px"
+                                  ></i>
+                                  <h4>
+                                    Kéo thả tệp tin hoặc bấm vào để tải tệp tin
+                                  </h4>
+                                </div>
+                              </vue-dropzone>
                             </div>
                           </div>
 
@@ -610,7 +632,7 @@ export default {
                               <div class="mb-2">
                                 <label class="form-label" for="validationCustom01">Ngày ký</label>
                                 <date-picker
-                                    v-model="model.ngay"
+                                    v-model="model.ngayKy"
                                     format="DD/MM/YYYY"
                                     :first-day-of-week="1"
                                     lang="en"
@@ -720,7 +742,7 @@ export default {
                                     v-model="model.linhVuc"
                                     :options="optionsLinhVuc"
                                     track-by="id"
-                                    label="label"
+                                    label="ten"
                                     placeholder="Chọn lĩnh vực"
                                     deselect-label="Nhấn để xoá"
                                     selectLabel="Nhấn enter để chọn"

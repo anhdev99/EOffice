@@ -28,6 +28,8 @@ namespace EOffice.WebAPI.Models
         public string DonViSoanTen { get; set; }
         public string CanBoSoan { get; set; }
         public string CanBoSoanTen { get; set; }
+        public string HinhThucNhan { get; set; }
+        public string HinhThucNhanTen { get; set; }
         public string HinhThucGui { get; set; }
         public string HinhThucGuiTen { get; set; }
         public string LinhVuc { get; set; }
@@ -50,19 +52,20 @@ namespace EOffice.WebAPI.Models
         public string KhoiCoQuanGui { get; set; }
         public string KhoiCoQuanGuiTen { get; set; }
         public string HanXuLy { get; set; }
-        public string CongVanChiDoc { get; set; }
-        public string BanChinh { get; set; }
-        public string HienThiThongBao { get; set; }
+        public bool CongVanChiDoc { get; set; }
+        public bool BanChinh { get; set; }
+        public bool HienThiThongBao { get; set; }
         public string NguoiKy { get; set; }
+        public DateTime? NgayKy { get; set; }
         public FileShort File { get; set; }
         [BsonIgnore]
         public FileShort UploadFiles{ get; set; }
         public List<NguoiPhanCong> NguoiPhanCong { get; set; }
         
-        public ButPhe ButPhe { get; set; }
-        public List<DonViXuLy> DonViXuLy { get; set; }
+        //public ButPhe ButPhe { get; set; }
+        //public List<DonViXuLy> DonViXuLy { get; set; }
         
-        public List<PhanCong> PhanCong { get; set; }
+        //public List<PhanCong> PhanCong { get; set; }
 
     }
 

@@ -98,10 +98,9 @@ const fromJson = (item) => {
     }
 }
 
-const baseJson = () => {
+const baseJson = (items) => {
     return {
-        id: null,
-        version: null,
+        version: 1,
         number: 0,
         loaiVanBan: null,
         loaiVanBanTen: null,
@@ -110,19 +109,20 @@ const baseJson = () => {
         soLuuCV: null,
         soVBDen: null,
         ngayNhap: new Date(),
-        ngayTraLoi: new Date(),
+        ngayNhan: new Date(),
         ngayBanHanh: new Date(),
-        traLoiCVso: null,
+        ngayTraLoi: new Date(),
+        traLoiCVSo: null,
         soBan: null,
         trichYeu: null,
         donViSoan: null,
         donViSoanTen: null,
         canBoSoan: null,
         canBoSoanTen: null,
+        hinhThucNhan: null,
+        hinhThucNhantTen: null,
         hinhThucGui: null,
         hinhThucGuiTen: null,
-        hinhThucNhan: null,
-        hanXuLy: new Date(),
         linhVuc: null,
         linhVucTen: null,
         mucDoBaoMat: null,
@@ -134,19 +134,23 @@ const baseJson = () => {
         noiLuuTru: null,
         coQuanNhan: null,
         coQuanNhanTen: null,
-        butPhe: null,
-        donViXuLy: null,
+        khoiCoQuanNhan: null,
+        khoiCoQuanNhanTen: null,
+        coQuanGui: null,
+        coQuanGuiTen: null,
+        khoiCoQuanGui: null,
+        khoiCoQuanGuiTen: null,
+        hanXuLy: new Date(),
         congVanChiDoc: false,
         banChinh: false,
         hienThiThongBao: false,
-        ngayNhan: new Date(),
-        coQuanGui: null,
-        khoiCoQuanGui: null,
         nguoiKy: null,
+        ngayKy: new Date(),
+        file: null,
+        uploadFiles: null,
+        nguoiPhanCong: null,
 
-        butphe: null,
-        donViNhanXuLy: null,
-        phanCong: null,
+
     }
 }
 

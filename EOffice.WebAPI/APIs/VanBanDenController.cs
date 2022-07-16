@@ -29,7 +29,7 @@ namespace EOffice.WebAPI.APIs
         {
             try
             {
-                var response = await _vanBanDenService.Create(model);
+                        var response = await _vanBanDenService.Create(model);
                 return Ok(
                     new ResultResponse<VanBanDen>()
                         .WithData(response)
