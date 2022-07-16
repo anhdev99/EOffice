@@ -102,7 +102,6 @@ const baseJson = (items) => {
     return {
         version: 1,
         id: null,
-        version: 0,
         number: 0,
         loaiVanBan: null,
         loaiVanBanTen: null,
