@@ -39,6 +39,7 @@ namespace EOffice.WebAPI.Models
         [BsonIgnore] public string Password { get; set; }
         [BsonIgnore] public List<string> Permissions { get; set; }
         [BsonIgnore] public List<NavMenuVM> Menu { get; set; }
+        [BsonIgnore] public string NgayKy { get; set; }
     }
 
     public class UserShort

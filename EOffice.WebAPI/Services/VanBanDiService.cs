@@ -24,6 +24,7 @@ namespace EOffice.WebAPI.Services
         private readonly BaseMongoDb<VanBanDi, string> BaseMongoDb;
         private readonly IMongoCollection<VanBanDi> _collection;
         private readonly IDbSettings _settings;
+        private readonly IFileService _fileService;
         private ILoggingService _logger;
         private readonly HistoryVanBanDiService _history;
         private List<String> filePicture = new List<string>() {".jpeg", ".jpg", ".gif", ".png"};
@@ -31,6 +32,7 @@ namespace EOffice.WebAPI.Services
 
         public VanBanDiService(HistoryVanBanDiService history, ILoggingService logger, IDbSettings settings,
             DataContext context,
+            IFileService fileService,
             IHttpContextAccessor contextAccessor)
             : base(context, contextAccessor)
         {
@@ -38,12 +40,46 @@ namespace EOffice.WebAPI.Services
             BaseMongoDb = new BaseMongoDb<VanBanDi, string>(_context.VanBanDi);
             _collection = context.VanBanDi;
             _settings = settings;
+            _fileService = fileService;
             _logger = logger.WithCollectionName(_settings.VanBanDiCollectionName)
                 .WithDatabaseName(_settings.DatabaseName)
                 .WithUserName(CurrentUserName);
             _history = history;
         }
 
+        public async Task<VanBanDi> CapSoVanBan()
+        {
+            var vanBanDi = _collection.Find(x => x.IsDeleted != true).ToList();
+            var identiyList = vanBanDi.Max();
+            var max = 0;
+            if (identiyList != default)
+            {
+                max = identiyList.Identity;
+            }
+            else
+            {
+                max = 1;
+            }
+            var newVanBanDi = new VanBanDi();
+            string formatMax = "";
+            if (max < 10)
+            {
+                formatMax = "000" + max;
+            }else if (max < 100)
+            {
+                formatMax = "00" + max;
+            }else if (max < 1000)
+            {
+                formatMax = "0" + max;
+            }
+            else
+            {
+                formatMax = max.ToString();
+            }
+            newVanBanDi.SoLuuCV = "ĐHĐT-HC-" + formatMax + "/"+ DateTime.Now.Year;
+
+            return newVanBanDi;
+        }
         public async Task<VanBanDi> Create(VanBanDi model)
         {
             if (model == default)
@@ -316,7 +352,69 @@ namespace EOffice.WebAPI.Services
             var result = new PagingModel<VanBanDi>();
             var builder = Builders<VanBanDi>.Filter;
             var filter = builder.Empty;
-            filter = builder.And(filter, builder.Where(x => x.IsDeleted == false));
+
+            var checkQuyenThuKy =
+                CurrentUser.Roles.Find(x => x.Ten == "Thư ký hiệu trường" || x.Ten == "Văn thư trường");
+            if (checkQuyenThuKy != default)
+            {
+                filter = builder.And(filter, builder.Where(x => x.IsDeleted == false));
+            }
+            else
+            {
+                filter = builder.And(filter, builder.Where(x => x.IsDeleted == false && x.CreatedBy == CurrentUserName));
+            }
+
+            // filter = filter & builder.In(x => x.IdOwner, CurrentUser.DonViIds);
+            if (!String.IsNullOrEmpty(param.Content))
+            {
+                filter = builder.And(filter,
+                    builder.Where(x => x.SoLuuCV.Trim().ToLower().Contains(param.Content.Trim().ToLower())));
+            }
+
+            if (!String.IsNullOrEmpty(param.TrangThai))
+            {
+                filter = builder.And(filter, builder.Eq(x => x.TrangThai.Code, param.TrangThai));
+            }
+
+            if (!String.IsNullOrEmpty(param.LinhVuc))
+            {
+                filter = builder.And(filter, builder.Eq(x => x.LinhVuc.Id, param.LinhVuc));
+            }
+
+            string sortBy = nameof(VanBanDi.ModifiedAt);
+            result.TotalRows = await _collection.CountDocumentsAsync(filter);
+            result.Data = await _collection.Find(filter)
+                .Sort(param.SortDesc
+                    ? Builders<VanBanDi>
+                        .Sort.Descending(sortBy)
+                    : Builders<VanBanDi>
+                        .Sort.Ascending(sortBy))
+                .Skip(param.Skip)
+                .Limit(param.Limit)
+                .ToListAsync();
+            return result;
+        }
+        
+        public async Task<PagingModel<VanBanDi>> GetPagingXuLy(VanBanDiParam param)
+        {
+            var result = new PagingModel<VanBanDi>();
+            var builder = Builders<VanBanDi>.Filter;
+            var filter = builder.Empty;
+
+            
+            // var checkQuyenThuKy =
+            //     CurrentUser.Roles.Find(x => x.Ten == "Thư ký hiệu trường" || x.Ten == "Văn thư trường");
+            // if (checkQuyenThuKy != default)
+            // {
+            //     filter = builder.And(filter, builder.Where(x => x.IsDeleted == false));
+            // }
+            // else
+            // {
+            //     filter = builder.And(filter, builder.Where(x => x.IsDeleted == false && x.CreatedBy == CurrentUserName));
+            // }
+            
+            filter = builder.And(filter, builder.Where(x => x.PhanCongKySo.Any(x => x.UserName == CurrentUserName)));
+
             // filter = filter & builder.In(x => x.IdOwner, CurrentUser.DonViIds);
             if (!String.IsNullOrEmpty(param.Content))
             {
@@ -632,28 +730,80 @@ namespace EOffice.WebAPI.Services
                 .WithTitle( "Ký thành công: " + CurrentUserName)
                 .SaveChangeHistoryQuestion();
 
-            TienHanhKySo(vanBanDi.PhanCongKySo, path, vanBanDi.File.Select(x => x.FileId).ToList());
+            var vanBanNew = _collection.Find(x => x.Id == model.VanBanDiId).FirstOrDefault();
+
+          
+            if (vanBanNew != default)
+            {
+                var checkPhanCongKy = vanBanNew.PhanCongKySo.Where(x => x.NgayKyString == null && x.ChoPhepKy).ToList();
+                if (checkPhanCongKy.Count <= 0)
+                {
+                    var resultFile = await TienHanhKySo(vanBanDi.PhanCongKySo, path, vanBanDi.File.Select(x => x.FileId).ToList());
+                    if (resultFile != default)
+                    {
+                        FileShort _newFile = new FileShort();
+                        _newFile.Ext = resultFile.Ext;
+                        _newFile.FileName = resultFile.FileName;
+                        _newFile.FileId = resultFile.Id;
+
+                        if (vanBanDi.FilePDF == default)
+                            vanBanDi.FilePDF = new List<FileShort>();
+                        vanBanDi.FilePDF.Add(_newFile);
+                        
+                        var newTrangThai = _context.TrangThai.Find(x => x.Ten == "Hoàn thành ký số").FirstOrDefault();
+                        if (newTrangThai != default)
+                        {
+                            vanBanNew.TrangThai = newTrangThai;
+                        }
+                        var resultNew = await BaseMongoDb.UpdateAsync(vanBanDi);
+                        if (!result.Success)
+                        {
+                            throw new ResponseMessageException()
+                                .WithCode(EResultResponse.FAIL.ToString())
+                                .WithMessage(DefaultMessage.UPDATE_FAILURE);
+                        }
+                    }
+                }
+            }
+        
             return vanBanDi;
         }
-
-                private bool TienHanhKySo(List<PhanCongKySo> phanCongKySos, string rootPath, List<string> fileIds)
+                private async Task<File> TienHanhKySo(List<PhanCongKySo> phanCongKySos, string rootPath, List<string> fileIds)
                 {
                     var userNameFormPhanCongKySo = phanCongKySos.Select(x => x.UserName).ToList();
                     var users = _context.Users.Find(x => userNameFormPhanCongKySo.Contains(x.UserName)).ToList();
+                    var userAssign = new List<User>();
+
+                    foreach (var item in phanCongKySos)
+                    {
+                        var check = users.Where(x => x.UserName == item.UserName && item.ChoPhepKy).FirstOrDefault();
+                        if (check != default)
+                        {
+                            check.NgayKy = item.NgayKyString;
+                            userAssign.Add(check);
+                        }
+                    }
+                    
+                    
                     var fileWord = _context.Files.Find(x => x.Id == fileIds.FirstOrDefault()).FirstOrDefault();
                     var kySoFunc = new KySoNoiBoService();
                     var fileName = "";
+                    var filePathPDF = "";
                     if (fileWord.Ext == ".docx")
                     {
-                        fileName = rootPath + "/" + fileWord.FileName.Replace(".docx", ".pdf");
+                        filePathPDF = rootPath + "/" + fileWord.FileName.Replace(".docx", ".pdf");
+                        fileName = fileWord.FileName.Replace(".docx", ".pdf");
                     }else if  (fileWord.Ext == ".doc")
                     {
-                        fileName = rootPath  + "/" + fileWord.FileName.Replace(".doc", ".pdf");
+                        filePathPDF = rootPath  + "/" + fileWord.FileName.Replace(".doc", ".pdf");
+                        fileName =  fileWord.FileName.Replace(".doc", ".pdf");
                     }
-                 
                     
-                    kySoFunc.TienTrinhKySo(fileWord.Path, fileWord.FileName, fileName ,users);
-                    return false;
+                    kySoFunc.TienTrinhKySo(fileWord.Path, fileWord.FileName, filePathPDF ,userAssign);
+                    var result =
+                        await _fileService.SaveFileAsync(filePathPDF, fileName, Guid.NewGuid().ToString() + ".pdf", ".pdf", 100);
+                   
+                    return result;
                 }
                 public async Task<List<PhanCongKySo>> GetPhanCongKySoByVanBanId(string vanBanId)
         {
@@ -664,8 +814,9 @@ namespace EOffice.WebAPI.Services
                     .WithCode(EResultResponse.FAIL.ToString())
                     .WithMessage(DefaultMessage.DATA_NOT_FOUND);
             };
-
-            return vanBanDi.PhanCongKySo.OrderByDescending(x => x.ThuTu).ToList();
+            if(vanBanDi.PhanCongKySo != default)
+                return vanBanDi.PhanCongKySo.OrderByDescending(x => x.ThuTu).ToList();
+            return vanBanDi.PhanCongKySo = new List<PhanCongKySo>();
         }
     }
 }

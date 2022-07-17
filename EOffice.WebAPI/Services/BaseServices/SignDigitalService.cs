@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.IO.Pipelines;
 using System.Text;
+using System.Xml;
 using EOffice.WebAPI.Models;
 using Org.BouncyCastle.Asn1.Pkcs;
 using Org.BouncyCastle.Crypto;
@@ -118,7 +119,7 @@ namespace EOffice.WebAPI.Services
 
     public class KySoNoiBoService
     {
-                public void TienTrinhKySo(string pathWord, string fileName, string pathPDF, List<User> users)
+        public void TienTrinhKySo(string pathWord, string fileName, string pathPDF, List<User> users)
         {
             Console.WriteLine(".............................");
             Console.WriteLine(".......Demo Sign Digital.....");
@@ -233,8 +234,10 @@ namespace EOffice.WebAPI.Services
                 //Fill Data in Rows
                 Paragraph p2 = DataRow.Cells[0].AddParagraph();
                 p2.Format.HorizontalAlignment = HorizontalAlignment.Center;
-                p2.AppendText("Signature Valid \n").ApplyCharacterFormat(formatHSign);
-                p2.AppendText("Da ky boi... " + listuser[i].FullName).ApplyCharacterFormat(formatHSign);
+                p2.AppendText("Chữ ký hợp lệ \n").ApplyCharacterFormat(formatHSign);
+                p2.AppendText(listuser[i].FullName + "\n").ApplyCharacterFormat(formatHSign);
+                p2.AppendText(listuser[i].DonVi?.Ten + "\n").ApplyCharacterFormat(formatHSign);
+                p2.AppendText( listuser[i].NgayKy + "\n").ApplyCharacterFormat(formatHSign);
                 // DataRow.Cells[0].CellFormat.VerticalAlignment = VerticalAlignment.Middle ;
 
                 i = i + 1;
@@ -251,10 +254,11 @@ namespace EOffice.WebAPI.Services
                     //Fill Data in Rows
                     Paragraph p3 = DataRow.Cells[1].AddParagraph();
                     p3.Format.HorizontalAlignment = HorizontalAlignment.Center;
-                    p3.AppendText("Signature Valid \n").ApplyCharacterFormat(formatHSign);
-                    p3.AppendText("Da ky boi... " + listuser[i].UserName).ApplyCharacterFormat(formatHSign);
+                    p3.AppendText("Chữ ký hợp lệ \n").ApplyCharacterFormat(formatHSign);
+                    p3.AppendText(listuser[i].FullName + "\n").ApplyCharacterFormat(formatHSign);
+                    p3.AppendText(listuser[i].DonVi?.Ten + "\n").ApplyCharacterFormat(formatHSign);
+                    p3.AppendText( listuser[i].NgayKy + "\n").ApplyCharacterFormat(formatHSign);
                     i = i + 1;
-                  
                 }
             }
 
@@ -269,7 +273,7 @@ namespace EOffice.WebAPI.Services
                     doc.SaveToStream(ms, Spire.Doc.FileFormat.Doc);
                     File.WriteAllBytes(pathPDF, ms.ToArray());
                 }
-                doc.SaveToFile(pathPDF, Spire.Doc.FileFormat.PDF);
+                // doc.SaveToFile(pathPDF, Spire.Doc.FileFormat.PDF);
                 // using (var strem = System.IO.File.Create(pathPDF))
                 // {
                 //     // strem.Position = 0;

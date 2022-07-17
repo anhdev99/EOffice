@@ -11,6 +11,7 @@ namespace EOffice.WebAPI.Models
         public string Id { get; set; }
         public int Version { get; set; }
         public int Number { get; set; }
+        public int Identity { get; set; }
         public LoaiVanBan LoaiVanBan { get; set; }
         public TrangThai TrangThai { get; set; }
         public string SoLuuCV { get; set; }
@@ -52,7 +53,7 @@ namespace EOffice.WebAPI.Models
         public User NguoiKy { get; set; }
         public DateTime? NgayKy { get; set; }
         public List<FileShort> File { get; set; }
-        
+        public List<FileShort> FilePDF { get; set; }
         public List<PhanCongKySo> PhanCongKySo { get; set; }
         [BsonIgnore]
         public List<FileShort> UploadFiles{ get; set; }

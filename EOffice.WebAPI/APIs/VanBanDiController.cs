@@ -27,6 +27,29 @@ namespace EOffice.WebAPI.APIs
             _hostingEnvironment = hostingEnvironment;
         }
 
+        [HttpGet]
+        [Route("cap-so-khi-tao-van-ban")]
+        public async Task<IActionResult> CapSoVanBanWhenNewVanBan()
+        {
+            try
+            {
+                var response = await _vanBanDiService.CapSoVanBan();
+                return Ok(
+                    new ResultResponse<VanBanDi>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.CREATE_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+        
         [HttpPost]
         [Route("create")]
         public async Task<IActionResult> Create([FromBody] VanBanDi model)
@@ -62,7 +85,9 @@ namespace EOffice.WebAPI.APIs
                 if (!Directory.Exists(uploadPath))
                     Directory.CreateDirectory(uploadPath);
                 var dateTime = DateTime.UtcNow.ToString("yyyy_MM_dd_HH_mm_ss");
-                var path = Path.Combine(_hostingEnvironment.ContentRootPath, uploadDirecotroy, dateTime);
+                var path = Path.Combine(uploadDirecotroy, dateTime);
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
                 
                 var response = await _vanBanDiService.AssignOrReject(model, path);
                 return Ok(
@@ -319,6 +344,31 @@ namespace EOffice.WebAPI.APIs
                 );
             }
         }
+        
+        [HttpPost]
+        [Route("get-paging-params-xuly")]
+        public async Task<IActionResult> GetPagingParamXuLy([FromBody] VanBanDiParam param)
+        {
+            try
+            {
+                var response = await _vanBanDiService.GetPagingXuLy(param);
+
+                return Ok(
+                    new ResultResponse<PagingModel<VanBanDi>>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+
         
         [HttpPost]
         [Route("get-paging-params-user")]

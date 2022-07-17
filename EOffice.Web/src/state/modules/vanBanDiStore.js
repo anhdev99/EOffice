@@ -7,6 +7,9 @@ export const actions = {
     async getPagingParams({commit}, params) {
         return apiClient.post(controller + "/get-paging-params", params);
     },
+    async getPagingParamsXuLy({commit}, params) {
+        return apiClient.post(controller + "/get-paging-params-xuly", params);
+    },
     async getPagingParamsVM({commit}, params) {
         return apiClient.post(controller + "/get-paging-params-vm", params);
     },
@@ -33,5 +36,8 @@ export const actions = {
     },
     async getPhanCongKySoByVanBanId({commit}, id) {
         return apiClient.get(controller + "/get-phancongkyso-by-vanbanid/" + id);
+    },
+    async getVaCapSo({commit}, id) {
+        return apiClient.get(controller + "/cap-so-khi-tao-van-ban");
     }
 };
