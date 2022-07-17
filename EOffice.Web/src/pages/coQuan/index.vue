@@ -7,13 +7,14 @@ import {notifyModel} from "@/models/notifyModel";
 import {pagingModel} from "@/models/pagingModel";
 import {CONSTANTS} from "@/helpers/constants";
 import {coQuanModel} from "@/models/coQuanModel";
+import Multiselect from "vue-multiselect";
 
 export default {
   page: {
     title: "Cơ quan",
     meta: [{name: "description", content: appConfig.description}],
   },
-  components: {Layout, PageHeader},
+  components: {Layout, PageHeader, Multiselect},
   data() {
     return {
       title: "Cơ quan",
@@ -68,10 +69,10 @@ export default {
           thStyle: "text-align:center",
         },
         {
-          key: "KhoiCoQuan",
+          key: "khoiCoQuan",
           label: "Khối cơ quan",
           class: "text-center",
-          thStyle: {width: '110px', minWidth: '110px'},
+          thStyle: {width: '310px', minWidth: '110px', textAlign: 'center'},
           thClass: 'hidden-sortable'
         },
         {
@@ -82,6 +83,7 @@ export default {
           thClass: 'hidden-sortable'
         }
       ],
+      optionsKhoiCoQuan:[]
     };
   },
   validations: {
@@ -92,6 +94,7 @@ export default {
     },
   },
   created() {
+    this.getKhoiCoQuan();
   },
   watch: {
     model: {
@@ -111,6 +114,21 @@ export default {
     },
   },
   methods: {
+    async getKhoiCoQuan() {
+      try {
+        await this.$store.dispatch("khoiCoQuanStore/get").then(resp => {
+          if (resp.resultCode == "SUCCESS") {
+            let items = resp.data
+            this.loading = false
+            this.optionsKhoiCoQuan = items;
+            console.log("this.optionUser", this.optionsUser);
+          }
+          return [];
+        });
+      } finally {
+        this.loading = false
+      }
+    },
     async handleUpdate(id) {
       await this.$store.dispatch("coQuanStore/getById", id).then((res) => {
         if (res.resultCode === 'SUCCESS') {
@@ -173,7 +191,7 @@ export default {
           });
         } else {
           // Create model
-          await this.$store.dispatch("coQuanStore/create", coQuanModel.toJson(this.model)).then((res) => {
+          await this.$store.dispatch("coQuanStore/create", this.model).then((res) => {
             if (res.resultCode === 'SUCCESS') {
               this.showModal = false;
               this.$refs.tblList.refresh()
@@ -255,6 +273,19 @@ export default {
                     <form @submit.prevent="handleSubmit"
                           ref="formContainer">
                       <div class="row">
+                        <div class="col-12 mb-2">
+                          <label class="form-label" for="validationCustom01"> Khối cơ quan</label>
+                          <multiselect
+                              v-model="model.khoiCoQuan"
+                              :options="optionsKhoiCoQuan"
+                              track-by="id"
+                              label="ten"
+                              placeholder="Chọn khối cơ quan"
+                              deselect-label="Nhấn để xoá"
+                              selectLabel="Nhấn enter để chọn"
+                              selectedLabel="Đã chọn"
+                          ></multiselect>
+                        </div>
                         <div class="col-12">
                           <div class="mb-3">
                             <label class="text-left">Code</label>
@@ -466,6 +497,11 @@ export default {
                         {{ row.value }}
                       </div>
                     </template>
+                    <template v-slot:cell(khoiCoQuan)="row">&nbsp;&nbsp;
+                      <span  v-if="row.value">
+                            {{ row.value.ten }}
+                      </span>
+                    </template>
                     <!--                    <template v-slot:cell(permissions)="data">-->
                     <!--                      <router-link :to='`/nhom-quyen/action/${data.item.id}`'>-->
                     <!--                        <b-button-->
@@ -478,14 +514,14 @@ export default {
                     <!--                      </router-link>-->
                     <!--                    </template>-->
                     <template v-slot:cell(process)="data">
-                      <button
-                          type="button"
-                          size="sm"
-                          class="btn btn-outline btn-sm"
-                          data-toggle="tooltip" data-placement="bottom" title="Chi tiết"
-                          v-on:click="handleDetail(data.item.id)">
-                        <i class="fas fa-eye  text-warning me-1"></i>
-                      </button>
+<!--                      <button-->
+<!--                          type="button"-->
+<!--                          size="sm"-->
+<!--                          class="btn btn-outline btn-sm"-->
+<!--                          data-toggle="tooltip" data-placement="bottom" title="Chi tiết"-->
+<!--                          v-on:click="handleDetail(data.item.id)">-->
+<!--                        <i class="fas fa-eye  text-warning me-1"></i>-->
+<!--                      </button>-->
                       <button
                           type="button"
                           size="sm"

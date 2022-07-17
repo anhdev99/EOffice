@@ -17,7 +17,8 @@ const fromJson = (item) => {
         createdBy: item.createdBy,
         modifiedBy: item.modifiedBy,
         lastModifiedShow: item.lastModifiedShow,
-        createdAtShow : item.createdAtShow
+        createdAtShow : item.createdAtShow,
+        khoiCoQuan: item.khoiCoQuan
     }
 }
 
@@ -31,6 +32,7 @@ const baseJson = () => {
         modifiedAt: null,
         createdBy: null,
         modifiedBy: null,
+        khoiCoQuan: null
     }
 }
 
