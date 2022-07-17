@@ -25,7 +25,7 @@ import {vanBanDiModel} from "@/models/vanBanDiModel";
  */
 export default {
   page: {
-    title: " Cấp số văn bản đi",
+    title: "Cấp số văn bản đến",
     meta: [{name: "description", content: appConfig.description}]
   },
   components: {
@@ -39,18 +39,18 @@ export default {
   },
   data() {
     return {
-      title: "Cấp số văn bản đi",
+      title: "Cấp số văn bản đến",
       items: [
         {
           text: "E-Office",
           href: "/"
         },
         {
-          text: "Văn bản đi",
+          text: "Văn bản đến",
           href: "/van-ban-den"
         },
         {
-          text: "Cấp số văn bản đi",
+          text: "Cấp số văn bản đến",
           active: true
         }
       ],
@@ -1612,10 +1612,10 @@ export default {
                   <div class="title-capso"> Ngày ký</div>
                   <div class="content-capso">{{model.ngayKy}}</div>
                 </div>
-<!--                <div class="col-md-12 capso-container">-->
-<!--                  <div class="title-capso"> Ngày ký</div>-->
-<!--                  <div class="content-capso">{{model.ngayKy}}</div>-->
-<!--                </div>-->
+                <!--                <div class="col-md-12 capso-container">-->
+                <!--                  <div class="title-capso"> Ngày ký</div>-->
+                <!--                  <div class="content-capso">{{model.ngayKy}}</div>-->
+                <!--                </div>-->
               </div>
             </div>
             <div class="col-md-6">
@@ -1666,7 +1666,7 @@ export default {
                       type="button"
                       class="w-md"
                       v-on:click="handleCapSoVanBan">
-             Cấp số
+              Cấp số
             </b-button>
           </template>
         </b-modal>
