@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using EOffice.WebAPI.Models;
 using EOffice.WebAPI.Params;
+using EOffice.WebAPI.ViewModels;
 
 namespace EOffice.WebAPI.Interfaces
 {
@@ -13,5 +14,6 @@ namespace EOffice.WebAPI.Interfaces
         Task<List<VanBanDen>> Get();
         Task<VanBanDen> GetById(string id);
         Task<PagingModel<VanBanDen>> GetPaging(VanBanDenParam param);
+        Task<PagingModel<VanBanDenVM>> GetPagingVM(VanBanDenParam param);
     }
 }

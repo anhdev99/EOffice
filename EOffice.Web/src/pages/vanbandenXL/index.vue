@@ -17,6 +17,7 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import vue2Dropzone from "vue2-dropzone";
 import {butPheModel} from "@/models/butPheModel";
 import {phanCongModel} from "@/models/phanCongModel";
+import {notifyModel} from "@/models/notifyModel";
 
 /**
  * Advanced table component
@@ -227,6 +228,7 @@ export default {
             this.model = vanBanDenModel.baseJson()
             this.myProvider()
           }
+          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
         });
       }
     },
@@ -675,7 +677,7 @@ export default {
                                     v-model="model.trangThai"
                                     :options="optionsTrangThai"
                                     track-by="id"
-                                    label="label"
+                                    label="ten"
                                     placeholder="Chọn trạng thái"
                                     deselect-label="Nhấn để xoá"
                                     selectLabel="Nhấn enter để chọn"
@@ -877,6 +879,10 @@ export default {
                     </template>
                     <template v-slot:cell(hanXuLy)="data">
                       <span class="badge bg-danger"> {{ data.item.hanXuLy }}</span>
+                    </template>
+                    <template v-slot:cell(trichYeu)="data">
+                      <div class="fs-5" :inner-html.prop="data.item.trichYeu" style="line-height: 30px">
+                      </div>
                     </template>
                     <template v-slot:cell(process)="data">
                       <button

@@ -10,6 +10,7 @@ using EOffice.WebAPI.Helpers;
 using EOffice.WebAPI.Interfaces;
 using EOffice.WebAPI.Models;
 using EOffice.WebAPI.Params;
+using EOffice.WebAPI.ViewModels;
 using Microsoft.AspNetCore.Http;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -58,14 +59,28 @@ namespace EOffice.WebAPI.Services
                 Id = BsonObjectId.GenerateNewId().ToString(),
                 Version = 1,
                 Number = 0,
+                LoaiVanBan = model.LoaiVanBan,
+                TrangThai = model.TrangThai,
                 SoLuuCV = model.SoLuuCV,
                 SoVBDen = model.SoVBDen,
-                NgayNhap = model.NgayNhap,
-                NgayTraLoi = model.NgayTraLoi,
-                TraLoiCVSo = model.TraLoiCVSo,
-                SoBan = model.SoBan,
+                NgayNhap = DateTime.Now,
+                NgayNhan = model.NgayNhan,
+                NgayBanHanh = model.NgayBanHanh,
                 TrichYeu = model.TrichYeu,
+                HinhThucNhan = model.HinhThucNhan,
+                LinhVuc = model.LinhVuc,
+                MucDoBaoMat = model.MucDoBaoMat,
+                MucDoTinhChat = model.MucDoTinhChat,
+                HoSoDonVi = model.HoSoDonVi,
                 NoiLuuTru = model.NoiLuuTru,
+                CoQuanGui = model.CoQuanGui,
+                KhoiCoQuanGui = model.KhoiCoQuanGui,
+                HanXuLy = model.HanXuLy,
+                CongVanChiDoc = model.CongVanChiDoc,
+                BanChinh = model.BanChinh,
+                HienThiThongBao = model.HienThiThongBao,
+                NguoiKy = model.NguoiKy,
+                NgayKy = model.NgayKy,
                 CreatedBy = CurrentUserName,
                 ModifiedBy = CurrentUserName,
                 CreatedAt = DateTime.Now,
@@ -81,49 +96,7 @@ namespace EOffice.WebAPI.Services
                 newFile.Ext = model.UploadFiles.Ext;
                 entity.File = newFile;
             }
-
-            var donVi = _context.DonVis.Find(x => x.IsDeleted != true).ToList();
-            entity.DonViSoanTen = donVi.Find(x => x.Id == model.DonViSoan)?.Ten;
-            entity.DonViSoan = model.DonViSoan;
-
-            entity.CoQuanNhanTen = donVi.Find(x => x.Id == model.CoQuanNhan)?.Ten;
-            entity.CoQuanNhan = model.CoQuanNhan;
-
-            entity.KhoiCoQuanNhanTen = donVi.Find(x => x.Id == model.KhoiCoQuanNhan)?.Ten;
-            entity.KhoiCoQuanNhan = model.KhoiCoQuanNhan;
-
-            var canBo = _context.Users.Find(x => x.Id == model.CanBoSoan).FirstOrDefault();
-            entity.CanBoSoan = model.CanBoSoan;
-            entity.CanBoSoanTen = canBo?.UserName + "-" + canBo?.FullName;
-
-            if (model.HoSoDonVi != default)
-            {
-                var hoSoDonVi = _context.HoSoDonVi.Find(x => x.Id == model.HoSoDonVi).FirstOrDefault();
-                entity.HoSoDonVi = model.HoSoDonVi;
-                entity.HoSoDonViTen = hoSoDonVi?.Ten;
-            }
-
-            // if (model.HinhThucGui != default)
-            // {
-            //     var hinhThucGui = _context.HinhThucGui.Find(x => x.Id == model.HinhThucGui).FirstOrDefault();
-            //     entity.HinhThucGui = model.HinhThucGui;
-            //     entity.HinhThucGuiTen = hinhThucGui?.Ten;
-            // }
-
-            if (model.LoaiVanBan != default)
-            {
-                var loaiVanBan = _context.LoaiVanBan.Find(x => x.Id == model.LoaiVanBan.Id).FirstOrDefault();
-                entity.LoaiVanBan = model.LoaiVanBan;
-                entity.LoaiVanBanTen = loaiVanBan?.Ten;
-            }
-
-            if (model.TrangThai != default)
-            {
-                var trangThai = _context.TrangThai.Find(x => x.Id == model.TrangThai).FirstOrDefault();
-                entity.TrangThai = model.TrangThai;
-                entity.TrangThaiTen = trangThai?.Ten;
-            }
-
+            
             var result = await BaseMongoDb.CreateAsync(entity);
             if (result.Entity.Id == default || !result.Success)
             {
@@ -131,11 +104,10 @@ namespace EOffice.WebAPI.Services
                     .WithCode(EResultResponse.FAIL.ToString())
                     .WithMessage(DefaultMessage.CREATE_FAILURE);
             }
-
-
+            
             await _history.WithQuestionId(entity.Id)
                 .WithAction(EAction.CREATE)
-                .WithStatus(entity.TrangThai, entity.TrangThaiTen)
+                .WithStatus(entity.TrangThai.Id, entity.TrangThaiTen)
                 .WithType(ETypeHistory.Question, null)
                 .WithTitle("Tạo văn bản đến")
                 .SaveChangeHistoryQuestion();
@@ -184,22 +156,22 @@ namespace EOffice.WebAPI.Services
             }
 
             var donVi = _context.DonVis.Find(x => x.IsDeleted != true).ToList();
-            entity.DonViSoanTen = donVi.Find(x => x.Id == model.DonViSoan)?.Ten;
+            entity.DonViSoanTen = donVi.Find(x => x.Id == model.DonViSoan.Id)?.Ten;
             entity.DonViSoan = model.DonViSoan;
 
-            entity.CoQuanNhanTen = donVi.Find(x => x.Id == model.CoQuanNhan)?.Ten;
+            entity.CoQuanNhanTen = donVi.Find(x => x.Id == model.CoQuanNhan.Id)?.Ten;
             entity.CoQuanNhan = model.CoQuanNhan;
 
-            entity.KhoiCoQuanNhanTen = donVi.Find(x => x.Id == model.KhoiCoQuanNhan)?.Ten;
+            entity.KhoiCoQuanNhanTen = donVi.Find(x => x.Id == model.KhoiCoQuanNhan.Id)?.Ten;
             entity.KhoiCoQuanNhan = model.KhoiCoQuanNhan;
 
-            var canBo = _context.Users.Find(x => x.Id == model.CanBoSoan).FirstOrDefault();
+            var canBo = _context.Users.Find(x => x.Id == model.CanBoSoan.Id).FirstOrDefault();
             entity.CanBoSoan = model.CanBoSoan;
             entity.CanBoSoanTen = canBo?.UserName + "-" + canBo?.FullName;
 
             if (model.HoSoDonVi != default)
             {
-                var hoSoDonVi = _context.HoSoDonVi.Find(x => x.Id == model.HoSoDonVi).FirstOrDefault();
+                var hoSoDonVi = _context.HoSoDonVi.Find(x => x.Id == model.HoSoDonVi.Id).FirstOrDefault();
                 entity.HoSoDonVi = model.HoSoDonVi;
                 entity.HoSoDonViTen = hoSoDonVi?.Ten;
             }
@@ -220,7 +192,7 @@ namespace EOffice.WebAPI.Services
 
             if (model.TrangThai != default)
             {
-                var trangThai = _context.TrangThai.Find(x => x.Id == model.TrangThai).FirstOrDefault();
+                var trangThai = _context.TrangThai.Find(x => x.Id == model.TrangThai.Id).FirstOrDefault();
                 entity.TrangThai = model.TrangThai;
                 entity.TrangThaiTen = trangThai?.Ten;
             }
@@ -236,7 +208,7 @@ namespace EOffice.WebAPI.Services
 
             await _history.WithQuestionId(entity.Id)
                 .WithAction(EAction.UPDATE)
-                .WithStatus(entity.TrangThai, entity.TrangThaiTen)
+                .WithStatus(entity.TrangThai.Id, entity.TrangThaiTen)
                 .WithType(ETypeHistory.Question, oldValue)
                 .WithTitle("Cập nhật văn bản đi.")
                 .SaveChangeHistoryQuestion();
@@ -272,7 +244,7 @@ namespace EOffice.WebAPI.Services
 
             await _history.WithQuestionId(entity.Id)
                 .WithType(ETypeHistory.Question, entity)
-                .WithStatus(entity.TrangThai, entity.TrangThaiTen)
+                .WithStatus(entity.TrangThai.Id, entity.TrangThaiTen)
                 .WithAction(EAction.DELETE)
                 .WithTitle("Xóa văn bản đi.")
                 .SaveChangeHistoryQuestion();
@@ -305,12 +277,12 @@ namespace EOffice.WebAPI.Services
 
             if (!String.IsNullOrEmpty(param.TrangThai))
             {
-                filter = builder.And(filter, builder.Eq(x => x.TrangThai, param.TrangThai));
+                filter = builder.And(filter, builder.Eq(x => x.TrangThai.Id, param.TrangThai));
             }
 
             if (!String.IsNullOrEmpty(param.LinhVuc))
             {
-                filter = builder.And(filter, builder.Eq(x => x.LinhVuc, param.LinhVuc));
+                filter = builder.And(filter, builder.Eq(x => x.LinhVuc.Id, param.LinhVuc));
             }
 
             string sortBy = nameof(VanBanDen.ModifiedAt);
@@ -324,6 +296,73 @@ namespace EOffice.WebAPI.Services
                 .Skip(param.Skip)
                 .Limit(param.Limit)
                 .ToListAsync();
+            return result;
+        }
+
+        public async Task<PagingModel<VanBanDenVM>> GetPagingVM(VanBanDenParam param)
+        {
+            var result = new PagingModel<VanBanDenVM>();
+            var builder = Builders<VanBanDen>.Filter;
+            var filter = builder.Empty;
+            filter = builder.And(filter, builder.Where(x => x.IsDeleted == false));
+            // filter = filter & builder.In(x => x.IdOwner, CurrentUser.DonViIds);
+            if (!String.IsNullOrEmpty(param.Content))
+            {
+                filter = builder.And(filter,
+                    builder.Where(x => x.SoLuuCV.Trim().ToLower().Contains(param.Content.Trim().ToLower())));
+            }
+
+            if (!String.IsNullOrEmpty(param.TrangThai))
+            {
+                filter = builder.And(filter, builder.Eq(x => x.TrangThai.Id, param.TrangThai));
+            }
+
+            if (!String.IsNullOrEmpty(param.LinhVuc))
+            {
+                filter = builder.And(filter, builder.Eq(x => x.LinhVuc.Id, param.LinhVuc));
+            }
+            
+            string sortBy = nameof(VanBanDen.ModifiedAt);
+            var listVanBanDen = await _collection.Find(filter)
+                .Sort(param.SortDesc
+                    ? Builders<VanBanDen>
+                        .Sort.Descending(sortBy)
+                    : Builders<VanBanDen>
+                        .Sort.Ascending(sortBy))
+                .Skip(param.Skip)
+                .Limit(param.Limit)
+                .ToListAsync();
+            List<VanBanDenVM> list = new List<VanBanDenVM>();
+            foreach (var item in listVanBanDen)
+            {
+                VanBanDenVM vanBanDenVm = new VanBanDenVM();
+                vanBanDenVm.Id = item.Id;
+                vanBanDenVm.Version = item.Version;
+                vanBanDenVm.LoaiVanBan = item.LoaiVanBan.Ten;
+                vanBanDenVm.TrangThai = item.TrangThai.Ten;
+                vanBanDenVm.SoVBDen = item.SoVBDen;
+                vanBanDenVm.NgayNhan = item.NgayNhan;
+                vanBanDenVm.NgayBanHanh = item.NgayBanHanh;
+                vanBanDenVm.HinhThucNhan = item.HinhThucNhan.Ten;
+                vanBanDenVm.TrichYeu = item.TrichYeu;
+                vanBanDenVm.LinhVuc = item.LinhVuc.Ten;
+                vanBanDenVm.MucDoBaoMat = item.MucDoBaoMat.Name;
+                vanBanDenVm.MucDoTinhChat = item.MucDoTinhChat.Name;
+                vanBanDenVm.HoSoDonVi = item.HoSoDonVi.Ten;
+                vanBanDenVm.NoiLuuTru = item.NoiLuuTru;
+                vanBanDenVm.CoQuanGui = item.CoQuanGui.Ten;
+                vanBanDenVm.HanXuLy = item.HanXuLy;
+                vanBanDenVm.CongVanChiDoc = item.CongVanChiDoc;
+                vanBanDenVm.BanChinh = item.BanChinh;
+                vanBanDenVm.HienThiThongBao = item.HienThiThongBao;
+                vanBanDenVm.NguoiKy = item.NguoiKy.FullName;
+                vanBanDenVm.NgayKy = item.NgayKy;
+                vanBanDenVm.File = item.File;
+                vanBanDenVm.UploadFiles = item.UploadFiles;
+                list.Add(vanBanDenVm);
+            }
+            result.TotalRows = await _collection.CountDocumentsAsync(filter);
+            result.Data = list;
             return result;
         }
         
@@ -364,7 +403,7 @@ namespace EOffice.WebAPI.Services
 
             await _history.WithQuestionId(entity.Id)
                 .WithAction(EAction.UPDATE)
-                .WithStatus(entity.TrangThai, entity.TrangThaiTen)
+                .WithStatus(entity.TrangThai.Id, entity.TrangThaiTen)
                 .WithType(ETypeHistory.Question, oldValue)
                 .WithTitle("Cập nhật văn bản đi.")
                 .SaveChangeHistoryQuestion();
@@ -386,12 +425,12 @@ namespace EOffice.WebAPI.Services
 
             if (!String.IsNullOrEmpty(param.TrangThai))
             {
-                filter = builder.And(filter, builder.Eq(x => x.TrangThai, param.TrangThai));
+                filter = builder.And(filter, builder.Eq(x => x.TrangThai.Id, param.TrangThai));
             }
 
             if (!String.IsNullOrEmpty(param.LinhVuc))
             {
-                filter = builder.And(filter, builder.Eq(x => x.LinhVuc, param.LinhVuc));
+                filter = builder.And(filter, builder.Eq(x => x.LinhVuc.Id, param.LinhVuc));
             }
             
             string sortBy = nameof(VanBanDen.ModifiedAt);

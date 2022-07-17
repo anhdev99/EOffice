@@ -7,6 +7,9 @@ export const actions = {
     async getPagingParams({commit}, params) {
         return apiClient.post(controller + "/get-paging-params", params);
     },
+    async getPagingParamsVM({commit}, params) {
+        return apiClient.post(controller + "/get-paging-params-vm", params);
+    },
     async create({commit}, values) {
         console.log("createVanBanDen", values);
         return apiClient.post(controller + "/create", values);

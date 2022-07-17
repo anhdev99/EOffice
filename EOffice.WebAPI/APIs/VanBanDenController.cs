@@ -5,6 +5,7 @@ using EOffice.WebAPI.Helpers;
 using EOffice.WebAPI.Interfaces;
 using EOffice.WebAPI.Models;
 using EOffice.WebAPI.Params;
+using EOffice.WebAPI.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using EResultResponse = EOffice.WebAPI.Helpers.EResultResponse;
@@ -29,7 +30,7 @@ namespace EOffice.WebAPI.APIs
         {
             try
             {
-                        var response = await _vanBanDenService.Create(model);
+                var response = await _vanBanDenService.Create(model);
                 return Ok(
                     new ResultResponse<VanBanDen>()
                         .WithData(response)
@@ -152,6 +153,29 @@ namespace EOffice.WebAPI.APIs
 
                 return Ok(
                     new ResultResponse<PagingModel<VanBanDen>>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+        [HttpPost]
+        [Route("get-paging-params-vm")]
+        public async Task<IActionResult> GetPagingParamVM([FromBody] VanBanDenParam param)
+        {
+            try
+            {
+                var response = await _vanBanDenService.GetPagingVM(param);
+
+                return Ok(
+                    new ResultResponse<PagingModel<VanBanDenVM>>()
                         .WithData(response)
                         .WithCode(EResultResponse.SUCCESS.ToString())
                         .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
