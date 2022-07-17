@@ -62,7 +62,9 @@ namespace EOffice.WebAPI.APIs
                 if (!Directory.Exists(uploadPath))
                     Directory.CreateDirectory(uploadPath);
                 var dateTime = DateTime.UtcNow.ToString("yyyy_MM_dd_HH_mm_ss");
-                var path = Path.Combine(_hostingEnvironment.ContentRootPath, uploadDirecotroy, dateTime);
+                var path = Path.Combine(uploadDirecotroy, dateTime);
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
                 
                 var response = await _vanBanDiService.AssignOrReject(model, path);
                 return Ok(

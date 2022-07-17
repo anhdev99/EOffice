@@ -672,7 +672,7 @@ namespace EOffice.WebAPI.Services
                     
                     kySoFunc.TienTrinhKySo(fileWord.Path, fileWord.FileName, filePathPDF ,userAssign);
                     var result =
-                        await _fileService.SaveFileAsync(filePathPDF, fileName, Guid.NewGuid().ToString(), ".pdf", 100);
+                        await _fileService.SaveFileAsync(filePathPDF, fileName, Guid.NewGuid().ToString() + ".pdf", ".pdf", 100);
                     return false;
                 }
                 public async Task<List<PhanCongKySo>> GetPhanCongKySoByVanBanId(string vanBanId)
