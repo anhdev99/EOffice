@@ -1194,6 +1194,7 @@ export default {
                       <td style="text-align:center">{{++index}}</td>
                       <td>{{item.userName}}</td>
                       <td>{{item.fullName}}</td>
+                      <td>{{item.choPhepKy}}</td>
                       <td>{{item.ngayKyString}}</td>
 <!--                      <td>-->
 <!--                        <b-button @click="handleShowModelAcceptKySo" size="sm"  variant="primary"> Ký số/Từ chối</b-button>-->

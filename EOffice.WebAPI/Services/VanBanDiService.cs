@@ -24,6 +24,7 @@ namespace EOffice.WebAPI.Services
         private readonly BaseMongoDb<VanBanDi, string> BaseMongoDb;
         private readonly IMongoCollection<VanBanDi> _collection;
         private readonly IDbSettings _settings;
+        private readonly IFileService _fileService;
         private ILoggingService _logger;
         private readonly HistoryVanBanDiService _history;
         private List<String> filePicture = new List<string>() {".jpeg", ".jpg", ".gif", ".png"};
@@ -31,6 +32,7 @@ namespace EOffice.WebAPI.Services
 
         public VanBanDiService(HistoryVanBanDiService history, ILoggingService logger, IDbSettings settings,
             DataContext context,
+            IFileService fileService,
             IHttpContextAccessor contextAccessor)
             : base(context, contextAccessor)
         {
@@ -38,6 +40,7 @@ namespace EOffice.WebAPI.Services
             BaseMongoDb = new BaseMongoDb<VanBanDi, string>(_context.VanBanDi);
             _collection = context.VanBanDi;
             _settings = settings;
+            _fileService = fileService;
             _logger = logger.WithCollectionName(_settings.VanBanDiCollectionName)
                 .WithDatabaseName(_settings.DatabaseName)
                 .WithUserName(CurrentUserName);
@@ -635,24 +638,41 @@ namespace EOffice.WebAPI.Services
             TienHanhKySo(vanBanDi.PhanCongKySo, path, vanBanDi.File.Select(x => x.FileId).ToList());
             return vanBanDi;
         }
-
-                private bool TienHanhKySo(List<PhanCongKySo> phanCongKySos, string rootPath, List<string> fileIds)
+                private async Task<bool> TienHanhKySo(List<PhanCongKySo> phanCongKySos, string rootPath, List<string> fileIds)
                 {
                     var userNameFormPhanCongKySo = phanCongKySos.Select(x => x.UserName).ToList();
                     var users = _context.Users.Find(x => userNameFormPhanCongKySo.Contains(x.UserName)).ToList();
+                    var userAssign = new List<User>();
+
+                    foreach (var item in phanCongKySos)
+                    {
+                        var check = users.Where(x => x.UserName == item.UserName && item.ChoPhepKy).FirstOrDefault();
+                        if (check != default)
+                        {
+                            check.NgayKy = item.NgayKyString;
+                            userAssign.Add(check);
+                        }
+                    }
+                    
+                    
                     var fileWord = _context.Files.Find(x => x.Id == fileIds.FirstOrDefault()).FirstOrDefault();
                     var kySoFunc = new KySoNoiBoService();
                     var fileName = "";
+                    var filePathPDF = "";
                     if (fileWord.Ext == ".docx")
                     {
-                        fileName = rootPath + "/" + fileWord.FileName.Replace(".docx", ".pdf");
+                        filePathPDF = rootPath + "/" + fileWord.FileName.Replace(".docx", ".pdf");
+                        fileName = fileWord.FileName.Replace(".docx", ".pdf");
                     }else if  (fileWord.Ext == ".doc")
                     {
-                        fileName = rootPath  + "/" + fileWord.FileName.Replace(".doc", ".pdf");
+                        filePathPDF = rootPath  + "/" + fileWord.FileName.Replace(".doc", ".pdf");
+                        fileName =  fileWord.FileName.Replace(".doc", ".pdf");
                     }
                  
                     
-                    kySoFunc.TienTrinhKySo(fileWord.Path, fileWord.FileName, fileName ,users);
+                    kySoFunc.TienTrinhKySo(fileWord.Path, fileWord.FileName, filePathPDF ,userAssign);
+                    var result =
+                        await _fileService.SaveFileAsync(filePathPDF, fileName, Guid.NewGuid().ToString(), ".pdf", 100);
                     return false;
                 }
                 public async Task<List<PhanCongKySo>> GetPhanCongKySoByVanBanId(string vanBanId)
