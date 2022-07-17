@@ -144,6 +144,7 @@ const baseJson = (items) => {
         nguoiKy: null,
         ngayKy: null,
         file: null,
+        filePDF: null,
         uploadFiles: null,
         nguoiPhanCong: null,
     }

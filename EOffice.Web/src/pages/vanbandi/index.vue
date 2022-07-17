@@ -317,6 +317,7 @@ export default {
       }
     },
     async getPhanCongKySoByVanBanId(id) {
+      // this.modelKySo = null;
       try {
         await this.$store.dispatch("vanBanDiStore/getPhanCongKySoByVanBanId", id).then(resp => {
           if (resp.resultCode == "SUCCESS") {
@@ -769,7 +770,22 @@ export default {
                                 ></ckeditor>
                               </div>
                             </div>
+                            <div v-if="model.filePDF != null  && model.filePDF.length > 0" class="col-md-12">
+                              <label for="">Danh sách đã ký (Nhấn vào để tải xuống)</label>
+                              <template >
+                                <div v-for="(file, index) in model.filePDF" :key="index">
+                                  <a
+                                      :href="`${apiUrl}files/view/${file.fileId}`"
+                                      class=" fw-medium"
+                                  ><i
+                                      :class="`mdi font-size-16 align-middle me-2`"
+                                  ></i>
+                                    {{index + 1}}: {{ file.fileName }}</a
+                                  >
+                                </div>
+                              </template>
 
+                            </div>
                             <div class="col-md-12">
                               <label for="">Danh sách tệp tin (Nhấn vào để tải xuống)</label>
                               <template v-if="model.file == null || (model.file != null &&model.file.length <= 0)">
@@ -1033,14 +1049,7 @@ export default {
                       </div>
                     </template>
                     <template v-slot:cell(process)="data">
-                      <button
-                          type="button"
-                          size="sm"
-                          class="btn btn-outline btn-sm"
-                          data-toggle="tooltip" data-placement="bottom" title=" Ký số"
-                          v-on:click="showModalMembers = true, modelKySo.vanBanDiId=data.item.id, getPhanCongKySoByVanBanId(data.item.id)">
-                        <i class="fas fa-eye  text-warning me-1"></i>
-                      </button>
+
                       <button
                           type="button"
                           size="sm"
@@ -1049,14 +1058,18 @@ export default {
                           v-on:click="handleUpdate(data.item.id)">
                         <i class="fas fa-pencil-alt text-success me-1"></i>
                       </button>
-                      <button
-                          type="button"
-                          size="sm"
-                          class="btn btn-outline btn-sm"
-                          data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
-                          v-on:click="HandleShowPhanCong(data.item.id)">
-                        <i class="fas fa-user-plus text-info me-1"></i>
-                      </button>
+                      <template   v-if="data.item.trangThai">
+                        <button
+                            v-if="data.item.trangThai.ten == 'Ký số'"
+                            type="button"
+                            size="sm"
+                            class="btn btn-outline btn-sm"
+                            data-toggle="tooltip" data-placement="bottom" title=" Ký số"
+                            v-on:click="showModalMembers = true, modelKySo.vanBanDiId=data.item.id, getPhanCongKySoByVanBanId(data.item.id)">
+                          <i class="fas fa-user-plus text-info me-1"></i>
+                        </button>
+                      </template>
+
                       <button
                           type="button"
                           size="sm"
@@ -1138,7 +1151,7 @@ export default {
             <div class="col-md-3">
               <div class=" d-flex align-items-center">
                 <switches v-model="modelKySo.choPhepKy" color="primary" class="ml-1 mx-2"></switches>
-                <label for=""> Chỉ duyệt </label>
+                <label for=""> Cho phép ký </label>
               </div>
 
             </div>
@@ -1171,7 +1184,7 @@ export default {
                   <tbody>
                   <template v-if="listPhanCongKySo == null || (listPhanCongKySo != null && listPhanCongKySo.length <= 0)">
                     <tr>
-                      <td>Không có dữ liệu</td>
+                      <td colspan="5">Không có dữ liệu</td>
                     </tr>
                   </template>
                   <template v-else>
@@ -1179,7 +1192,10 @@ export default {
                       <td>{{++index}}</td>
                       <td>{{item.userName}}</td>
                       <td>{{item.fullName}}</td>
-                      <td>{{item.choPhepKy}}</td>
+                      <td>
+                        <span v-if="item.choPhepKy">Ký số</span>
+                        <span v-else>Xem duyệt</span>
+                      </td>
                       <td>
                         <b-button @click="handleRemoveAssignSign(item.userName)"  variant="danger">Xóa</b-button>
                       </td>

@@ -1180,6 +1180,7 @@ export default {
                     <th style="text-align:center">#</th>
                     <th>Tài khoản</th>
                     <th>Họ và tên</th>
+                    <th>Tình trạng</th>
                     <th> Ngày ký</th>
                   </tr>
                   </thead>
@@ -1194,7 +1195,10 @@ export default {
                       <td style="text-align:center">{{++index}}</td>
                       <td>{{item.userName}}</td>
                       <td>{{item.fullName}}</td>
-                      <td>{{item.choPhepKy}}</td>
+                      <td>
+                        <span v-if="item.choPhepKy">Ký số</span>
+                        <span v-else>Xem duyệt</span>
+                      </td>
                       <td>{{item.ngayKyString}}</td>
 <!--                      <td>-->
 <!--                        <b-button @click="handleShowModelAcceptKySo" size="sm"  variant="primary"> Ký số/Từ chối</b-button>-->

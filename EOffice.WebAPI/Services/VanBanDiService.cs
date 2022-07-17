@@ -319,7 +319,18 @@ namespace EOffice.WebAPI.Services
             var result = new PagingModel<VanBanDi>();
             var builder = Builders<VanBanDi>.Filter;
             var filter = builder.Empty;
-            filter = builder.And(filter, builder.Where(x => x.IsDeleted == false));
+
+            var checkQuyenThuKy =
+                CurrentUser.Roles.Find(x => x.Ten == "Thư ký hiệu trường" || x.Ten == "Văn thư trường");
+            if (checkQuyenThuKy != default)
+            {
+                filter = builder.And(filter, builder.Where(x => x.IsDeleted == false));
+            }
+            else
+            {
+                filter = builder.And(filter, builder.Where(x => x.IsDeleted == false && x.CreatedBy == CurrentUserName));
+            }
+
             // filter = filter & builder.In(x => x.IdOwner, CurrentUser.DonViIds);
             if (!String.IsNullOrEmpty(param.Content))
             {
@@ -635,10 +646,45 @@ namespace EOffice.WebAPI.Services
                 .WithTitle( "Ký thành công: " + CurrentUserName)
                 .SaveChangeHistoryQuestion();
 
-            TienHanhKySo(vanBanDi.PhanCongKySo, path, vanBanDi.File.Select(x => x.FileId).ToList());
+            var vanBanNew = _collection.Find(x => x.Id == model.VanBanDiId).FirstOrDefault();
+
+          
+            if (vanBanNew != default)
+            {
+                var checkPhanCongKy = vanBanNew.PhanCongKySo.Where(x => x.NgayKyString == null && x.ChoPhepKy).ToList();
+                if (checkPhanCongKy.Count <= 0)
+                {
+                    var resultFile = await TienHanhKySo(vanBanDi.PhanCongKySo, path, vanBanDi.File.Select(x => x.FileId).ToList());
+                    if (resultFile != default)
+                    {
+                        FileShort _newFile = new FileShort();
+                        _newFile.Ext = resultFile.Ext;
+                        _newFile.FileName = resultFile.FileName;
+                        _newFile.FileId = resultFile.Id;
+
+                        if (vanBanDi.FilePDF == default)
+                            vanBanDi.FilePDF = new List<FileShort>();
+                        vanBanDi.FilePDF.Add(_newFile);
+                        
+                        var newTrangThai = _context.TrangThai.Find(x => x.Ten == "Hoàn thành ký số").FirstOrDefault();
+                        if (newTrangThai != default)
+                        {
+                            vanBanNew.TrangThai = newTrangThai;
+                        }
+                        var resultNew = await BaseMongoDb.UpdateAsync(vanBanDi);
+                        if (!result.Success)
+                        {
+                            throw new ResponseMessageException()
+                                .WithCode(EResultResponse.FAIL.ToString())
+                                .WithMessage(DefaultMessage.UPDATE_FAILURE);
+                        }
+                    }
+                }
+            }
+        
             return vanBanDi;
         }
-                private async Task<bool> TienHanhKySo(List<PhanCongKySo> phanCongKySos, string rootPath, List<string> fileIds)
+                private async Task<File> TienHanhKySo(List<PhanCongKySo> phanCongKySos, string rootPath, List<string> fileIds)
                 {
                     var userNameFormPhanCongKySo = phanCongKySos.Select(x => x.UserName).ToList();
                     var users = _context.Users.Find(x => userNameFormPhanCongKySo.Contains(x.UserName)).ToList();
@@ -668,12 +714,12 @@ namespace EOffice.WebAPI.Services
                         filePathPDF = rootPath  + "/" + fileWord.FileName.Replace(".doc", ".pdf");
                         fileName =  fileWord.FileName.Replace(".doc", ".pdf");
                     }
-                 
                     
                     kySoFunc.TienTrinhKySo(fileWord.Path, fileWord.FileName, filePathPDF ,userAssign);
                     var result =
                         await _fileService.SaveFileAsync(filePathPDF, fileName, Guid.NewGuid().ToString() + ".pdf", ".pdf", 100);
-                    return false;
+                   
+                    return result;
                 }
                 public async Task<List<PhanCongKySo>> GetPhanCongKySoByVanBanId(string vanBanId)
         {
@@ -684,8 +730,9 @@ namespace EOffice.WebAPI.Services
                     .WithCode(EResultResponse.FAIL.ToString())
                     .WithMessage(DefaultMessage.DATA_NOT_FOUND);
             };
-
-            return vanBanDi.PhanCongKySo.OrderByDescending(x => x.ThuTu).ToList();
+            if(vanBanDi.PhanCongKySo != default)
+                return vanBanDi.PhanCongKySo.OrderByDescending(x => x.ThuTu).ToList();
+            return vanBanDi.PhanCongKySo = new List<PhanCongKySo>();
         }
     }
 }

@@ -52,7 +52,7 @@ namespace EOffice.WebAPI.Models
         public User NguoiKy { get; set; }
         public DateTime? NgayKy { get; set; }
         public List<FileShort> File { get; set; }
-        
+        public List<FileShort> FilePDF { get; set; }
         public List<PhanCongKySo> PhanCongKySo { get; set; }
         [BsonIgnore]
         public List<FileShort> UploadFiles{ get; set; }
