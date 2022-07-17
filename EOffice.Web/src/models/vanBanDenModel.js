@@ -46,6 +46,7 @@ const toJson = (item) => {
         butphe: item.butphe,
         donViNhanXuLy: item.donViNhanXuLy,
         phanCong: item.phanCong,
+        identity: item.identity
     }
 }
 const fromJson = (item) => {
@@ -95,6 +96,7 @@ const fromJson = (item) => {
         butphe: item.butphe,
         donViNhanXuLy: item.donViNhanXuLy,
         phanCong: item.phanCong,
+        identity: item.identity
     }
 }
 
@@ -149,6 +151,7 @@ const baseJson = (items) => {
         butPhe: null,
         phanCong: null,
         donViXuLy: null,
+        identity: null,
     }
 }
 

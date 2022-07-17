@@ -50,11 +50,11 @@ namespace EOffice.WebAPI.Services
         public async Task<VanBanDi> CapSoVanBan()
         {
             var vanBanDi = _collection.Find(x => x.IsDeleted != true).ToList();
-            var identiyList = vanBanDi.Max();
+            var identiyList = vanBanDi.Max(x => x.Identity);
             var max = 0;
             if (identiyList != default)
             {
-                max = identiyList.Identity;
+                max = ++identiyList;
             }
             else
             {
@@ -81,7 +81,7 @@ namespace EOffice.WebAPI.Services
             }
 
             newVanBanDi.SoLuuCV = "ĐHĐT-HC-" + formatMax + "/" + DateTime.Now.Year;
-
+            newVanBanDi.Identity = max;
             return newVanBanDi;
         }
 
@@ -93,7 +93,6 @@ namespace EOffice.WebAPI.Services
                     .WithCode(EResultResponse.FAIL.ToString())
                     .WithMessage(DefaultMessage.DATA_NOT_EMPTY);
             }
-
             var entity = new VanBanDi()
             {
                 Id = BsonObjectId.GenerateNewId().ToString(),
@@ -101,6 +100,7 @@ namespace EOffice.WebAPI.Services
                 Number = 0,
                 SoLuuCV = model.SoLuuCV,
                 SoVBDi = model.SoVBDi,
+                Identity = model.Identity,
                 CanBoSoan = model.CanBoSoan,
                 DonViSoan = model.DonViSoan,
                 NgayNhap = model.NgayNhap,
@@ -225,6 +225,7 @@ namespace EOffice.WebAPI.Services
             entity.NguoiKy = model.NguoiKy;
             entity.NgayKy = model.NgayKy;
             entity.CreatedBy = CurrentUserName;
+           entity.Identity = model.Identity;
             entity.ModifiedBy = CurrentUserName;
             entity.ModifiedAt = DateTime.Now;
             entity.CongVanChiDoc = model.CongVanChiDoc;
