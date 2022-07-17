@@ -719,6 +719,12 @@ export default [{
         component: () => import("../pages/vanbandenXL"),
     },
     {
+        path: "/xu-ly-van-ban-den",
+        name: "Văn bản đến",
+        //meta: { },
+        component: () => import("../pages/vanbandenXL/xuLyVanBanDen"),
+    },
+    {
         path: "/thong-bao",
         name: " Thông báo",
         // meta: {},
