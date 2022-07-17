@@ -47,6 +47,39 @@ namespace EOffice.WebAPI.Services
             _history = history;
         }
 
+        public async Task<VanBanDi> CapSoVanBan()
+        {
+            var vanBanDi = _collection.Find(x => x.IsDeleted != true).ToList();
+            var identiyList = vanBanDi.Max();
+            var max = 0;
+            if (identiyList != default)
+            {
+                max = identiyList.Identity;
+            }
+            else
+            {
+                max = 1;
+            }
+            var newVanBanDi = new VanBanDi();
+            string formatMax = "";
+            if (max < 10)
+            {
+                formatMax = "000" + max;
+            }else if (max < 100)
+            {
+                formatMax = "00" + max;
+            }else if (max < 1000)
+            {
+                formatMax = "0" + max;
+            }
+            else
+            {
+                formatMax = max.ToString();
+            }
+            newVanBanDi.SoLuuCV = "ĐHĐT-HC-" + formatMax + "/"+ DateTime.Now.Year;
+
+            return newVanBanDi;
+        }
         public async Task<VanBanDi> Create(VanBanDi model)
         {
             if (model == default)
@@ -330,6 +363,57 @@ namespace EOffice.WebAPI.Services
             {
                 filter = builder.And(filter, builder.Where(x => x.IsDeleted == false && x.CreatedBy == CurrentUserName));
             }
+
+            // filter = filter & builder.In(x => x.IdOwner, CurrentUser.DonViIds);
+            if (!String.IsNullOrEmpty(param.Content))
+            {
+                filter = builder.And(filter,
+                    builder.Where(x => x.SoLuuCV.Trim().ToLower().Contains(param.Content.Trim().ToLower())));
+            }
+
+            if (!String.IsNullOrEmpty(param.TrangThai))
+            {
+                filter = builder.And(filter, builder.Eq(x => x.TrangThai.Code, param.TrangThai));
+            }
+
+            if (!String.IsNullOrEmpty(param.LinhVuc))
+            {
+                filter = builder.And(filter, builder.Eq(x => x.LinhVuc.Id, param.LinhVuc));
+            }
+
+            string sortBy = nameof(VanBanDi.ModifiedAt);
+            result.TotalRows = await _collection.CountDocumentsAsync(filter);
+            result.Data = await _collection.Find(filter)
+                .Sort(param.SortDesc
+                    ? Builders<VanBanDi>
+                        .Sort.Descending(sortBy)
+                    : Builders<VanBanDi>
+                        .Sort.Ascending(sortBy))
+                .Skip(param.Skip)
+                .Limit(param.Limit)
+                .ToListAsync();
+            return result;
+        }
+        
+        public async Task<PagingModel<VanBanDi>> GetPagingXuLy(VanBanDiParam param)
+        {
+            var result = new PagingModel<VanBanDi>();
+            var builder = Builders<VanBanDi>.Filter;
+            var filter = builder.Empty;
+
+            
+            // var checkQuyenThuKy =
+            //     CurrentUser.Roles.Find(x => x.Ten == "Thư ký hiệu trường" || x.Ten == "Văn thư trường");
+            // if (checkQuyenThuKy != default)
+            // {
+            //     filter = builder.And(filter, builder.Where(x => x.IsDeleted == false));
+            // }
+            // else
+            // {
+            //     filter = builder.And(filter, builder.Where(x => x.IsDeleted == false && x.CreatedBy == CurrentUserName));
+            // }
+            
+            filter = builder.And(filter, builder.Where(x => x.PhanCongKySo.Any(x => x.UserName == CurrentUserName)));
 
             // filter = filter & builder.In(x => x.IdOwner, CurrentUser.DonViIds);
             if (!String.IsNullOrEmpty(param.Content))

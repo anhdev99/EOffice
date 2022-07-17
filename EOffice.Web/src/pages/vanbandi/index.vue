@@ -254,9 +254,13 @@ export default {
       });
     },
 
-   handleCreate(id) {
-    this.model= vanBanDiModel.baseJson();
-    this.showModal = true;
+   async handleCreate() {
+     await this.$store.dispatch("vanBanDiStore/getVaCapSo").then((res) => {
+       if (res.resultCode === 'SUCCESS') {
+         this.model= res.data;
+         this.showModal = true;
+       }
+     });
     },
     handleShowDeleteModal(id) {
       this.model.id = id;

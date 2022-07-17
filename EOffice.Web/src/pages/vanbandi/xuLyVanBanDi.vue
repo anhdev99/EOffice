@@ -491,7 +491,7 @@ export default {
       this.loading = true
 
       try {
-        let promise = this.$store.dispatch("vanBanDiStore/getPagingParams", params)
+        let promise = this.$store.dispatch("vanBanDiStore/getPagingParamsXuLy", params)
         return promise.then(resp => {
           let items = resp.data.data
           this.totalRows = resp.data.totalRows
@@ -596,11 +596,11 @@ export default {
                         <b-button variant="light" size="sm" style="width: 80px" @click="showModal = false">
                           Đóng
                         </b-button>
-                        <b-button type="submit" variant="primary" class="ms-1" style="width: 80px" size="sm"
-                                  @click="handleSubmit"
-                        >
-                          Lưu
-                        </b-button>
+<!--                        <b-button type="submit" variant="primary" class="ms-1" style="width: 80px" size="sm"-->
+<!--                                  @click="handleSubmit"-->
+<!--                        >-->
+<!--                          Lưu-->
+<!--                        </b-button>-->
                       </div>
                     </template>
                     <form @submit.prevent="handleSubmit"
@@ -1085,14 +1085,14 @@ export default {
                           v-on:click="handleUpdate(data.item.id)">
                         <i class="fas fa-pencil-alt text-success me-1"></i>
                       </button>
-                      <button
-                          type="button"
-                          size="sm"
-                          class="btn btn-outline btn-sm"
-                          data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
-                          v-on:click="HandleShowPhanCong(data.item.id)">
-                        <i class="fas fa-user-plus text-info me-1"></i>
-                      </button>
+<!--                      <button-->
+<!--                          type="button"-->
+<!--                          size="sm"-->
+<!--                          class="btn btn-outline btn-sm"-->
+<!--                          data-toggle="tooltip" data-placement="bottom" title="Cập nhật"-->
+<!--                          v-on:click="HandleShowPhanCong(data.item.id)">-->
+<!--                        <i class="fas fa-user-plus text-info me-1"></i>-->
+<!--                      </button>-->
                       <button
                           type="button"
                           size="sm"
@@ -1101,14 +1101,14 @@ export default {
                           v-on:click="handleShowButPhe(data.item.id)">
                         <i class="fas fa-feather-alt text-primary me-1"></i>
                       </button>
-                      <button
-                          type="button"
-                          size="sm"
-                          class="btn btn-outline btn-sm"
-                          data-toggle="tooltip" data-placement="bottom" title="Xóa"
-                          v-on:click="handleShowDeleteModal(data.item.id)">
-                        <i class="fas fa-trash-alt text-danger me-1"></i>
-                      </button>
+<!--                      <button-->
+<!--                          type="button"-->
+<!--                          size="sm"-->
+<!--                          class="btn btn-outline btn-sm"-->
+<!--                          data-toggle="tooltip" data-placement="bottom" title="Xóa"-->
+<!--                          v-on:click="handleShowDeleteModal(data.item.id)">-->
+<!--                        <i class="fas fa-trash-alt text-danger me-1"></i>-->
+<!--                      </button>-->
                     </template>
                     <template v-slot:cell(ten)="data">&nbsp;&nbsp;
                       {{ data.item.ten }}

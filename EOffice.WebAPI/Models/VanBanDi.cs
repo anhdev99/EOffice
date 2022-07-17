@@ -11,6 +11,7 @@ namespace EOffice.WebAPI.Models
         public string Id { get; set; }
         public int Version { get; set; }
         public int Number { get; set; }
+        public int Identity { get; set; }
         public LoaiVanBan LoaiVanBan { get; set; }
         public TrangThai TrangThai { get; set; }
         public string SoLuuCV { get; set; }
