@@ -17,6 +17,7 @@ using Spire.Doc;
 using Spire.Doc.Documents;
 using Spire.Doc.Formatting;
 using Spire.Pdf;
+using File = System.IO.File;
 using FileFormat = Spire.Pdf.FileFormat;
 
 namespace EOffice.WebAPI.Services
@@ -262,12 +263,19 @@ namespace EOffice.WebAPI.Services
             //
             try
             {
+                using (MemoryStream ms = new MemoryStream())
+                {
+        
+                    doc.SaveToStream(ms, Spire.Doc.FileFormat.Doc);
+                    File.WriteAllBytes(pathPDF, ms.ToArray());
+                }
+                doc.SaveToFile(pathPDF, Spire.Doc.FileFormat.PDF);
                 // using (var strem = System.IO.File.Create(pathPDF))
                 // {
                 //     // strem.Position = 0;
                 //     doc.SaveToStream(strem, Spire.Doc.FileFormat.PDF);
                 // }
-                doc.SaveToFile(pathPDF, Spire.Doc.FileFormat.PDF);
+                // doc.SaveToFile(pathPDF, Spire.Doc.FileFormat.PDF);
                 // using (var stream = new FileStream
                 //            (pathPDF, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 // {
