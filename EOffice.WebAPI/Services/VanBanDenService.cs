@@ -171,7 +171,6 @@ namespace EOffice.WebAPI.Services
                 entity.ButPhe.File = model.ButPhe.File;
                 entity.ButPhe.UploadFiles = model.ButPhe.UploadFiles;
                 entity.ButPhe.DonViPhoiHop = model.ButPhe.DonViPhoiHop;
-                entity.ButPhe.DonViXuLy = model.ButPhe.DonViXuLy;
                 entity.ButPhe.NoiDungButPhe = model.ButPhe.NoiDungButPhe;
             }
             // phan cong 
@@ -184,8 +183,6 @@ namespace EOffice.WebAPI.Services
 
                 }
             }
-            
-
             if (model.UploadFiles != default)
             {
                 var newFile = new FileShort();
@@ -194,49 +191,6 @@ namespace EOffice.WebAPI.Services
                 newFile.Ext = model.UploadFiles.Ext;
                 entity.File = newFile;
             }
-
-            var donVi = _context.DonVis.Find(x => x.IsDeleted != true).ToList();
-            entity.DonViSoanTen = donVi.Find(x => x.Id == model.DonViSoan.Id)?.Ten;
-            entity.DonViSoan = model.DonViSoan;
-
-            entity.CoQuanNhanTen = donVi.Find(x => x.Id == model.CoQuanNhan.Id)?.Ten;
-            entity.CoQuanNhan = model.CoQuanNhan;
-
-            entity.KhoiCoQuanNhanTen = donVi.Find(x => x.Id == model.KhoiCoQuanNhan.Id)?.Ten;
-            entity.KhoiCoQuanNhan = model.KhoiCoQuanNhan;
-
-            var canBo = _context.Users.Find(x => x.Id == model.CanBoSoan.Id).FirstOrDefault();
-            entity.CanBoSoan = model.CanBoSoan;
-            entity.CanBoSoanTen = canBo?.UserName + "-" + canBo?.FullName;
-
-            if (model.HoSoDonVi != default)
-            {
-                var hoSoDonVi = _context.HoSoDonVi.Find(x => x.Id == model.HoSoDonVi.Id).FirstOrDefault();
-                entity.HoSoDonVi = model.HoSoDonVi;
-                entity.HoSoDonViTen = hoSoDonVi?.Ten;
-            }
-
-            // if (model.HinhThucGui != default)
-            // {
-            //     var hinhThucGui = _context.HinhThucGui.Find(x => x.Id == model.HinhThucGui).FirstOrDefault();
-            //     entity.HinhThucGui = model.HinhThucGui;
-            //     entity.HinhThucGuiTen = hinhThucGui?.Ten;
-            // }
-
-            if (model.LoaiVanBan != default)
-            {
-                var loaiVanBan = _context.LoaiVanBan.Find(x => x.Id == model.LoaiVanBan.Id).FirstOrDefault();
-                entity.LoaiVanBan = model.LoaiVanBan;
-                entity.LoaiVanBanTen = loaiVanBan?.Ten;
-            }
-
-            if (model.TrangThai != default)
-            {
-                var trangThai = _context.TrangThai.Find(x => x.Id == model.TrangThai.Id).FirstOrDefault();
-                entity.TrangThai = model.TrangThai;
-                entity.TrangThaiTen = trangThai?.Ten;
-            }
-
 
             var result = await BaseMongoDb.UpdateAsync(entity);
             if (!result.Success)
@@ -254,7 +208,7 @@ namespace EOffice.WebAPI.Services
                 .SaveChangeHistoryQuestion();
             return entity;
         }
-
+        
         public async Task Delete(string id)
         {
             if (id == default)
