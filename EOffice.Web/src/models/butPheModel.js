@@ -36,6 +36,7 @@ const fromJson = (item) => {
 const baseJson = () => {
     return {
         id: null,
+        vanBanDenId: null,
         noiDungButPhe: null,
         nguoiButPhe: null,
         ngayButPhe: new Date(),

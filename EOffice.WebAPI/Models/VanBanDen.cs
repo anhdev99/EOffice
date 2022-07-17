@@ -71,6 +71,8 @@ namespace EOffice.WebAPI.Models
 
     public class ButPhe
     {
+        public string Id { get; set; }
+        public string VanBanDenId { get; set; }
         public string NoiDungButPhe { get; set; }
         public User NguoiButPhe { get; set; }
         public DateTime? NgayButPhe { get; set; }
@@ -78,15 +80,17 @@ namespace EOffice.WebAPI.Models
         [BsonIgnore]
         public FileShort UploadFiles{ get; set; }
         public EnumModel MucDoQuanTrong { get; set; }
-        public User NguoiPhuTrach { get; set; }
-        public User NguoiChuTri { get; set; }
-        public User NguoiPhoiHopXuLy { get; set; }
-        public DonVi DonViPhoiHop { get; set; }
-        public User NguoiXemDeBiet { get; set; }
+        public List<User> NguoiPhuTrach { get; set; }
+        public List<User> NguoiChuTri { get; set; }
+        public List<User> NguoiPhoiHopXuLy { get; set; }
+        public List<DonVi> DonViPhoiHop { get; set; }
+        public List<User> NguoiXemDeBiet { get; set; }
     }
 
     public class DonViXuLy
     {
+        public string Id { get; set; }
+        public string VanBanDenId { get; set; }
         public User NguoiPhuTrach { get; set; }
         public User NguoiChuTri { get; set; }
         public User NguoiPhoiHopXuLy { get; set; }
@@ -101,6 +105,8 @@ namespace EOffice.WebAPI.Models
 
     public class PhanCong
     {
+        public string Id { get; set; }
+        public string VanBanDenId { get; set; }
         public string YKienChiDao { get; set; }
         public User NguoiButPhe { get; set; }
         public User NguoiNhanXuLy { get; set; }   

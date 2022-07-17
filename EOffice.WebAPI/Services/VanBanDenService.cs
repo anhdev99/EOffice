@@ -109,7 +109,7 @@ namespace EOffice.WebAPI.Services
                 .WithAction(EAction.CREATE)
                 .WithStatus(entity.TrangThai.Id, entity.TrangThaiTen)
                 .WithType(ETypeHistory.Question, null)
-                .WithTitle("Tạo văn bản đến")
+                .WithTitle("Thêm thành công")
                 .SaveChangeHistoryQuestion();
             return entity;
         }
@@ -158,31 +158,6 @@ namespace EOffice.WebAPI.Services
             entity.ModifiedBy = CurrentUserName;
             entity.CreatedAt = DateTime.Now;
             entity.ModifiedAt = DateTime.Now;
-            // butphe
-            if (model.ButPhe != default || model.ButPhe != null)
-            {
-                entity.ButPhe.NgayButPhe = model.ButPhe.NgayButPhe;
-                entity.ButPhe.NguoiButPhe = model.ButPhe.NguoiButPhe;
-                entity.ButPhe.NguoiChuTri = model.ButPhe.NguoiChuTri;
-                entity.ButPhe.NguoiPhuTrach = model.ButPhe.NguoiPhuTrach;
-                entity.ButPhe.NguoiPhoiHopXuLy = model.ButPhe.NguoiPhoiHopXuLy;
-                entity.ButPhe.NguoiXemDeBiet = model.ButPhe.NguoiXemDeBiet;
-                entity.ButPhe.MucDoQuanTrong = model.ButPhe.MucDoQuanTrong;
-                entity.ButPhe.File = model.ButPhe.File;
-                entity.ButPhe.UploadFiles = model.ButPhe.UploadFiles;
-                entity.ButPhe.DonViPhoiHop = model.ButPhe.DonViPhoiHop;
-                entity.ButPhe.NoiDungButPhe = model.ButPhe.NoiDungButPhe;
-            }
-            // phan cong 
-            if (model.PhanCong != default || model.PhanCong != null)
-            {
-                List<PhanCong> listPhanCong = new List<PhanCong>();
-                foreach (var item in model.PhanCong)
-                {
-                    var phancong = new PhanCong();
-
-                }
-            }
             if (model.UploadFiles != default)
             {
                 var newFile = new FileShort();
@@ -204,7 +179,68 @@ namespace EOffice.WebAPI.Services
                 .WithAction(EAction.UPDATE)
                 .WithStatus(entity.TrangThai.Id, entity.TrangThaiTen)
                 .WithType(ETypeHistory.Question, oldValue)
-                .WithTitle("Cập nhật văn bản đi.")
+                .WithTitle("Cập nhập thành công.")
+                .SaveChangeHistoryQuestion();
+            return entity;
+        }
+        public async Task<VanBanDen> ButPhe(ButPhe model)
+        {
+            if (model == default)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.DATA_NOT_EMPTY);
+            }
+
+            var entity = _context.VanBanDen.Find(x => x.Id == model.VanBanDenId).FirstOrDefault();
+            if (entity == default)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.DATA_NOT_FOUND);
+            }
+            var newButPhe = new ButPhe();
+            newButPhe.Id = model.Id;
+            newButPhe.NoiDungButPhe = model.NoiDungButPhe;
+            newButPhe.NguoiButPhe = model.NguoiButPhe;
+            newButPhe.NgayButPhe = model.NgayButPhe;
+            newButPhe.NguoiPhuTrach = model.NguoiPhuTrach;
+            newButPhe.NguoiButPhe = model.NguoiButPhe;
+            newButPhe.NguoiChuTri = model.NguoiChuTri;
+            newButPhe.DonViPhoiHop = model.DonViPhoiHop;
+            newButPhe.NguoiPhoiHopXuLy = model.NguoiPhoiHopXuLy;
+            newButPhe.MucDoQuanTrong = model.MucDoQuanTrong;
+            newButPhe.NguoiXemDeBiet = model.NguoiXemDeBiet;
+            newButPhe.NguoiButPhe = model.NguoiButPhe;
+            
+            if (model.UploadFiles != default)
+            {
+                var newFile = new FileShort();
+                newFile.FileId = model.UploadFiles.FileId;
+                newFile.FileName = model.UploadFiles.FileName;
+                newFile.Ext = model.UploadFiles.Ext;
+                newButPhe.File = newFile;
+            }
+
+            if (entity.ButPhe == default)
+            {
+                entity.ButPhe = new ButPhe();
+            }
+
+            entity.ButPhe = newButPhe;
+            
+            var result = await BaseMongoDb.UpdateAsync(entity);
+            if (!result.Success)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.UPDATE_FAILURE);
+            }
+            await _history.WithQuestionId(entity.Id)
+                .WithAction(EAction.UPDATE)
+                .WithStatus(entity.TrangThai.Id, entity.TrangThaiTen)
+                .WithType(ETypeHistory.Question, entity)
+                .WithTitle("Bút phê thành công.")
                 .SaveChangeHistoryQuestion();
             return entity;
         }
@@ -290,73 +326,6 @@ namespace EOffice.WebAPI.Services
                 .Skip(param.Skip)
                 .Limit(param.Limit)
                 .ToListAsync();
-            return result;
-        }
-
-        public async Task<PagingModel<VanBanDenVM>> GetPagingVM(VanBanDenParam param)
-        {
-            var result = new PagingModel<VanBanDenVM>();
-            var builder = Builders<VanBanDen>.Filter;
-            var filter = builder.Empty;
-            filter = builder.And(filter, builder.Where(x => x.IsDeleted == false));
-            // filter = filter & builder.In(x => x.IdOwner, CurrentUser.DonViIds);
-            if (!String.IsNullOrEmpty(param.Content))
-            {
-                filter = builder.And(filter,
-                    builder.Where(x => x.SoLuuCV.Trim().ToLower().Contains(param.Content.Trim().ToLower())));
-            }
-
-            if (!String.IsNullOrEmpty(param.TrangThai))
-            {
-                filter = builder.And(filter, builder.Eq(x => x.TrangThai.Id, param.TrangThai));
-            }
-
-            if (!String.IsNullOrEmpty(param.LinhVuc))
-            {
-                filter = builder.And(filter, builder.Eq(x => x.LinhVuc.Id, param.LinhVuc));
-            }
-            
-            string sortBy = nameof(VanBanDen.ModifiedAt);
-            var listVanBanDen = await _collection.Find(filter)
-                .Sort(param.SortDesc
-                    ? Builders<VanBanDen>
-                        .Sort.Descending(sortBy)
-                    : Builders<VanBanDen>
-                        .Sort.Ascending(sortBy))
-                .Skip(param.Skip)
-                .Limit(param.Limit)
-                .ToListAsync();
-            List<VanBanDenVM> list = new List<VanBanDenVM>();
-            foreach (var item in listVanBanDen)
-            {
-                VanBanDenVM vanBanDenVm = new VanBanDenVM();
-                vanBanDenVm.Id = item.Id;
-                vanBanDenVm.Version = item.Version;
-                vanBanDenVm.LoaiVanBan = item.LoaiVanBan.Ten;
-                vanBanDenVm.TrangThai = item.TrangThai.Ten;
-                vanBanDenVm.SoVBDen = item.SoVBDen;
-                vanBanDenVm.NgayNhan = item.NgayNhan;
-                vanBanDenVm.NgayBanHanh = item.NgayBanHanh;
-                vanBanDenVm.HinhThucNhan = item.HinhThucNhan.Ten;
-                vanBanDenVm.TrichYeu = item.TrichYeu;
-                vanBanDenVm.LinhVuc = item.LinhVuc.Ten;
-                vanBanDenVm.MucDoBaoMat = item.MucDoBaoMat.Name;
-                vanBanDenVm.MucDoTinhChat = item.MucDoTinhChat.Name;
-                vanBanDenVm.HoSoDonVi = item.HoSoDonVi.Ten;
-                vanBanDenVm.NoiLuuTru = item.NoiLuuTru;
-                vanBanDenVm.CoQuanGui = item.CoQuanGui.Ten;
-                vanBanDenVm.HanXuLy = item.HanXuLy;
-                vanBanDenVm.CongVanChiDoc = item.CongVanChiDoc;
-                vanBanDenVm.BanChinh = item.BanChinh;
-                vanBanDenVm.HienThiThongBao = item.HienThiThongBao;
-                vanBanDenVm.NguoiKy = item.NguoiKy.FullName;
-                vanBanDenVm.NgayKy = item.NgayKy;
-                vanBanDenVm.File = item.File;
-                vanBanDenVm.UploadFiles = item.UploadFiles;
-                list.Add(vanBanDenVm);
-            }
-            result.TotalRows = await _collection.CountDocumentsAsync(filter);
-            result.Data = list;
             return result;
         }
         

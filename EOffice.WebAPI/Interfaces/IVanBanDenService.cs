@@ -10,10 +10,10 @@ namespace EOffice.WebAPI.Interfaces
     {
         Task<VanBanDen> Create(VanBanDen model);  
         Task<VanBanDen> Update(VanBanDen model);
+        Task<VanBanDen> ButPhe(ButPhe model);
         Task Delete(string id);
         Task<List<VanBanDen>> Get();
         Task<VanBanDen> GetById(string id);
         Task<PagingModel<VanBanDen>> GetPaging(VanBanDenParam param);
-        Task<PagingModel<VanBanDenVM>> GetPagingVM(VanBanDenParam param);
     }
 }

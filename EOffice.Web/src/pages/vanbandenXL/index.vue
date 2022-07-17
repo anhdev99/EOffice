@@ -221,8 +221,10 @@ export default {
           if (res.resultCode === 'SUCCESS') {
             this.showModal = false;
             this.model = vanBanDenModel.baseJson()
-            this.myProvider()
+            console.log("res", res);
           }
+          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+          this.$refs.tblList.refresh()
         })
       } else {
         console.log("this.model-create", this.model);
@@ -232,7 +234,7 @@ export default {
           if (res.resultCode === 'SUCCESS') {
             this.showModal = false;
             this.model = vanBanDenModel.baseJson()
-            this.myProvider()
+            // this.$refs.myVueDropzone.removeAllFiles();
           }
           this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
           this.$refs.tblList.refresh()
@@ -252,14 +254,13 @@ export default {
     },
     async handleButPhe(e) {
       e.preventDefault();
-      // this.model.butPhe = this.modelButPhe;
-      console.log("ModelButPhe", this.model);
-      await this.$store.dispatch("vanBanDenStore/update", this.model).then((res) => {
+      await this.$store.dispatch("vanBanDenStore/butPhe", this.modelButPhe).then((res) => {
         if (res.resultCode === 'SUCCESS') {
-          this.showModal = false;
-          this.model = vanBanDenModel.baseJson()
+          this.showModalButPhe = false;
           this.myProvider()
         }
+        this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+        this.$refs.tblList.refresh()
       });
     },
     async handlePhanCong(e) {
@@ -277,7 +278,7 @@ export default {
       // });
     },
     handleShowDeleteModal(id) {
-      this.model.id = id;
+      this.modelButPhe.vanBanDiId= id;
       this.showDeleteModal = true;
     },
     async handleDelete() {
@@ -295,21 +296,18 @@ export default {
 
     },
     HandleShowPhanCong(id) {
-      this.model.id = id;
       this.showModalPhanCong = true;
 
     },
     async handleShowButPhe(id) {
-      this.model.id = id;
-      this.showModalButPhe = true;
+      this.modelButPhe.vanBanDenId = id;
       await this.$store.dispatch("vanBanDenStore/getById", id).then(resp => {
         if (resp.resultCode == "SUCCESS") {
           let items = resp.data;
           this.loading = false
           this.model = items || [];
-          console.log("Capj nhaapj model", this.model);
+          this.showModalButPhe = true;
           return items || [];
-
         }
         return [];
       })
@@ -536,7 +534,7 @@ export default {
                       variant="primary"
                       type="button"
                       class="btn w-md btn-primary"
-                      @click="showModal = true"
+                      @click="showModal = true "
                       size="sm"
                   >
                     <i class="mdi mdi-plus me-1"></i> Thêm mới
@@ -618,13 +616,15 @@ export default {
                                     track-by="id"
                                     label="ten"
                                     placeholder="Chọn trạng thái"
-
+                                    deselect-label="Nhấn để xoá"
+                                    selectLabel="Nhấn enter để chọn"
+                                    selectedLabel="Đã chọn"
                                 ></multiselect>
                                 <div
-                                    v-if="submitted && $v.model.soVBDen.$error"
+                                    v-if="submitted && $v.model.loaiVanBan.$error"
                                     class="invalid-feedback"
                                 >
-                                <span v-if="!$v.model.soVBDen.required"
+                                <span v-if="!$v.model.loaiVanBan.required"
                                 >Vui lòng thêm số văn bản đến.</span
                                 >
                                 </div>
@@ -646,26 +646,30 @@ export default {
                             <div class="col-md-6">
                               <div class="mb-2">
                                 <label class="form-label" for="validationCustom01">Ngày ban hành</label>
-                                <date-picker
-                                    v-model="model.ngayBanHanh"
-                                    format="DD/MM/YYYY"
-                                    :first-day-of-week="1"
-                                    lang="en"
-                                    placeholder="Chọn ngày ban hành"
-                                ></date-picker>
+                                <date-picker v-model="model.ngayBanHanh"
+                                             format="DD/MM/YYYY"
+                                             value-type="format"
+                                >
+                                  <div slot="input">
+                                    <input  v-model="model.ngayBanHanh"
+                                            v-mask="'##/##/####'" type="text" class="form-control" placeholder="Nhập ngày ban hành"/>
+                                  </div>
+                                </date-picker>
                               </div>
                             </div>
                             <!--                            Ngày nhận -->
                             <div class="col-md-6">
                               <div class="mb-2">
                                 <label class="form-label" for="validationCustom01">Ngày nhận</label>
-                                <date-picker
-                                    v-model="model.ngayNhan"
-                                    format="DD/MM/YYYY"
-                                    :first-day-of-week="1"
-                                    lang="en"
-                                    placeholder="Chọn ngày nhận"
-                                ></date-picker>
+                                <date-picker v-model="model.ngayNhan"
+                                             format="DD/MM/YYYY"
+                                             value-type="format"
+                                >
+                                  <div slot="input">
+                                    <input  v-model="model.ngayNhan"
+                                            v-mask="'##/##/####'" type="text" class="form-control" placeholder="Nhập ngày nhận"/>
+                                  </div>
+                                </date-picker>
                               </div>
                             </div>
 
@@ -700,13 +704,15 @@ export default {
                             <div class="col-md-6">
                               <div class="mb-2">
                                 <label class="form-label" for="validationCustom01">Ngày ký</label>
-                                <date-picker
-                                    v-model="model.ngayKy"
-                                    format="DD/MM/YYYY"
-                                    :first-day-of-week="1"
-                                    lang="en"
-                                    placeholder="Chọn ngày ban hành"
-                                ></date-picker>
+                                <date-picker v-model="model.ngayKy"
+                                             format="DD/MM/YYYY"
+                                             value-type="format"
+                                >
+                                  <div slot="input">
+                                    <input  v-model="model.ngayKy"
+                                            v-mask="'##/##/####'" type="text" class="form-control" placeholder="Nhập ngày ký"/>
+                                  </div>
+                                </date-picker>
                               </div>
                             </div>
                             <!--                            Người ký-->
@@ -729,13 +735,15 @@ export default {
                             <div class="col-md-6">
                               <div class="mb-2">
                                 <label class="form-label" for="validationCustom01">Thời hạn xử lý</label>
-                                <date-picker
-                                    v-model="model.hanXuLy"
-                                    format="DD/MM/YYYY"
-                                    :first-day-of-week="1"
-                                    lang="en"
-                                    placeholder="Chọn ngày ban hành"
-                                ></date-picker>
+                                <date-picker v-model="model.hanXuLy"
+                                             format="DD/MM/YYYY"
+                                             value-type="format"
+                                >
+                                  <div slot="input">
+                                    <input  v-model="model.hanXuLy"
+                                            v-mask="'##/##/####'" type="text" class="form-control" placeholder="Nhập hạn xử lý"/>
+                                  </div>
+                                </date-picker>
                               </div>
                             </div>
                             <!--                            Trạng thái-->
@@ -947,6 +955,9 @@ export default {
                            class="text-left text-black w-100 block-ellipsis mx-2"
                       ></div>
                     </template>
+                    <template v-slot:cell(trangThai)="data">
+                      <span v-if="data.item.trangThai" class="badge bg-success"> {{ data.item.trangThai.ten }}</span>
+                    </template>
                     <template v-slot:cell(process)="data">
                       <div class="d-flex justify-content-around">
                         <button
@@ -1086,13 +1097,15 @@ export default {
                 <!--                Ngày bút phê -->
                 <div class="mb-2">
                   <label class="form-label" for="validationCustom01">Ngày bút phê</label>
-                  <date-picker
-                      v-model="modelButPhe.ngayButPhe"
-                      format="DD/MM/YYYY"
-                      :first-day-of-week="1"
-                      lang="en"
-                      placeholder="Chọn ngày bút phê"
-                  ></date-picker>
+                  <date-picker v-model="modelButPhe.ngayButPhe"
+                               format="DD/MM/YYYY"
+                               value-type="format"
+                  >
+                    <div slot="input">
+                      <input  v-model="modelButPhe.ngayButPhe"
+                              v-mask="'##/##/####'" type="text" class="form-control" placeholder="Chọn ngày bút phê"/>
+                    </div>
+                  </date-picker>
                 </div>
               </div>
               <div class="col-md-6">

@@ -70,6 +70,30 @@ namespace EOffice.WebAPI.APIs
                 );
             }
         }
+        
+        [HttpPost]
+        [Route("but-phe")]
+        public async Task<IActionResult> ButPhe([FromBody] ButPhe model)    
+        {
+            try
+            {
+                var response = await _vanBanDenService.ButPhe(model);
+
+                return Ok(
+                    new ResultResponse<VanBanDen>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.UPDATE_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
 
         [HttpPost]
         [Route("delete/{id}")]
@@ -166,28 +190,6 @@ namespace EOffice.WebAPI.APIs
                 );
             }
         }
-        [HttpPost]
-        [Route("get-paging-params-vm")]
-        public async Task<IActionResult> GetPagingParamVM([FromBody] VanBanDenParam param)
-        {
-            try
-            {
-                var response = await _vanBanDenService.GetPagingVM(param);
-
-                return Ok(
-                    new ResultResponse<PagingModel<VanBanDenVM>>()
-                        .WithData(response)
-                        .WithCode(EResultResponse.SUCCESS.ToString())
-                        .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
-                );
-            }
-            catch (ResponseMessageException ex)
-            {
-                return Ok(
-                    new ResultMessageResponse().WithCode(ex.ResultCode)
-                        .WithMessage(ex.ResultString)
-                );
-            }
-        }
+        
     }
 }
