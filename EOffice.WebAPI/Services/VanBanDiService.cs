@@ -645,10 +645,10 @@ namespace EOffice.WebAPI.Services
                     var fileName = "";
                     if (fileWord.Ext == ".docx")
                     {
-                        fileName = rootPath + "/" + fileWord.FileName.Replace(".docx", ".pdf");
+                        fileName = "files" + "/" + fileWord.FileName.Replace(".docx", ".pdf");
                     }else if  (fileWord.Ext == ".doc")
                     {
-                        fileName = rootPath + "/" + fileWord.FileName.Replace(".doc", ".pdf");
+                        fileName = "files"  + "/" + fileWord.FileName.Replace(".doc", ".pdf");
                     }
                  
                     

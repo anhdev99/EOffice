@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.IO.Pipelines;
 using System.Text;
 using EOffice.WebAPI.Models;
 using Org.BouncyCastle.Asn1.Pkcs;
@@ -15,6 +17,7 @@ using Spire.Doc;
 using Spire.Doc.Documents;
 using Spire.Doc.Formatting;
 using Spire.Pdf;
+using FileFormat = Spire.Pdf.FileFormat;
 
 namespace EOffice.WebAPI.Services
 {
@@ -255,7 +258,31 @@ namespace EOffice.WebAPI.Services
             }
 
 
-            doc.SaveToFile(pathPDF, Spire.Doc.FileFormat.PDF);
+            // doc.SaveToFile(pathPDF, Spire.Doc.FileFormat.PDF);
+            //
+            try
+            {
+                // using (var strem = System.IO.File.Create(pathPDF))
+                // {
+                //     // strem.Position = 0;
+                //     doc.SaveToStream(strem, Spire.Doc.FileFormat.PDF);
+                // }
+                doc.SaveToFile(pathPDF, Spire.Doc.FileFormat.PDF);
+                // using (var stream = new FileStream
+                //            (pathPDF, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                // {
+                //     stream.Position = 0;
+                //     doc.SaveToStream(stream, Spire.Doc.FileFormat.PDF);
+                //     stream.CopyToAsync()
+                // }
+                // doc.SaveToFile(pathPDF);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+   
             Console.WriteLine("Ghi File thanh cong!");
 
             //mo file
