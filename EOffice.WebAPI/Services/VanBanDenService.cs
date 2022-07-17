@@ -132,19 +132,59 @@ namespace EOffice.WebAPI.Services
             }
 
             var oldValue = entity;
-            entity.Version = model.Version;
-            entity.Number = model.Number;
+            entity.LoaiVanBan = model.LoaiVanBan;
+            entity.TrangThai = model.TrangThai;
             entity.SoLuuCV = model.SoLuuCV;
             entity.SoVBDen = model.SoVBDen;
-            entity.NgayNhap = model.NgayNhap;
-            entity.NgayTraLoi = model.NgayTraLoi;
-            entity.TraLoiCVSo = model.TraLoiCVSo;
-            entity.SoBan = model.SoBan;
+            entity.NgayNhap = DateTime.Now;
+            entity.NgayNhan = model.NgayNhan;
+            entity.NgayBanHanh = model.NgayBanHanh;
             entity.TrichYeu = model.TrichYeu;
+            entity.HinhThucNhan = model.HinhThucNhan;
+            entity.LinhVuc = model.LinhVuc;
+            entity.MucDoBaoMat = model.MucDoBaoMat;
+            entity.MucDoTinhChat = model.MucDoTinhChat;
+            entity.HoSoDonVi = model.HoSoDonVi;
             entity.NoiLuuTru = model.NoiLuuTru;
+            entity.CoQuanGui = model.CoQuanGui;
+            entity.KhoiCoQuanGui = model.KhoiCoQuanGui;
+            entity.HanXuLy = model.HanXuLy;
+            entity.CongVanChiDoc = model.CongVanChiDoc;
+            entity.BanChinh = model.BanChinh;
+            entity.HienThiThongBao = model.HienThiThongBao;
+            entity.NguoiKy = model.NguoiKy;
+            entity.NgayKy = model.NgayKy;
+            entity.CreatedBy = CurrentUserName;
             entity.ModifiedBy = CurrentUserName;
+            entity.CreatedAt = DateTime.Now;
             entity.ModifiedAt = DateTime.Now;
+            // butphe
+            if (model.ButPhe != default || model.ButPhe != null)
+            {
+                entity.ButPhe.NgayButPhe = model.ButPhe.NgayButPhe;
+                entity.ButPhe.NguoiButPhe = model.ButPhe.NguoiButPhe;
+                entity.ButPhe.NguoiChuTri = model.ButPhe.NguoiChuTri;
+                entity.ButPhe.NguoiPhuTrach = model.ButPhe.NguoiPhuTrach;
+                entity.ButPhe.NguoiPhoiHopXuLy = model.ButPhe.NguoiPhoiHopXuLy;
+                entity.ButPhe.NguoiXemDeBiet = model.ButPhe.NguoiXemDeBiet;
+                entity.ButPhe.MucDoQuanTrong = model.ButPhe.MucDoQuanTrong;
+                entity.ButPhe.File = model.ButPhe.File;
+                entity.ButPhe.UploadFiles = model.ButPhe.UploadFiles;
+                entity.ButPhe.DonViPhoiHop = model.ButPhe.DonViPhoiHop;
+                entity.ButPhe.DonViXuLy = model.ButPhe.DonViXuLy;
+                entity.ButPhe.NoiDungButPhe = model.ButPhe.NoiDungButPhe;
+            }
+            // phan cong 
+            if (model.PhanCong != default || model.PhanCong != null)
+            {
+                List<PhanCong> listPhanCong = new List<PhanCong>();
+                foreach (var item in model.PhanCong)
+                {
+                    var phancong = new PhanCong();
 
+                }
+            }
+            
 
             if (model.UploadFiles != default)
             {

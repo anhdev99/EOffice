@@ -135,8 +135,6 @@ const baseJson = (items) => {
         noiLuuTru: null,
         coQuanNhan: null,
         coQuanNhanTen: null,
-
-        donViXuLy: null,
         congVanChiDoc: false,
         banChinh: false,
         hienThiThongBao: false,
@@ -148,6 +146,9 @@ const baseJson = (items) => {
         file: null,
         uploadFiles: null,
         nguoiPhanCong: null,
+        butPhe: null,
+        phanCong: null,
+        donViXuLy: null,
     }
 }
 
