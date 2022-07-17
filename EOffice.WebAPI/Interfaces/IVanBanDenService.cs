@@ -11,6 +11,7 @@ namespace EOffice.WebAPI.Interfaces
         Task<VanBanDen> Create(VanBanDen model);  
         Task<VanBanDen> Update(VanBanDen model);
         Task<VanBanDen> ButPhe(ButPhe model);
+        Task<VanBanDen> PhanCong(List<PhanCong> model);
         Task Delete(string id);
         Task<List<VanBanDen>> Get();
         Task<VanBanDen> GetById(string id);

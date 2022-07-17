@@ -244,6 +244,63 @@ namespace EOffice.WebAPI.Services
                 .SaveChangeHistoryQuestion();
             return entity;
         }
+
+        public async Task<VanBanDen> PhanCong(List<PhanCong> model)
+        {
+            
+            var entity = _collection.Find(x => x.Id == model[0].VanBanDenId).FirstOrDefault();  
+            if (entity == default)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.DATA_NOT_EMPTY);
+            }
+
+            var listPhanCong = entity.PhanCong;
+            if (listPhanCong != default)
+            {
+                foreach (var item in model)
+                {
+                    var tempUserExist = listPhanCong.FindIndex(x => x.NguoiNhanXuLy == item.NguoiNhanXuLy);
+                    if (tempUserExist != default)
+                    {
+                        throw new ResponseMessageException()
+                            .WithCode(EResultResponse.FAIL.ToString())
+                            .WithMessage("Đã tồn tại trong danh sách phân công");
+                    }
+                    entity.PhanCong.RemoveAt(tempUserExist);
+                }
+                
+            }
+
+            List<PhanCong> list = new List<PhanCong>();
+            foreach (var item in model)
+            {
+                var phancong = new PhanCong();
+                phancong.Id = item.Id;
+                phancong.YKienChiDao = item.YKienChiDao;
+                phancong.NguoiButPhe = item.NguoiButPhe;
+                phancong.NguoiNhanXuLy = item.NguoiNhanXuLy;
+                
+                list.Add(phancong);
+            }
+            entity.PhanCong = list;
+            var result = await BaseMongoDb.UpdateAsync(entity);
+            if (!result.Success)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.UPDATE_FAILURE);
+            }
+
+            await _history.WithQuestionId(entity.Id)
+                .WithAction(EAction.UPDATE)
+                .WithStatus(entity.TrangThai?.Ten, entity.TrangThai?.Ten)
+                .WithType(ETypeHistory.Question, entity)
+                .WithTitle("Thêm nhóm thực hiện thành công.")
+                .SaveChangeHistoryQuestion();
+            return entity;
+        }
         
         public async Task Delete(string id)
         {

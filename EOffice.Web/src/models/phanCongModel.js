@@ -19,14 +19,13 @@ const fromJson = (item) => {
     }
 }
 
-const baseJson = () => {
+const baseJson = (items) => {
     return {
-        id: null,
+        id: items?.id ?? null,
+        vanBanDenId: null,
         yKienChiDao: null,
         nguoiButPhe: null,
         NguoiNhanXuLy: null,
-        file: null,
-        uploadFiles: null,
     }
 }
 

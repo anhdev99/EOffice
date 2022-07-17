@@ -22,6 +22,7 @@ import vue2Dropzone from "vue2-dropzone";
 import {butPheModel} from "@/models/butPheModel";
 import {phanCongModel} from "@/models/phanCongModel";
 import {notifyModel} from "@/models/notifyModel";
+import Swal from "sweetalert2";
 
 /**
  * Advanced table component
@@ -152,7 +153,7 @@ export default {
       },
       showModalButPhe: false,
       showModalPhanCong: false,
-      phanCong: [{id: 1}],
+      phanCong: [],
     };
   },
   validations: {
@@ -173,6 +174,13 @@ export default {
       return this.data.length;
     },
   },
+  watch: {
+    showModalPhanCong() {
+      if(this.showModalPhanCong == false){
+        this.phanCong = [];
+      }
+    }
+  },
   async created() {
     this.getLoaiVanBan();
     this.getTrangThai();
@@ -186,6 +194,7 @@ export default {
     // Set the initial number of items
     this.totalRows = this.items.length;
   },
+
   methods: {
     /**
      * Search the table data with search input
@@ -194,7 +203,6 @@ export default {
       await this.onPageChange();
     },
     async onPageChange(page = 1) {
-      console.log("LOG ON PAGE CHAGNE : ")
       this.pagination.currentPage = page;
       const params = {
         pageNumber: this.pagination.currentPage,
@@ -207,10 +215,8 @@ export default {
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
-
     async handleSubmit(e) {
       e.preventDefault();
-      console.log("handle submit", this.model);
       if (
           this.model.id != 0 &&
           this.model.id != null &&
@@ -221,13 +227,11 @@ export default {
           if (res.resultCode === 'SUCCESS') {
             this.showModal = false;
             this.model = vanBanDenModel.baseJson()
-            console.log("res", res);
           }
           this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
           this.$refs.tblList.refresh()
         })
       } else {
-        console.log("this.model-create", this.model);
         //Create modelhandleSubmit
         this.model.version = 1;
         await this.$store.dispatch("vanBanDenStore/create", this.model).then((res) => {
@@ -244,7 +248,6 @@ export default {
     async handleUpdate(id) {
       await this.$store.dispatch("vanBanDenStore/getById", id).then((res) => {
         if (res.resultCode == "SUCCESS") {
-          console.log("res", res.data)
           this.model = res.data;
           this.showModal = true;
         } else {
@@ -265,17 +268,15 @@ export default {
     },
     async handlePhanCong(e) {
       e.preventDefault();
-      this.model.phanCong = this.modelPhanCong;
-      console.log("ModelPhanCong", this.model);
-      console.log("ModelPhanCong 2", this.phanCong);
-
-      // await this.$store.dispatch("vanBanDenStore/update", this.model).then((res) => {
-      //   if (res.resultCode === 'SUCCESS') {
-      //     this.showModal = false;
-      //     this.model = vanBanDenModel.baseJson()
-      //     this.myProvider()
-      //   }
-      // });
+      this.modelPhanCong = this.phanCong;
+      await this.$store.dispatch("vanBanDenStore/phanCong", this.modelPhanCong).then((res) => {
+        if (res.resultCode === 'SUCCESS') {
+          this.showModal = false;
+          this.phanCong = [];
+        }
+        this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+        this.$refs.tblList.refresh()
+      });
     },
     handleShowDeleteModal(id) {
       this.modelButPhe.vanBanDiId= id;
@@ -296,8 +297,9 @@ export default {
 
     },
     HandleShowPhanCong(id) {
+      this.modelPhanCong.vanBanDenId = id;
+      this.phanCong.push({yKienChiDao: "", nguoiButPhe: "", NguoiNhanXuLy: "", vanBanDenId: id,});
       this.showModalPhanCong = true;
-
     },
     async handleShowButPhe(id) {
       this.modelButPhe.vanBanDenId = id;
@@ -357,7 +359,6 @@ export default {
             let items = resp.data
             this.loading = false
             this.optionsUser = items;
-            console.log("this.optionUser", this.optionsUser);
           }
           return [];
         });
@@ -385,7 +386,6 @@ export default {
         return promise.then(resp => {
           if (resp.resultCode == "SUCCESS") {
             let items = resp.data
-            console.log("hinhthucnhan", items);
             this.loading = false
             this.optionsHinhThucNhan = items;
           }
@@ -398,12 +398,10 @@ export default {
     async getMucDo() {
       await this.$store.dispatch("enumStore/getMucDo").then((res) => {
         if (res.resultCode === "SUCCESS") {
-          console.log("resMucDo", res.data);
           this.optionsMucDo = res.data;
         } else {
           this.optionsMucDo = [];
         }
-        console.log("optionsMucDo", this.optionsMucDo);
       });
     },
     removeThisFile(file, error, xhr) {
@@ -421,21 +419,8 @@ export default {
         if (this.modelButPhe.uploadFiles == null || this.modelButPhe.uploadFiles <= 0) {
           this.modelButPhe.uploadFiles = [];
         }
-        console.log("LOG ADD THIS FILE but phe", response)
         let fileSuccess = response.data;
         this.modelButPhe.uploadFiles.push({
-          fileId: fileSuccess.id,
-          fileName: fileSuccess.fileName,
-          ext: fileSuccess.ext
-        })
-      }
-      if (this.showModalPhanCong == true) {
-        if (this.modelPhanCong == null || this.modelPhanCong.uploadFiles <= 0) {
-          this.modelPhanCong.uploadFiles = [];
-        }
-        console.log("LOG ADD THIS FILE phan cong ", response)
-        let fileSuccess = response.data;
-        this.modelPhanCong.uploadFiles.push({
           fileId: fileSuccess.id,
           fileName: fileSuccess.fileName,
           ext: fileSuccess.ext
@@ -445,7 +430,6 @@ export default {
         if (this.model.uploadFiles == null || this.model.uploadFiles.length <= 0) {
           this.model.uploadFiles = [];
         }
-        console.log("LOG ADD THIS FILE ", response)
         let fileSuccess = response.data;
         this.model.uploadFiles.push({fileId: fileSuccess.id, fileName: fileSuccess.fileName, ext: fileSuccess.ext})
       }
@@ -472,12 +456,29 @@ export default {
         delete node.children;
       }
     },
-    AddformData() {
-      this.phanCong.push({yKienChiDao: null, nguoiButPhe: null, nguoiNhanXuLy: null, file: null});
+    AddformData(id) {
+      this.phanCong.push({yKienChiDao: "", nguoiButPhe: "", NguoiNhanXuLy: "", vanBanDenId: id,});
     },
     deleteRow(index) {
-      if (confirm("Bạn có chắc muốn xoá không?"))
-        this.phanCong.splice(index, 1);
+      Swal.fire({
+        title: "Bạn có chắc muốn xoá không?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#34c38f",
+        cancelButtonColor: "#f46a6a",
+        confirmButtonText: "Đồng ý"
+      }).then(result => {
+        if (result.value) {
+          this.phanCong.splice(index, 1);
+          Swal.fire({
+            position: 'top-center',
+            icon: 'success',
+            title: 'Thành công',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
+      });
     },
     myProvider(ctx) {
       const params = {
@@ -496,14 +497,13 @@ export default {
           this.totalRows = resp.data.totalRows
           this.numberOfElement = resp.data.data.length
           this.loading = false
-          console.log("data", items);
           return items || []
         })
       } finally {
         this.loading = false
       }
     }
-  }
+  },
 };
 </script>
 
@@ -1252,7 +1252,7 @@ export default {
                   <b-button
                       pill
                       variant="success"
-                      @click="AddformData"
+                      @click="AddformData(modelPhanCong.vanBanDenId)"
                   >
                     <i class="fas fa-plus text-light fs-3"></i>
                   </b-button>
@@ -1327,18 +1327,18 @@ export default {
                             ></multiselect>
                           </div>
                         </div>
-                        <div class="col-md-12">
-                          <div class="mb-2">
-                            <label for="">File đính kèm</label>
-                            <vue-dropzone
-                                id="dropzone"
-                                ref="myVueDropzone"
-                                :options="dropzoneOptions"
-                                v-on:vdropzone-removed-file="removeThisFile"
-                                v-on:vdropzone-success="addThisFile"
-                            ></vue-dropzone>
-                          </div>
-                        </div>
+<!--                        <div class="col-md-12">-->
+<!--                          <div class="mb-2">-->
+<!--                            <label for="">File đính kèm</label>-->
+<!--                            <vue-dropzone-->
+<!--                                id="dropzone"-->
+<!--                                ref="myVueDropzone"-->
+<!--                                :options="dropzoneOptions"-->
+<!--                                v-on:vdropzone-removed-file="removeThisFile"-->
+<!--                                v-on:vdropzone-success="addThisFile"-->
+<!--                            ></vue-dropzone>-->
+<!--                          </div>-->
+<!--                        </div>-->
                       </div>
                     </div>
                   </div>

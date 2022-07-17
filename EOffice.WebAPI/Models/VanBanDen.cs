@@ -64,8 +64,8 @@ namespace EOffice.WebAPI.Models
         
         public ButPhe ButPhe { get; set; }
         public List<DonViXuLy> DonViXuLy { get; set; }
-        
-        public List<PhanCong> PhanCong { get; set; }
+
+        public List<PhanCong> PhanCong { get; set; } = new List<PhanCong>();
 
     }
 
@@ -109,9 +109,6 @@ namespace EOffice.WebAPI.Models
         public string VanBanDenId { get; set; }
         public string YKienChiDao { get; set; }
         public User NguoiButPhe { get; set; }
-        public User NguoiNhanXuLy { get; set; }   
-        public FileShort File { get; set; }
-        [BsonIgnore]
-        public FileShort UploadFiles{ get; set; }
+        public List<User> NguoiNhanXuLy { get; set; }   
     }
 }

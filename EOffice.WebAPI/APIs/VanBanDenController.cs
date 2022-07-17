@@ -94,6 +94,30 @@ namespace EOffice.WebAPI.APIs
                 );
             }
         }
+        
+        [HttpPost]
+        [Route("phan-cong")]
+        public async Task<IActionResult> PhanCong([FromBody] List<PhanCong> model)    
+        {
+            try
+            {
+                var response = await _vanBanDenService.PhanCong(model);
+
+                return Ok(
+                    new ResultResponse<VanBanDen>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.UPDATE_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
 
         [HttpPost]
         [Route("delete/{id}")]
