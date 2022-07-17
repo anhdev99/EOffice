@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using EOffice.WebAPI.Exceptions;
 using EOffice.WebAPI.Helpers;
@@ -6,6 +8,7 @@ using EOffice.WebAPI.Interfaces;
 using EOffice.WebAPI.Models;
 using EOffice.WebAPI.Params;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using EResultResponse = EOffice.WebAPI.Helpers.EResultResponse;
 
@@ -16,10 +19,12 @@ namespace EOffice.WebAPI.APIs
     public class VanBanDiController : ControllerBase
     {
         private IVanBanDiService _vanBanDiService;
+        private readonly IWebHostEnvironment _hostingEnvironment;
 
-        public VanBanDiController(IVanBanDiService vanBanDiService)
+        public VanBanDiController(IVanBanDiService vanBanDiService, IWebHostEnvironment hostingEnvironment)
         {
             _vanBanDiService = vanBanDiService;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         [HttpPost]
@@ -44,6 +49,38 @@ namespace EOffice.WebAPI.APIs
                 );
             }
         }
+        
+        [HttpPost]
+        [Route("assign-or-reject")]
+        public async Task<IActionResult> AssignOrReject([FromBody] PhanCongKySo model)
+        {
+            try
+            {
+                var uploadDirecotroy = "files/";
+                var uploadPath = Path.Combine(_hostingEnvironment.ContentRootPath, uploadDirecotroy);
+
+                if (!Directory.Exists(uploadPath))
+                    Directory.CreateDirectory(uploadPath);
+                var dateTime = DateTime.UtcNow.ToString("yyyy_MM_dd_HH_mm_ss");
+                var path = Path.Combine(_hostingEnvironment.ContentRootPath, uploadDirecotroy, dateTime);
+                
+                var response = await _vanBanDiService.AssignOrReject(model, path);
+                return Ok(
+                    new ResultResponse<VanBanDi>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage("Ký số thành công")
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+
         
         [HttpPost]
         [Route("them-nguoi-ky-so")]

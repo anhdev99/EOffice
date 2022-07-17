@@ -19,6 +19,7 @@ import {butPheModel} from "@/models/butPheModel";
 import {phanCongModel} from "@/models/phanCongModel";
 import {notifyModel} from "@/models/notifyModel";
 import {vanBanDiModel} from "@/models/vanBanDiModel";
+import moment from "moment";
 
 /**
  * Advanced table component
@@ -67,8 +68,13 @@ export default {
         choPhepKy: true,
         nguoiKy: null,
         vanBanDiId: null,
-        thuTu: 0
+        thuTu: 0,
+        reject: false,
+        password: null,
+        content: null,
+        ngayKyString: null
       },
+      showModelAcceptKySo: false,
       modelButPhe: butPheModel.baseJson(),
       modelPhanCong: phanCongModel.baseJson(),
       pagination: pagingModel.baseJson(),
@@ -143,6 +149,7 @@ export default {
       optionsMucDo: [],
       optionsTrangThai: [],
       listPhanCongKySo:[],
+      showButtonKySoCurrent: true,
       editor: ClassicEditor,
       editorConfig: {
         height: '200px'
@@ -196,6 +203,13 @@ export default {
     /**
      * Search the table data with search input
      */
+    getCurrentUser(){
+      let authUser = localStorage.getItem("auth-user");
+      if(authUser){
+        let jsonUserCurrent = JSON.parse(authUser);
+       return jsonUserCurrent;
+      }
+    },
     async fnGetList() {
       await this.onPageChange();
     },
@@ -280,6 +294,18 @@ export default {
         });
       }
     },
+    async handleAssignOrReject() {
+      if (this.modelKySo.vanBanDiId  != null) {
+        this.modelKySo.ngayKyString = moment().format();
+        await this.$store.dispatch("vanBanDiStore/assignOrReject", this.modelKySo).then((res) => {
+          if (res.resultCode === 'SUCCESS') {
+            this.showModelAcceptKySo = false;
+            this.showModalMembers = false;
+          }
+          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+        });
+      }
+    },
     handleDetail(id) {
 
     },
@@ -323,6 +349,13 @@ export default {
             let items = resp.data;
             this.loading = false
             this.listPhanCongKySo = items || [];
+            let checkExistPhanCongKySo = this.listPhanCongKySo.find(x => x.userName == this.getCurrentUser().userName && (x.ngayKyString != null && x.ngayKyString != "") );
+            console.log("Check",  checkExistPhanCongKySo)
+            if(checkExistPhanCongKySo != null ) {
+              this.showButtonKySoCurrent = true;
+            }else{
+              this.showButtonKySoCurrent = false;
+            }
             return items || []
           }
           return [];
@@ -506,6 +539,9 @@ export default {
         })
       }
     },
+    handleShowModelAcceptKySo(){
+      this.showModelAcceptKySo = true;
+    }
   }
 };
 </script>
@@ -533,15 +569,15 @@ export default {
               </div>
               <div class="col-sm-8">
                 <div class="text-sm-end">
-                  <b-button
-                      variant="primary"
-                      type="button"
-                      class="btn w-md btn-primary"
-                      @click="handleCreate"
-                      size="sm"
-                  >
-                    <i class="mdi mdi-plus me-1"></i> Thêm mới
-                  </b-button>
+<!--                  <b-button-->
+<!--                      variant="primary"-->
+<!--                      type="button"-->
+<!--                      class="btn w-md btn-primary"-->
+<!--                      @click="handleCreate"-->
+<!--                      size="sm"-->
+<!--                  >-->
+<!--                    <i class="mdi mdi-plus me-1"></i> Thêm mới-->
+<!--                  </b-button>-->
                   <!-- Model create -->
                   <b-modal
                       v-model="showModal"
@@ -1108,9 +1144,10 @@ export default {
             </div>
           </div>
         </div>
+
         <b-modal
             v-model="showModalMembers"
-            title="Thành viên ký số"
+            title="Ký số nội bộ"
             title-class="text-black font-18"
             body-class="p-3"
             hide-footer
@@ -1118,54 +1155,32 @@ export default {
             no-close-on-backdrop
             size="lg"
         >
-          <div class="row" style="display: flex; justify-content: center; align-items: center;">
-            <div class="col-md-5">
-              <!--                Lãnh đạo bút phê -->
-              <div class="mb-2">
-                <label class="form-label" for="validationCustom01"> Thành viên</label>
-                <multiselect
-                    v-model="modelKySo.nguoiKy"
-                    :options="optionsUser"
-                    track-by="id"
-                    label="fullName"
-                    placeholder="Chọn người ký số"
-                    deselect-label="Nhấn để xoá"
-                    selectLabel="Nhấn enter để chọn"
-                    selectedLabel="Đã chọn"
-                ></multiselect>
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div class=" d-flex align-items-center">
-                <switches v-model="modelKySo.choPhepKy" color="primary" class="ml-1 mx-2"></switches>
-                <label for=""> Chỉ duyệt </label>
-              </div>
+          <template #modal-header="{ close }">
+            <!-- Emulate built in modal header close button action -->
+            <h5> Ký số nội bộ</h5>
+            <div class="text-end">
+              <b-button variant="light" size="sm" style="width: 80px" @click="showModalMembers = false">
+                Đóng
+              </b-button>
 
+              <b-button v-if="!showButtonKySoCurrent" type="submit" variant="primary" class="ms-1"  size="sm"
+                        @click="handleShowModelAcceptKySo"
+              >
+
+                Ký số / Từ chối
+              </b-button>
             </div>
-            <div class="col-md-2">
-              <div class="mb-2">
-                <label class="form-label" for="validationCustom01"> Thứ tự</label>
-                <input
-                    v-model="modelKySo.thuTu"
-                    type="text"
-                    class="form-control"
-                    placeholder="Nhập thứ tự"
-                />
-              </div>
-            </div>
-            <div class="col-md-2">
-              <b-button @click="handleAssignSign" variant="primary"> Thêm thành viên</b-button>
-            </div>
+          </template>
+          <div class="row" style="display: flex; justify-content: center; align-items: center;">
             <div class="col-md-12">
               <div class="table-responsive-sm">
                 <table class="datatables table b-table table-striped table-bordered" style="width:100%">
                   <thead>
                   <tr>
-                    <th>#</th>
+                    <th style="text-align:center">#</th>
                     <th>Tài khoản</th>
                     <th>Họ và tên</th>
-                    <th>Cho phép ký</th>
-                    <th></th>
+                    <th> Ngày ký</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -1176,13 +1191,13 @@ export default {
                   </template>
                   <template v-else>
                     <tr v-for="(item, index) in listPhanCongKySo" :key="index">
-                      <td>{{++index}}</td>
+                      <td style="text-align:center">{{++index}}</td>
                       <td>{{item.userName}}</td>
                       <td>{{item.fullName}}</td>
-                      <td>{{item.choPhepKy}}</td>
-                      <td>
-                        <b-button @click="handleRemoveAssignSign(item.userName)"  variant="danger">Xóa</b-button>
-                      </td>
+                      <td>{{item.ngayKyString}}</td>
+<!--                      <td>-->
+<!--                        <b-button @click="handleShowModelAcceptKySo" size="sm"  variant="primary"> Ký số/Từ chối</b-button>-->
+<!--                      </td>-->
                     </tr>
                   </template>
                   </tbody>
@@ -1192,8 +1207,69 @@ export default {
 
 
           </div>
+
         </b-modal>
-        <!--        Modal bút phê-->
+        <b-modal
+            v-model="showModelAcceptKySo"
+            centered
+            title=" Ký số nội bộ"
+            title-class="font-18"
+            no-close-on-backdrop
+        >
+          <div class="row">
+            <div class="col-md-12">
+              <div class=" d-flex align-items-center">
+                <switches v-model="modelKySo.reject" color="primary" class="ml-1 mx-2"></switches>
+                <label for=""> Từ chối ký </label>
+              </div>
+            </div>
+            <div class="col-md-12 mt-2">
+              <label class="form-label" for="validationCustom01"> Mật khẩu</label> <span
+                class="text-danger">*</span>
+              <input
+                  id="validationCustom01"
+                  v-model="modelKySo.password"
+                  type="password"
+                  class="form-control"
+              />
+            </div>
+            <div class="col-md-12 mt-2">
+              <label class="form-label" for="validationCustom01"> Nội dung</label> <span
+                class="text-danger">*</span>
+              <textarea
+                  id="validationCustom01"
+                  v-model="modelKySo.content"
+                  type="text"
+                  class="form-control"
+              />
+            </div>
+          </div>
+          <template #modal-footer>
+            <b-button v-b-modal.modal-close_visit
+                      size="sm"
+                      class="btn btn-outline-info w-md"
+                      v-on:click="showModelAcceptKySo = false">
+              Đóng
+            </b-button>
+            <b-button v-if="!modelKySo.reject" v-b-modal.modal-close_visit
+                      size="sm"
+                      variant="primary"
+                      type="button"
+                      class="w-md"
+                      v-on:click="handleAssignOrReject">
+              Đồng ý
+            </b-button>
+            <b-button v-if="modelKySo.reject" v-b-modal.modal-close_visit
+                      size="sm"
+                      variant="danger"
+                      type="button"
+                      class="w-md"
+                      v-on:click="handleAssignOrReject">
+              Từ chối
+            </b-button>
+          </template>
+        </b-modal>
+
         <b-modal
             v-model="showModalButPhe"
             title="Bút phê đơn vị lãnh đạo, đơn vị nhận/ xử lý văn bản"

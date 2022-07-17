@@ -67,11 +67,15 @@ namespace EOffice.WebAPI.Models
         public int ThuTu { get; set; }
         public KySo SignImage { get; set; }
         public DateTime? NgayKy { get; set; }
+        public string NgayKyString { get; set; }
         public bool Reject { get; set; } = false;
         public bool ChoPhepKy { get; set; } = false;
         public string VanBanDiId { get; set; }
-        
+        public string Content { get; set; }
+
         [BsonIgnore]
-        public User NguoiKy { get; set; }
+        public User NguoiKy { get; set; }        
+        [BsonIgnore]
+        public string Password { get; set; }
     }
 }

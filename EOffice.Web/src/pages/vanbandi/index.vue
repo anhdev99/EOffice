@@ -1175,15 +1175,15 @@ export default {
                     </tr>
                   </template>
                   <template v-else>
-                      <tr v-for="(item, index) in listPhanCongKySo" :key="index">
-                        <td>{{++index}}</td>
-                        <td>{{item.userName}}</td>
-                        <td>{{item.fullName}}</td>
-                        <td>{{item.choPhepKy}}</td>
-                        <td>
-                          <b-button @click="handleRemoveAssignSign(item.userName)"  variant="danger">Xóa</b-button>
-                        </td>
-                      </tr>
+                    <tr v-for="(item, index) in listPhanCongKySo" :key="index">
+                      <td>{{++index}}</td>
+                      <td>{{item.userName}}</td>
+                      <td>{{item.fullName}}</td>
+                      <td>{{item.choPhepKy}}</td>
+                      <td>
+                        <b-button @click="handleRemoveAssignSign(item.userName)"  variant="danger">Xóa</b-button>
+                      </td>
+                    </tr>
                   </template>
                   </tbody>
                 </table>

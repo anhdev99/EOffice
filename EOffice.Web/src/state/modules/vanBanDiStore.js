@@ -13,6 +13,9 @@ export const actions = {
     async create({commit}, values) {
         return apiClient.post(controller + "/create", values);
     },
+    async assignOrReject({commit}, values) {
+        return apiClient.post(controller + "/assign-or-reject", values);
+    },
     async assignSign({commit}, values) {
         return apiClient.post(controller + "/them-nguoi-ky-so", values);
     },
