@@ -81,7 +81,6 @@ namespace EOffice.WebAPI.Models
         public User NguoiPhuTrach { get; set; }
         public User NguoiChuTri { get; set; }
         public User NguoiPhoiHopXuLy { get; set; }
-        public DonVi DonViXuLy { get; set; }
         public DonVi DonViPhoiHop { get; set; }
         public User NguoiXemDeBiet { get; set; }
     }

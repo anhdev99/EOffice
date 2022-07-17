@@ -11,10 +11,10 @@ export const actions = {
         return apiClient.post(controller + "/get-paging-params-vm", params);
     },
     async create({commit}, values) {
-        console.log("createVanBanDen", values);
         return apiClient.post(controller + "/create", values);
     },
     async update({commit, dispatch}, values) {
+        console.log("update VanBanDen", values);
         return apiClient.put(controller + "/update", values);
     },
     async delete({commit}, id) {

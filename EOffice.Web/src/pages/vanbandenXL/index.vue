@@ -105,7 +105,7 @@ export default {
         {
           key: "trichYeu",
           label: "Trích yếu",
-          thStyle: {width: '100px', minWidth: '100px', maxHeight : '200px',},
+          thStyle: {width: '100px', minWidth: '100px', maxHeight: '200px',},
           class: "px-1 w-25",
         },
         {
@@ -250,9 +250,9 @@ export default {
         }
       });
     },
-    async handleButPhe(e){
+    async handleButPhe(e) {
       e.preventDefault();
-      this.model.butPhe = this.modelButPhe;
+      // this.model.butPhe = this.modelButPhe;
       console.log("ModelButPhe", this.model);
       await this.$store.dispatch("vanBanDenStore/update", this.model).then((res) => {
         if (res.resultCode === 'SUCCESS') {
@@ -262,7 +262,7 @@ export default {
         }
       });
     },
-    async handlePhanCong(e){
+    async handlePhanCong(e) {
       e.preventDefault();
       this.model.phanCong = this.modelPhanCong;
       console.log("ModelPhanCong", this.model);
@@ -299,9 +299,20 @@ export default {
       this.showModalPhanCong = true;
 
     },
-    handleShowButPhe(id) {
+    async handleShowButPhe(id) {
       this.model.id = id;
       this.showModalButPhe = true;
+      await this.$store.dispatch("vanBanDenStore/getById", id).then(resp => {
+        if (resp.resultCode == "SUCCESS") {
+          let items = resp.data;
+          this.loading = false
+          this.model = items || [];
+          console.log("Capj nhaapj model", this.model);
+          return items || [];
+
+        }
+        return [];
+      })
     },
     async getLoaiVanBan() {
       await this.$store.dispatch("loaiVanBanStore/getAll").then((res) => {
@@ -408,6 +419,30 @@ export default {
       }
     },
     addThisFile(file, response) {
+      if (this.showModalButPhe == true) {
+        if (this.modelButPhe.uploadFiles == null || this.modelButPhe.uploadFiles <= 0) {
+          this.modelButPhe.uploadFiles = [];
+        }
+        console.log("LOG ADD THIS FILE but phe", response)
+        let fileSuccess = response.data;
+        this.modelButPhe.uploadFiles.push({
+          fileId: fileSuccess.id,
+          fileName: fileSuccess.fileName,
+          ext: fileSuccess.ext
+        })
+      }
+      if (this.showModalPhanCong == true) {
+        if (this.modelPhanCong == null || this.modelPhanCong.uploadFiles <= 0) {
+          this.modelPhanCong.uploadFiles = [];
+        }
+        console.log("LOG ADD THIS FILE phan cong ", response)
+        let fileSuccess = response.data;
+        this.modelPhanCong.uploadFiles.push({
+          fileId: fileSuccess.id,
+          fileName: fileSuccess.fileName,
+          ext: fileSuccess.ext
+        })
+      }
       if (this.model) {
         if (this.model.uploadFiles == null || this.model.uploadFiles.length <= 0) {
           this.model.uploadFiles = [];
@@ -729,7 +764,7 @@ export default {
                                     placeholder="Chọn khối cơ quan gửi"
                                     value-format="object"
                                 />
-                                <treeselect-value :value="model.khoiCoQuanGui" />
+                                <treeselect-value :value="model.khoiCoQuanGui"/>
                               </div>
                             </div>
                             <!--                            Cơ quan gửi-->
@@ -742,7 +777,7 @@ export default {
                                     placeholder="Chọn cơ quan gửi"
                                     value-format="object"
                                 />
-                                <treeselect-value :value="model.coQuanGui" />
+                                <treeselect-value :value="model.coQuanGui"/>
                               </div>
                             </div>
                             <!--                            Hình thức nhận -->
@@ -909,7 +944,7 @@ export default {
                     </template>
                     <template v-slot:cell(trichYeu)="data">
                       <div :inner-html.prop="data.item.trichYeu | truncate(100)"
-                            class="text-left text-black w-100 block-ellipsis mx-2"
+                           class="text-left text-black w-100 block-ellipsis mx-2"
                       ></div>
                     </template>
                     <template v-slot:cell(process)="data">
@@ -1005,45 +1040,26 @@ export default {
             <div class="row">
               <div class="col-md-6">
                 <!--                Số lưu and số văn bản đến -->
-                <div class="d-flex justify-content-between mb-2">
+                <div class="d-flex justify-content-start">
                   <!--                              Số lưu -->
-                  <div class="me-4">
-                    <label class="form-label" for="validationCustom01">Số lưu CV</label> <span
-                      class="text-danger">*</span>
-                    <input
-                        id="validationCustom01"
-                        v-model="model.soLuuCV"
-                        type="text"
-                        class="form-control"
-                        disabled
-                    />
+                  <div class="me-4 d-flex align-items-baseline">
+                    <label class="form-label me-2" for="validationCustom01">Số lưu CV:</label>
+                    <p class="fw-bold text-primary">{{model.soLuuCV}}</p>
                   </div>
                   <!--                            Số VB đến -->
-                  <div class="">
-                    <label class="form-label" for="validationCustom01">Số văn bản đến</label> <span
-                      class="text-danger">*</span>
-                    <input
-                        id="validationSoVBDen"
-                        v-model="model.soVBDen"
-                        type="text"
-                        class="form-control"
-                        disabled
-                    />
+                  <div class="d-flex align-items-baseline">
+                    <label class="form-label me-2" for="validationCustom01">Số văn bản đến:</label>
+                    <p class="fw-bold text-primary">{{model.soVBDen}}</p>
                   </div>
-
                 </div>
                 <!--                Trích yếu -->
                 <div class="mb-2">
-                  <label class="form-label" for="validationCustom01">Trích yếu</label> <span
-                    class="text-danger">*</span>
-                  <textarea
-                      v-model="model.trichYeu"
-                      name=""
-                      id="trichyeu"
-                      rows="2"
-                      class="form-control"
-                      disabled
-                  ></textarea>
+                  <label class="form-label" for="validationCustom01">Trích yếu</label>
+                  <div
+                      :inner-html.prop="model.trichYeu | truncate(100)"
+                      class="bg-soft-blue-grey p-2"
+                      style="border-radius: 3px; color: #2a2a2a;"
+                  ></div>
                 </div>
                 <!--                Bút phê -->
                 <label class="form-label" for="validationCustom01">Bút phê</label> <span
@@ -1140,17 +1156,17 @@ export default {
                   ></multiselect>
                 </div>
                 <!--                Đơn vị xử lý-->
-                <div class="mb-2">
-                  <label class="form-label" for="validationCustom01">Đơn vị xử Lý</label>
-                  <treeselect
-                      :multiple="true"
-                      v-model="modelButPhe.donViXuLy"
-                      :options="optionsDonVi"
-                      placeholder="Chọn đơn vị xử lý"
-                      value-format="object"
-                  />
-                  <treeselect-value :value="model.donViXuLy" />
-                </div>
+<!--                <div class="mb-2">-->
+<!--                  <label class="form-label" for="validationCustom01">Đơn vị xử Lý</label>-->
+<!--                  <treeselect-->
+<!--                      :multiple="true"-->
+<!--                      v-model="modelButPhe.donViXuLy"-->
+<!--                      :options="optionsDonVi"-->
+<!--                      placeholder="Chọn đơn vị xử lý"-->
+<!--                      value-format="object"-->
+<!--                  />-->
+<!--                  <treeselect-value :value="model.donViXuLy"/>-->
+<!--                </div>-->
                 <!--                Đơn vị phối hợp-->
                 <div class="mb-2">
                   <label class="form-label" for="validationCustom01"> Đơn vị phối hợp</label>
@@ -1161,7 +1177,7 @@ export default {
                       placeholder="Chọn đơn vị phối hợp"
                       value-format="object"
                   />
-                  <treeselect-value :value="model.donViXuLy" />
+                  <treeselect-value :value="model.donViXuLy"/>
                 </div>
                 <!--                Ngừoi xem để biết-->
                 <div class="mb-2">
@@ -1228,7 +1244,7 @@ export default {
                     <i class="fas fa-plus text-light fs-3"></i>
                   </b-button>
                 </div>
-                <div class="mb-4"></div>    
+                <div class="mb-4"></div>
                 <div data-repeater-list="group-a">
                   <div
                       v-for="(items, index) in phanCong"
@@ -1238,7 +1254,7 @@ export default {
                     <div class="card-body" style="position: relative">
                       <div class="custom-ribon">
                         <div class="bg-primary text-center">
-                          <p class="text-light p-1">Nhóm {{index}}</p>
+                          <p class="text-light p-1">Nhóm {{ index }}</p>
                         </div>
                       </div>
                       <div class="row align-items-center">
@@ -1393,6 +1409,7 @@ export default {
   top: 8px;
   left: -20px;
 }
+
 .custom-ribon {
   position: absolute;
   width: 130px;
@@ -1400,7 +1417,7 @@ export default {
   left: -15px;
 }
 
-.custom-ribon>div {
+.custom-ribon > div {
   border-radius: 3px;
 }
 </style>

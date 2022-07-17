@@ -26,6 +26,7 @@ const baseJson = () => {
         nguoiButPhe: null,
         NguoiNhanXuLy: null,
         file: null,
+        uploadFiles: null,
     }
 }
 
