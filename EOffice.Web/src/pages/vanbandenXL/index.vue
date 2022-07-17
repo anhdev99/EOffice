@@ -8,6 +8,10 @@ import {vanBanDenModel} from "@/models/vanBanDenModel";
 import Multiselect from "vue-multiselect";
 import DatePicker from "vue2-datepicker";
 import Switches from "vue-switches";
+// import the component
+import Treeselect from '@riophae/vue-treeselect'
+// import the styles
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
 /**
  * Form editor
@@ -34,7 +38,8 @@ export default {
     ckeditor: CKEditor.component,
     Switches,
     DatePicker,
-    vueDropzone: vue2Dropzone
+    vueDropzone: vue2Dropzone,
+    Treeselect,
   },
   data() {
     return {
@@ -87,21 +92,21 @@ export default {
         {
           key: "soLuuCV",
           label: "Số lưu CV",
-          thStyle: {width: '10px', minWidth: '160px'},
+          thStyle: {width: '10px', minWidth: '100px'},
           class: "px-1",
           sortable: true,
         },
         {
           key: "soVBDen",
           label: "Số văn bản đến",
-          thStyle: {width: '160px', minWidth: '160px'},
+          thStyle: {width: '160px', minWidth: '100px'},
           class: "px-1",
         },
         {
           key: "trichYeu",
           label: "Trích yếu",
-          thStyle: {width: '100px', minWidth: '100px'},
-          class: "px-1",
+          thStyle: {width: '100px', minWidth: '100px', maxHeight : '200px',},
+          class: "px-1 w-25",
         },
         {
           key: "hanXuLy",
@@ -119,6 +124,7 @@ export default {
           key: 'process',
           label: 'Xử lý',
           thStyle: {width: '110px', minWidth: '110px'},
+          class: "px-1"
         }
       ],
       optionsLoaiVanBan: null,
@@ -229,6 +235,7 @@ export default {
             this.myProvider()
           }
           this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+          this.$refs.tblList.refresh()
         });
       }
     },
@@ -243,6 +250,32 @@ export default {
         }
       });
     },
+    async handleButPhe(e){
+      e.preventDefault();
+      this.model.butPhe = this.modelButPhe;
+      console.log("ModelButPhe", this.model);
+      await this.$store.dispatch("vanBanDenStore/update", this.model).then((res) => {
+        if (res.resultCode === 'SUCCESS') {
+          this.showModal = false;
+          this.model = vanBanDenModel.baseJson()
+          this.myProvider()
+        }
+      });
+    },
+    async handlePhanCong(e){
+      e.preventDefault();
+      this.model.phanCong = this.modelPhanCong;
+      console.log("ModelPhanCong", this.model);
+      console.log("ModelPhanCong 2", this.phanCong);
+
+      // await this.$store.dispatch("vanBanDenStore/update", this.model).then((res) => {
+      //   if (res.resultCode === 'SUCCESS') {
+      //     this.showModal = false;
+      //     this.model = vanBanDenModel.baseJson()
+      //     this.myProvider()
+      //   }
+      // });
+    },
     handleShowDeleteModal(id) {
       this.model.id = id;
       this.showDeleteModal = true;
@@ -254,6 +287,7 @@ export default {
             this.showDeleteModal = false;
             this.myProvider()
           }
+          this.$refs.tblList.refresh()
         });
       }
     },
@@ -686,36 +720,29 @@ export default {
                               </div>
                             </div>
                             <!--                            Khối cơ quan gửi-->
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                               <div class="mb-2">
                                 <label class="form-label" for="validationCustom01">Khối cơ quan gửi</label>
-                                <multiselect
+                                <treeselect
                                     v-model="model.khoiCoQuanGui"
                                     :options="optionsDonVi"
-                                    track-by="id"
-                                    label="label"
                                     placeholder="Chọn khối cơ quan gửi"
-                                    deselect-label="Nhấn để xoá"
-                                    selectLabel="Nhấn enter để chọn"
-                                    selectedLabel="Đã chọn"
-                                ></multiselect>
-
+                                    value-format="object"
+                                />
+                                <treeselect-value :value="model.khoiCoQuanGui" />
                               </div>
                             </div>
                             <!--                            Cơ quan gửi-->
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                               <div class="mb-2">
                                 <label class="form-label" for="validationCustom01">Cơ quan gửi</label>
-                                <multiselect
+                                <treeselect
                                     v-model="model.coQuanGui"
                                     :options="optionsDonVi"
-                                    track-by="id"
-                                    label="label"
                                     placeholder="Chọn cơ quan gửi"
-                                    deselect-label="Nhấn để xoá"
-                                    selectLabel="Nhấn enter để chọn"
-                                    selectedLabel="Đã chọn"
-                                ></multiselect>
+                                    value-format="object"
+                                />
+                                <treeselect-value :value="model.coQuanGui" />
                               </div>
                             </div>
                             <!--                            Hình thức nhận -->
@@ -881,50 +908,53 @@ export default {
                       <span class="badge bg-danger"> {{ data.item.hanXuLy }}</span>
                     </template>
                     <template v-slot:cell(trichYeu)="data">
-                      <div class="fs-5" :inner-html.prop="data.item.trichYeu" style="line-height: 30px">
-                      </div>
+                      <div :inner-html.prop="data.item.trichYeu | truncate(100)"
+                            class="text-left text-black w-100 block-ellipsis mx-2"
+                      ></div>
                     </template>
                     <template v-slot:cell(process)="data">
-                      <button
-                          type="button"
-                          size="sm"
-                          class="btn btn-outline btn-sm"
-                          data-toggle="tooltip" data-placement="bottom" title="Chi tiết"
-                          v-on:click="handleDetail(data.item.id)">
-                        <i class="fas fa-eye  text-warning me-1"></i>
-                      </button>
-                      <button
-                          type="button"
-                          size="sm"
-                          class="btn btn-outline btn-sm"
-                          data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
-                          v-on:click="handleUpdate(data.item.id)">
-                        <i class="fas fa-pencil-alt text-success me-1"></i>
-                      </button>
-                      <button
-                          type="button"
-                          size="sm"
-                          class="btn btn-outline btn-sm"
-                          data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
-                          v-on:click="HandleShowPhanCong(data.item.id)">
-                        <i class="fas fa-user-plus text-info me-1"></i>
-                      </button>
-                      <button
-                          type="button"
-                          size="sm"
-                          class="btn btn-outline btn-sm"
-                          data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
-                          v-on:click="handleShowButPhe(data.item.id)">
-                        <i class="fas fa-feather-alt text-primary me-1"></i>
-                      </button>
-                      <button
-                          type="button"
-                          size="sm"
-                          class="btn btn-outline btn-sm"
-                          data-toggle="tooltip" data-placement="bottom" title="Xóa"
-                          v-on:click="handleShowDeleteModal(data.item.id)">
-                        <i class="fas fa-trash-alt text-danger me-1"></i>
-                      </button>
+                      <div class="d-flex justify-content-around">
+                        <button
+                            type="button"
+                            size="sm"
+                            class="btn btn-outline btn-sm p-0"
+                            data-toggle="tooltip" data-placement="bottom" title="Chi tiết"
+                            v-on:click="handleDetail(data.item.id)">
+                          <i class="fas fa-eye  text-warning me-1"></i>
+                        </button>
+                        <button
+                            type="button"
+                            size="sm"
+                            class="btn btn-outline btn-sm p-0"
+                            data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
+                            v-on:click="handleUpdate(data.item.id)">
+                          <i class="fas fa-pencil-alt text-success me-1"></i>
+                        </button>
+                        <button
+                            type="button"
+                            size="sm"
+                            class="btn btn-outline btn-sm p-0"
+                            data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
+                            v-on:click="HandleShowPhanCong(data.item.id)">
+                          <i class="fas fa-user-plus text-info me-1"></i>
+                        </button>
+                        <button
+                            type="button"
+                            size="sm"
+                            class="btn btn-outline btn-sm p-0"
+                            data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
+                            v-on:click="handleShowButPhe(data.item.id)">
+                          <i class="fas fa-feather-alt text-primary me-1"></i>
+                        </button>
+                        <button
+                            type="button"
+                            size="sm"
+                            class="btn btn-outline btn-sm p-0"
+                            data-toggle="tooltip" data-placement="bottom" title="Xóa"
+                            v-on:click="handleShowDeleteModal(data.item.id)">
+                          <i class="fas fa-trash-alt text-danger me-1"></i>
+                        </button>
+                      </div>
                     </template>
                     <template v-slot:cell(ten)="data">&nbsp;&nbsp;
                       {{ data.item.ten }}
@@ -1100,9 +1130,9 @@ export default {
                   <multiselect
                       :multiple="true"
                       v-model="modelButPhe.nguoiPhoihopXuLy"
-                      :options="optionsMucDo"
+                      :options="optionsUser"
                       track-by="id"
-                      label="name"
+                      label="fullName"
                       placeholder="Chọn người phối hợp xử lý"
                       deselect-label="Nhấn để xoá"
                       selectLabel="Nhấn enter để chọn"
@@ -1112,32 +1142,26 @@ export default {
                 <!--                Đơn vị xử lý-->
                 <div class="mb-2">
                   <label class="form-label" for="validationCustom01">Đơn vị xử Lý</label>
-                  <multiselect
+                  <treeselect
                       :multiple="true"
                       v-model="modelButPhe.donViXuLy"
                       :options="optionsDonVi"
-                      track-by="id"
-                      label="label"
-                      placeholder="Chọn mức độ bảo mật"
-                      deselect-label="Nhấn để xoá"
-                      selectLabel="Nhấn enter để chọn"
-                      selectedLabel="Đã chọn"
-                  ></multiselect>
+                      placeholder="Chọn đơn vị xử lý"
+                      value-format="object"
+                  />
+                  <treeselect-value :value="model.donViXuLy" />
                 </div>
                 <!--                Đơn vị phối hợp-->
                 <div class="mb-2">
                   <label class="form-label" for="validationCustom01"> Đơn vị phối hợp</label>
-                  <multiselect
+                  <treeselect
                       :multiple="true"
                       v-model="modelButPhe.donViPhoiHop"
                       :options="optionsDonVi"
-                      track-by="id"
-                      label="label"
                       placeholder="Chọn đơn vị phối hợp"
-                      deselect-label="Nhấn để xoá"
-                      selectLabel="Nhấn enter để chọn"
-                      selectedLabel="Đã chọn"
-                  ></multiselect>
+                      value-format="object"
+                  />
+                  <treeselect-value :value="model.donViXuLy" />
                 </div>
                 <!--                Ngừoi xem để biết-->
                 <div class="mb-2">
@@ -1163,6 +1187,8 @@ export default {
                       id="dropzone"
                       ref="myVueDropzone"
                       :options="dropzoneOptions"
+                      v-on:vdropzone-removed-file="removeThisFile"
+                      v-on:vdropzone-success="addThisFile"
                   ></vue-dropzone>
                 </div>
               </div>
@@ -1279,6 +1305,8 @@ export default {
                                 id="dropzone"
                                 ref="myVueDropzone"
                                 :options="dropzoneOptions"
+                                v-on:vdropzone-removed-file="removeThisFile"
+                                v-on:vdropzone-success="addThisFile"
                             ></vue-dropzone>
                           </div>
                         </div>
