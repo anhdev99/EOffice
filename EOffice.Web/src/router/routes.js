@@ -494,6 +494,12 @@ export default [{
         component: () => import("../pages/vanbandi"),
     },
     {
+        path: "/xu-ly-van-ban-di",
+        name: "Văn bản đi",
+        // meta: {},
+        component: () => import("../pages/vanbandi/xuLyVanBanDi"),
+    },
+    {
         path: '/icons/themify',
         name: 'Themify icons',
         component: () => import('./views/icons/themify'),
