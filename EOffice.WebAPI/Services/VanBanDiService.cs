@@ -70,6 +70,7 @@ namespace EOffice.WebAPI.Services
                 NoiLuuTru = model.NoiLuuTru,
                 NguoiKy = model.NguoiKy,
                 NgayKy = model.NgayKy,
+                File = model.File,
                 CreatedBy = CurrentUserName,
                 ModifiedBy = CurrentUserName,
                 CreatedAt = DateTime.Now,
@@ -84,6 +85,15 @@ namespace EOffice.WebAPI.Services
 
             if (model.UploadFiles != default)
             {
+                var exps = model.UploadFiles.Select(x => x.Ext).ToList();
+                var tempExt =  fileOffice.Where(x => exps.Contains(x)).FirstOrDefault();
+                if (tempExt == default)
+                {
+                    throw new ResponseMessageException()
+                        .WithCode(EResultResponse.FAIL.ToString())
+                        .WithMessage("Định dạng tệp tin không đúng.");
+                }
+                
                 foreach (var item in model.UploadFiles)
                 {
                     var newFile = new FileShort();
@@ -181,10 +191,19 @@ namespace EOffice.WebAPI.Services
             entity.HienThiThongBao = model.HienThiThongBao;
             entity.MucDoBaoMat = model.MucDoBaoMat;
             entity.MucDoTinhChat = model.MucDoTinhChat;
+            entity.File = model.File;
 
 
             if (model.UploadFiles != default)
             {
+                var exps = model.UploadFiles.Select(x => x.Ext).ToList();
+               var tempExt =  fileOffice.Where(x => exps.Contains(x)).FirstOrDefault();
+               if (tempExt == default)
+               {
+                   throw new ResponseMessageException()
+                       .WithCode(EResultResponse.FAIL.ToString())
+                       .WithMessage("Định dạng tệp tin không đúng.");
+               }
                 foreach (var item in model.UploadFiles)
                 {
                     var newFile = new FileShort();
@@ -425,6 +444,54 @@ namespace EOffice.WebAPI.Services
             return result;
         }
 
+         public async Task<VanBanDi> RemoveAssignSign(PhanCongKySo model)
+        {
+            if (model == default)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.DATA_NOT_EMPTY);
+            }
+            
+            var vanBanDi = _context.VanBanDi.Find(x => x.Id == model.VanBanDiId).FirstOrDefault();
+            if (vanBanDi == default)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.DATA_NOT_FOUND);
+            }
+    
+            var listPhanCong = vanBanDi.PhanCongKySo;
+            if (listPhanCong != default)
+            {
+                var tempUserExist = listPhanCong.FindIndex(x => x.UserName == model.NguoiKy?.UserName);
+                if (tempUserExist < 0)
+                {
+                    throw new ResponseMessageException()
+                        .WithCode(EResultResponse.FAIL.ToString())
+                        .WithMessage("Không tồn tại trong danh sách ký số");
+                }
+                vanBanDi.PhanCongKySo.RemoveAt(tempUserExist);
+            }
+
+            var result = await BaseMongoDb.UpdateAsync(vanBanDi);
+            if (!result.Success)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.UPDATE_FAILURE);
+            }
+
+            await _history.WithQuestionId(vanBanDi.Id)
+                .WithAction(EAction.UPDATE)
+                .WithStatus(vanBanDi.TrangThai?.Ten, vanBanDi.TrangThai?.Ten)
+                .WithType(ETypeHistory.Question, vanBanDi)
+                .WithTitle("Xóa thành viên ký số")
+                .SaveChangeHistoryQuestion();
+
+            return vanBanDi;
+        }
+         
         public async Task<VanBanDi> AssignSign(PhanCongKySo model)
         {
             if (model == default)
@@ -434,6 +501,12 @@ namespace EOffice.WebAPI.Services
                     .WithMessage(DefaultMessage.DATA_NOT_EMPTY);
             }
 
+            if (model.NguoiKy == default)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage("Hãy chọn cán bộ ký số");
+            }
             var vanBanDi = _context.VanBanDi.Find(x => x.Id == model.VanBanDiId).FirstOrDefault();
             if (vanBanDi == default)
             {
@@ -441,7 +514,18 @@ namespace EOffice.WebAPI.Services
                     .WithCode(EResultResponse.FAIL.ToString())
                     .WithMessage(DefaultMessage.DATA_NOT_FOUND);
             }
-
+    
+            var listPhanCong = vanBanDi.PhanCongKySo;
+            if (listPhanCong != default)
+            {
+                var tempUserExist = listPhanCong.Where(x => x.UserName == model.NguoiKy?.UserName).FirstOrDefault();
+                if (tempUserExist != default)
+                {
+                    throw new ResponseMessageException()
+                        .WithCode(EResultResponse.FAIL.ToString())
+                        .WithMessage("Đã tồn tại trong danh sách ký số");
+                }
+            }
             var newNguoiKy = new PhanCongKySo();
             newNguoiKy.Id = model.Id;
             newNguoiKy.FullName = model.NguoiKy?.FullName;
@@ -476,7 +560,102 @@ namespace EOffice.WebAPI.Services
             return vanBanDi;
         }
 
-        public async Task<List<PhanCongKySo>> GetPhanCongKySoByVanBanId(string vanBanId)
+                public async Task<VanBanDi> AssignOrReject(PhanCongKySo model, string path)
+        {
+            if (model == default)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.DATA_NOT_EMPTY);
+            }
+            
+            var vanBanDi = _context.VanBanDi.Find(x => x.Id == model.VanBanDiId).FirstOrDefault();
+            if (vanBanDi == default)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.DATA_NOT_FOUND);
+            }
+    
+            var listPhanCong = vanBanDi.PhanCongKySo;
+            if (listPhanCong != default)
+            {
+                var tempUserExist = listPhanCong.Where(x => x.UserName == CurrentUserName).FirstOrDefault();
+                if (tempUserExist == default)
+                {
+                    throw new ResponseMessageException()
+                        .WithCode(EResultResponse.FAIL.ToString())
+                        .WithMessage("Không tồn tại trong danh sách ký số");
+                }
+
+                var user = _context.Users.Find(x => x.UserName == CurrentUserName).FirstOrDefault();
+                
+                byte[] passHash, passSalt;
+                passHash = user.PasswordHash;
+                passSalt = user.PasswordSalt;
+                var pass = PasswordExtensions.VerifyPasswordHash(model.Password, passHash, passSalt);
+                if (pass != true)
+                {
+                    throw new ResponseMessageException().WithCode(EResultResponse.FAIL.ToString())
+                        .WithMessage("Mật khẩu không chính xác");
+                }
+                var tempUserExistIndex = listPhanCong.FindIndex(x => x.UserName == CurrentUserName);
+
+                if (model.Reject)
+                {
+                    // vanBanDi.PhanCongKySo = new List<PhanCongKySo>();
+                    await _history.WithQuestionId(vanBanDi.Id)
+                        .WithAction(EAction.UPDATE)
+                        .WithStatus(vanBanDi.TrangThai?.Ten, vanBanDi.TrangThai?.Ten)
+                        .WithType(ETypeHistory.Question, vanBanDi)
+                        .WithTitle("Đã có thành viên từ chối")
+                        .SaveChangeHistoryQuestion();
+                }
+                vanBanDi.PhanCongKySo[tempUserExistIndex].NgayKy = DateTime.Now;
+                vanBanDi.PhanCongKySo[tempUserExistIndex].Content = model.Content;
+                vanBanDi.PhanCongKySo[tempUserExistIndex].Reject = model.Reject;
+                vanBanDi.PhanCongKySo[tempUserExistIndex].NgayKyString = model.NgayKyString;
+            }
+
+            var result = await BaseMongoDb.UpdateAsync(vanBanDi);
+            if (!result.Success)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.UPDATE_FAILURE);
+            }
+
+            await _history.WithQuestionId(vanBanDi.Id)
+                .WithAction(EAction.UPDATE)
+                .WithStatus(vanBanDi.TrangThai?.Ten, vanBanDi.TrangThai?.Ten)
+                .WithType(ETypeHistory.Question, vanBanDi)
+                .WithTitle( "Ký thành công: " + CurrentUserName)
+                .SaveChangeHistoryQuestion();
+
+            TienHanhKySo(vanBanDi.PhanCongKySo, path, vanBanDi.File.Select(x => x.FileId).ToList());
+            return vanBanDi;
+        }
+
+                private bool TienHanhKySo(List<PhanCongKySo> phanCongKySos, string rootPath, List<string> fileIds)
+                {
+                    var userNameFormPhanCongKySo = phanCongKySos.Select(x => x.UserName).ToList();
+                    var users = _context.Users.Find(x => userNameFormPhanCongKySo.Contains(x.UserName)).ToList();
+                    var fileWord = _context.Files.Find(x => x.Id == fileIds.FirstOrDefault()).FirstOrDefault();
+                    var kySoFunc = new KySoNoiBoService();
+                    var fileName = "";
+                    if (fileWord.Ext == ".docx")
+                    {
+                        fileName = "files" + "/" + fileWord.FileName.Replace(".docx", ".pdf");
+                    }else if  (fileWord.Ext == ".doc")
+                    {
+                        fileName = "files"  + "/" + fileWord.FileName.Replace(".doc", ".pdf");
+                    }
+                 
+                    
+                    kySoFunc.TienTrinhKySo(fileWord.Path, fileWord.FileName, fileName ,users);
+                    return false;
+                }
+                public async Task<List<PhanCongKySo>> GetPhanCongKySoByVanBanId(string vanBanId)
         {
             var vanBanDi = _context.VanBanDi.Find(x => x.Id == vanBanId).FirstOrDefault();
             if (vanBanDi == default)
@@ -486,7 +665,7 @@ namespace EOffice.WebAPI.Services
                     .WithMessage(DefaultMessage.DATA_NOT_FOUND);
             };
 
-            return vanBanDi.PhanCongKySo;
+            return vanBanDi.PhanCongKySo.OrderByDescending(x => x.ThuTu).ToList();
         }
     }
 }

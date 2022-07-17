@@ -13,8 +13,14 @@ export const actions = {
     async create({commit}, values) {
         return apiClient.post(controller + "/create", values);
     },
+    async assignOrReject({commit}, values) {
+        return apiClient.post(controller + "/assign-or-reject", values);
+    },
     async assignSign({commit}, values) {
         return apiClient.post(controller + "/them-nguoi-ky-so", values);
+    },
+    async removeAssignSign({commit}, values) {
+        return apiClient.post(controller + "/xoa-nguoi-ky-so", values);
     },
     async update({commit, dispatch}, values) {
         return apiClient.put(controller + "/update", values);
