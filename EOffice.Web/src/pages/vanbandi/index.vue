@@ -149,6 +149,7 @@ export default {
       },
       apiUrl: process.env.VUE_APP_API_URL,
       url: `${process.env.VUE_APP_API_URL}files/upload`,
+      urlView: `${process.env.VUE_APP_API_URL}files/view/`,
       dropzoneOptions: {
         url: `${process.env.VUE_APP_API_URL}files/upload`,
         thumbnailWidth: 300,
@@ -226,6 +227,7 @@ export default {
             this.model = vanBanDenModel.baseJson()
             this.$refs.tblList.refresh();
           }
+          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
         })
       } else {
         //Create modelhandleSubmit
@@ -259,6 +261,14 @@ export default {
     handleShowDeleteModal(id) {
       this.model.id = id;
       this.showDeleteModal = true;
+    },
+    handleDeleteFile(index) {
+      if(this.model){
+      if( this.model.file){
+        this.model.file.splice(index,1);
+      }
+
+      }
     },
     async handleDelete() {
       if (this.model.id != 0 && this.model.id != null && this.model.id) {
@@ -471,13 +481,28 @@ export default {
         await this.$store.dispatch("vanBanDiStore/assignSign", this.modelKySo).then((res) => {
           if (res.resultCode === 'SUCCESS') {
             this.showModal = false;
-            let oldIdVanBan = this.modelKySo.vanBanDiId
-            this.getPhanCongKySoByVanBanId(oldIdVanBan);
-            this.modelKySo = vanBanDenModel.baseJson()
-            this.modelKySo.vanBanDiId = oldIdVanBan;
-
-            // this.$refs.tblList.refresh();
+            this.getPhanCongKySoByVanBanId(this.modelKySo.vanBanDiId);
+            this.modelKySo.nguoiKy = null
           }
+          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+        })
+      }
+    },
+    async handleRemoveAssignSign(userName) {
+      if (
+          this.modelKySo.vanBanDiId != 0 &&
+          this.modelKySo.vanBanDiId != null &&
+          this.modelKySo.vanBanDiId
+      ) {
+        this.modelKySo.nguoiKy = {userName: userName};
+        //Update model
+        await this.$store.dispatch("vanBanDiStore/removeAssignSign", this.modelKySo).then((res) => {
+          if (res.resultCode === 'SUCCESS') {
+            this.showModal = false;
+            this.getPhanCongKySoByVanBanId(this.modelKySo.vanBanDiId);
+            this.modelKySo.nguoiKy = null
+          }
+          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
         })
       }
     },
@@ -745,6 +770,33 @@ export default {
                               </div>
                             </div>
 
+                            <div class="col-md-12">
+                              <label for="">Danh sách tệp tin (Nhấn vào để tải xuống)</label>
+                              <template v-if="model.file == null || (model.file != null &&model.file.length <= 0)">
+                                <div>Không có tệp tin</div>
+                              </template>
+                              <template v-else>
+                                <div v-for="(file, index) in model.file" :key="index">
+                                  <a
+                                      :href="`${apiUrl}files/view/${file.fileId}`"
+                                      class=" fw-medium"
+                                  ><i
+                                      :class="`mdi font-size-16 align-middle me-2`"
+                                  ></i>
+                                    {{index + 1}}: {{ file.fileName }}</a
+                                  >
+                                  <button
+                                      type="button"
+                                      size="sm"
+                                      class="btn btn-outline btn-sm"
+                                      data-toggle="tooltip" data-placement="bottom" title="Xóa"
+                                      v-on:click="handleDeleteFile(index)">
+                                    <i class="fas fa-trash-alt text-danger me-1"></i>
+                                  </button>
+                                </div>
+                              </template>
+
+                            </div>
 
                             <!--                            file đính kèm-->
                             <div class="col-md-12">
@@ -1097,7 +1149,7 @@ export default {
                     v-model="modelKySo.thuTu"
                     type="text"
                     class="form-control"
-                    placeholder="Nhập nơi lưu trữ"
+                    placeholder="Nhập thứ tự"
                 />
               </div>
             </div>
@@ -1128,7 +1180,9 @@ export default {
                         <td>{{item.userName}}</td>
                         <td>{{item.fullName}}</td>
                         <td>{{item.choPhepKy}}</td>
-                        <td></td>
+                        <td>
+                          <b-button @click="handleRemoveAssignSign(item.userName)"  variant="danger">Xóa</b-button>
+                        </td>
                       </tr>
                   </template>
                   </tbody>

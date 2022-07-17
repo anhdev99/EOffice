@@ -70,6 +70,7 @@ namespace EOffice.WebAPI.Services
                 NoiLuuTru = model.NoiLuuTru,
                 NguoiKy = model.NguoiKy,
                 NgayKy = model.NgayKy,
+                File = model.File,
                 CreatedBy = CurrentUserName,
                 ModifiedBy = CurrentUserName,
                 CreatedAt = DateTime.Now,
@@ -181,6 +182,7 @@ namespace EOffice.WebAPI.Services
             entity.HienThiThongBao = model.HienThiThongBao;
             entity.MucDoBaoMat = model.MucDoBaoMat;
             entity.MucDoTinhChat = model.MucDoTinhChat;
+            entity.File = model.File;
 
 
             if (model.UploadFiles != default)
@@ -425,6 +427,54 @@ namespace EOffice.WebAPI.Services
             return result;
         }
 
+         public async Task<VanBanDi> RemoveAssignSign(PhanCongKySo model)
+        {
+            if (model == default)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.DATA_NOT_EMPTY);
+            }
+            
+            var vanBanDi = _context.VanBanDi.Find(x => x.Id == model.VanBanDiId).FirstOrDefault();
+            if (vanBanDi == default)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.DATA_NOT_FOUND);
+            }
+    
+            var listPhanCong = vanBanDi.PhanCongKySo;
+            if (listPhanCong != default)
+            {
+                var tempUserExist = listPhanCong.FindIndex(x => x.UserName == model.NguoiKy?.UserName);
+                if (tempUserExist < 0)
+                {
+                    throw new ResponseMessageException()
+                        .WithCode(EResultResponse.FAIL.ToString())
+                        .WithMessage("Không tồn tại trong danh sách ký số");
+                }
+                vanBanDi.PhanCongKySo.RemoveAt(tempUserExist);
+            }
+
+            var result = await BaseMongoDb.UpdateAsync(vanBanDi);
+            if (!result.Success)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.UPDATE_FAILURE);
+            }
+
+            await _history.WithQuestionId(vanBanDi.Id)
+                .WithAction(EAction.UPDATE)
+                .WithStatus(vanBanDi.TrangThai?.Ten, vanBanDi.TrangThai?.Ten)
+                .WithType(ETypeHistory.Question, vanBanDi)
+                .WithTitle("Xóa thành viên ký số")
+                .SaveChangeHistoryQuestion();
+
+            return vanBanDi;
+        }
+         
         public async Task<VanBanDi> AssignSign(PhanCongKySo model)
         {
             if (model == default)
@@ -434,6 +484,12 @@ namespace EOffice.WebAPI.Services
                     .WithMessage(DefaultMessage.DATA_NOT_EMPTY);
             }
 
+            if (model.NguoiKy == default)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage("Hãy chọn cán bộ ký số");
+            }
             var vanBanDi = _context.VanBanDi.Find(x => x.Id == model.VanBanDiId).FirstOrDefault();
             if (vanBanDi == default)
             {
@@ -441,7 +497,18 @@ namespace EOffice.WebAPI.Services
                     .WithCode(EResultResponse.FAIL.ToString())
                     .WithMessage(DefaultMessage.DATA_NOT_FOUND);
             }
-
+    
+            var listPhanCong = vanBanDi.PhanCongKySo;
+            if (listPhanCong != default)
+            {
+                var tempUserExist = listPhanCong.Where(x => x.UserName == model.NguoiKy?.UserName).FirstOrDefault();
+                if (tempUserExist != default)
+                {
+                    throw new ResponseMessageException()
+                        .WithCode(EResultResponse.FAIL.ToString())
+                        .WithMessage("Đã tồn tại trong danh sách ký số");
+                }
+            }
             var newNguoiKy = new PhanCongKySo();
             newNguoiKy.Id = model.Id;
             newNguoiKy.FullName = model.NguoiKy?.FullName;
@@ -486,7 +553,7 @@ namespace EOffice.WebAPI.Services
                     .WithMessage(DefaultMessage.DATA_NOT_FOUND);
             };
 
-            return vanBanDi.PhanCongKySo;
+            return vanBanDi.PhanCongKySo.OrderByDescending(x => x.ThuTu).ToList();
         }
     }
 }

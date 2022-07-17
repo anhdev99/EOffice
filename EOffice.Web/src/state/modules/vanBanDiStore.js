@@ -16,6 +16,9 @@ export const actions = {
     async assignSign({commit}, values) {
         return apiClient.post(controller + "/them-nguoi-ky-so", values);
     },
+    async removeAssignSign({commit}, values) {
+        return apiClient.post(controller + "/xoa-nguoi-ky-so", values);
+    },
     async update({commit, dispatch}, values) {
         return apiClient.put(controller + "/update", values);
     },

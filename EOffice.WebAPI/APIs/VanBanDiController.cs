@@ -56,7 +56,7 @@ namespace EOffice.WebAPI.APIs
                     new ResultResponse<VanBanDi>()
                         .WithData(response)
                         .WithCode(EResultResponse.SUCCESS.ToString())
-                        .WithMessage(DefaultMessage.CREATE_SUCCESS)
+                        .WithMessage("Thêm người tham gia ký số.")
                 );
             }
             catch (ResponseMessageException ex)
@@ -67,6 +67,54 @@ namespace EOffice.WebAPI.APIs
                 );
             }
         }
+        
+        [HttpPost]
+        [Route("xoa-nguoi-ky-so")]
+        public async Task<IActionResult> XoaNguoiKySo([FromBody] PhanCongKySo model)
+        {
+            try
+            {
+                var response = await _vanBanDiService.RemoveAssignSign(model);
+                return Ok(
+                    new ResultResponse<VanBanDi>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage("Xóa người tham gia ký số!")
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+
+    
+        [HttpGet]
+        [Route("get-phancongkyso-by-vanbanid/{id}")]
+        public async Task<IActionResult> GetPhanCongKySoByVanBanId(string id)
+        {
+            try
+            {
+                var response = await _vanBanDiService.GetPhanCongKySoByVanBanId(id);
+                return Ok(
+                    new ResultResponse<List<PhanCongKySo>>()
+                        .WithData(response)
+                    .WithCode(EResultResponse.SUCCESS.ToString())
+                    .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+
         
         [HttpPost]
         [Route("phan-cong")]
@@ -161,33 +209,32 @@ namespace EOffice.WebAPI.APIs
                 );
             }
         }
-        
-        
-        [HttpGet]
-        [Route("get-phancongkyso-by-vanbanid/{id}")]
-        public async Task<IActionResult> GetPhanCongKySoByVanBanId(string id)
-        {
-            try
-            {
-                var response = await _vanBanDiService.GetPhanCongKySoByVanBanId(id);
 
-                return Ok(
-                    new ResultResponse<List<PhanCongKySo>>()
-                        .WithData(response)
-                        .WithCode(EResultResponse.SUCCESS.ToString())
-                        .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
-                );
-            }
-            catch (ResponseMessageException ex)
-            {
-                return Ok(
-                    new ResultMessageResponse().WithCode(ex.ResultCode)
-                        .WithMessage(ex.ResultString)
-                );
-            }
-        }
-
-        
+        // [HttpGet]
+        // [Route("get-phancongkyso-by-vanbanid/{id}")]
+        // public async Task<IActionResult> RemoveAssignSign(PhanCongKySo model)
+        // {
+        //     try
+        //     {
+        //         var response = await _vanBanDiService.RemoveAssignSign(model);
+        //
+        //         return Ok(
+        //             new ResultResponse<VanBanDi>()
+        //                 .WithData(response)
+        //                 .WithCode(EResultResponse.SUCCESS.ToString())
+        //                 .WithMessage("Xóa ký số thành công")
+        //         );
+        //     }
+        //     catch (ResponseMessageException ex)
+        //     {
+        //         return Ok(
+        //             new ResultMessageResponse().WithCode(ex.ResultCode)
+        //                 .WithMessage(ex.ResultString)
+        //         );
+        //     }
+        // }
+        //
+        //
         [HttpGet]
         [Route("get")]
         public async Task<IActionResult> Get()
