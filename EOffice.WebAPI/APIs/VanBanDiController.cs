@@ -74,6 +74,30 @@ namespace EOffice.WebAPI.APIs
         }
         
         [HttpPost]
+        [Route("cap-so-van-ban-di")]
+        public async Task<IActionResult> CapSoVanBanDi([FromBody] VanBanDi model)
+        {
+            try
+            {
+                var response = await _vanBanDiService.CapSoVanBanDi(model);
+                return Ok(
+                    new ResultResponse<VanBanDi>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage("Cấp số thành công: " + model.SoVBDi)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+
+        
+        [HttpPost]
         [Route("assign-or-reject")]
         public async Task<IActionResult> AssignOrReject([FromBody] PhanCongKySo model)
         {
@@ -352,6 +376,30 @@ namespace EOffice.WebAPI.APIs
             try
             {
                 var response = await _vanBanDiService.GetPagingXuLy(param);
+
+                return Ok(
+                    new ResultResponse<PagingModel<VanBanDi>>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+        
+        [HttpPost]
+        [Route("get-paging-params-capso")]
+        public async Task<IActionResult> GetPagingParamCapSo([FromBody] VanBanDiParam param)
+        {
+            try
+            {
+                var response = await _vanBanDiService.GetPagingCapSo(param);
 
                 return Ok(
                     new ResultResponse<PagingModel<VanBanDi>>()

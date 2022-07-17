@@ -7,6 +7,9 @@ export const actions = {
     async getPagingParams({commit}, params) {
         return apiClient.post(controller + "/get-paging-params", params);
     },
+    async getPagingParamsCapSo({commit}, params) {
+        return apiClient.post(controller + "/get-paging-params-capso", params);
+    },
     async getPagingParamsXuLy({commit}, params) {
         return apiClient.post(controller + "/get-paging-params-xuly", params);
     },
@@ -15,6 +18,9 @@ export const actions = {
     },
     async create({commit}, values) {
         return apiClient.post(controller + "/create", values);
+    },
+    async capSoVanBanDi({commit}, values) {
+        return apiClient.post(controller + "/cap-so-van-ban-di", values);
     },
     async assignOrReject({commit}, values) {
         return apiClient.post(controller + "/assign-or-reject", values);

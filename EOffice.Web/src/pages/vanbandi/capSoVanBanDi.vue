@@ -19,14 +19,13 @@ import {butPheModel} from "@/models/butPheModel";
 import {phanCongModel} from "@/models/phanCongModel";
 import {notifyModel} from "@/models/notifyModel";
 import {vanBanDiModel} from "@/models/vanBanDiModel";
-import moment from "moment";
 
 /**
  * Advanced table component
  */
 export default {
   page: {
-    title: "Văn bản đi",
+    title: " Cấp số văn bản đi",
     meta: [{name: "description", content: appConfig.description}]
   },
   components: {
@@ -40,7 +39,7 @@ export default {
   },
   data() {
     return {
-      title: "Xử lý văn bản đi",
+      title: "Cấp số văn bản đi",
       items: [
         {
           text: "E-Office",
@@ -51,7 +50,7 @@ export default {
           href: "/van-ban-den"
         },
         {
-          text: " Xử lý văn bản",
+          text: "Cấp số văn bản đi",
           active: true
         }
       ],
@@ -59,6 +58,7 @@ export default {
       showModal: false,
       showDetail: false,
       showDeleteModal: false,
+      showModelCapSo: false,
       submitted: false,
       listCoQuan: [],
       listRole: [],
@@ -68,13 +68,8 @@ export default {
         choPhepKy: true,
         nguoiKy: null,
         vanBanDiId: null,
-        thuTu: 0,
-        reject: false,
-        password: null,
-        content: null,
-        ngayKyString: null
+        thuTu: 0
       },
-      showModelAcceptKySo: false,
       modelButPhe: butPheModel.baseJson(),
       modelPhanCong: phanCongModel.baseJson(),
       pagination: pagingModel.baseJson(),
@@ -149,7 +144,6 @@ export default {
       optionsMucDo: [],
       optionsTrangThai: [],
       listPhanCongKySo:[],
-      showButtonKySoCurrent: true,
       editor: ClassicEditor,
       editorConfig: {
         height: '200px'
@@ -203,13 +197,6 @@ export default {
     /**
      * Search the table data with search input
      */
-    getCurrentUser(){
-      let authUser = localStorage.getItem("auth-user");
-      if(authUser){
-        let jsonUserCurrent = JSON.parse(authUser);
-       return jsonUserCurrent;
-      }
-    },
     async fnGetList() {
       await this.onPageChange();
     },
@@ -226,7 +213,24 @@ export default {
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
-
+    async handleCapSoVanBan(e) {
+      e.preventDefault();
+      if (
+          this.model.id != 0 &&
+          this.model.id != null &&
+          this.model.id
+      ) {
+        //Update model
+        await this.$store.dispatch("vanBanDiStore/capSoVanBanDi", this.model).then((res) => {
+          if (res.resultCode === 'SUCCESS') {
+            this.showModelCapSo = false;
+            this.model = vanBanDenModel.baseJson()
+            this.$refs.tblList.refresh();
+          }
+          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+        })
+      }
+    },
     async handleSubmit(e) {
       e.preventDefault();
       if (
@@ -267,10 +271,23 @@ export default {
         }
       });
     },
-
-    handleCreate(id) {
-      this.model= vanBanDiModel.baseJson();
-      this.showModal = true;
+    async handleShowDataWhenCapSo(id) {
+      await this.$store.dispatch("vanBanDiStore/getById", id).then((res) => {
+        if (res.resultCode == "SUCCESS") {
+          this.model = res.data;
+          this.showModelCapSo = true;
+        } else {
+          // this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+        }
+      });
+    },
+    async handleCreate() {
+      await this.$store.dispatch("vanBanDiStore/getVaCapSo").then((res) => {
+        if (res.resultCode === 'SUCCESS') {
+          this.model= res.data;
+          this.showModal = true;
+        }
+      });
     },
     handleShowDeleteModal(id) {
       this.model.id = id;
@@ -291,18 +308,6 @@ export default {
             this.showDeleteModal = false;
             this.$refs.tblList.refresh();
           }
-        });
-      }
-    },
-    async handleAssignOrReject() {
-      if (this.modelKySo.vanBanDiId  != null) {
-        this.modelKySo.ngayKyString = moment().format();
-        await this.$store.dispatch("vanBanDiStore/assignOrReject", this.modelKySo).then((res) => {
-          if (res.resultCode === 'SUCCESS') {
-            this.showModelAcceptKySo = false;
-            this.showModalMembers = false;
-          }
-          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
         });
       }
     },
@@ -343,19 +348,13 @@ export default {
       }
     },
     async getPhanCongKySoByVanBanId(id) {
+      // this.modelKySo = null;
       try {
         await this.$store.dispatch("vanBanDiStore/getPhanCongKySoByVanBanId", id).then(resp => {
           if (resp.resultCode == "SUCCESS") {
             let items = resp.data;
             this.loading = false
             this.listPhanCongKySo = items || [];
-            let checkExistPhanCongKySo = this.listPhanCongKySo.find(x => x.userName == this.getCurrentUser().userName && (x.ngayKyString != null && x.ngayKyString != "") );
-            console.log("Check",  checkExistPhanCongKySo)
-            if(checkExistPhanCongKySo != null ) {
-              this.showButtonKySoCurrent = true;
-            }else{
-              this.showButtonKySoCurrent = false;
-            }
             return items || []
           }
           return [];
@@ -491,7 +490,7 @@ export default {
       this.loading = true
 
       try {
-        let promise = this.$store.dispatch("vanBanDiStore/getPagingParamsXuLy", params)
+        let promise = this.$store.dispatch("vanBanDiStore/getPagingParamsCapSo", params)
         return promise.then(resp => {
           let items = resp.data.data
           this.totalRows = resp.data.totalRows
@@ -539,9 +538,6 @@ export default {
         })
       }
     },
-    handleShowModelAcceptKySo(){
-      this.showModelAcceptKySo = true;
-    }
   }
 };
 </script>
@@ -569,15 +565,15 @@ export default {
               </div>
               <div class="col-sm-8">
                 <div class="text-sm-end">
-<!--                  <b-button-->
-<!--                      variant="primary"-->
-<!--                      type="button"-->
-<!--                      class="btn w-md btn-primary"-->
-<!--                      @click="handleCreate"-->
-<!--                      size="sm"-->
-<!--                  >-->
-<!--                    <i class="mdi mdi-plus me-1"></i> Thêm mới-->
-<!--                  </b-button>-->
+                  <b-button
+                      variant="primary"
+                      type="button"
+                      class="btn w-md btn-primary"
+                      @click="handleCreate"
+                      size="sm"
+                  >
+                    <i class="mdi mdi-plus me-1"></i> Thêm mới
+                  </b-button>
                   <!-- Model create -->
                   <b-modal
                       v-model="showModal"
@@ -596,11 +592,11 @@ export default {
                         <b-button variant="light" size="sm" style="width: 80px" @click="showModal = false">
                           Đóng
                         </b-button>
-<!--                        <b-button type="submit" variant="primary" class="ms-1" style="width: 80px" size="sm"-->
-<!--                                  @click="handleSubmit"-->
-<!--                        >-->
-<!--                          Lưu-->
-<!--                        </b-button>-->
+                        <b-button type="submit" variant="primary" class="ms-1" style="width: 80px" size="sm"
+                                  @click="handleSubmit"
+                        >
+                          Lưu
+                        </b-button>
                       </div>
                     </template>
                     <form @submit.prevent="handleSubmit"
@@ -805,7 +801,22 @@ export default {
                                 ></ckeditor>
                               </div>
                             </div>
+                            <div v-if="model.filePDF != null  && model.filePDF.length > 0" class="col-md-12">
+                              <label for="">Danh sách đã ký (Nhấn vào để tải xuống)</label>
+                              <template >
+                                <div v-for="(file, index) in model.filePDF" :key="index">
+                                  <a
+                                      :href="`${apiUrl}files/view/${file.fileId}`"
+                                      class=" fw-medium"
+                                  ><i
+                                      :class="`mdi font-size-16 align-middle me-2`"
+                                  ></i>
+                                    {{index + 1}}: {{ file.fileName }}</a
+                                  >
+                                </div>
+                              </template>
 
+                            </div>
                             <div class="col-md-12">
                               <label for="">Danh sách tệp tin (Nhấn vào để tải xuống)</label>
                               <template v-if="model.file == null || (model.file != null &&model.file.length <= 0)">
@@ -1069,46 +1080,15 @@ export default {
                       </div>
                     </template>
                     <template v-slot:cell(process)="data">
+
                       <button
                           type="button"
                           size="sm"
                           class="btn btn-outline btn-sm"
-                          data-toggle="tooltip" data-placement="bottom" title=" Ký số"
-                          v-on:click="showModalMembers = true, modelKySo.vanBanDiId=data.item.id, getPhanCongKySoByVanBanId(data.item.id)">
-                        <i class="fas fa-eye  text-warning me-1"></i>
-                      </button>
-                      <button
-                          type="button"
-                          size="sm"
-                          class="btn btn-outline btn-sm"
-                          data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
-                          v-on:click="handleUpdate(data.item.id)">
+                          data-toggle="tooltip" data-placement="bottom" title=" Cấp số"
+                          v-on:click="handleShowDataWhenCapSo(data.item.id)">
                         <i class="fas fa-pencil-alt text-success me-1"></i>
                       </button>
-<!--                      <button-->
-<!--                          type="button"-->
-<!--                          size="sm"-->
-<!--                          class="btn btn-outline btn-sm"-->
-<!--                          data-toggle="tooltip" data-placement="bottom" title="Cập nhật"-->
-<!--                          v-on:click="HandleShowPhanCong(data.item.id)">-->
-<!--                        <i class="fas fa-user-plus text-info me-1"></i>-->
-<!--                      </button>-->
-                      <button
-                          type="button"
-                          size="sm"
-                          class="btn btn-outline btn-sm"
-                          data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
-                          v-on:click="handleShowButPhe(data.item.id)">
-                        <i class="fas fa-feather-alt text-primary me-1"></i>
-                      </button>
-<!--                      <button-->
-<!--                          type="button"-->
-<!--                          size="sm"-->
-<!--                          class="btn btn-outline btn-sm"-->
-<!--                          data-toggle="tooltip" data-placement="bottom" title="Xóa"-->
-<!--                          v-on:click="handleShowDeleteModal(data.item.id)">-->
-<!--                        <i class="fas fa-trash-alt text-danger me-1"></i>-->
-<!--                      </button>-->
                     </template>
                     <template v-slot:cell(ten)="data">&nbsp;&nbsp;
                       {{ data.item.ten }}
@@ -1144,10 +1124,9 @@ export default {
             </div>
           </div>
         </div>
-
         <b-modal
             v-model="showModalMembers"
-            title="Ký số nội bộ"
+            title="Thành viên ký số"
             title-class="text-black font-18"
             body-class="p-3"
             hide-footer
@@ -1155,54 +1134,74 @@ export default {
             no-close-on-backdrop
             size="lg"
         >
-          <template #modal-header="{ close }">
-            <!-- Emulate built in modal header close button action -->
-            <h5> Ký số nội bộ</h5>
-            <div class="text-end">
-              <b-button variant="light" size="sm" style="width: 80px" @click="showModalMembers = false">
-                Đóng
-              </b-button>
-
-              <b-button v-if="!showButtonKySoCurrent" type="submit" variant="primary" class="ms-1"  size="sm"
-                        @click="handleShowModelAcceptKySo"
-              >
-
-                Ký số / Từ chối
-              </b-button>
-            </div>
-          </template>
           <div class="row" style="display: flex; justify-content: center; align-items: center;">
+            <div class="col-md-5">
+              <!--                Lãnh đạo bút phê -->
+              <div class="mb-2">
+                <label class="form-label" for="validationCustom01"> Thành viên</label>
+                <multiselect
+                    v-model="modelKySo.nguoiKy"
+                    :options="optionsUser"
+                    track-by="id"
+                    label="fullName"
+                    placeholder="Chọn người ký số"
+                    deselect-label="Nhấn để xoá"
+                    selectLabel="Nhấn enter để chọn"
+                    selectedLabel="Đã chọn"
+                ></multiselect>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class=" d-flex align-items-center">
+                <switches v-model="modelKySo.choPhepKy" color="primary" class="ml-1 mx-2"></switches>
+                <label for=""> Cho phép ký </label>
+              </div>
+
+            </div>
+            <div class="col-md-2">
+              <div class="mb-2">
+                <label class="form-label" for="validationCustom01"> Thứ tự</label>
+                <input
+                    v-model="modelKySo.thuTu"
+                    type="text"
+                    class="form-control"
+                    placeholder="Nhập thứ tự"
+                />
+              </div>
+            </div>
+            <div class="col-md-2">
+              <b-button @click="handleAssignSign" variant="primary"> Thêm thành viên</b-button>
+            </div>
             <div class="col-md-12">
               <div class="table-responsive-sm">
                 <table class="datatables table b-table table-striped table-bordered" style="width:100%">
                   <thead>
                   <tr>
-                    <th style="text-align:center">#</th>
+                    <th>#</th>
                     <th>Tài khoản</th>
                     <th>Họ và tên</th>
-                    <th>Tình trạng</th>
-                    <th> Ngày ký</th>
+                    <th>Cho phép ký</th>
+                    <th></th>
                   </tr>
                   </thead>
                   <tbody>
                   <template v-if="listPhanCongKySo == null || (listPhanCongKySo != null && listPhanCongKySo.length <= 0)">
                     <tr>
-                      <td>Không có dữ liệu</td>
+                      <td colspan="5">Không có dữ liệu</td>
                     </tr>
                   </template>
                   <template v-else>
                     <tr v-for="(item, index) in listPhanCongKySo" :key="index">
-                      <td style="text-align:center">{{++index}}</td>
+                      <td>{{++index}}</td>
                       <td>{{item.userName}}</td>
                       <td>{{item.fullName}}</td>
                       <td>
                         <span v-if="item.choPhepKy">Ký số</span>
                         <span v-else>Xem duyệt</span>
                       </td>
-                      <td>{{item.ngayKyString}}</td>
-<!--                      <td>-->
-<!--                        <b-button @click="handleShowModelAcceptKySo" size="sm"  variant="primary"> Ký số/Từ chối</b-button>-->
-<!--                      </td>-->
+                      <td>
+                        <b-button @click="handleRemoveAssignSign(item.userName)"  variant="danger">Xóa</b-button>
+                      </td>
                     </tr>
                   </template>
                   </tbody>
@@ -1212,69 +1211,8 @@ export default {
 
 
           </div>
-
         </b-modal>
-        <b-modal
-            v-model="showModelAcceptKySo"
-            centered
-            title=" Ký số nội bộ"
-            title-class="font-18"
-            no-close-on-backdrop
-        >
-          <div class="row">
-            <div class="col-md-12">
-              <div class=" d-flex align-items-center">
-                <switches v-model="modelKySo.reject" color="primary" class="ml-1 mx-2"></switches>
-                <label for=""> Từ chối ký </label>
-              </div>
-            </div>
-            <div class="col-md-12 mt-2">
-              <label class="form-label" for="validationCustom01"> Mật khẩu</label> <span
-                class="text-danger">*</span>
-              <input
-                  id="validationCustom01"
-                  v-model="modelKySo.password"
-                  type="password"
-                  class="form-control"
-              />
-            </div>
-            <div class="col-md-12 mt-2">
-              <label class="form-label" for="validationCustom01"> Nội dung</label> <span
-                class="text-danger">*</span>
-              <textarea
-                  id="validationCustom01"
-                  v-model="modelKySo.content"
-                  type="text"
-                  class="form-control"
-              />
-            </div>
-          </div>
-          <template #modal-footer>
-            <b-button v-b-modal.modal-close_visit
-                      size="sm"
-                      class="btn btn-outline-info w-md"
-                      v-on:click="showModelAcceptKySo = false">
-              Đóng
-            </b-button>
-            <b-button v-if="!modelKySo.reject" v-b-modal.modal-close_visit
-                      size="sm"
-                      variant="primary"
-                      type="button"
-                      class="w-md"
-                      v-on:click="handleAssignOrReject">
-              Đồng ý
-            </b-button>
-            <b-button v-if="modelKySo.reject" v-b-modal.modal-close_visit
-                      size="sm"
-                      variant="danger"
-                      type="button"
-                      class="w-md"
-                      v-on:click="handleAssignOrReject">
-              Từ chối
-            </b-button>
-          </template>
-        </b-modal>
-
+        <!--        Modal bút phê-->
         <b-modal
             v-model="showModalButPhe"
             title="Bút phê đơn vị lãnh đạo, đơn vị nhận/ xử lý văn bản"
@@ -1642,6 +1580,96 @@ export default {
             </b-button>
           </template>
         </b-modal>
+
+        <!--        Modal delete -->
+        <b-modal
+            v-model="showModelCapSo"
+            centered
+            title=" Chi tiết văn bản cấp số"
+            title-class="font-18"
+            no-close-on-backdrop
+            size="lg"
+        >
+          <div class="row">
+            <div class="col-md-6">
+              <div class="row">
+                <div class="col-md-12 capso-container">
+                  <div class="title-capso">Số lưu CV</div>
+                  <div class="content-capso">{{model.soLuuCV}}</div>
+                </div>
+                <div class="col-md-12 capso-container">
+                  <div class="title-capso"> Ngày nhập công văn</div>
+                  <div class="content-capso">{{model.ngayNhap}}</div>
+                </div>
+                <template v-if="model.nguoiKy">
+                  <div class="col-md-12 capso-container">
+                    <div class="title-capso"> Người ký</div>
+                    <div class="content-capso">{{model.nguoiKy.fullName }}({{ model.nguoiKy.donVi.ten}})</div>
+                  </div>
+                </template>
+
+                <div class="col-md-12 capso-container">
+                  <div class="title-capso"> Ngày ký</div>
+                  <div class="content-capso">{{model.ngayKy}}</div>
+                </div>
+<!--                <div class="col-md-12 capso-container">-->
+<!--                  <div class="title-capso"> Ngày ký</div>-->
+<!--                  <div class="content-capso">{{model.ngayKy}}</div>-->
+<!--                </div>-->
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="row">
+                <div class="col-md-12 capso-container">
+                  <div class="title-capso"> Loại văn bản</div>
+                  <template v-if="model.loaiVanBan">
+                    <div class="content-capso">{{model.loaiVanBan.ten}}</div>
+                  </template>
+                </div>
+                <div class="col-md-12 capso-container">
+                  <div class="title-capso"> Trạng thái</div>
+                  <template v-if="model.trangThai">
+                    <div class="content-capso">{{model.trangThai.ten}}</div>
+                  </template>
+                </div>
+
+              </div>
+
+            </div>
+            <div class="col-md-12" style="display: flex; justify-content: center; align-content: center;">
+              <label class="form-label" style="margin-bottom: 0px" for="validationCustom01"> Số CV đi</label> <span
+                class="text-danger">*</span>
+              <div style="margin-left: 20px; width:300px">
+
+                <input
+                    id="validationCustom01"
+                    v-model="model.soVBDi"
+                    type="text"
+                    class="form-control"
+                    placeholder=""
+                />
+              </div>
+            </div>
+
+          </div>
+          <template #modal-footer>
+
+            <b-button v-b-modal.modal-close_visit
+                      size="sm"
+                      class="btn btn-outline-info w-md"
+                      v-on:click="showModelCapSo = false">
+              Đóng
+            </b-button>
+            <b-button v-b-modal.modal-close_visit
+                      size="sm"
+                      variant="danger"
+                      type="button"
+                      class="w-md"
+                      v-on:click="handleCapSoVanBan">
+             Cấp số
+            </b-button>
+          </template>
+        </b-modal>
       </div>
     </div>
   </Layout>
@@ -1689,5 +1717,16 @@ export default {
 
 .custom-ribon > div {
   border-radius: 3px;
+}
+
+.title-capso{
+  font-weight: bold; color: #00568C; margin-right: 10px
+}
+.content-capso{
+  color: #00568C;
+}
+.capso-container{
+  margin-top: 10px;
+  display: flex;
 }
 </style>

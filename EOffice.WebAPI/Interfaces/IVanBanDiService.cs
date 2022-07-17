@@ -30,5 +30,7 @@ namespace EOffice.WebAPI.Interfaces
         Task<VanBanDi> AssignOrReject(PhanCongKySo model, string path);
         Task<PagingModel<VanBanDi>> GetPagingXuLy(VanBanDiParam param);
         Task<VanBanDi> CapSoVanBan();
+        Task<PagingModel<VanBanDi>> GetPagingCapSo(VanBanDiParam param);
+        Task<VanBanDi> CapSoVanBanDi(VanBanDi model);
     }
 }

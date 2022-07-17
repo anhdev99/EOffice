@@ -500,6 +500,12 @@ export default [{
         component: () => import("../pages/vanbandi/xuLyVanBanDi"),
     },
     {
+        path: "/cap-so-van-ban-di",
+        name: " Cấp số văn bản đi",
+        // meta: {},
+        component: () => import("../pages/vanbandi/capSoVanBanDi"),
+    },
+    {
         path: '/icons/themify',
         name: 'Themify icons',
         component: () => import('./views/icons/themify'),
