@@ -488,6 +488,12 @@ export default [{
         }
     },
     {
+        path: "/van-ban-di",
+        name: "Văn bản đi",
+        // meta: {},
+        component: () => import("../pages/vanbandi"),
+    },
+    {
         path: '/icons/themify',
         name: 'Themify icons',
         component: () => import('./views/icons/themify'),

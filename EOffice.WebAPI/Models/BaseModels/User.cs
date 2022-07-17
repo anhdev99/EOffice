@@ -20,6 +20,7 @@ namespace EOffice.WebAPI.Models
         public string Email { get; set; }
         public string Note { get; set; }
         public Avatar Avatar { get; set; }
+        public KySo KySo { get; set; }
         public DonVi DonVi { get; set; }
         public ChucVu ChucVu { get; set; }
         public List<Role> Roles { get; set; }
@@ -39,5 +40,20 @@ namespace EOffice.WebAPI.Models
         [BsonIgnore] public List<string> Permissions { get; set; }
         [BsonIgnore] public List<NavMenuVM> Menu { get; set; }
     }
-    
+
+    public class UserShort
+    {
+        public string Id { get; set; }
+
+        public string UserName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string FullName { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Email { get; set; }
+        public string Note { get; set; }
+        public Avatar Avatar { get; set; }
+        public DonVi DonVi { get; set; }
+        public ChucVu ChucVu { get; set; }
+    }
 }

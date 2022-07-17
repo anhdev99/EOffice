@@ -22,6 +22,9 @@ namespace EOffice.WebAPI.Interfaces
         // Task<PagingModel<VanBanDi>>   GetPagingHandle (VanBanDiParam param);
         //
         // Task<VanBanDi> QuestionNavigation(VanBanDi model);    
-        // Task<VanBanDi> NotApprove(VanBanDi model);   
+        // Task<VanBanDi> NotApprove(VanBanDi model); 
+
+        Task<VanBanDi> AssignSign(PhanCongKySo model);
+        Task<List<PhanCongKySo>> GetPhanCongKySoByVanBanId(string vanBanId);
     }
 }

@@ -11,39 +11,67 @@ namespace EOffice.WebAPI.Models
         public string Id { get; set; }
         public int Version { get; set; }
         public int Number { get; set; }
-        public string LoaiVanBan { get; set; }
-        public string LoaiVanBanTen { get; set; }
-        public string TrangThai { get; set; }
-        public string TrangThaiTen { get; set; }
+        public LoaiVanBan LoaiVanBan { get; set; }
+        public TrangThai TrangThai { get; set; }
         public string SoLuuCV { get; set; }
-        public string SoVBDi { get; set; }
+        public string SoVBDi{ get; set; }
         public DateTime? NgayNhap { get; set; }
+        public DateTime? NgayBanHanh { get; set; }
         public DateTime? NgayTraLoi { get; set; }
         public string TraLoiCVSo { get; set; }
-        public string SoBan { get; set; }
+        public int SoBan { get; set; }
         public string TrichYeu { get; set; }
-        public string DonViSoan { get; set; }
+        public DonVi DonViSoan { get; set; }
         public string DonViSoanTen { get; set; }
-        public string CanBoSoan { get; set; }
+        public User CanBoSoan { get; set; }
         public string CanBoSoanTen { get; set; }
-        public string HinhThucGui { get; set; }
-        public string HinhThucGuiTen { get; set; }
-        public string LinhVuc { get; set; }
+        public HinhThucGui HinhThucGui { get; set; }
+        public LinhVuc LinhVuc { get; set; }
         public string LinhVucTen { get; set; }
-        public string MucDoBaoMat { get; set; }
+        public EnumModel MucDoBaoMat { get; set; }
         public string MucDoBaoMatTen { get; set; }
-        public string MucDoTinhChat { get; set; }
+        public EnumModel MucDoTinhChat { get; set; }
         public string MucDoTinhChatTen { get; set; }
-        public string HoSoDonVi { get; set; }
+        public HoSoDonVi HoSoDonVi { get; set; }
         public string HoSoDonViTen { get; set; }
         public string NoiLuuTru { get; set; }
-        public string CoQuanNhan { get; set; }
+        public CoQuan CoQuanNhan { get; set; }
         public string CoQuanNhanTen { get; set; }
-        public string KhoiCoQuanNhan { get; set; }
+        
+        public KhoiCoQuan KhoiCoQuanNhan { get; set; }
         public string KhoiCoQuanNhanTen { get; set; }
-        public FileShort File { get; set; }
-        public List<NguoiPhanCong> NguoiPhanCong { get; set; }
+        
+        public CoQuan CoQuanGui { get; set; }
+        public string CoQuanGuiTen { get; set; }
+        public KhoiCoQuan KhoiCoQuanGui { get; set; }
+        public string KhoiCoQuanGuiTen { get; set; }
+        public DateTime? HanXuLy { get; set; }
+        public bool CongVanChiDoc { get; set; }
+        public bool BanChinh { get; set; }
+        public bool HienThiThongBao { get; set; }
+        public User NguoiKy { get; set; }
+        public DateTime? NgayKy { get; set; }
+        public List<FileShort> File { get; set; }
+        
+        public List<PhanCongKySo> PhanCongKySo { get; set; }
         [BsonIgnore]
-        public FileShort UploadFiles{ get; set; }
+        public List<FileShort> UploadFiles{ get; set; }
+        public List<NguoiPhanCong> NguoiPhanCong { get; set; }
+    }
+
+    public class PhanCongKySo
+    {
+        public string Id { get; set; }
+        public string UserName { get; set; }
+        public string FullName { get; set; }
+        public int ThuTu { get; set; }
+        public KySo SignImage { get; set; }
+        public DateTime? NgayKy { get; set; }
+        public bool Reject { get; set; } = false;
+        public bool ChoPhepKy { get; set; } = false;
+        public string VanBanDiId { get; set; }
+        
+        [BsonIgnore]
+        public User NguoiKy { get; set; }
     }
 }

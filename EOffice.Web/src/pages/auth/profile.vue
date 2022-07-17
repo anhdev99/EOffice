@@ -231,6 +231,25 @@ export default {
         this.model.avatar = {fileId: fileSuccess.id,  name: fileSuccess.fileName};
       }
     },
+    removeHinhAnhKySo(file, error, xhr){
+      let fileHinhAnh = JSON.parse( file.xhr.response);
+      if(fileHinhAnh.data && fileHinhAnh.data.id){
+        let idFile = fileHinhAnh.data.id;
+        let resultData =   this.model.kySo.filter(x => {
+          return x.fileId != idFile;
+        })
+        this.model.kySo= resultData;
+      }
+    },
+    addHinhAnhKySo(file, response){
+      if(this.model ){
+        if(this.model.kySo == null || this.model.kySo.length <= 0){
+          this.model.kySo = [];
+        }
+        let fileSuccess = response.data;
+        this.model.kySo = {fileId: fileSuccess.id,  name: fileSuccess.fileName};
+      }
+    },
     logoutUser() {
       // eslint-disable-next-line no-unused-vars
       var userLocalStorage = localStorage.getItem("user-token");
@@ -457,7 +476,7 @@ export default {
                         </div>
                       </div>
                       <div class="col-6">
-                        <label class="text-left">Hình ảnh</label>
+                        <label class="text-left"> Ảnh cá nhân </label>
                         <div class=" profile-user-wid mt-2">
                           <div v-if="model.avatar != null">
                             <b-img
@@ -484,6 +503,39 @@ export default {
                             :options="dropzoneOptions"
                             v-on:vdropzone-removed-file="removeHinhAnh"
                             v-on:vdropzone-success="addHinhAnh"
+                        >
+                          <div class="dropzone-custom-content">
+                            <i class="display-1 text-muted bx bxs-cloud-upload " style="font-size: 70px"></i>
+                            <h4>Kéo thả hình ảnh hoặc bấm vào để tải hình ảnh</h4>
+                          </div>
+                        </vue-dropzone>
+                      </div>
+                      <div class="col-6">
+                        <label class="text-left"> Chữ ký</label>
+                        <div class=" profile-user-wid mt-2">
+                          <div v-if="model.kySo != null">
+                            <b-img
+                                style="height: 200px ; width: 300px"
+                                :src=" url + `${model.kySo.fileId}`">
+                            </b-img>
+                          </div>
+                          <div v-else>
+                            <img
+                                style="max-height: 280px ; width: 300px"
+                                src="@/assets/images/4.png"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-6" >
+                        <label class="text-left"> Chọn hình ảnh chữ ký </label>
+                        <vue-dropzone
+                            id="myVueDropzone"
+                            ref="myVueDropzone"
+                            :use-custom-slot="true"
+                            :options="dropzoneOptions"
+                            v-on:vdropzone-removed-file="removeHinhAnhKySo"
+                            v-on:vdropzone-success="addHinhAnhKySo"
                         >
                           <div class="dropzone-custom-content">
                             <i class="display-1 text-muted bx bxs-cloud-upload " style="font-size: 70px"></i>

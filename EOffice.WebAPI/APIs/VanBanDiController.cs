@@ -44,6 +44,30 @@ namespace EOffice.WebAPI.APIs
                 );
             }
         }
+        
+        [HttpPost]
+        [Route("them-nguoi-ky-so")]
+        public async Task<IActionResult> ThemNguoiKySo([FromBody] PhanCongKySo model)
+        {
+            try
+            {
+                var response = await _vanBanDiService.AssignSign(model);
+                return Ok(
+                    new ResultResponse<VanBanDi>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.CREATE_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+        
         [HttpPost]
         [Route("phan-cong")]
         public async Task<IActionResult> PhanCong([FromBody] VanBanDi model)
@@ -138,6 +162,31 @@ namespace EOffice.WebAPI.APIs
             }
         }
         
+        
+        [HttpGet]
+        [Route("get-phancongkyso-by-vanbanid/{id}")]
+        public async Task<IActionResult> GetPhanCongKySoByVanBanId(string id)
+        {
+            try
+            {
+                var response = await _vanBanDiService.GetPhanCongKySoByVanBanId(id);
+
+                return Ok(
+                    new ResultResponse<List<PhanCongKySo>>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+
         
         [HttpGet]
         [Route("get")]

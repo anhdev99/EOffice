@@ -119,6 +119,30 @@ namespace EOffice.WebAPI.APIs
         }
 
         [HttpGet]
+        [Route("get")]
+        public async Task<IActionResult> Get()
+        {
+            try
+            {
+                var response = await _donViService.Get();
+
+                return Ok(
+                    new ResultResponse<IEnumerable<DonVi>>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.UPDATE_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+        
+        [HttpGet]
         [Route("getTree")]
         public async Task<IActionResult> GetTree()
         {

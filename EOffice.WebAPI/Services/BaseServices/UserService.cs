@@ -198,6 +198,7 @@ namespace EOffice.WebAPI.Services
             entity.PhoneNumber = model.PhoneNumber;
             entity.Email = model.Email;
             entity.Note = model.Note;
+            entity.KySo = model.KySo;
             entity.Roles = model.Roles;
             entity.      DonVi = model.DonVi;
             entity.       ChucVu = model.ChucVu;
@@ -258,6 +259,7 @@ namespace EOffice.WebAPI.Services
             entity.PhoneNumber = model.PhoneNumber;
             entity.Email = model.Email;
             entity.Avatar = model.Avatar;
+            entity.KySo = model.KySo;
 
             var result = await BaseMongoDb.UpdateAsync(entity);
             if (!result.Success)

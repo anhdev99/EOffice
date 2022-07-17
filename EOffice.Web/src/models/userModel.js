@@ -45,6 +45,7 @@ const baseJson = () => {
         email: null,
         note: null,
         avatar: null,
+        kySo: null,
         donVi: {id: null, ten: null},
         roles: null
     }

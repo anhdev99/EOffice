@@ -60,68 +60,68 @@ namespace EOffice.WebAPI.Services
                 Number = 0,
                 SoLuuCV = model.SoLuuCV,
                 SoVBDi = model.SoVBDi,
+                CanBoSoan = model.CanBoSoan,
+                DonViSoan = model.DonViSoan,
                 NgayNhap = model.NgayNhap,
                 NgayTraLoi = model.NgayTraLoi,
                 TraLoiCVSo = model.TraLoiCVSo,
                 SoBan = model.SoBan,
                 TrichYeu = model.TrichYeu,
                 NoiLuuTru = model.NoiLuuTru,
+                NguoiKy = model.NguoiKy,
+                NgayKy = model.NgayKy,
                 CreatedBy = CurrentUserName,
                 ModifiedBy = CurrentUserName,
                 CreatedAt = DateTime.Now,
-                ModifiedAt = DateTime.Now
+                ModifiedAt = DateTime.Now,
+                CongVanChiDoc = model.CongVanChiDoc,
+                BanChinh = model.BanChinh,
+                HienThiThongBao = model.HienThiThongBao,
+                MucDoBaoMat = model.MucDoBaoMat,
+                MucDoTinhChat = model.MucDoTinhChat
             };
 
 
             if (model.UploadFiles != default)
             {
-                var newFile = new FileShort();
-                newFile.FileId = model.UploadFiles.FileId;
-                newFile.FileName = model.UploadFiles.FileName;
-                newFile.Ext = model.UploadFiles.Ext;
-                entity.File = newFile;
+                foreach (var item in model.UploadFiles)
+                {
+                    var newFile = new FileShort();
+                    newFile.FileId = item.FileId;
+                    newFile.FileName = item.FileName;
+                    newFile.Ext = item.Ext;
+                    if (entity.File == default)
+                    {
+                        entity.File = new List<FileShort>();
+                    }
+                    entity.File.Add(newFile);
+                }
+
             }
 
-            var donVi = _context.DonVis.Find(x => x.IsDeleted != true).ToList();
-            entity.DonViSoanTen = donVi.Find(x => x.Id == model.DonViSoan)?.Ten;
-            entity.DonViSoan = model.DonViSoan;
-
-            entity.CoQuanNhanTen = donVi.Find(x => x.Id == model.CoQuanNhan)?.Ten;
             entity.CoQuanNhan = model.CoQuanNhan;
-
-            entity.KhoiCoQuanNhanTen = donVi.Find(x => x.Id == model.KhoiCoQuanNhan)?.Ten;
+            
             entity.KhoiCoQuanNhan = model.KhoiCoQuanNhan;
-
-            var canBo = _context.Users.Find(x => x.Id == model.CanBoSoan).FirstOrDefault();
-            entity.CanBoSoan = model.CanBoSoan;
-            entity.CanBoSoanTen = canBo?.UserName + "-" + canBo?.FullName;
+            entity.LinhVuc = model.LinhVuc;
 
             if (model.HoSoDonVi != default)
             {
-                var hoSoDonVi = _context.HoSoDonVi.Find(x => x.Id == model.HoSoDonVi).FirstOrDefault();
                 entity.HoSoDonVi = model.HoSoDonVi;
-                entity.HoSoDonViTen = hoSoDonVi?.Ten;
             }
 
-            // if (model.HinhThucGui != default)
-            // {
-            //     var hinhThucGui = _context.HinhThucGui.Find(x => x.Id == model.HinhThucGui).FirstOrDefault();
-            //     entity.HinhThucGui = model.HinhThucGui;
-            //     entity.HinhThucGuiTen = hinhThucGui?.Ten;
-            // }
+            if (model.HinhThucGui != default)
+            {
+                entity.HinhThucGui = model.HinhThucGui;
+            }
 
             if (model.LoaiVanBan != default)
             {
-                var loaiVanBan = _context.LoaiVanBan.Find(x => x.Id == model.LoaiVanBan).FirstOrDefault();
                 entity.LoaiVanBan = model.LoaiVanBan;
-                entity.LoaiVanBanTen = loaiVanBan?.Ten;
             }
 
             if (model.TrangThai != default)
             {
-                var trangThai = _context.TrangThai.Find(x => x.Id == model.TrangThai).FirstOrDefault();
                 entity.TrangThai = model.TrangThai;
-                entity.TrangThaiTen = trangThai?.Ten;
             }
 
             var result = await BaseMongoDb.CreateAsync(entity);
@@ -135,7 +135,7 @@ namespace EOffice.WebAPI.Services
 
             await _history.WithQuestionId(entity.Id)
                 .WithAction(EAction.CREATE)
-                .WithStatus(entity.TrangThai, entity.TrangThaiTen)
+                .WithStatus(entity.TrangThai?.Ten, entity.TrangThai?.Ten)
                 .WithType(ETypeHistory.Question, null)
                 .WithTitle("Tạo văn bản đến")
                 .SaveChangeHistoryQuestion();
@@ -160,69 +160,70 @@ namespace EOffice.WebAPI.Services
             }
 
             var oldValue = entity;
-            entity.Version = model.Version;
-            entity.Number = model.Number;
+
             entity.SoLuuCV = model.SoLuuCV;
             entity.SoVBDi = model.SoVBDi;
+            entity.CanBoSoan = model.CanBoSoan;
+            entity.DonViSoan = model.DonViSoan;
             entity.NgayNhap = model.NgayNhap;
             entity.NgayTraLoi = model.NgayTraLoi;
             entity.TraLoiCVSo = model.TraLoiCVSo;
             entity.SoBan = model.SoBan;
             entity.TrichYeu = model.TrichYeu;
             entity.NoiLuuTru = model.NoiLuuTru;
+            entity.NguoiKy = model.NguoiKy;
+            entity.NgayKy = model.NgayKy;
+            entity.CreatedBy = CurrentUserName;
             entity.ModifiedBy = CurrentUserName;
             entity.ModifiedAt = DateTime.Now;
+            entity.CongVanChiDoc = model.CongVanChiDoc;
+            entity.BanChinh = model.BanChinh;
+            entity.HienThiThongBao = model.HienThiThongBao;
+            entity.MucDoBaoMat = model.MucDoBaoMat;
+            entity.MucDoTinhChat = model.MucDoTinhChat;
 
 
             if (model.UploadFiles != default)
             {
-                var newFile = new FileShort();
-                newFile.FileId = model.UploadFiles.FileId;
-                newFile.FileName = model.UploadFiles.FileName;
-                newFile.Ext = model.UploadFiles.Ext;
-                entity.File = newFile;
+                foreach (var item in model.UploadFiles)
+                {
+                    var newFile = new FileShort();
+                    newFile.FileId = item.FileId;
+                    newFile.FileName = item.FileName;
+                    newFile.Ext = item.Ext;
+                    if (entity.File == default)
+                    {
+                        entity.File = new List<FileShort>();
+                    }
+                    entity.File.Add(newFile);
+                }
             }
-
-            var donVi = _context.DonVis.Find(x => x.IsDeleted != true).ToList();
-            entity.DonViSoanTen = donVi.Find(x => x.Id == model.DonViSoan)?.Ten;
+            
             entity.DonViSoan = model.DonViSoan;
-
-            entity.CoQuanNhanTen = donVi.Find(x => x.Id == model.CoQuanNhan)?.Ten;
             entity.CoQuanNhan = model.CoQuanNhan;
-
-            entity.KhoiCoQuanNhanTen = donVi.Find(x => x.Id == model.KhoiCoQuanNhan)?.Ten;
+            entity.LinhVuc = model.LinhVuc;
+            
             entity.KhoiCoQuanNhan = model.KhoiCoQuanNhan;
-
-            var canBo = _context.Users.Find(x => x.Id == model.CanBoSoan).FirstOrDefault();
-            entity.CanBoSoan = model.CanBoSoan;
-            entity.CanBoSoanTen = canBo?.UserName + "-" + canBo?.FullName;
+            
 
             if (model.HoSoDonVi != default)
             {
-                var hoSoDonVi = _context.HoSoDonVi.Find(x => x.Id == model.HoSoDonVi).FirstOrDefault();
                 entity.HoSoDonVi = model.HoSoDonVi;
-                entity.HoSoDonViTen = hoSoDonVi?.Ten;
             }
 
-            // if (model.HinhThucGui != default)
-            // {
-            //     var hinhThucGui = _context.HinhThucGui.Find(x => x.Id == model.HinhThucGui).FirstOrDefault();
-            //     entity.HinhThucGui = model.HinhThucGui;
-            //     entity.HinhThucGuiTen = hinhThucGui?.Ten;
-            // }
+            if (model.HinhThucGui != default)
+            {
+                entity.HinhThucGui = model.HinhThucGui;
+            }
 
             if (model.LoaiVanBan != default)
             {
-                var loaiVanBan = _context.LoaiVanBan.Find(x => x.Id == model.LoaiVanBan).FirstOrDefault();
                 entity.LoaiVanBan = model.LoaiVanBan;
-                entity.LoaiVanBanTen = loaiVanBan?.Ten;
             }
 
             if (model.TrangThai != default)
             {
-                var trangThai = _context.TrangThai.Find(x => x.Id == model.TrangThai).FirstOrDefault();
                 entity.TrangThai = model.TrangThai;
-                entity.TrangThaiTen = trangThai?.Ten;
             }
 
 
@@ -236,7 +237,7 @@ namespace EOffice.WebAPI.Services
 
             await _history.WithQuestionId(entity.Id)
                 .WithAction(EAction.UPDATE)
-                .WithStatus(entity.TrangThai, entity.TrangThaiTen)
+                .WithStatus(entity.TrangThai?.Ten, entity.TrangThai?.Ten)
                 .WithType(ETypeHistory.Question, oldValue)
                 .WithTitle("Cập nhật văn bản đi.")
                 .SaveChangeHistoryQuestion();
@@ -272,7 +273,7 @@ namespace EOffice.WebAPI.Services
 
             await _history.WithQuestionId(entity.Id)
                 .WithType(ETypeHistory.Question, entity)
-                .WithStatus(entity.TrangThai, entity.TrangThaiTen)
+                .WithStatus(entity.TrangThai?.Ten, entity.TrangThai?.Ten)
                 .WithAction(EAction.DELETE)
                 .WithTitle("Xóa văn bản đi.")
                 .SaveChangeHistoryQuestion();
@@ -306,12 +307,12 @@ namespace EOffice.WebAPI.Services
 
             if (!String.IsNullOrEmpty(param.TrangThai))
             {
-                filter = builder.And(filter, builder.Eq(x => x.TrangThai, param.TrangThai));
+                filter = builder.And(filter, builder.Eq(x => x.TrangThai.Code, param.TrangThai));
             }
 
             if (!String.IsNullOrEmpty(param.LinhVuc))
             {
-                filter = builder.And(filter, builder.Eq(x => x.LinhVuc, param.LinhVuc));
+                filter = builder.And(filter, builder.Eq(x => x.LinhVuc.Id, param.LinhVuc));
             }
 
             string sortBy = nameof(VanBanDi.ModifiedAt);
@@ -365,7 +366,7 @@ namespace EOffice.WebAPI.Services
 
             await _history.WithQuestionId(entity.Id)
                 .WithAction(EAction.UPDATE)
-                .WithStatus(entity.TrangThai, entity.TrangThaiTen)
+                .WithStatus(entity.TrangThai.Ten, entity.TrangThai?.Ten)
                 .WithType(ETypeHistory.Question, oldValue)
                 .WithTitle("Cập nhật văn bản đi.")
                 .SaveChangeHistoryQuestion();
@@ -387,12 +388,12 @@ namespace EOffice.WebAPI.Services
 
             if (!String.IsNullOrEmpty(param.TrangThai))
             {
-                filter = builder.And(filter, builder.Eq(x => x.TrangThai, param.TrangThai));
+                filter = builder.And(filter, builder.Eq(x => x.TrangThai.Code, param.TrangThai));
             }
 
             if (!String.IsNullOrEmpty(param.LinhVuc))
             {
-                filter = builder.And(filter, builder.Eq(x => x.LinhVuc, param.LinhVuc));
+                filter = builder.And(filter, builder.Eq(x => x.LinhVuc.Id, param.LinhVuc));
             }
             
             string sortBy = nameof(VanBanDi.ModifiedAt);
@@ -422,6 +423,70 @@ namespace EOffice.WebAPI.Services
             }
             result.Data = listVB;
             return result;
+        }
+
+        public async Task<VanBanDi> AssignSign(PhanCongKySo model)
+        {
+            if (model == default)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.DATA_NOT_EMPTY);
+            }
+
+            var vanBanDi = _context.VanBanDi.Find(x => x.Id == model.VanBanDiId).FirstOrDefault();
+            if (vanBanDi == default)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.DATA_NOT_FOUND);
+            }
+
+            var newNguoiKy = new PhanCongKySo();
+            newNguoiKy.Id = model.Id;
+            newNguoiKy.FullName = model.NguoiKy?.FullName;
+            newNguoiKy.UserName = model.NguoiKy?.UserName;
+            newNguoiKy.SignImage = model.NguoiKy?.KySo;
+            newNguoiKy.ChoPhepKy = model.ChoPhepKy;
+            newNguoiKy.ThuTu = model.ThuTu;
+            newNguoiKy.VanBanDiId = model.VanBanDiId;
+
+
+            if (vanBanDi.PhanCongKySo == default)
+            {
+                vanBanDi.PhanCongKySo = new List<PhanCongKySo>();
+            }
+            vanBanDi.PhanCongKySo.Add(newNguoiKy);
+            
+            var result = await BaseMongoDb.UpdateAsync(vanBanDi);
+            if (!result.Success)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.UPDATE_FAILURE);
+            }
+
+            await _history.WithQuestionId(vanBanDi.Id)
+                .WithAction(EAction.UPDATE)
+                .WithStatus(vanBanDi.TrangThai?.Ten, vanBanDi.TrangThai?.Ten)
+                .WithType(ETypeHistory.Question, vanBanDi)
+                .WithTitle("Thêm thành viên ký số: " + newNguoiKy.UserName )
+                .SaveChangeHistoryQuestion();
+
+            return vanBanDi;
+        }
+
+        public async Task<List<PhanCongKySo>> GetPhanCongKySoByVanBanId(string vanBanId)
+        {
+            var vanBanDi = _context.VanBanDi.Find(x => x.Id == vanBanId).FirstOrDefault();
+            if (vanBanDi == default)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.DATA_NOT_FOUND);
+            };
+
+            return vanBanDi.PhanCongKySo;
         }
     }
 }
