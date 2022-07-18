@@ -844,15 +844,17 @@ namespace EOffice.WebAPI.Services
         {
             var userNameFormPhanCongKySo = phanCongKySos.Select(x => x.UserName).ToList();
             var users = _context.Users.Find(x => userNameFormPhanCongKySo.Contains(x.UserName)).ToList();
+            var fileImage = users.Where(x => x.KySo != null).Select(x => x.KySo.FileId).ToList();
             var userAssign = new List<User>();
-
+            var filesUser = _context.Files.Find(x => fileImage.Contains(x.Id)).ToList();
             foreach (var item in phanCongKySos)
             {
-                var check = users.Where(x => x.UserName == item.UserName && item.ChoPhepKy).FirstOrDefault();
-                if (check != default)
+                var checkUser = users.Where(x => x.UserName == item.UserName && item.ChoPhepKy).FirstOrDefault();
+                if (checkUser != default)
                 {
-                    check.NgayKy = item.NgayKyString;
-                    userAssign.Add(check);
+                    checkUser.NgayKy = item.NgayKyString;
+                    checkUser.FilePath = filesUser.Where(x => x.Id == checkUser.KySo?.FileId).FirstOrDefault()?.Path;
+                    userAssign.Add(checkUser);
                 }
             }
 

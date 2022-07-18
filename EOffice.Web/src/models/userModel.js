@@ -12,7 +12,8 @@ const toJson = (item) => {
         donVi: item.donVi,
         roles: item.roles,
         permissions: item.permissions,
-        menu: item.menu
+        menu: item.menu,
+        kySo: item.kySo,
     }
 }
 
@@ -30,7 +31,8 @@ const fromJson = (item) => {
         donVi: item.donVi,
         roles: item.roles,
         permissions: item.permissions,
-        menu: item.menu
+        menu: item.menu,
+        kySo: item.kySo,
     }
 }
 
