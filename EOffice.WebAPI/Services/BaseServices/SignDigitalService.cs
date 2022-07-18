@@ -169,7 +169,7 @@ namespace EOffice.WebAPI.Services
         public void MultiInsertToDoc(string p, string pathWord, string pathPDF, string fileName, List<User> listuser)
         {
             Document doc = new Document();
-            doc.LoadFromFile(pathWord, FileFormat.Doc);
+            doc.LoadFromFile(pathWord);
 
             //Section sec = doc.AddSection();// them moi section
             Section sec = doc.LastSection; // khong them moi sextion
@@ -184,6 +184,7 @@ namespace EOffice.WebAPI.Services
 
             //danh dau ket thuc noi dung vb
             Paragraph parEnd = sec.AddParagraph();
+            parEnd.AppendBreak(BreakType.PageBreak);
             //TextBox textBoxEnd = parEnd.AppendTextBox(400, 20);
             //Paragraph EndText = textBoxEnd.Body.AddParagraph();
             // EndText.AppendText('\u00cb'.ToString()).ApplyCharacterFormat(formatSign);
@@ -228,14 +229,23 @@ namespace EOffice.WebAPI.Services
                 //Fill Data in Rows
                 Paragraph p2 = DataRow.Cells[0].AddParagraph();
                 p2.Format.HorizontalAlignment = HorizontalAlignment.Center;
-                Image image = Image.FromFile(listuser[i].FilePath);
-                p2.AppendText("Chữ ký hợp lệ \n").ApplyCharacterFormat(formatHSign);
-                p2.AppendText(listuser[i].FullName + "\n").ApplyCharacterFormat(formatHSign);
-                p2.AppendText(listuser[i].DonVi?.Ten + "\n").ApplyCharacterFormat(formatHSign);
-                p2.AppendText(listuser[i].NgayKy + "\n").ApplyCharacterFormat(formatHSign);
-                DocPicture pic2 = p2.AppendPicture(image);
-                pic2.Height = pic2.Height * 0.3f;
-                pic2.Width = pic2.Width * 0.2f;
+                p2.AppendText("CHỮ KÝ HỢP LỆ").ApplyCharacterFormat(formatHSign);
+                p2.AppendBreak(BreakType.LineBreak);
+                if (listuser[i].FilePath != default)
+                {
+                    Image image = Image.FromFile(listuser[i].FilePath);
+                    DocPicture pic2 = p2.AppendPicture(image);
+                    pic2.Height = 80f;
+                    pic2.Width = 150f;
+                }
+                p2.AppendBreak(BreakType.LineBreak);
+   
+                p2.AppendText(listuser[i].FullName).ApplyCharacterFormat(formatHSign);
+                p2.AppendBreak(BreakType.LineBreak);
+                p2.AppendText(listuser[i].DonVi?.Ten).ApplyCharacterFormat(formatHSign);
+                p2.AppendBreak(BreakType.LineBreak);
+                p2.AppendText(listuser[i].NgayKy).ApplyCharacterFormat(formatHSign);
+            
                 // DataRow.Cells[0].CellFormat.VerticalAlignment = VerticalAlignment.Middle ;
 
                 i = i + 1;
@@ -252,14 +262,23 @@ namespace EOffice.WebAPI.Services
                     //Fill Data in Rows
                     Paragraph p3 = DataRow.Cells[1].AddParagraph();
                     p3.Format.HorizontalAlignment = HorizontalAlignment.Center;
-                    p3.AppendText("Chữ ký hợp lệ \n").ApplyCharacterFormat(formatHSign);
-                    p3.AppendText(listuser[i].FullName + "\n").ApplyCharacterFormat(formatHSign);
-                    p3.AppendText(listuser[i].DonVi?.Ten + "\n").ApplyCharacterFormat(formatHSign);
-                    p3.AppendText(listuser[i].NgayKy + "\n").ApplyCharacterFormat(formatHSign);
-                    DocPicture pic3 = p3.AppendPicture(image);
+                    p3.AppendText("CHỮ KÝ HỢP LỆ").ApplyCharacterFormat(formatHSign);
+                    p3.AppendBreak(BreakType.LineBreak);
+                    if (listuser[i].FilePath != default)
+                    {
+                        Image image = Image.FromFile(listuser[i].FilePath);
+                        DocPicture pic3 = p3.AppendPicture(image);
 
-                    pic3.Height = pic3.Height * 0.3f;
-                    pic3.Width = pic3.Width * 0.2f;
+                        pic3.Height = 80f;
+                        pic3.Width = 150f;
+                    }
+                    p3.AppendBreak(BreakType.LineBreak);
+                    p3.AppendText(listuser[i].FullName).ApplyCharacterFormat(formatHSign);
+                    p3.AppendBreak(BreakType.LineBreak);
+                    p3.AppendText(listuser[i].DonVi?.Ten).ApplyCharacterFormat(formatHSign);
+                    p3.AppendBreak(BreakType.LineBreak);
+                    p3.AppendText(listuser[i].NgayKy).ApplyCharacterFormat(formatHSign);
+                    
                     i = i + 1;
                 }
             }

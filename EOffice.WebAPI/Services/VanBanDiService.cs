@@ -809,18 +809,24 @@ namespace EOffice.WebAPI.Services
                 {
                     var resultFile = await TienHanhKySo(vanBanDi.PhanCongKySo, path,
                         vanBanDi.File.Select(x => x.FileId).ToList());
+                  
                     if (resultFile != default)
                     {
-                        FileShort _newFile = new FileShort();
-                        _newFile.Ext = resultFile.Ext;
-                        _newFile.FileName = resultFile.FileName;
-                        _newFile.FileId = resultFile.Id;
+                        foreach (var item in resultFile)
+                        {
+                            var newFile = new FileShort();
+                            newFile.FileId = item.Id;
+                            newFile.FileName = item.FileName;
+                            newFile.Ext = item.Ext;
+                            if (vanBanDi.FilePDF == default)
+                            {
+                                vanBanDi.FilePDF = new List<FileShort>();
+                            }
 
-                        if (vanBanDi.FilePDF == default)
-                            vanBanDi.FilePDF = new List<FileShort>();
-                        vanBanDi.FilePDF.Add(_newFile);
+                            vanBanDi.FilePDF.Add(newFile);
+                        }
 
-                        var newTrangThai = _context.TrangThai.Find(x => x.Ten == "Hoàn thành ký số").FirstOrDefault();
+                        var newTrangThai = _context.TrangThai.Find(x => x.Code == "Hoàn thành ký số").FirstOrDefault();
                         if (newTrangThai != default)
                         {
                             vanBanNew.TrangThai = newTrangThai;
@@ -840,7 +846,7 @@ namespace EOffice.WebAPI.Services
             return vanBanDi;
         }
 
-        private async Task<File> TienHanhKySo(List<PhanCongKySo> phanCongKySos, string rootPath, List<string> fileIds)
+        private async Task<List<File>> TienHanhKySo(List<PhanCongKySo> phanCongKySos, string rootPath, List<string> fileIds)
         {
             var userNameFormPhanCongKySo = phanCongKySos.Select(x => x.UserName).ToList();
             var users = _context.Users.Find(x => userNameFormPhanCongKySo.Contains(x.UserName)).ToList();
@@ -858,28 +864,37 @@ namespace EOffice.WebAPI.Services
                 }
             }
 
-
-            var fileWord = _context.Files.Find(x => x.Id == fileIds.FirstOrDefault()).FirstOrDefault();
-            var kySoFunc = new KySoNoiBoService();
-            var fileName = "";
-            var filePathPDF = "";
-            if (fileWord.Ext == ".docx")
+            var results = new List<File>();
+            var getFileWord =_context.Files.Find(x => fileIds.Contains(x.Id)).ToList();
+            foreach (var file in getFileWord)
             {
-                filePathPDF = rootPath + "/" + fileWord.FileName.Replace(".docx", ".pdf");
-                fileName = fileWord.FileName.Replace(".docx", ".pdf");
-            }
-            else if (fileWord.Ext == ".doc")
-            {
-                filePathPDF = rootPath + "/" + fileWord.FileName.Replace(".doc", ".pdf");
-                fileName = fileWord.FileName.Replace(".doc", ".pdf");
-            }
+                var fileWord = file;
+                var kySoFunc = new KySoNoiBoService();
+                var fileName = "";
+                var filePathPDF = "";
+                if (fileWord.Ext == ".docx")
+                {
+                    filePathPDF = rootPath + "/" + fileWord.FileName.Replace(".docx", ".pdf");
+                    fileName = fileWord.FileName.Replace(".docx", ".pdf");
+                }
+                else if (fileWord.Ext == ".doc")
+                {
+                    filePathPDF = rootPath + "/" + fileWord.FileName.Replace(".doc", ".pdf");
+                    fileName = fileWord.FileName.Replace(".doc", ".pdf");
+                }
 
-            kySoFunc.TienTrinhKySo(fileWord.Path, fileWord.FileName, filePathPDF, userAssign);
-            var result =
-                await _fileService.SaveFileAsync(filePathPDF, fileName, Guid.NewGuid().ToString() + ".pdf", ".pdf",
-                    100);
-
-            return result;
+                kySoFunc.TienTrinhKySo(fileWord.Path, fileWord.FileName, filePathPDF, userAssign);
+                var resultFile =
+                    await _fileService.SaveFileAsync(filePathPDF, fileName, Guid.NewGuid().ToString() + ".pdf", ".pdf",
+                        100);
+                if (resultFile != default)
+                {
+                    results.Add(resultFile);
+                }
+            }
+            
+    
+            return results;
         }
 
         public async Task<List<PhanCongKySo>> GetPhanCongKySoByVanBanId(string vanBanId)
