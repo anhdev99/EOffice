@@ -156,6 +156,13 @@ namespace EOffice.WebAPI.Services
                 .ToListAsync();
             return data.Select(x => new ChucVu(x)).ToList();
         }
+        
+        public async Task<List<ChucVu>> GetAll()
+        {
+            var data = await _context.ChucVu.Find(x => x.IsDeleted != true).SortByDescending(x => x.ThuTu)
+                .ToListAsync();
+            return data;
+        }
 
         public async Task<ChucVu> GetById(string id)
         {

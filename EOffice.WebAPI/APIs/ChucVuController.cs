@@ -147,6 +147,30 @@ namespace EOffice.WebAPI.APIs
         {
             try
             {
+                var data = await _chucVuService.GetAll();
+
+                return Ok(
+                    new ResultResponse<List<ChucVu>>()
+                        .WithData(data)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+        
+        [HttpGet]
+        [Route("get")]
+        public async Task<IActionResult> Get()
+        {
+            try
+            {
                 var data = await _chucVuService.Get();
 
                 return Ok(

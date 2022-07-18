@@ -11,6 +11,7 @@ namespace EOffice.WebAPI.Interfaces
         Task<ChucVu> Update(ChucVu model);
         Task Delete(string id);
         Task<List<ChucVu>> Get();
+        Task<List<ChucVu>> GetAll();
         Task<ChucVu> GetById(string id);
         Task<PagingModel<ChucVu>> GetPaging(LinhVucParam param);
     }

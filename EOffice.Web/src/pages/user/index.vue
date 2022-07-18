@@ -44,16 +44,22 @@ export default {
           sortable: true,
         },
         {
-          key: "roles",
-          label: "Quyền",
-          class: 'td-email',
-          sortable: true,
+          key: "chucVu",
+          label: " Chức vụ",
+          class: 'td-donVi',
+          sortable: true
         },
         {
           key: "donVi",
           label: "Đơn vị",
           class: 'td-donVi',
           sortable: true
+        },
+        {
+          key: "roles",
+          label: "Quyền",
+          class: 'td-email',
+          sortable: true,
         },
         {
           key: 'process',
@@ -77,6 +83,7 @@ export default {
       model: userModel.baseJson(),
       listCoQuan: [],
       listRole: [],
+      listChucVu: [],
       pagination: pagingModel.baseJson()
     };
   },
@@ -85,7 +92,9 @@ export default {
       userName: {required},
       firstName: {required},
       lastName: {required},
-      donVi : {required}
+      donVi : {required},
+      roles : {required},
+      chucVu : {required},
     },
   },
   methods: {
@@ -100,6 +109,11 @@ export default {
     async getListRole(){
       await  this.$store.dispatch("roleStore/getAll").then((res) =>{
         this.listRole = res.data || [];
+      })
+    },
+    async getListChucVu(){
+      await  this.$store.dispatch("chucVuStore/getAll").then((res) =>{
+        this.listChucVu = res.data || [];
       })
     },
     async getListCoQuan(){
@@ -133,10 +147,8 @@ export default {
       this.submitted = true;
       this.$v.$touch();
       if (this.$v.$invalid) {
-        console.log("LOG INVALID  : ")
         return;
       } else {
-        console.log("LOG ELSE  INVALID  : ")
         let loader = this.$loading.show({
           container: this.$refs.formContainer,
         });
@@ -150,6 +162,7 @@ export default {
           await this.$store.dispatch("userStore/update", this.model).then((res) => {
             if (res.resultCode === 'SUCCESS') {
               this.showModal = false;
+              this.model= userModel.baseJson();
               this.$refs.tblList.refresh();
             }
             this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res))
@@ -160,7 +173,7 @@ export default {
             if (res.resultCode === 'SUCCESS') {
               this.fnGetList();
               this.showModal = false;
-              this.model={}
+              this.model= userModel.baseJson();
             }
             this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res))
           });
@@ -209,9 +222,13 @@ export default {
       }
     },
   },
-  mounted() {
+  created(){
+    this.getListChucVu();
     this.getListRole();
     this.getListCoQuan();
+  },
+  mounted() {
+
   },
   watch: {
     model: {
@@ -451,7 +468,30 @@ export default {
                             </div>
                           </div>
                         </div>
-
+                        <div class="col-6">
+                          <div class="mb-3">
+                            <label class="text-left"> Chức vụ</label>
+                            <span style="color: red">&nbsp;*</span>
+                            <multiselect v-model="model.chucVu"
+                                         :options="listChucVu"
+                                         label="ten"
+                                         selectLabel="Nhấn vào để chọn"
+                                         deselectLabel="Nhấn vào để xóa"
+                                         track-by="id"
+                                         :class="{
+                                'is-invalid':
+                                  submitted && $v.model.chucVu.$error,
+                              }"
+                                         placeholder="Chọn vai trò"
+                            ></multiselect>
+                            <div
+                                v-if="submitted && !$v.model.chucVu.required"
+                                class="invalid-feedback"
+                            >
+                              Vai trò không được trống.
+                            </div>
+                          </div>
+                        </div>
                       </div>
                       <div class="text-end pt-2">
                         <b-button variant="light" class="w-md" @click="showModal = false">
@@ -509,6 +549,12 @@ export default {
                                 {{item.ten}}
                               </span>
                       </div>
+                    </template>
+                    <template v-slot:cell(chucVu)="data">
+                      <div v-if="data.item.chucVu">
+                        {{ data.item.chucVu.ten }}
+                      </div>
+
                     </template>
                     <template v-slot:cell(donVi)="data">
                       <div v-if="data.item.donVi">
