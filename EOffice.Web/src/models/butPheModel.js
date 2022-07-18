@@ -39,7 +39,7 @@ const baseJson = () => {
         vanBanDenId: null,
         noiDungButPhe: null,
         nguoiButPhe: null,
-        ngayButPhe: new Date(),
+        ngayButPhe: null,
         file: null,
         mucDoQuanTrong: null,
         nguoiPhuTrach: null,

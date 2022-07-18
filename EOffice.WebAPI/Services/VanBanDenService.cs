@@ -63,7 +63,7 @@ namespace EOffice.WebAPI.Services
                 TrangThai = model.TrangThai,
                 SoLuuCV = model.SoLuuCV,
                 SoVBDen = model.SoVBDen,
-                NgayNhap = DateTime.Now,
+                NgayNhap = model.NgayNhap,
                 NgayNhan = model.NgayNhan,
                 NgayBanHanh = model.NgayBanHanh,
                 TrichYeu = model.TrichYeu,
@@ -90,12 +90,30 @@ namespace EOffice.WebAPI.Services
 
             if (model.UploadFiles != default)
             {
-                var newFile = new FileShort();
-                newFile.FileId = model.UploadFiles.FileId;
-                newFile.FileName = model.UploadFiles.FileName;
-                newFile.Ext = model.UploadFiles.Ext;
-                entity.File = newFile;
+                var exps = model.UploadFiles.Select(x => x.Ext).ToList();
+                var tempExt = fileOffice.Where(x => exps.Contains(x)).FirstOrDefault();
+                if (tempExt == default)
+                {
+                    throw new ResponseMessageException()
+                        .WithCode(EResultResponse.FAIL.ToString())
+                        .WithMessage("Định dạng tệp tin không đúng.");
+                }
+
+                foreach (var item in model.UploadFiles)
+                {
+                    var newFile = new FileShort();
+                    newFile.FileId = item.FileId;
+                    newFile.FileName = item.FileName;
+                    newFile.Ext = item.Ext;
+                    if (entity.File == default)
+                    {
+                        entity.File = new List<FileShort>();
+                    }
+
+                    entity.File.Add(newFile);
+                }
             }
+
             
             var result = await BaseMongoDb.CreateAsync(entity);
             if (result.Entity.Id == default || !result.Success)
@@ -160,12 +178,30 @@ namespace EOffice.WebAPI.Services
             entity.ModifiedAt = DateTime.Now;
             if (model.UploadFiles != default)
             {
-                var newFile = new FileShort();
-                newFile.FileId = model.UploadFiles.FileId;
-                newFile.FileName = model.UploadFiles.FileName;
-                newFile.Ext = model.UploadFiles.Ext;
-                entity.File = newFile;
+                var exps = model.UploadFiles.Select(x => x.Ext).ToList();
+                var tempExt = fileOffice.Where(x => exps.Contains(x)).FirstOrDefault();
+                if (tempExt == default)
+                {
+                    throw new ResponseMessageException()
+                        .WithCode(EResultResponse.FAIL.ToString())
+                        .WithMessage("Định dạng tệp tin không đúng.");
+                }
+
+                foreach (var item in model.UploadFiles)
+                {
+                    var newFile = new FileShort();
+                    newFile.FileId = item.FileId;
+                    newFile.FileName = item.FileName;
+                    newFile.Ext = item.Ext;
+                    if (entity.File == default)
+                    {
+                        entity.File = new List<FileShort>();
+                    }
+
+                    entity.File.Add(newFile);
+                }
             }
+
 
             var result = await BaseMongoDb.UpdateAsync(entity);
             if (!result.Success)
@@ -212,14 +248,30 @@ namespace EOffice.WebAPI.Services
             newButPhe.MucDoQuanTrong = model.MucDoQuanTrong;
             newButPhe.NguoiXemDeBiet = model.NguoiXemDeBiet;
             newButPhe.NguoiButPhe = model.NguoiButPhe;
-            
             if (model.UploadFiles != default)
             {
-                var newFile = new FileShort();
-                newFile.FileId = model.UploadFiles.FileId;
-                newFile.FileName = model.UploadFiles.FileName;
-                newFile.Ext = model.UploadFiles.Ext;
-                newButPhe.File = newFile;
+                var exps = newButPhe.UploadFiles.Select(x => x.Ext).ToList();
+                var tempExt = fileOffice.Where(x => exps.Contains(x)).FirstOrDefault();
+                if (tempExt == default)
+                {
+                    throw new ResponseMessageException()
+                        .WithCode(EResultResponse.FAIL.ToString())
+                        .WithMessage("Định dạng tệp tin không đúng.");
+                }
+
+                foreach (var item in newButPhe.UploadFiles)
+                {
+                    var newFile = new FileShort();
+                    newFile.FileId = item.FileId;
+                    newFile.FileName = item.FileName;
+                    newFile.Ext = item.Ext;
+                    if (newButPhe.File == default)
+                    {
+                        newButPhe.File = new List<FileShort>();
+                    }
+
+                    newButPhe.File.Add(newFile);
+                }
             }
 
             if (entity.ButPhe == default)

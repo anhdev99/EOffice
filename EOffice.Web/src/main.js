@@ -9,6 +9,7 @@ import VueApexCharts from 'vue-apexcharts'
 import router from './router/index'
 import store from '@/state/store'
 import vco from "v-click-outside"
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 // Toast
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
@@ -47,7 +48,6 @@ const options = {
 };
 
 Vue.use(Toast, options);
-
 Vue.use(BootstrapVue);
 Vue.use(VJstree)
 Vue.use(Vuelidate);

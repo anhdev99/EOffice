@@ -11,7 +11,6 @@ import Switches from "vue-switches";
 // import the component
 import Treeselect from '@riophae/vue-treeselect'
 // import the styles
-import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
 /**
  * Form editor
@@ -174,11 +173,11 @@ export default {
     /**
      * Total no. of records
      */
-    rows() {
-      return this.data.length;
-    },
+    // rows() {
+    //   return this.data.length;
+    // },
   },
-  async created() {
+  created() {
     this.getLoaiVanBan();
     this.getTrangThai();
     this.getDonVi();
@@ -186,6 +185,7 @@ export default {
     this.getLinhVuc();
     this.getHinhThuc();
     this.getMucDo();
+    this.fnGetList();
   },
   mounted() {
     // Set the initial number of items
@@ -200,11 +200,11 @@ export default {
     },
     async onPageChange(page = 1) {
       console.log("LOG ON PAGE CHAGNE : ")
-      this.pagination.currentPage = page;
-      const params = {
-        pageNumber: this.pagination.currentPage,
-        pageSize: this.pagination.pageSize,
-      }
+      // this.pagination.currentPage = page;
+      // const params = {
+      //   pageNumber: this.pagination.currentPage,
+      //   pageSize: this.pagination.pageSize,
+      // }
       this.$refs.tblList?.refresh()
     },
     onFiltered(filteredItems) {
@@ -226,7 +226,7 @@ export default {
           if (res.resultCode === 'SUCCESS') {
             this.showModal = false;
             this.model = vanBanDenModel.baseJson()
-            this.myProvider()
+            this.$refs.tblList?.refresh()
           }
         })
       } else {
@@ -237,10 +237,9 @@ export default {
           if (res.resultCode === 'SUCCESS') {
             this.showModal = false;
             this.model = vanBanDenModel.baseJson()
-            this.myProvider()
+            this.$refs.tblList?.refresh()
           }
           this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
-          this.$refs.tblList.refresh()
         });
       }
     },
@@ -263,16 +262,13 @@ export default {
         if (res.resultCode === 'SUCCESS') {
           this.showModal = false;
           this.model = vanBanDenModel.baseJson()
-          this.myProvider()
+          this.$refs.tblList?.refresh()
         }
       });
     },
     async handlePhanCong(e) {
       e.preventDefault();
       this.model.phanCong = this.modelPhanCong;
-      console.log("ModelPhanCong", this.model);
-      console.log("ModelPhanCong 2", this.phanCong);
-
       // await this.$store.dispatch("vanBanDenStore/update", this.model).then((res) => {
       //   if (res.resultCode === 'SUCCESS') {
       //     this.showModal = false;
@@ -290,9 +286,8 @@ export default {
         await this.$store.dispatch("vanBanDenStore/delete", this.model.id).then((res) => {
           if (res.resultCode === 'SUCCESS') {
             this.showDeleteModal = false;
-            this.myProvider()
+            this.$refs.tblList?.refresh()
           }
-          this.$refs.tblList.refresh()
         });
       }
     },
@@ -302,7 +297,6 @@ export default {
     HandleShowPhanCong(id) {
       this.model.id = id;
       this.showModalPhanCong = true;
-
     },
     async handleShowButPhe(id) {
       this.model.id = id;
@@ -312,9 +306,7 @@ export default {
           let items = resp.data;
           this.loading = false
           this.model = items || [];
-          console.log("Capj nhaapj model", this.model);
           return items || [];
-
         }
         return [];
       })
@@ -364,7 +356,6 @@ export default {
             let items = resp.data
             this.loading = false
             this.optionsUser = items;
-            console.log("this.optionUser", this.optionsUser);
           }
           return [];
         });
@@ -392,7 +383,6 @@ export default {
         return promise.then(resp => {
           if (resp.resultCode == "SUCCESS") {
             let items = resp.data
-            console.log("hinhthucnhan", items);
             this.loading = false
             this.optionsHinhThucNhan = items;
           }
@@ -405,12 +395,10 @@ export default {
     async getMucDo() {
       await this.$store.dispatch("enumStore/getMucDo").then((res) => {
         if (res.resultCode === "SUCCESS") {
-          console.log("resMucDo", res.data);
           this.optionsMucDo = res.data;
         } else {
           this.optionsMucDo = [];
         }
-        console.log("optionsMucDo", this.optionsMucDo);
       });
     },
     removeThisFile(file, error, xhr) {
@@ -428,7 +416,6 @@ export default {
         if (this.modelButPhe.uploadFiles == null || this.modelButPhe.uploadFiles <= 0) {
           this.modelButPhe.uploadFiles = [];
         }
-        console.log("LOG ADD THIS FILE but phe", response)
         let fileSuccess = response.data;
         this.modelButPhe.uploadFiles.push({
           fileId: fileSuccess.id,
@@ -440,7 +427,6 @@ export default {
         if (this.modelPhanCong == null || this.modelPhanCong.uploadFiles <= 0) {
           this.modelPhanCong.uploadFiles = [];
         }
-        console.log("LOG ADD THIS FILE phan cong ", response)
         let fileSuccess = response.data;
         this.modelPhanCong.uploadFiles.push({
           fileId: fileSuccess.id,
@@ -452,7 +438,6 @@ export default {
         if (this.model.uploadFiles == null || this.model.uploadFiles.length <= 0) {
           this.model.uploadFiles = [];
         }
-        console.log("LOG ADD THIS FILE ", response)
         let fileSuccess = response.data;
         this.model.uploadFiles.push({fileId: fileSuccess.id, fileName: fileSuccess.fileName, ext: fileSuccess.ext})
       }
@@ -501,9 +486,8 @@ export default {
         return promise.then(resp => {
           let items = resp.data.data
           this.totalRows = resp.data.totalRows
-          this.numberOfElement = resp.data.data.length
+          this.numberOfElement =items.length
           this.loading = false
-          console.log("data", items);
           return items || []
         })
       } finally {

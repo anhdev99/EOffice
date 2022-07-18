@@ -38,7 +38,6 @@ namespace EOffice.WebAPI
             });
             services.InstallServicesInAssembly(Configuration);
             services.AddControllers();
-            
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services.AddSwaggerGen(c =>

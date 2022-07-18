@@ -12,7 +12,7 @@ namespace EOffice.WebAPI.Models
         public int Version { get; set; }
         public int Number { get; set; }
         public LoaiVanBan LoaiVanBan { get; set; }
-        public string LoaiVanBanTen { get; set; }
+        public int Identity { get; set; }
         public TrangThai TrangThai { get; set; }
         public string TrangThaiTen { get; set; }
         public string SoLuuCV { get; set; }
@@ -27,39 +27,36 @@ namespace EOffice.WebAPI.Models
         public DonVi DonViSoan { get; set; }
         public string DonViSoanTen { get; set; }
         public User CanBoSoan { get; set; }
-        public string CanBoSoanTen { get; set; }
         public HinhThucGui HinhThucNhan { get; set; }
-        public string HinhThucNhanTen { get; set; }
+ 
         public HinhThucGui HinhThucGui { get; set; }
-        public string HinhThucGuiTen { get; set; }
+       
         public LinhVuc LinhVuc { get; set; }
-        public string LinhVucTen { get; set; }
+
         public EnumModel MucDoBaoMat { get; set; }
-        public string MucDoBaoMatTen { get; set; }
+
         public EnumModel MucDoTinhChat { get; set; }
-        public string MucDoTinhChatTen { get; set; }
+     
         public HoSoDonVi HoSoDonVi { get; set; }
-        public string HoSoDonViTen { get; set; }
+    
         public string NoiLuuTru { get; set; }
         public CoQuan CoQuanNhan { get; set; }
-        public string CoQuanNhanTen { get; set; }
+
         
         public KhoiCoQuan KhoiCoQuanNhan { get; set; }
-        public string KhoiCoQuanNhanTen { get; set; }
+    
         
         public CoQuan CoQuanGui { get; set; }
-        public string CoQuanGuiTen { get; set; }
         public KhoiCoQuan KhoiCoQuanGui { get; set; }
-        public string KhoiCoQuanGuiTen { get; set; }
         public DateTime? HanXuLy { get; set; }
         public bool CongVanChiDoc { get; set; }
         public bool BanChinh { get; set; }
         public bool HienThiThongBao { get; set; }
         public User NguoiKy { get; set; }
         public DateTime? NgayKy { get; set; }
-        public FileShort File { get; set; }
+        public List<FileShort> File { get; set; }
         [BsonIgnore]
-        public FileShort UploadFiles{ get; set; }
+        public List<FileShort> UploadFiles{ get; set; }
         public List<NguoiPhanCong> NguoiPhanCong { get; set; }
         
         public ButPhe ButPhe { get; set; }
@@ -76,14 +73,14 @@ namespace EOffice.WebAPI.Models
         public string NoiDungButPhe { get; set; }
         public User NguoiButPhe { get; set; }
         public DateTime? NgayButPhe { get; set; }
-        public FileShort File { get; set; }
+        public List<FileShort> File { get; set; }
         [BsonIgnore]
-        public FileShort UploadFiles{ get; set; }
+        public List<FileShort> UploadFiles{ get; set; }
         public EnumModel MucDoQuanTrong { get; set; }
         public List<User> NguoiPhuTrach { get; set; }
         public List<User> NguoiChuTri { get; set; }
         public List<User> NguoiPhoiHopXuLy { get; set; }
-        public List<DonVi> DonViPhoiHop { get; set; }
+        public List<DonViShort> DonViPhoiHop { get; set; }
         public List<User> NguoiXemDeBiet { get; set; }
     }
 

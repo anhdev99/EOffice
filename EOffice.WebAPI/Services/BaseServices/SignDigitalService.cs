@@ -18,8 +18,7 @@ using Spire.Doc;
 using Spire.Doc.Documents;
 using Spire.Doc.Formatting;
 using Spire.Pdf;
-using File = System.IO.File;
-using FileFormat = Spire.Pdf.FileFormat;
+using FileFormat = Spire.Doc.FileFormat;
 
 namespace EOffice.WebAPI.Services
 {
@@ -173,7 +172,7 @@ namespace EOffice.WebAPI.Services
         public void MultiInsertToDoc(string p, string pathWord, string pathPDF, string fileName, List<User> listuser)
         {
             Document doc = new Document();
-            doc.LoadFromFile(pathWord);
+            doc.LoadFromFile(pathWord, FileFormat.Doc);
 
             //Section sec = doc.AddSection();// them moi section
             Section sec = doc.LastSection; // khong them moi sextion
@@ -198,7 +197,6 @@ namespace EOffice.WebAPI.Services
             //Paragraph par = sec.AddParagraph();
             //Dinh dang thong tin nguoi ky
             CharacterFormat formatHSign = new CharacterFormat(doc);
-            formatHSign.FontName = "Calibri";
             formatHSign.FontSize = 12;
             formatHSign.Bold = false;
 
@@ -267,12 +265,14 @@ namespace EOffice.WebAPI.Services
             //
             try
             {
-                using (MemoryStream ms = new MemoryStream())
-                {
-        
-                    doc.SaveToStream(ms, Spire.Doc.FileFormat.Doc);
-                    File.WriteAllBytes(pathPDF, ms.ToArray());
-                }
+                doc.SaveToFile(pathPDF, FileFormat.PDF);
+                // using (MemoryStream ms = new MemoryStream())
+                // {
+                //
+                //     doc.SaveToFile(ms, FileFormat.Doc);
+                //     doc.SaveToFile(pathPDF, Spire.Doc.FileFormat.PDF);
+                //     File.WriteAllBytes(pathPDF, ms.ToArray());
+                // }
                 // doc.SaveToFile(pathPDF, Spire.Doc.FileFormat.PDF);
                 // using (var strem = System.IO.File.Create(pathPDF))
                 // {

@@ -1076,7 +1076,7 @@ export default {
                       <span v-if="data.item.trangThai" class="badge bg-success"> {{ data.item.trangThai.ten }}</span>
                     </template>
                     <template v-slot:cell(trichYeu)="data">
-                      <div class="fs-5" :inner-html.prop="data.item.trichYeu" style="line-height: 30px">
+                      <div v-if="data.item.trichYeu" :inner-html.prop="data.item.trichYeu | truncate(150)">
                       </div>
                     </template>
                     <template v-slot:cell(process)="data">

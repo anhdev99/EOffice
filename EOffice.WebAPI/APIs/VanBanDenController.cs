@@ -25,7 +25,6 @@ namespace EOffice.WebAPI.APIs
 
         [HttpPost]
         [Route("create")]
-        [AllowAnonymous]
         public async Task<IActionResult> Create([FromBody] VanBanDen model)
         {
             try

@@ -11,7 +11,7 @@ import Switches from "vue-switches";
 // import the component
 import Treeselect from '@riophae/vue-treeselect'
 // import the styles
-import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+// import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
 /**
  * Form editor
@@ -23,6 +23,7 @@ import {butPheModel} from "@/models/butPheModel";
 import {phanCongModel} from "@/models/phanCongModel";
 import {notifyModel} from "@/models/notifyModel";
 import Swal from "sweetalert2";
+import login from "@/router/views/account/login";
 
 /**
  * Advanced table component
@@ -93,25 +94,25 @@ export default {
         {
           key: "soLuuCV",
           label: "Số lưu CV",
-          thStyle: {width: '10px', minWidth: '100px'},
+          thStyle: {width: '10px', minWidth: '160px'},
           class: "px-1",
           sortable: true,
         },
         {
           key: "soVBDen",
-          label: "Số văn bản đến",
-          thStyle: {width: '160px', minWidth: '100px'},
+          label: "Số CV đến",
+          thStyle: {width: '160px', minWidth: '160px'},
           class: "px-1",
         },
         {
           key: "trichYeu",
           label: "Trích yếu",
-          thStyle: {width: '100px', minWidth: '100px', maxHeight: '200px',},
-          class: "px-1 w-25",
+          thStyle: {width: '100px', minWidth: '100px'},
+          class: "px-1",
         },
         {
-          key: "hanXuLy",
-          label: "Hạn xử lý",
+          key: "loaiVanBan",
+          label: "Loại văn bản",
           thStyle: {width: '100px', minWidth: '100px'},
           class: "px-1",
         },
@@ -122,19 +123,24 @@ export default {
           class: "px-1",
         },
         {
+          key: "ngayNhap",
+          label: "Ngày nhập",
+          thStyle: {width: '100px', minWidth: '100px'},
+          class: "px-1",
+        },
+        {
           key: 'process',
           label: 'Xử lý',
           thStyle: {width: '110px', minWidth: '110px'},
-          class: "px-1"
         }
       ],
-      optionsLoaiVanBan: null,
-      optionsDonVi: null,
-      optionsLinhVuc: null,
-      optionsUser: null,
-      optionsHinhThucNhan: null,
-      optionsMucDo: null,
-      optionsTrangThai: null,
+      optionsLoaiVanBan: [],
+      optionsDonVi:[],
+      optionsLinhVuc:[],
+      optionsUser: [],
+      optionsHinhThucNhan:[],
+      optionsMucDo:[],
+      optionsTrangThai:[],
       editor: ClassicEditor,
       editorConfig: {
         height: '200px'
@@ -170,9 +176,9 @@ export default {
     /**
      * Total no. of records
      */
-    rows() {
-      return this.data.length;
-    },
+    // rows() {
+    //   return this.data.length;
+    // },
   },
   watch: {
     showModalPhanCong() {
@@ -190,10 +196,10 @@ export default {
     this.getHinhThuc();
     this.getMucDo();
   },
-  mounted() {
-    // Set the initial number of items
-    this.totalRows = this.items.length;
-  },
+  // mounted() {
+  //   // Set the initial number of items
+  //   this.totalRows = this.items.length;
+  // },
 
   methods: {
     /**
@@ -226,10 +232,11 @@ export default {
         await this.$store.dispatch("vanBanDenStore/update", this.model).then((res) => {
           if (res.resultCode === 'SUCCESS') {
             this.showModal = false;
-            this.model = vanBanDenModel.baseJson()
+            this.model = vanBanDenModel.baseJson();
+            this.$refs.tblList.refresh()
           }
           this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
-          this.$refs.tblList.refresh()
+
         })
       } else {
         //Create modelhandleSubmit
@@ -239,9 +246,10 @@ export default {
             this.showModal = false;
             this.model = vanBanDenModel.baseJson()
             // this.$refs.myVueDropzone.removeAllFiles();
+            this.$refs.tblList.refresh();
           }
           this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
-          this.$refs.tblList.refresh()
+
         });
       }
     },
@@ -260,10 +268,9 @@ export default {
       await this.$store.dispatch("vanBanDenStore/butPhe", this.modelButPhe).then((res) => {
         if (res.resultCode === 'SUCCESS') {
           this.showModalButPhe = false;
-          this.myProvider()
+          this.$refs.tblList.refresh()
         }
         this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
-        this.$refs.tblList.refresh()
       });
     },
     async handlePhanCong(e) {
@@ -279,7 +286,7 @@ export default {
       });
     },
     handleShowDeleteModal(id) {
-      this.modelButPhe.vanBanDiId= id;
+      this.model.id= id;
       this.showDeleteModal = true;
     },
     async handleDelete() {
@@ -287,9 +294,10 @@ export default {
         await this.$store.dispatch("vanBanDenStore/delete", this.model.id).then((res) => {
           if (res.resultCode === 'SUCCESS') {
             this.showDeleteModal = false;
-            this.myProvider()
+            this.model = vanBanDenModel.baseJson();
+           this.$refs.tblList.refresh();
           }
-          this.$refs.tblList.refresh()
+          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
         });
       }
     },
@@ -309,6 +317,8 @@ export default {
           this.loading = false
           this.model = items || [];
           this.showModalButPhe = true;
+          this.modelButPhe = this.model.butPhe;
+
           return items || [];
         }
         return [];
@@ -322,6 +332,10 @@ export default {
           this.optionsLoaiVanBan = [];
         }
       });
+    },
+    handleCreate(){
+      this.model = vanBanDenModel.baseJson();
+      this.showModal = true;
     },
     async getTrangThai() {
       try {
@@ -502,8 +516,53 @@ export default {
       } finally {
         this.loading = false
       }
-    }
-  },
+    },
+    formatRemoveKhoiCoQuans(node, instanceId) {
+      let value = this.model.coQuanGiaiQuyet?.find(x => x.id == node.id);
+      if (value != null) {
+        this.model.coQuanGiaiQuyet = this.model.coQuanGiaiQuyet.filter(x => x.id != value.id);
+      }
+    },
+    formatKhoiCoQuans(node, instanceId) {
+      let index = this.model.coQuanGiaiQuyet?.findIndex(x => x.id == node.id);
+      if (index == -1 || index == undefined) {
+        if (!this.model.coQuanGiaiQuyet) {
+          this.model.coQuanGiaiQuyet = [];
+        }
+        this.model.coQuanGiaiQuyet.push({id: node.id, ten: node.label});
+      }
+    },
+    formatRemoveCoQuans(node, instanceId) {
+      let value = this.model.coQuanGiaiQuyet?.find(x => x.id == node.id);
+      if (value != null) {
+        this.model.coQuanGiaiQuyet = this.model.coQuanGiaiQuyet.filter(x => x.id != value.id);
+      }
+    },
+    formatCoQuans(node, instanceId) {
+      let index = this.model.coQuanGiaiQuyet?.findIndex(x => x.id == node.id);
+      if (index == -1 || index == undefined) {
+        if (!this.model.coQuanGiaiQuyet) {
+          this.model.coQuanGiaiQuyet = [];
+        }
+        this.model.coQuanGiaiQuyet.push({id: node.id, ten: node.label});
+      }
+    },
+    formatRemoveDonViXuLy(node, instanceId) {
+      let value = this.modelButPhe.donViPhoiHop?.find(x => x.id == node.id);
+      if (value != null) {
+        this.modelButPhe.donViPhoiHop = this.modelButPhe.donViPhoiHop.filter(x => x.id != value.id);
+      }
+    },
+    formatDonViXuLy(node, instanceId) {
+      let index = this.modelButPhe.donViPhoiHop?.findIndex(x => x.id == node.id);
+      if (index == -1 || index == undefined) {
+        if (!this.modelButPhe.donViPhoiHop) {
+          this.modelButPhe.donViPhoiHop = [];
+        }
+        this.modelButPhe.donViPhoiHop.push({id: node.id, ten: node.label});
+      }
+    },
+    },
 };
 </script>
 
@@ -534,7 +593,7 @@ export default {
                       variant="primary"
                       type="button"
                       class="btn w-md btn-primary"
-                      @click="showModal = true "
+                      @click="handleCreate"
                       size="sm"
                   >
                     <i class="mdi mdi-plus me-1"></i> Thêm mới
@@ -766,13 +825,32 @@ export default {
                             <div class="col-md-12">
                               <div class="mb-2">
                                 <label class="form-label" for="validationCustom01">Khối cơ quan gửi</label>
+<!--                                <treeselect-->
+<!--                                    v-model="model.khoiCoQuanGui"-->
+<!--                                    :options="optionsDonVi"-->
+<!--                                    placeholder="Chọn khối cơ quan gửi"-->
+<!--                                    value-format="object"-->
+<!--                                />-->
+<!--                                <treeselect-value :value="model.khoiCoQuanGui"/>-->
                                 <treeselect
-                                    v-model="model.khoiCoQuanGui"
+                                    v-on:select="formatKhoiCoQuans"
+                                    v-on:deselect="formatRemoveKhoiCoQuans"
                                     :options="optionsDonVi"
-                                    placeholder="Chọn khối cơ quan gửi"
+                                    :value="model.khoiCoQuanGui"
+                                    :searchable="true"
+                                    :show-count="true"
+                                    :default-expand-level="1"
+                                    :normalizer="normalizer"
                                     value-format="object"
-                                />
-                                <treeselect-value :value="model.khoiCoQuanGui"/>
+                                >
+
+                                  <label slot="option-label"
+                                         slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }"
+                                         :class="labelClassName">
+                                    {{ node.label }}
+                                    <span v-if="shouldShowCount" :class="countClassName">({{ count }})</span>
+                                  </label>
+                                </treeselect>
                               </div>
                             </div>
                             <!--                            Cơ quan gửi-->
@@ -780,12 +858,24 @@ export default {
                               <div class="mb-2">
                                 <label class="form-label" for="validationCustom01">Cơ quan gửi</label>
                                 <treeselect
-                                    v-model="model.coQuanGui"
+                                    v-on:select="formatCoQuans"
+                                    v-on:deselect="formatRemoveCoQuans"
                                     :options="optionsDonVi"
-                                    placeholder="Chọn cơ quan gửi"
+                                    :value="model.coQuanGui"
+                                    :searchable="true"
+                                    :show-count="true"
+                                    :default-expand-level="1"
+                                    :normalizer="normalizer"
                                     value-format="object"
-                                />
-                                <treeselect-value :value="model.coQuanGui"/>
+                                >
+
+                                  <label slot="option-label"
+                                         slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }"
+                                         :class="labelClassName">
+                                    {{ node.label }}
+                                    <span v-if="shouldShowCount" :class="countClassName">({{ count }})</span>
+                                  </label>
+                                </treeselect>
                               </div>
                             </div>
                             <!--                            Hình thức nhận -->
@@ -947,16 +1037,15 @@ export default {
                     <template v-slot:cell(STT)="data">
                       {{ data.index + ((currentPage - 1) * perPage) + 1 }}
                     </template>
-                    <template v-slot:cell(hanXuLy)="data">
-                      <span class="badge bg-danger"> {{ data.item.hanXuLy }}</span>
-                    </template>
-                    <template v-slot:cell(trichYeu)="data">
-                      <div :inner-html.prop="data.item.trichYeu | truncate(100)"
-                           class="text-left text-black w-100 block-ellipsis mx-2"
-                      ></div>
+                    <template v-slot:cell(loaiVanBan)="data">
+                      <span v-if="data.item.loaiVanBan"> {{ data.item.loaiVanBan.ten }}</span>
                     </template>
                     <template v-slot:cell(trangThai)="data">
                       <span v-if="data.item.trangThai" class="badge bg-success"> {{ data.item.trangThai.ten }}</span>
+                    </template>
+                    <template v-slot:cell(trichYeu)="data">
+                      <div v-if="data.item.trichYeu" :inner-html.prop="data.item.trichYeu | truncate(150)">
+                      </div>
                     </template>
                     <template v-slot:cell(process)="data">
                       <div class="d-flex justify-content-around">
@@ -1169,7 +1258,7 @@ export default {
                   ></multiselect>
                 </div>
                 <!--                Đơn vị xử lý-->
-<!--                <div class="mb-2">-->
+                <div class="mb-2">
 <!--                  <label class="form-label" for="validationCustom01">Đơn vị xử Lý</label>-->
 <!--                  <treeselect-->
 <!--                      :multiple="true"-->
@@ -1179,18 +1268,49 @@ export default {
 <!--                      value-format="object"-->
 <!--                  />-->
 <!--                  <treeselect-value :value="model.donViXuLy"/>-->
-<!--                </div>-->
+<!--                  <treeselect-->
+<!--                      v-on:select="formatDonViXuLy"-->
+<!--                      v-on:deselect="formatRemoveDonViXuLy"-->
+<!--                      :options="optionsDonVi"-->
+<!--                      :value="modelButPhe.donViPhoiHop"-->
+<!--                      :searchable="true"-->
+<!--                      :show-count="true"-->
+<!--                      :default-expand-level="1"-->
+<!--                      :normalizer="normalizer"-->
+<!--                      value-format="object"-->
+<!--                  >-->
+
+<!--                    <label slot="option-label"-->
+<!--                           slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }"-->
+<!--                           :class="labelClassName">-->
+<!--                      {{ node.label }}-->
+<!--                      <span v-if="shouldShowCount" :class="countClassName">({{ count }})</span>-->
+<!--                    </label>-->
+<!--                  </treeselect>-->
+                </div>
                 <!--                Đơn vị phối hợp-->
                 <div class="mb-2">
                   <label class="form-label" for="validationCustom01"> Đơn vị phối hợp</label>
                   <treeselect
                       :multiple="true"
-                      v-model="modelButPhe.donViPhoiHop"
+                      v-on:select="formatDonViXuLy"
+                      v-on:deselect="formatRemoveDonViXuLy"
                       :options="optionsDonVi"
-                      placeholder="Chọn đơn vị phối hợp"
+                      :value="modelButPhe.donViPhoiHop"
+                      :searchable="true"
+                      :show-count="true"
+                      :default-expand-level="1"
+                      :normalizer="normalizer"
                       value-format="object"
-                  />
-                  <treeselect-value :value="model.donViXuLy"/>
+                  >
+
+                    <label slot="option-label"
+                           slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }"
+                           :class="labelClassName">
+                      {{ node.label }}
+                      <span v-if="shouldShowCount" :class="countClassName">({{ count }})</span>
+                    </label>
+                  </treeselect>
                 </div>
                 <!--                Ngừoi xem để biết-->
                 <div class="mb-2">
