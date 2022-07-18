@@ -1,0 +1,337 @@
+{
+	"info": {
+		"_postman_id": "db9f7198-8f04-452c-84ff-56fe537b732d",
+		"name": "SmartCA",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Get Token",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "[Nhập username]",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "[Nhập password]",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "4185-637127995547330633.apps.signserviceapi.com",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "NGNhMzdmOGE-OGM2Mi00MTg0",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://rmgateway.vnptit.vn/auth/token",
+					"protocol": "https",
+					"host": [
+						"rmgateway",
+						"vnptit",
+						"vn"
+					],
+					"path": [
+						"auth",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2. Get User Info",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjZDNUMwQUFGNEY0MzBENEJCQjUzOUY1RTREMTBDREE2QTVCMEQxOTZSUzI1NiIsInR5cCI6ImF0K2p3dCIsIng1dCI6ImJGd0tyMDlERFV1N1U1OWVUUkROcHFXdzBaWSJ9.eyJuYmYiOjE2NTEwNDMyMzYsImV4cCI6MTY1MTA0NjgzNiwiaXNzIjoiVk5QVFJNX0lEUCIsImF1ZCI6WyJzaWduYXR1cmUiLCJWTlBUUk1fSURQL3Jlc291cmNlcyJdLCJjbGllbnRfaWQiOiI0MTg1LTYzNzEyNzk5NTU0NzMzMDYzMy5hcHBzLnNpZ25zZXJ2aWNlYXBpLmNvbSIsImNsaWVudF9uYW1lIjoiVk5QVCBTbWFydENBIEFwcCIsInN1YiI6ImQyYzdmMzg4LTU3Y2EtNDg1MC04M2M0LTFiZGNlYTVhZGVmNSIsImF1dGhfdGltZSI6MTY1MTA0MzIzNiwiaWRwIjoibG9jYWwiLCJyb2xlIjoiVXNlciIsIkZ1bGxOYW1lIjoiTmd1eeG7hW4gVsSDbiBIb8OgaSIsIkNvbXBhbnlBZG1pbiI6IkNvbXBhbnlVc2VyIiwiVXNlckdyb3VwSWQiOiIiLCJVaWQiOiIzNDE0NTc3NjkiLCJQaG9uZU51bWJlciI6IjA5NDQ3MDIwMDAiLCJBY2NvdW50VHlwZURlc2MiOiJJTkRJVklEVUFMIiwibGFuZ3VhZ2UiOiJ2aSIsIlNlcnZpY2VQYWNrIjoiU21hcnRDQSBQZXJzb25hbCBQcm8iLCJBZG1pbkxvY2FsaXR5Q29kZSI6IiIsImp0aSI6IjJBMjIyN0MxMkMzNzk2RjdEMDk2MDdDQjAwN0MwOUIwIiwiaWF0IjoxNjUxMDQzMjM2LCJzY29wZSI6WyJlbWFpbCIsIm9wZW5pZCIsInByb2ZpbGUiLCJzaWduIiwib2ZmbGluZV9hY2Nlc3MiXSwiYW1yIjpbImN1c3RvbSJdfQ.1x-a__EORRpnnBEinTlQ1oCjm8OKma_tFWkgD3RtrNL81odufp8nkjWrh1kgAwbqsYJX1Eu19J11ne1IJUXDGfw_sZR_aGFVjoNRbJwJjYZTCZ8sKwHQAzJX0Gm7CUkkc-DArdDNVM-lA9iDnEQcl0KEO2yV5Y3QPbxfrUOfc7MMy6TsisJHmVs-jq7T1jYfYuKcwH2UL2ib2J-baVyYJR9_AkkPQjobIiUMUHW3U6ujDpIeZz6FYqL9jZN8qDpC6z5pYtYGqgW9zhag4SeJ70XRAsSwS6aCEZ5Gaa7g3u6hSScYi02RdXlbtjZIVjcTnKcoNgA2UH9HkMJl1qaLtg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://rmgateway.vnptit.vn/identityapi/userinfo/info",
+					"protocol": "https",
+					"host": [
+						"rmgateway",
+						"vnptit",
+						"vn"
+					],
+					"path": [
+						"identityapi",
+						"userinfo",
+						"info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3. Get Credential List",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjZDNUMwQUFGNEY0MzBENEJCQjUzOUY1RTREMTBDREE2QTVCMEQxOTZSUzI1NiIsInR5cCI6ImF0K2p3dCIsIng1dCI6ImJGd0tyMDlERFV1N1U1OWVUUkROcHFXdzBaWSJ9.eyJuYmYiOjE2NTEwNDMyMzYsImV4cCI6MTY1MTA0NjgzNiwiaXNzIjoiVk5QVFJNX0lEUCIsImF1ZCI6WyJzaWduYXR1cmUiLCJWTlBUUk1fSURQL3Jlc291cmNlcyJdLCJjbGllbnRfaWQiOiI0MTg1LTYzNzEyNzk5NTU0NzMzMDYzMy5hcHBzLnNpZ25zZXJ2aWNlYXBpLmNvbSIsImNsaWVudF9uYW1lIjoiVk5QVCBTbWFydENBIEFwcCIsInN1YiI6ImQyYzdmMzg4LTU3Y2EtNDg1MC04M2M0LTFiZGNlYTVhZGVmNSIsImF1dGhfdGltZSI6MTY1MTA0MzIzNiwiaWRwIjoibG9jYWwiLCJyb2xlIjoiVXNlciIsIkZ1bGxOYW1lIjoiTmd1eeG7hW4gVsSDbiBIb8OgaSIsIkNvbXBhbnlBZG1pbiI6IkNvbXBhbnlVc2VyIiwiVXNlckdyb3VwSWQiOiIiLCJVaWQiOiIzNDE0NTc3NjkiLCJQaG9uZU51bWJlciI6IjA5NDQ3MDIwMDAiLCJBY2NvdW50VHlwZURlc2MiOiJJTkRJVklEVUFMIiwibGFuZ3VhZ2UiOiJ2aSIsIlNlcnZpY2VQYWNrIjoiU21hcnRDQSBQZXJzb25hbCBQcm8iLCJBZG1pbkxvY2FsaXR5Q29kZSI6IiIsImp0aSI6IjJBMjIyN0MxMkMzNzk2RjdEMDk2MDdDQjAwN0MwOUIwIiwiaWF0IjoxNjUxMDQzMjM2LCJzY29wZSI6WyJlbWFpbCIsIm9wZW5pZCIsInByb2ZpbGUiLCJzaWduIiwib2ZmbGluZV9hY2Nlc3MiXSwiYW1yIjpbImN1c3RvbSJdfQ.1x-a__EORRpnnBEinTlQ1oCjm8OKma_tFWkgD3RtrNL81odufp8nkjWrh1kgAwbqsYJX1Eu19J11ne1IJUXDGfw_sZR_aGFVjoNRbJwJjYZTCZ8sKwHQAzJX0Gm7CUkkc-DArdDNVM-lA9iDnEQcl0KEO2yV5Y3QPbxfrUOfc7MMy6TsisJHmVs-jq7T1jYfYuKcwH2UL2ib2J-baVyYJR9_AkkPQjobIiUMUHW3U6ujDpIeZz6FYqL9jZN8qDpC6z5pYtYGqgW9zhag4SeJ70XRAsSwS6aCEZ5Gaa7g3u6hSScYi02RdXlbtjZIVjcTnKcoNgA2UH9HkMJl1qaLtg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://rmgateway.vnptit.vn/csc/credentials/list",
+					"protocol": "https",
+					"host": [
+						"rmgateway",
+						"vnptit",
+						"vn"
+					],
+					"path": [
+						"csc",
+						"credentials",
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4. Get Credential",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjZDNUMwQUFGNEY0MzBENEJCQjUzOUY1RTREMTBDREE2QTVCMEQxOTZSUzI1NiIsInR5cCI6ImF0K2p3dCIsIng1dCI6ImJGd0tyMDlERFV1N1U1OWVUUkROcHFXdzBaWSJ9.eyJuYmYiOjE2NTEwNDMyMzYsImV4cCI6MTY1MTA0NjgzNiwiaXNzIjoiVk5QVFJNX0lEUCIsImF1ZCI6WyJzaWduYXR1cmUiLCJWTlBUUk1fSURQL3Jlc291cmNlcyJdLCJjbGllbnRfaWQiOiI0MTg1LTYzNzEyNzk5NTU0NzMzMDYzMy5hcHBzLnNpZ25zZXJ2aWNlYXBpLmNvbSIsImNsaWVudF9uYW1lIjoiVk5QVCBTbWFydENBIEFwcCIsInN1YiI6ImQyYzdmMzg4LTU3Y2EtNDg1MC04M2M0LTFiZGNlYTVhZGVmNSIsImF1dGhfdGltZSI6MTY1MTA0MzIzNiwiaWRwIjoibG9jYWwiLCJyb2xlIjoiVXNlciIsIkZ1bGxOYW1lIjoiTmd1eeG7hW4gVsSDbiBIb8OgaSIsIkNvbXBhbnlBZG1pbiI6IkNvbXBhbnlVc2VyIiwiVXNlckdyb3VwSWQiOiIiLCJVaWQiOiIzNDE0NTc3NjkiLCJQaG9uZU51bWJlciI6IjA5NDQ3MDIwMDAiLCJBY2NvdW50VHlwZURlc2MiOiJJTkRJVklEVUFMIiwibGFuZ3VhZ2UiOiJ2aSIsIlNlcnZpY2VQYWNrIjoiU21hcnRDQSBQZXJzb25hbCBQcm8iLCJBZG1pbkxvY2FsaXR5Q29kZSI6IiIsImp0aSI6IjJBMjIyN0MxMkMzNzk2RjdEMDk2MDdDQjAwN0MwOUIwIiwiaWF0IjoxNjUxMDQzMjM2LCJzY29wZSI6WyJlbWFpbCIsIm9wZW5pZCIsInByb2ZpbGUiLCJzaWduIiwib2ZmbGluZV9hY2Nlc3MiXSwiYW1yIjpbImN1c3RvbSJdfQ.1x-a__EORRpnnBEinTlQ1oCjm8OKma_tFWkgD3RtrNL81odufp8nkjWrh1kgAwbqsYJX1Eu19J11ne1IJUXDGfw_sZR_aGFVjoNRbJwJjYZTCZ8sKwHQAzJX0Gm7CUkkc-DArdDNVM-lA9iDnEQcl0KEO2yV5Y3QPbxfrUOfc7MMy6TsisJHmVs-jq7T1jYfYuKcwH2UL2ib2J-baVyYJR9_AkkPQjobIiUMUHW3U6ujDpIeZz6FYqL9jZN8qDpC6z5pYtYGqgW9zhag4SeJ70XRAsSwS6aCEZ5Gaa7g3u6hSScYi02RdXlbtjZIVjcTnKcoNgA2UH9HkMJl1qaLtg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"credentialId\": [Lấy credentialId từ api 3],\r\n \"certificates\": \"single\",\r\n \"certInfo\": true,\r\n \"authInfo\": true\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://rmgateway.vnptit.vn/csc/credentials/info",
+					"protocol": "https",
+					"host": [
+						"rmgateway",
+						"vnptit",
+						"vn"
+					],
+					"path": [
+						"csc",
+						"credentials",
+						"info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "5. Sign by hash",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjZDNUMwQUFGNEY0MzBENEJCQjUzOUY1RTREMTBDREE2QTVCMEQxOTZSUzI1NiIsInR5cCI6ImF0K2p3dCIsIng1dCI6ImJGd0tyMDlERFV1N1U1OWVUUkROcHFXdzBaWSJ9.eyJuYmYiOjE2NTEwNDMyMzYsImV4cCI6MTY1MTA0NjgzNiwiaXNzIjoiVk5QVFJNX0lEUCIsImF1ZCI6WyJzaWduYXR1cmUiLCJWTlBUUk1fSURQL3Jlc291cmNlcyJdLCJjbGllbnRfaWQiOiI0MTg1LTYzNzEyNzk5NTU0NzMzMDYzMy5hcHBzLnNpZ25zZXJ2aWNlYXBpLmNvbSIsImNsaWVudF9uYW1lIjoiVk5QVCBTbWFydENBIEFwcCIsInN1YiI6ImQyYzdmMzg4LTU3Y2EtNDg1MC04M2M0LTFiZGNlYTVhZGVmNSIsImF1dGhfdGltZSI6MTY1MTA0MzIzNiwiaWRwIjoibG9jYWwiLCJyb2xlIjoiVXNlciIsIkZ1bGxOYW1lIjoiTmd1eeG7hW4gVsSDbiBIb8OgaSIsIkNvbXBhbnlBZG1pbiI6IkNvbXBhbnlVc2VyIiwiVXNlckdyb3VwSWQiOiIiLCJVaWQiOiIzNDE0NTc3NjkiLCJQaG9uZU51bWJlciI6IjA5NDQ3MDIwMDAiLCJBY2NvdW50VHlwZURlc2MiOiJJTkRJVklEVUFMIiwibGFuZ3VhZ2UiOiJ2aSIsIlNlcnZpY2VQYWNrIjoiU21hcnRDQSBQZXJzb25hbCBQcm8iLCJBZG1pbkxvY2FsaXR5Q29kZSI6IiIsImp0aSI6IjJBMjIyN0MxMkMzNzk2RjdEMDk2MDdDQjAwN0MwOUIwIiwiaWF0IjoxNjUxMDQzMjM2LCJzY29wZSI6WyJlbWFpbCIsIm9wZW5pZCIsInByb2ZpbGUiLCJzaWduIiwib2ZmbGluZV9hY2Nlc3MiXSwiYW1yIjpbImN1c3RvbSJdfQ.1x-a__EORRpnnBEinTlQ1oCjm8OKma_tFWkgD3RtrNL81odufp8nkjWrh1kgAwbqsYJX1Eu19J11ne1IJUXDGfw_sZR_aGFVjoNRbJwJjYZTCZ8sKwHQAzJX0Gm7CUkkc-DArdDNVM-lA9iDnEQcl0KEO2yV5Y3QPbxfrUOfc7MMy6TsisJHmVs-jq7T1jYfYuKcwH2UL2ib2J-baVyYJR9_AkkPQjobIiUMUHW3U6ujDpIeZz6FYqL9jZN8qDpC6z5pYtYGqgW9zhag4SeJ70XRAsSwS6aCEZ5Gaa7g3u6hSScYi02RdXlbtjZIVjcTnKcoNgA2UH9HkMJl1qaLtg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"credentialId\": [Lấy credentialId từ api 3\r\n    ],\r\n    \"refTranId\": \"1234-5678-90000\",\r\n    \"notifyUrl\": [Url notify\r\n    ],\r\n    \"description\": \"Pdf signhash sample\",\r\n    \"datas\": [\r\n        {\r\n            \"name\": \"sample.pdf\",\r\n            \"hash\": [Chuỗi hash]\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://rmgateway.vnptit.vn/csc/signature/signhash",
+					"protocol": "https",
+					"host": [
+						"rmgateway",
+						"vnptit",
+						"vn"
+					],
+					"path": [
+						"csc",
+						"signature",
+						"signhash"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "5. Sign by base64",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjZDNUMwQUFGNEY0MzBENEJCQjUzOUY1RTREMTBDREE2QTVCMEQxOTZSUzI1NiIsInR5cCI6ImF0K2p3dCIsIng1dCI6ImJGd0tyMDlERFV1N1U1OWVUUkROcHFXdzBaWSJ9.eyJuYmYiOjE2NTEwNDMyMzYsImV4cCI6MTY1MTA0NjgzNiwiaXNzIjoiVk5QVFJNX0lEUCIsImF1ZCI6WyJzaWduYXR1cmUiLCJWTlBUUk1fSURQL3Jlc291cmNlcyJdLCJjbGllbnRfaWQiOiI0MTg1LTYzNzEyNzk5NTU0NzMzMDYzMy5hcHBzLnNpZ25zZXJ2aWNlYXBpLmNvbSIsImNsaWVudF9uYW1lIjoiVk5QVCBTbWFydENBIEFwcCIsInN1YiI6ImQyYzdmMzg4LTU3Y2EtNDg1MC04M2M0LTFiZGNlYTVhZGVmNSIsImF1dGhfdGltZSI6MTY1MTA0MzIzNiwiaWRwIjoibG9jYWwiLCJyb2xlIjoiVXNlciIsIkZ1bGxOYW1lIjoiTmd1eeG7hW4gVsSDbiBIb8OgaSIsIkNvbXBhbnlBZG1pbiI6IkNvbXBhbnlVc2VyIiwiVXNlckdyb3VwSWQiOiIiLCJVaWQiOiIzNDE0NTc3NjkiLCJQaG9uZU51bWJlciI6IjA5NDQ3MDIwMDAiLCJBY2NvdW50VHlwZURlc2MiOiJJTkRJVklEVUFMIiwibGFuZ3VhZ2UiOiJ2aSIsIlNlcnZpY2VQYWNrIjoiU21hcnRDQSBQZXJzb25hbCBQcm8iLCJBZG1pbkxvY2FsaXR5Q29kZSI6IiIsImp0aSI6IjJBMjIyN0MxMkMzNzk2RjdEMDk2MDdDQjAwN0MwOUIwIiwiaWF0IjoxNjUxMDQzMjM2LCJzY29wZSI6WyJlbWFpbCIsIm9wZW5pZCIsInByb2ZpbGUiLCJzaWduIiwib2ZmbGluZV9hY2Nlc3MiXSwiYW1yIjpbImN1c3RvbSJdfQ.1x-a__EORRpnnBEinTlQ1oCjm8OKma_tFWkgD3RtrNL81odufp8nkjWrh1kgAwbqsYJX1Eu19J11ne1IJUXDGfw_sZR_aGFVjoNRbJwJjYZTCZ8sKwHQAzJX0Gm7CUkkc-DArdDNVM-lA9iDnEQcl0KEO2yV5Y3QPbxfrUOfc7MMy6TsisJHmVs-jq7T1jYfYuKcwH2UL2ib2J-baVyYJR9_AkkPQjobIiUMUHW3U6ujDpIeZz6FYqL9jZN8qDpC6z5pYtYGqgW9zhag4SeJ70XRAsSwS6aCEZ5Gaa7g3u6hSScYi02RdXlbtjZIVjcTnKcoNgA2UH9HkMJl1qaLtg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"credentialId\": [Lấy credentialId từ api 3\r\n    ],\r\n    \"refTranId\": \"1234-5678-90000\",\r\n    \"notifyUrl\": [Url notify\r\n    ],\r\n    \"description\": \"Pdf signhash sample\",\r\n    \"datas\": [\r\n        {\r\n            \"name\": \"sample.pdf\",\r\n            \"dataBase64\": [String base64]\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://rmgateway.vnptit.vn/csc/signature/signhash",
+					"protocol": "https",
+					"host": [
+						"rmgateway",
+						"vnptit",
+						"vn"
+					],
+					"path": [
+						"csc",
+						"signature",
+						"signhash"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "6. Get Transaction Info",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjZDNUMwQUFGNEY0MzBENEJCQjUzOUY1RTREMTBDREE2QTVCMEQxOTZSUzI1NiIsInR5cCI6ImF0K2p3dCIsIng1dCI6ImJGd0tyMDlERFV1N1U1OWVUUkROcHFXdzBaWSJ9.eyJuYmYiOjE2NTEwNDMyMzYsImV4cCI6MTY1MTA0NjgzNiwiaXNzIjoiVk5QVFJNX0lEUCIsImF1ZCI6WyJzaWduYXR1cmUiLCJWTlBUUk1fSURQL3Jlc291cmNlcyJdLCJjbGllbnRfaWQiOiI0MTg1LTYzNzEyNzk5NTU0NzMzMDYzMy5hcHBzLnNpZ25zZXJ2aWNlYXBpLmNvbSIsImNsaWVudF9uYW1lIjoiVk5QVCBTbWFydENBIEFwcCIsInN1YiI6ImQyYzdmMzg4LTU3Y2EtNDg1MC04M2M0LTFiZGNlYTVhZGVmNSIsImF1dGhfdGltZSI6MTY1MTA0MzIzNiwiaWRwIjoibG9jYWwiLCJyb2xlIjoiVXNlciIsIkZ1bGxOYW1lIjoiTmd1eeG7hW4gVsSDbiBIb8OgaSIsIkNvbXBhbnlBZG1pbiI6IkNvbXBhbnlVc2VyIiwiVXNlckdyb3VwSWQiOiIiLCJVaWQiOiIzNDE0NTc3NjkiLCJQaG9uZU51bWJlciI6IjA5NDQ3MDIwMDAiLCJBY2NvdW50VHlwZURlc2MiOiJJTkRJVklEVUFMIiwibGFuZ3VhZ2UiOiJ2aSIsIlNlcnZpY2VQYWNrIjoiU21hcnRDQSBQZXJzb25hbCBQcm8iLCJBZG1pbkxvY2FsaXR5Q29kZSI6IiIsImp0aSI6IjJBMjIyN0MxMkMzNzk2RjdEMDk2MDdDQjAwN0MwOUIwIiwiaWF0IjoxNjUxMDQzMjM2LCJzY29wZSI6WyJlbWFpbCIsIm9wZW5pZCIsInByb2ZpbGUiLCJzaWduIiwib2ZmbGluZV9hY2Nlc3MiXSwiYW1yIjpbImN1c3RvbSJdfQ.1x-a__EORRpnnBEinTlQ1oCjm8OKma_tFWkgD3RtrNL81odufp8nkjWrh1kgAwbqsYJX1Eu19J11ne1IJUXDGfw_sZR_aGFVjoNRbJwJjYZTCZ8sKwHQAzJX0Gm7CUkkc-DArdDNVM-lA9iDnEQcl0KEO2yV5Y3QPbxfrUOfc7MMy6TsisJHmVs-jq7T1jYfYuKcwH2UL2ib2J-baVyYJR9_AkkPQjobIiUMUHW3U6ujDpIeZz6FYqL9jZN8qDpC6z5pYtYGqgW9zhag4SeJ70XRAsSwS6aCEZ5Gaa7g3u6hSScYi02RdXlbtjZIVjcTnKcoNgA2UH9HkMJl1qaLtg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"tranId\": [Mã tranId trả về sau khi sign]\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://rmgateway.vnptit.vn/csc/credentials/gettraninfo",
+					"protocol": "https",
+					"host": [
+						"rmgateway",
+						"vnptit",
+						"vn"
+					],
+					"path": [
+						"csc",
+						"credentials",
+						"gettraninfo"
+					]
+				},
+				"description": "Trạng thái của giao dịch"
+			},
+			"response": []
+		}
+	]
+}
