@@ -736,4 +736,11 @@ export default [{
         // meta: {},
         component: () => import("../pages/thongBao"),
     }
+    ,
+    {
+        path: "/ky-so",
+        name: "Ký số",
+        // meta: {},
+        component: () => import("../pages/kyso"),
+    }
 ]
