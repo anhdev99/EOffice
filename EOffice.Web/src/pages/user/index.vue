@@ -347,7 +347,6 @@ export default {
                           <div class="mb-3">
                             <label class="text-left">Tên</label>
                             <span style="color: red">&nbsp;*</span>
-                            <input type="hidden" v-model="model.id"/>
                             <input
                                 id="firstName"
                                 v-model="model.firstName"
@@ -394,7 +393,7 @@ export default {
                             />
                           </div>
                         </div>
-                        <div class="col-6">
+                        <div v-if="model.donVi" class="col-6">
                           <div class="mb-3">
                             <label class="text-left">Cơ quan</label>
                             <span style="color: red">&nbsp;*</span>
@@ -512,7 +511,10 @@ export default {
                       </div>
                     </template>
                     <template v-slot:cell(donVi)="data">
-                      {{ data.item.donVi.ten }}
+                      <div v-if="data.item.donVi">
+                        {{ data.item.donVi.ten }}
+                      </div>
+
                     </template>
                     <template v-slot:cell(process)="data">
                       <button

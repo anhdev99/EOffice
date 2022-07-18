@@ -13,5 +13,9 @@ namespace EOffice.WebAPI.Interfaces
         Task<List<KhoiCoQuan>> Get();
         Task<KhoiCoQuan> GetById(string id);
         Task<PagingModel<KhoiCoQuan>> GetPaging(PagingParam param);
+        Task ReadDataCoQuan(string filePath);
+        Task ReadDataKhoiCoQuan(string filePath);
+        Task ReadDataChucVu(string filePath);
+
     }
 }

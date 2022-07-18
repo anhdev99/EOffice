@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using MongoDB.Driver;
@@ -11,6 +13,8 @@ using EOffice.WebAPI.Interfaces;
 using EOffice.WebAPI.Models;
 using EOffice.WebAPI.Params;
 using EOffice.WebAPI.ViewModels;
+using ExcelDataReader;
+using MongoDB.Bson;
 using EResultResponse = EOffice.WebAPI.Helpers.EResultResponse;
 
 namespace EOffice.WebAPI.Services
@@ -90,7 +94,54 @@ namespace EOffice.WebAPI.Services
         {
             return await _context.Users.Find(x => x.UserName == userName && x.IsDeleted != true).FirstOrDefaultAsync();
         }
+        public async Task ReadDataUser(string filePath)
+        {
+            var donVis = _context.DonVis.Find(x => x.IsDeleted != true).ToList();
+            var roles = _context.Roles.Find(x => x.IsDeleted != true).ToList();
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            using (var stream = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read))
+            {
+                using (var reader = ExcelReaderFactory.CreateReader(stream))
+                {
+                    while (reader.Read())
+                    {
+                        int khoiCoQuanId = 0;
+                        var check = int.TryParse(reader.GetValue(0)?.ToString(), out khoiCoQuanId);
+                        if (check && khoiCoQuanId != 0)
+                        {
+                            var user = new User()
+                            {
+                                UserName =  reader.GetValue(1)?.ToString(),
+                                FullName = reader.GetValue(2)?.ToString(),
+                            };
+                            var donVi = donVis.Where(x => x.Ten.ToLower() == reader.GetValue(3)?.ToString().ToLower()).FirstOrDefault();
+                            if (donVi != default)
+                            {
+                                user.DonVi = donVi;
+                            }
+                            var role = roles.Where(x => x.Code == "5555").FirstOrDefault();
+                            if (role != default)
+                            {
+                                if (user.Roles == default)
+                                    user.Roles = new List<Role>();
+                                user.Roles.Add(role);
+                            }
 
+                            try
+                            {
+                                Create(user);
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e);
+                            }
+                            
+                        }
+                    }
+                }
+            }
+
+        }
         public async Task<User> Create(User model)
         {
             if (model == default)
@@ -110,7 +161,7 @@ namespace EOffice.WebAPI.Services
                 UserName = model.UserName,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                FullName = model.LastName + " " + model.FirstName,
+                FullName = model.FullName,
                 PhoneNumber = model.PhoneNumber,
                 Email = model.Email,
                 Note = model.Note,
@@ -153,23 +204,7 @@ namespace EOffice.WebAPI.Services
 
             await _logger.WithAction(nameof(this.Create)).WithActionResult(EResultResponse.SUCCESS.ToString())
                 .WithContentLog($"Tạo tài khoản: {entity.UserName}").SaveChanges();
-            
-            try
-            {
-                var notify = new Notify()
-                {
-                    Title =
-                        $"Xử lý văn bản đến",
-                    Content =
-                        $"Có một văn bản đến cần xỷ lý trước ngày {DateTime.Now.ToShortDateString()}"
-                };
 
-                await  _notifyService.WithNotify(notify).WithRecipients(new List<string>(){CurrentUser?.Id}).PushNotify();
-            }
-            catch (Exception e)
-            {
-            }
-            
             return entity;
         }
 

@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using EOffice.WebAPI.Data;
 using EOffice.WebAPI.Exceptions;
@@ -8,7 +10,9 @@ using EOffice.WebAPI.Helpers;
 using EOffice.WebAPI.Interfaces;
 using EOffice.WebAPI.Models;
 using EOffice.WebAPI.Params;
+using ExcelDataReader;
 using Microsoft.AspNetCore.Http;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using EResultResponse = EOffice.WebAPI.Exceptions.EResultResponse;
 
@@ -187,6 +191,104 @@ namespace EOffice.WebAPI.Services
                 .Limit(param.Limit)
                 .ToListAsync();
             return result;
+        }
+        
+        public async Task ReadDataKhoiCoQuan(string filePath)
+        {
+            List<KhoiCoQuan> KhoiCoQuan = new List<KhoiCoQuan>();
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            using (var stream = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read))
+            {
+                using (var reader = ExcelReaderFactory.CreateReader(stream))
+                {
+                    while (reader.Read())
+                    {
+                        int khoiCoQuanId = 0;
+                        var check = int.TryParse(reader.GetValue(0)?.ToString(), out khoiCoQuanId);
+                        if (check && khoiCoQuanId != 0)
+                        {
+                            var unitGroup = new KhoiCoQuan()
+                            {
+                                Id = BsonObjectId.GenerateNewId().ToString(),
+                                KhoiCoQuanId = khoiCoQuanId.ToString(),
+                                Ten = reader.GetValue(1)?.ToString(),
+                                MoTa = reader.GetValue(2)?.ToString(),
+                                ThuTu = khoiCoQuanId
+                            };
+                            KhoiCoQuan.Add(unitGroup);
+                        }
+                    }
+                }
+            }
+            await _collection.InsertManyAsync(KhoiCoQuan);
+        }
+        public async Task ReadDataChucVu(string filePath)
+        {
+            var KhoiCoQuan = new List<ChucVu>();
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            using (var stream = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read))
+            {
+                using (var reader = ExcelReaderFactory.CreateReader(stream))
+                {
+                    int index = 1;
+                    while (reader.Read())
+                    {
+                        var unitGroup = new ChucVu()
+                        {
+                            Id = BsonObjectId.GenerateNewId().ToString(),
+                            Ten = reader.GetValue(0)?.ToString(),
+                            ThuTu = index++
+                        };
+                        KhoiCoQuan.Add(unitGroup);
+                    }
+                }
+            }
+            await _context.ChucVu.InsertManyAsync(KhoiCoQuan);
+        }
+        public async Task ReadDataCoQuan(string filePath)
+        {
+            var khoiCoQuan = _context.KhoiCoQuan.AsQueryable().Where(x => x.IsDeleted != true)
+                .Select(x => new KhoiCoQuanShort()
+            {
+                Id = x.Id,
+                Ten =x.Ten,
+                MoTa = x.MoTa,
+                KhoiCoQuanId = x.KhoiCoQuanId
+            }).ToList();
+            List<CoQuan> CoQuan = new List<CoQuan>();
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            using (var stream = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read))
+            {
+                using (var reader = ExcelReaderFactory.CreateReader(stream))
+                {
+                    while (reader.Read())
+                    {
+                        int coquanId = 0;
+                        var check = int.TryParse(reader.GetValue(0)?.ToString(), out coquanId);
+                        if (check && coquanId != 0)
+                        {
+                            var khoiCoQuanId = 0;
+                            var checkKhoiCoQuan = int.TryParse(reader.GetValue(2)?.ToString(), out khoiCoQuanId);
+                            var khoiCoQuanEntity = new KhoiCoQuanShort();
+                            if(checkKhoiCoQuan  && khoiCoQuanId != 0)
+                            {
+                                khoiCoQuanEntity = khoiCoQuan.Where(x => x.KhoiCoQuanId == khoiCoQuanId.ToString()).FirstOrDefault();
+                                if(khoiCoQuanEntity == default)
+                                    continue;
+                            }
+                            var unitGroup = new CoQuan()
+                            {
+                                Id = BsonObjectId.GenerateNewId().ToString(),
+                                KhoiCoQuan = khoiCoQuanEntity,
+                                Ten = reader.GetValue(1)?.ToString(),
+                                ThuTu = coquanId
+                            };
+                            await _context.CoQuan.InsertOneAsync(unitGroup);
+                        }
+                    }
+                }
+            }
+        
         }
     }
 }

@@ -239,5 +239,26 @@ namespace EOffice.WebAPI.APIs.Identity
                 );
             }
         }
+        
+        [HttpPost]
+        [Route("import-user")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ImportCoQuan()
+        {
+            try
+            {
+                await _userService.ReadDataUser(@"OldData/Users1.xls");
+                return Ok(
+                    new { }
+
+                );
+            }
+            catch (Exception ex)
+            {
+                return new ObjectResult(
+                    new { }
+                );
+            }
+        }
     }
 }

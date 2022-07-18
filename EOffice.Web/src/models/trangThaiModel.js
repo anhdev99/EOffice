@@ -3,7 +3,8 @@ const toJson = (item) => {
     return {
         id: item.id,
         ten: item.ten,
-        thuTu: item.thuTu
+        thuTu: item.thuTu,
+        code: item.code
     }
 }
 const fromJson = (item) => {
@@ -11,6 +12,7 @@ const fromJson = (item) => {
         id: item.id,
         ten: item.ten,
         thuTu: item.thuTu,
+        code: item.code,
         //createdAt: moment(item.createdAt).format('YYYY-MM-DD'),
         createAt:item.createAt,
         // modifiedAt: moment(item.modifiedAt).format('YYYY-MM-DD'),
@@ -27,6 +29,7 @@ const baseJson = () => {
         id: null,
         ten: null,
         thuTu: 0,
+        code: null,
         createdAt: null,
         modifiedAt: null,
         createdBy: null,

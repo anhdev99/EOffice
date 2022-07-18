@@ -54,6 +54,12 @@ export default {
       fields: [
         { key: 'STT', label: 'STT', class: 'td-stt', sortable: false,thClass: 'hidden-sortable' },
         {
+          key: "code",
+          label: "Code",
+          class: 'td-xuly',
+          sortable: true,
+        },
+        {
           key: "ten",
           label: "Tên",
           sortable: true,
@@ -77,6 +83,7 @@ export default {
   },
   validations: {
     model: {
+      code: {required},
       ten: {required},
       thuTu: {required}
     },
@@ -267,6 +274,29 @@ export default {
                       <div class="row">
                         <div class="col-12">
                           <div class="mb-3">
+                            <label class="text-left"> Code</label>
+                            <span style="color: red">&nbsp;*</span>
+                            <input
+                                id="ten"
+                                v-model.trim="model.code"
+                                type="text"
+                                class="form-control"
+                                placeholder="Nhập code"
+                                :class="{
+                                'is-invalid':
+                                  submitted && $v.model.code.$error,
+                              }"
+                            />
+                            <div
+                                v-if="submitted && !$v.model.code.required"
+                                class="invalid-feedback"
+                            >
+                              Tên trạng thái không được để trống.
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-12">
+                          <div class="mb-3">
                             <label class="text-left">Tên trạng thái</label>
                             <span style="color: red">&nbsp;*</span>
                             <input type="hidden" v-model="model.id"/>
@@ -279,7 +309,7 @@ export default {
                                 :class="{
                                 'is-invalid':
                                   submitted && $v.model.ten.$error,
-                              }"
+                                }"
                             />
                             <div
                                 v-if="submitted && !$v.model.ten.required"

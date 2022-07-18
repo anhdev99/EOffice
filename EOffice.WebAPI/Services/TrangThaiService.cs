@@ -94,6 +94,7 @@ namespace EOffice.WebAPI.Services
             }
             
             entity.Code = model.Code;
+            entity.Ten = model.Ten;
             entity.ThuTu = model.ThuTu;
             entity.ModifiedBy = CurrentUserName;
             entity.ModifiedAt = DateTime.Now;

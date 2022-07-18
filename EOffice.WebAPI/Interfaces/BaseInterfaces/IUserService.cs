@@ -20,6 +20,7 @@ namespace EOffice.WebAPI.Interfaces
         Task<User> ChangePassword(UserVM model);
         Task<User> ChangeProfile(User model);
         Task<User> FindUserWithUserNameOrPhoneNumber(string input);
+        Task ReadDataUser(string filePath);
 
     }
 }

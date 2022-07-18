@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using EOffice.WebAPI.Exceptions;
@@ -5,6 +6,7 @@ using EOffice.WebAPI.Helpers;
 using EOffice.WebAPI.Interfaces;
 using EOffice.WebAPI.Models;
 using EOffice.WebAPI.Params;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using EResultResponse = EOffice.WebAPI.Helpers.EResultResponse;
 
@@ -161,6 +163,68 @@ namespace EOffice.WebAPI.APIs
                 return Ok(
                     new ResultMessageResponse().WithCode(ex.ResultCode)
                         .WithMessage(ex.ResultString)
+                );
+            }
+        }
+        
+        [HttpPost]
+        [Route("import-KhoiCoQuan")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ImportKhoiCoQuan()
+        {
+            try
+            {
+                await _khoiCoQuanService.ReadDataKhoiCoQuan(@"OldData/KhoiCoQuan.xlsx");
+                return Ok(
+                    new { }
+
+                );
+            }
+            catch (Exception ex)
+            {
+                return new ObjectResult(
+                    new { }
+                );
+            }
+        }
+        
+        [HttpPost]
+        [Route("import-CoQuan")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ImportCoQuan()
+        {
+            try
+            {
+                await _khoiCoQuanService.ReadDataCoQuan(@"OldData/CoQuan.xlsx");
+                return Ok(
+                    new { }
+
+                );
+            }
+            catch (Exception ex)
+            {
+                return new ObjectResult(
+                    new { }
+                );
+            }
+        }
+        
+        [HttpPost]
+        [Route("import-chucvu")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ImportChucVu()
+        {
+            try
+            {
+                await _khoiCoQuanService.ReadDataChucVu(@"OldData/ChucVu.xlsx");
+                return Ok(
+                    new { }
+                );
+            }
+            catch (Exception ex)
+            {
+                return new ObjectResult(
+                    new { }
                 );
             }
         }
