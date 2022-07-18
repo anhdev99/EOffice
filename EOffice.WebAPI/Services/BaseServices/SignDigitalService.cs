@@ -229,7 +229,12 @@ namespace EOffice.WebAPI.Services
                 //Fill Data in Rows
                 Paragraph p2 = DataRow.Cells[0].AddParagraph();
                 p2.Format.HorizontalAlignment = HorizontalAlignment.Center;
-                p2.AppendText("CHỮ KÝ HỢP LỆ").ApplyCharacterFormat(formatHSign);
+                CharacterFormat formatHSignp2 = new CharacterFormat(doc);
+                formatHSignp2.Bold = true;
+                formatHSignp2.FontSize = 12;
+                // p2.AppendText("CHỮ KÝ HỢP LỆ").ApplyCharacterFormat(formatHSignp2);
+                p2.AppendText(listuser[i].ChucVu?.Ten).ApplyCharacterFormat(formatHSignp2);
+                p2.AppendBreak(BreakType.LineBreak);
                 p2.AppendBreak(BreakType.LineBreak);
                 if (listuser[i].FilePath != default)
                 {
@@ -239,12 +244,15 @@ namespace EOffice.WebAPI.Services
                     pic2.Width = 150f;
                 }
                 p2.AppendBreak(BreakType.LineBreak);
+                p2.AppendBreak(BreakType.LineBreak);
    
-                p2.AppendText(listuser[i].FullName).ApplyCharacterFormat(formatHSign);
+                p2.AppendText(listuser[i].FullName).ApplyCharacterFormat(formatHSignp2);
                 p2.AppendBreak(BreakType.LineBreak);
-                p2.AppendText(listuser[i].DonVi?.Ten).ApplyCharacterFormat(formatHSign);
-                p2.AppendBreak(BreakType.LineBreak);
-                p2.AppendText(listuser[i].NgayKy).ApplyCharacterFormat(formatHSign);
+                // CharacterFormat formatHSignp21 = new CharacterFormat(doc);
+                // formatHSignp21.FontSize = 10;
+                // p2.AppendText(listuser[i].DonVi?.Ten).ApplyCharacterFormat(formatHSignp21);
+                // p2.AppendBreak(BreakType.LineBreak);
+                // p2.AppendText(listuser[i].NgayKy).ApplyCharacterFormat(formatHSignp21);
             
                 // DataRow.Cells[0].CellFormat.VerticalAlignment = VerticalAlignment.Middle ;
 
@@ -262,7 +270,12 @@ namespace EOffice.WebAPI.Services
                     //Fill Data in Rows
                     Paragraph p3 = DataRow.Cells[1].AddParagraph();
                     p3.Format.HorizontalAlignment = HorizontalAlignment.Center;
-                    p3.AppendText("CHỮ KÝ HỢP LỆ").ApplyCharacterFormat(formatHSign);
+                    // p3.AppendText("CHỮ KÝ HỢP LỆ").ApplyCharacterFormat(formatHSign);
+                    CharacterFormat formatHSignp3 = new CharacterFormat(doc);
+                    formatHSignp3.Bold = true;
+                    formatHSignp3.FontSize = 12;
+                    p3.AppendText(listuser[i].ChucVu?.Ten).ApplyCharacterFormat(formatHSignp3);
+                    p3.AppendBreak(BreakType.LineBreak);
                     p3.AppendBreak(BreakType.LineBreak);
                     if (listuser[i].FilePath != default)
                     {
@@ -273,11 +286,14 @@ namespace EOffice.WebAPI.Services
                         pic3.Width = 150f;
                     }
                     p3.AppendBreak(BreakType.LineBreak);
-                    p3.AppendText(listuser[i].FullName).ApplyCharacterFormat(formatHSign);
                     p3.AppendBreak(BreakType.LineBreak);
-                    p3.AppendText(listuser[i].DonVi?.Ten).ApplyCharacterFormat(formatHSign);
+                    p3.AppendText(listuser[i].FullName).ApplyCharacterFormat(formatHSignp3);
                     p3.AppendBreak(BreakType.LineBreak);
-                    p3.AppendText(listuser[i].NgayKy).ApplyCharacterFormat(formatHSign);
+                    // CharacterFormat formatHSignp31 = new CharacterFormat(doc);
+                    // formatHSignp31.FontSize = 10;
+                    // p3.AppendText(listuser[i].DonVi?.Ten).ApplyCharacterFormat(formatHSignp31);
+                    // p3.AppendBreak(BreakType.LineBreak);
+                    // p3.AppendText(listuser[i].NgayKy).ApplyCharacterFormat(formatHSignp31);
                     
                     i = i + 1;
                 }

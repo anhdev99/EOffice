@@ -141,6 +141,7 @@ export default {
           thStyle: {width: '110px', minWidth: '110px'},
         }
       ],
+      loading: false,
       optionsLoaiVanBan: [],
       optionsDonVi: [],
       optionsLinhVuc: [],
@@ -295,14 +296,20 @@ export default {
       }
     },
     async handleAssignOrReject() {
+      let loader = this.$loading.show({
+        container: this.$refs.modalAcceptKySo,
+      });
       if (this.modelKySo.vanBanDiId  != null) {
         this.modelKySo.ngayKyString = moment().format();
         await this.$store.dispatch("vanBanDiStore/assignOrReject", this.modelKySo).then((res) => {
           if (res.resultCode === 'SUCCESS') {
             this.showModelAcceptKySo = false;
             this.showModalMembers = false;
+            loader.hide();
           }
           this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+        }).finally(() => {
+          loader.hide();
         });
       }
     },
@@ -1220,8 +1227,9 @@ export default {
             title=" Ký số nội bộ"
             title-class="font-18"
             no-close-on-backdrop
+
         >
-          <div class="row">
+          <div class="row" ref="modalAcceptKySo">
             <div class="col-md-12">
               <div class=" d-flex align-items-center">
                 <switches v-model="modelKySo.reject" color="primary" class="ml-1 mx-2"></switches>
@@ -1248,32 +1256,35 @@ export default {
                   class="form-control"
               />
             </div>
+
+            <div class="text-end pt-2 mt-3">
+              <b-button v-b-modal.modal-close_visit
+                        size="sm"
+                        class="btn btn-outline-info w-md"
+                        v-on:click="showModelAcceptKySo = false">
+                Đóng
+              </b-button>
+              <b-button v-if="!modelKySo.reject" v-b-modal.modal-close_visit
+                        size="sm"
+                        variant="primary"
+                        type="button"
+                        class="w-md"
+                        v-on:click="handleAssignOrReject">
+                Đồng ý
+              </b-button>
+              <b-button v-if="modelKySo.reject" v-b-modal.modal-close_visit
+                        size="sm"
+                        variant="danger"
+                        type="button"
+                        class="w-md"
+                        v-on:click="handleAssignOrReject">
+                Từ chối
+              </b-button>
+            </div>
           </div>
-          <template #modal-footer>
-            <b-button v-b-modal.modal-close_visit
-                      size="sm"
-                      class="btn btn-outline-info w-md"
-                      v-on:click="showModelAcceptKySo = false">
-              Đóng
-            </b-button>
-            <b-button v-if="!modelKySo.reject" v-b-modal.modal-close_visit
-                      size="sm"
-                      variant="primary"
-                      type="button"
-                      class="w-md"
-                      v-on:click="handleAssignOrReject">
-              Đồng ý
-            </b-button>
-            <b-button v-if="modelKySo.reject" v-b-modal.modal-close_visit
-                      size="sm"
-                      variant="danger"
-                      type="button"
-                      class="w-md"
-                      v-on:click="handleAssignOrReject">
-              Từ chối
-            </b-button>
-          </template>
         </b-modal>
+
+
 
         <b-modal
             v-model="showModalButPhe"
