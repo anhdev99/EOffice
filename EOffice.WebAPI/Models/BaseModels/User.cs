@@ -34,6 +34,7 @@ namespace EOffice.WebAPI.Models
         public byte[] PrivateKey, PublicKey;
         public string SignPath, PrivateKey_string, PublicKey_string;
         public string PIN { get; set; }
+        public string EOfficeId { get; set; }
         [BsonIgnore]   public bool IsRequireChangePassword { get; set; } = false;
         [BsonIgnore]     public bool IsRequireVerify { get; set; } = false;
         [BsonIgnore] public string Password { get; set; }

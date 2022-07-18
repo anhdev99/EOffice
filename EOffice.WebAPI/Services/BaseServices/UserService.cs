@@ -97,6 +97,7 @@ namespace EOffice.WebAPI.Services
         public async Task ReadDataUser(string filePath)
         {
             var donVis = _context.DonVis.Find(x => x.IsDeleted != true).ToList();
+            var chucVus = _context.ChucVu.Find(x => x.IsDeleted != true).ToList();
             var roles = _context.Roles.Find(x => x.IsDeleted != true).ToList();
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
             using (var stream = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read))
@@ -106,18 +107,26 @@ namespace EOffice.WebAPI.Services
                     while (reader.Read())
                     {
                         int khoiCoQuanId = 0;
-                        var check = int.TryParse(reader.GetValue(0)?.ToString(), out khoiCoQuanId);
-                        if (check && khoiCoQuanId != 0)
+                        var check = reader.GetValue(7)?.ToString();
+                        if (check != default)
                         {
                             var user = new User()
                             {
-                                UserName =  reader.GetValue(1)?.ToString(),
-                                FullName = reader.GetValue(2)?.ToString(),
+                                EOfficeId =  reader.GetValue(0)?.ToString(),
+                                LastName = reader.GetValue(1)?.ToString(),
+                                FirstName = reader.GetValue(2)?.ToString(),
+                                Email = reader.GetValue(3)?.ToString(),
+                                UserName =  reader.GetValue(7)?.ToString(),
                             };
-                            var donVi = donVis.Where(x => x.Ten.ToLower() == reader.GetValue(3)?.ToString().ToLower()).FirstOrDefault();
+                            var donVi = donVis.Where(x => x.Ten.ToLower() == reader.GetValue(4)?.ToString().ToLower()).FirstOrDefault();
                             if (donVi != default)
                             {
                                 user.DonVi = donVi;
+                            }
+                            var chucVu = chucVus.Where(x => x.Ten.ToLower() == reader.GetValue(5)?.ToString().ToLower()).FirstOrDefault();
+                            if (chucVu != default)
+                            {
+                                user.ChucVu = chucVu;
                             }
                             var role = roles.Where(x => x.Code == "5555").FirstOrDefault();
                             if (role != default)
@@ -135,7 +144,6 @@ namespace EOffice.WebAPI.Services
                             {
                                 Console.WriteLine(e);
                             }
-                            
                         }
                     }
                 }
@@ -161,7 +169,8 @@ namespace EOffice.WebAPI.Services
                 UserName = model.UserName,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                FullName = model.FullName,
+                FullName = model.LastName + " " +model.FirstName,
+                EOfficeId = model.EOfficeId,
                 PhoneNumber = model.PhoneNumber,
                 Email = model.Email,
                 Note = model.Note,
