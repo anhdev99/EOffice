@@ -10,6 +10,9 @@ export const actions = {
     async getTrangThai({commit}) {
         return apiClient.get(controller +"/get-all");
     },
+    async getTree({commit}) {
+        return apiClient.get(controller +"/getTree");
+    },
     async create({commit}, values) {
         return apiClient.post(controller + "/create", values);
     },

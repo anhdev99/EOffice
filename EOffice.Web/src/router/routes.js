@@ -743,4 +743,17 @@ export default [{
         // meta: {},
         component: () => import("../pages/kyso"),
     }
+    ,
+    {
+        path: "/ky-so-test",
+        name: "Ký số",
+        // meta: {},
+        component: () => import("../pages/kyso/test"),
+    },
+    {
+        path: "/loai-trang-thai",
+        name: " Loại trạng thái",
+        // meta: {},
+        component: () => import("../pages/loaiTrangThai"),
+    }
 ]

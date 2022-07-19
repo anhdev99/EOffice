@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using MongoDB.Driver;
@@ -190,6 +191,15 @@ namespace EOffice.WebAPI.Services
                 list.Add(trangThai);
             }
             return list;
+        }
+        
+        public List<TrangThaiTreeVM> GetAllTree()
+        {
+            var data =  _context.TrangThai.Find(x => x.IsDeleted != true)
+                .ToList()
+                .Select(x => new TrangThaiTreeVM(x))
+                .ToList();
+            return data;
         }
     }
 }
