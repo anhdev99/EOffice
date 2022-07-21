@@ -755,5 +755,11 @@ export default [{
         name: " Loại trạng thái",
         // meta: {},
         component: () => import("../pages/loaiTrangThai"),
+    },
+    {
+        path: "/xac-nhan-ky-so-noi-bo",
+        name: " Xác nhận ký số nội bộ",
+        // meta: {},
+        component: () => import("../pages/xacNhanKySo"),
     }
 ]

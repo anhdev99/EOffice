@@ -19,6 +19,9 @@ export const actions = {
     async create({commit}, values) {
         return apiClient.post(controller + "/create", values);
     },
+    async xacThuc({commit}, values) {
+        return apiClient.post("SignDigital" + "/xac-thuc", values);
+    },
     async capSoVanBanDi({commit}, values) {
         return apiClient.post(controller + "/cap-so-van-ban-di", values);
     },

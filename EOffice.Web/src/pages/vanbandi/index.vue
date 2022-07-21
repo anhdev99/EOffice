@@ -878,15 +878,15 @@ export default {
                                 >
                                   <template slot="singleLabel" slot-scope="{ option }">
                                     <strong>{{ option.fullName }}</strong>
-                                    <span style="color:red">&nbsp;{{ option.donVi.ten }}</span>
+
+                                    <span v-if="option.donVi" style="color:red">&nbsp;{{ option.donVi.ten }}</span>
                                   </template>
-                                  <!-- affichage des options(multiselect déplié) -->
                                   <template slot="option" slot-scope="{ option }">
                                     <div class="option__desc">
           <span class="option__title">
             <strong>{{ option.fullName }}&nbsp;</strong>
           </span>
-                                      <span class="option__small" style="color:green">{{ option.donVi.ten }}</span>
+                                      <span v-if="option.donVi" class="option__small" style="color:green">{{ option.donVi.ten }}</span>
                                     </div>
                                   </template>
                                 </multiselect>

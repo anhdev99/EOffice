@@ -14,6 +14,7 @@ using EOffice.WebAPI.Helpers;
 using EOffice.WebAPI.Interfaces;
 using EOffice.WebAPI.Models;
 using EOffice.WebAPI.Params;
+using EOffice.WebAPI.ViewModels;
 using EResultResponse = EOffice.WebAPI.Exceptions.EResultResponse;
 
 namespace EOffice.WebAPI.Services
@@ -941,6 +942,25 @@ namespace EOffice.WebAPI.Services
                 .WithTitle("Cấp số văn bản đi.")
                 .SaveChangeHistoryQuestion();
             return vanBanDi;
+        }
+
+        public async Task XacThuc(XacMinhVM model)
+        {
+            if (model == default)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.DATA_NOT_EMPTY);
+            }
+
+            var listFileId = model.UploadFiles.Select(x => x.FileId).ToList();
+
+            var files = _context.Files.AsQueryable().Where(x => listFileId.Contains(x.Id)).ToList();
+        
+            foreach (var file in files)
+            {
+                SignDigitalService.ValidDsign(file.Path, model.User);
+            }
         }
     }
 }

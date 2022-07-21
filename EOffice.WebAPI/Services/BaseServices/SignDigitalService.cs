@@ -6,6 +6,8 @@ using System.IO;
 using System.IO.Pipelines;
 using System.Text;
 using System.Xml;
+using EOffice.WebAPI.Exceptions;
+using EOffice.WebAPI.Helpers;
 using EOffice.WebAPI.Models;
 using Org.BouncyCastle.Asn1.Pkcs;
 using Org.BouncyCastle.Crypto;
@@ -19,6 +21,7 @@ using Spire.Doc.Documents;
 using Spire.Doc.Fields;
 using Spire.Doc.Formatting;
 using Spire.Pdf;
+using EResultResponse = EOffice.WebAPI.Exceptions.EResultResponse;
 using FileFormat = Spire.Doc.FileFormat;
 
 namespace EOffice.WebAPI.Services
@@ -99,7 +102,11 @@ namespace EOffice.WebAPI.Services
             document.LoadFromFile(path);
 
             StringBuilder content = new StringBuilder();
-            content.Append(document.Pages[0].ExtractText());
+            for (int i = 0; i < document.Pages.Count; i++)
+            {
+                content.Append(document.Pages[i].ExtractText());
+            }
+    
             // content.Append(document.Pages[1].ExtractText());
 
             //String fileName = @"D:\TextFromPDF.txt";
@@ -112,10 +119,119 @@ namespace EOffice.WebAPI.Services
 
             // Console.WriteLine("Trich xuat noi dung PDF thanh cong!");
         }
+        public static RsaKeyParameters StringtoKey(string keyString)
+        {
+            byte[] publicKeyDerRestored = Convert.FromBase64String(keyString);
+            RsaKeyParameters publicKeyRestored = (RsaKeyParameters)PublicKeyFactory.CreateKey(publicKeyDerRestored);
+            return publicKeyRestored;
+
+        }
+        public static void ValidDsign(string pathPdf, User user)
+        {
+            //dinh nghia template Dsign
+            string StartSignD = "startSignD";
+            string EndSignD = "endSignD";
+
+
+            Console.WriteLine();
+            Console.WriteLine("Doc noi dung PDF...");
+            string TextFromPDF = SignDigitalService.ExtractPDF(pathPdf);
+            Console.WriteLine("noi dung PDF thanh cong");
+
+            //lay vitri ket thuc text
+            var indEndText = TextFromPDF.IndexOf(StartSignD);
+
+            // var ind1Sign = TextFromPDF.IndexOf(StartSignD);
+            var indEndSign = TextFromPDF.IndexOf(EndSignD);
+
+
+            Console.WriteLine();
+            Console.WriteLine("Dsign trich xuat tu pdf:");
+            string signExtracted = TextFromPDF.Substring(indEndText + StartSignD.Length,
+                indEndSign - indEndText - StartSignD.Length);
+            Console.WriteLine(signExtracted);
+
+
+            Console.WriteLine();
+            string ContentPdf = TextFromPDF.Substring(0, indEndText);
+            Console.WriteLine("Noi dung van ban lay tu pdf can xac thuc");
+            Console.WriteLine(ContentPdf);
+            Console.WriteLine("Do dai noi dung file pdf can xac thuc: " + ContentPdf.Length);
+
+
+            var listDsign = signExtracted.Split("##");
+            Console.WriteLine();
+            Console.WriteLine("List Dsign:");
+            bool checkExist = false;
+            for (int i = 0; i < listDsign.Length; i++)
+            {
+                var item = listDsign[i];
+                if (item.StartsWith(user.UserName))
+                {
+                    checkExist = true;
+                    Console.WriteLine();
+                    Console.WriteLine("Xac thuc chu ky cua user: " + user.UserName);
+                    var UserDsign = item.Substring(user.UserName.Length);
+                    Console.WriteLine("noi dung chu ky: ");
+                    Console.WriteLine(UserDsign);
+                    Console.WriteLine("do dai chu ky: ");
+                    Console.WriteLine(UserDsign.Length);
+
+                    //xac thuc theo user
+                    Xacthuc(ContentPdf, UserDsign, user.PublicKey_string);
+                    break;
+                }
+                
+                if (i == listDsign.Length)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Khong tim thay Dsign cua: " + user.UserName);
+                  
+                }
+                
+            }
+
+            if (!checkExist)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage("Xác thực thất bại với tài khoản: " + user.UserName + ": " + user.FullName);
+            }
+        }
+        
+        public static void Xacthuc(string noidungvb, string _Dsign, string _publickey)
+        {
+            var tmpSourePdfValid = ASCIIEncoding.ASCII.GetBytes(noidungvb);
+            var Public_Key = StringtoKey(_publickey);
+            // var SignD = Hex.Decode(_Dsign);
+            var SignD = Convert.FromBase64String(_Dsign);
+
+            // Xac nhan voi khoa Public cho file pdf dung
+            Console.WriteLine();
+            Console.WriteLine("Xac nhan file PDF voi Public_Key ");
+            ISigner signCheckforPDF = SignerUtilities.GetSigner(PkcsObjectIdentifiers.Sha1WithRsaEncryption.Id);
+            signCheckforPDF.Init(false, Public_Key);
+            signCheckforPDF.BlockUpdate(tmpSourePdfValid, 0, tmpSourePdfValid.Length);
+            bool statusforpdf = signCheckforPDF.VerifySignature(SignD);
+
+
+            Console.WriteLine();
+            Console.WriteLine("Ket qua Xac nhan van ban:");
+            if (statusforpdf == true)
+            {
+                Console.WriteLine("File PDF dung");
+            }
+            else
+            {
+                Console.WriteLine("File PDF da duoc chinh sua");
+            }
+        }
     }
 
     public class KySoNoiBoService
     {
+        
+            
         public void TienTrinhKySo(string pathWord, string fileName, string pathPDF, List<User> users)
         {
             Console.WriteLine(".............................");
@@ -152,7 +268,7 @@ namespace EOffice.WebAPI.Services
                 byte[] SignD = signP.GenerateSignature();
 
                 //listDSign.Add(listUser[i].name + Hex.ToHexString(SignD)); // '\u00cb'.ToString()
-                listDSign.Add(users[i].FullName + Convert.ToBase64String(SignD)); // '\u00cb'.ToString()
+                listDSign.Add(users[i].UserName + Convert.ToBase64String(SignD)); // '\u00cb'.ToString()
             }
 
             string StartSignD = "startSignD";
@@ -184,7 +300,7 @@ namespace EOffice.WebAPI.Services
 
             //danh dau ket thuc noi dung vb
             Paragraph parEnd = sec.AddParagraph();
-            parEnd.AppendBreak(BreakType.PageBreak);
+            // parEnd.AppendBreak(BreakType.PageBreak);
             //TextBox textBoxEnd = parEnd.AppendTextBox(400, 20);
             //Paragraph EndText = textBoxEnd.Body.AddParagraph();
             // EndText.AppendText('\u00cb'.ToString()).ApplyCharacterFormat(formatSign);
@@ -337,20 +453,20 @@ namespace EOffice.WebAPI.Services
             Console.WriteLine("Ghi File thanh cong!");
 
             //mo file
-            Process pr = new Process();
-            ProcessStartInfo pi = new ProcessStartInfo();
-            pi.UseShellExecute = true;
-            pi.FileName = pathPDF;
-            pr.StartInfo = pi;
-
-            try
-            {
-                pr.Start();
-            }
-            catch (Exception Ex)
-            {
-                //MessageBox.Show(Ex.Message);
-            }
+            // Process pr = new Process();
+            // ProcessStartInfo pi = new ProcessStartInfo();
+            // pi.UseShellExecute = true;
+            // pi.FileName = pathPDF;
+            // pr.StartInfo = pi;
+            //
+            // try
+            // {
+            //     pr.Start();
+            // }
+            // catch (Exception Ex)
+            // {
+            //     //MessageBox.Show(Ex.Message);
+            // }
         }
     }
 }
