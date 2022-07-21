@@ -14,14 +14,14 @@ namespace EOffice.WebAPI.Services.SignDigital
 
     public class SmartCA
     {
-        public static ResponseMessage getSignFile (string user, string pass, string content, string fileName, byte[] file, bool positionRight,string xPosition, string yPosition)
+        public static ResponseMessage getSignFile(string user, string pass, string content, string fileName, byte[] file, string pageNumber, string xPosition, string yPosition)
         {
 
-            ResponseMessage result = _signSmartCA_PDF(user, pass, content, fileName, file, positionRight, xPosition, yPosition);
+            ResponseMessage result = _signSmartCA_PDF(user, pass, content, fileName, file, pageNumber, xPosition, yPosition);
             return result;
         }
-        
-                private static ResponseMessage _signSmartCA_PDF(string user, string pass, string content, string fileName, byte[] file, bool positionRight, string xPosition, string yPosition)
+
+        private static ResponseMessage _signSmartCA_PDF(string user, string pass, string content, string fileName, byte[] file, string pageNumber, string xPosition, string yPosition)
         {
             var customerEmail = user;
             var customerPass = pass;
@@ -41,17 +41,17 @@ namespace EOffice.WebAPI.Services.SignDigital
             //string _pdfInput = @"C:\Users\User29421\Documents\ca\test_smartca_thien.pdf";
             //string _pdfSignedPath = @"C:\Users\User29421\Documents\ca\test_smartca_thien_signed2.pdf";
 
-           // byte[] unsignData = null;
+            // byte[] unsignData = null;
             byte[] unsignData = file;
-           /* try
-            {
-                unsignData = File.ReadAllBytes(_pdfInput);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return;
-            }*/
+            /* try
+             {
+                 unsignData = File.ReadAllBytes(_pdfInput);
+             }
+             catch (Exception ex)
+             {
+                 Console.WriteLine(ex);
+                 return;
+             }*/
             CryptoConfig.AddAlgorithm(typeof(RSAPKCS1SHA256SignatureDescription),
                "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
             );
@@ -63,7 +63,7 @@ namespace EOffice.WebAPI.Services.SignDigital
             // Property: Lý do ký số
             ((PdfHashSigner)signer).SetReason("Xác nhận tài liệu");
             // Hình ảnh hiển thị trên chữ ký (mặc định là logo VNPT)
-            var imgBytes = File.ReadAllBytes(@"assets/DTHU.aead3196.png");
+            var imgBytes = File.ReadAllBytes("logo_vnpt.png");
             var x = Convert.ToBase64String(imgBytes);
             ((PdfHashSigner)signer).SetCustomImage(imgBytes);
             // Signing page (@deprecated)
@@ -120,23 +120,17 @@ namespace EOffice.WebAPI.Services.SignDigital
 
             // Hiển thị ảnh chữ ký tại nhiều vị trí trên tài liệu
 
-            if (!string.IsNullOrEmpty(xPosition) && !string.IsNullOrEmpty(yPosition))
+            if (!string.IsNullOrEmpty(xPosition) && !string.IsNullOrEmpty(yPosition) && !string.IsNullOrEmpty(pageNumber))
             {
                 int x1 = int.Parse(xPosition);
                 int y1 = int.Parse(yPosition);
                 ((PdfHashSigner)signer).AddSignatureView(new PdfSignatureView
                 {
-                    Rectangle = $"{x1 - 100},{800 - y1},{x1 + 100},{800 - y1 +50}",
-                    Page = 1
+                    // Với kích thước chữ ký 200x50
+                    Rectangle = $"{x1 - 100},{y1 - 25},{x1 + 100},{y1 + 25}",
+                    Page = int.Parse(pageNumber)
                 });
-            }
-            else if(positionRight)
-            {
-                ((PdfHashSigner)signer).AddSignatureView(new PdfSignatureView
-                {
-                    Rectangle = "400,100,600,150",
-                    Page = 1
-                });
+
             }
             else
             {
@@ -173,7 +167,7 @@ namespace EOffice.WebAPI.Services.SignDigital
             ((PdfHashSigner)signer).SetSignatureBorderType(PdfHashSigner.VisibleSigBorder.DASHED);
             #endregion -----------------------------------------
             //var hashValue = "ULUOyLMAvzuNOOVJJG/GMdIonsfkD2mtagK5R8RV3cY=";
-            // var hashValue = signer.GetSecondHashAsBase64();
+            var hashValue = signer.GetSecondHashAsBase64();
 
             //var tranId = _signHash(access_token, "https://rmgateway.vnptit.vn/csc/signature/signhash", hashValue, credential);
             //SignHash End
@@ -190,7 +184,7 @@ namespace EOffice.WebAPI.Services.SignDigital
             var count = 0;
             var isConfirm = false;
             var datasigned = "";
-            while (count < 24 && !isConfirm)
+            while (count < 4 && !isConfirm)
             {
                 Console.WriteLine("Get TranInfo PDF lan " + count + " : ");
                 //_log.Info("Get TranInfo PDF lan " + count + " : ");
@@ -213,7 +207,7 @@ namespace EOffice.WebAPI.Services.SignDigital
                 else
                 {
                     Console.WriteLine("Error from content");
-                   //return;
+                    //return;
                 }
             }
             if (!isConfirm)
@@ -246,12 +240,12 @@ namespace EOffice.WebAPI.Services.SignDigital
 
             return responseMessage;
             //File.WriteAllBytes(_pdfSignedPath, Convert.FromBase64String(datasigned));
-           // Console.WriteLine("SignHash PDF: Successfull. signed file at '" + _pdfSignedPath + "'");
+            // Console.WriteLine("SignHash PDF: Successfull. signed file at '" + _pdfSignedPath + "'");
             //_log.Info("SignHash PDF: Successfull. signed file at '" + _pdfSignedPath + "'");
 
         }
 
-                        private static string _getCredentialSmartCA(String accessToken, String serviceUri)
+        private static string _getCredentialSmartCA(String accessToken, String serviceUri)
         {
             using (WebClient wc = new WebClient())
             {

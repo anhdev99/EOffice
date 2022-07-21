@@ -28,13 +28,13 @@ namespace EOffice.WebAPI.APIs
         [HttpPost] 
         public ResponseMessage Pdf(IFormCollection data, IFormFile fileUpload)
         {
-            string user = data["user"]; 
+            string user = data["user"];
             string pass = data["pass"];
             string content = data["content"];
             string fileName = data["fileName"];
             string xPosition = data["xPosition"];
             string yPosition = data["yPosition"];
-            bool positionRight = bool.Parse(data["positionRight"]);
+            string pageNumber = data["pageNumber"];
             byte[] fileInput = null;
             using (var ms = new MemoryStream())
             {
@@ -43,7 +43,7 @@ namespace EOffice.WebAPI.APIs
                 string s = Convert.ToBase64String(fileInput);
                 // act on the Base64 data
             }
-            ResponseMessage result = SmartCA.getSignFile(user, pass, content, fileName, fileInput, positionRight, xPosition, yPosition);
+            ResponseMessage result = SmartCA.getSignFile(user, pass, content, fileName, fileInput, pageNumber, xPosition, yPosition);
             return result;
         }
         
