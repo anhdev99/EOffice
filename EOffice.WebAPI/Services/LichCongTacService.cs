@@ -55,11 +55,12 @@ namespace EOffice.WebAPI.Services
                 MauSac = model.MauSac,
                 DiaDiem = model.DiaDiem,
                 TieuDe = model.TieuDe,
+                ThanhPhanThamDu = model.ThanhPhanThamDu,
                 GhiChu = model.GhiChu,
                 CreatedBy = CurrentUserName,
                 ModifiedBy = CurrentUserName,
                 CreatedAt = DateTime.Now,
-                ModifiedAt = DateTime.Now
+                ModifiedAt = DateTime.Now,
             };
 
             var result = await BaseMongoDb.CreateAsync(entity);
@@ -97,6 +98,7 @@ namespace EOffice.WebAPI.Services
             entity.MauSac = model.MauSac;
             entity.DiaDiem = model.DiaDiem;
             entity.TieuDe = model.TieuDe;
+            entity.ThanhPhanThamDu = model.ThanhPhanThamDu;
             entity.GhiChu = model.GhiChu;
             entity.ModifiedAt = DateTime.Now;
             entity.ModifiedBy = CurrentUserName;

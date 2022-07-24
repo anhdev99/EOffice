@@ -58,43 +58,43 @@ export default {
         {
           key: "tuNgay",
           label: "Từ ngày",
+          class: "px-2",
           sortable: true,
-          thStyle: "text-align:left",
         },
         {
           key: "denNgay",
           label: "Đến ngày",
-          class: 'td-xuly',
+          class: "px-2",
           sortable: true,
         },
         {
           key: "tieuDe",
           label: "Tiêu đề",
-          class: 'td-xuly',
+          class: "px-2",
           sortable: true,
         },
         {
           key: "chuTri",
           label: "Chủ trì",
-          class: 'td-xuly',
+          class: "px-2",
           sortable: true,
         },
         {
           key: "diaDiem",
           label: "Địa điểm",
-          class: 'td-xuly',
+          class: "px-2",
           sortable: true,
         },
         {
           key: "thanhPhanThamDu",
           label: "Thành phẩn tham dự",
-          class: 'td-xuly',
+          class: "px-2",
           sortable: true,
         },
         {
           key: "ghiChu",
           label: "Ghi chú",
-          class: 'td-xuly',
+          class: "px-2",
           sortable: true,
         },
         {
@@ -164,7 +164,7 @@ export default {
     },
     async handleUpdate(id) {
       console.log("LOG HANDLE UPDATE ", id)
-      await this.$store.dispatch("licCongTacStore/getById", id).then((res) => {
+      await this.$store.dispatch("lichCongTacStore/getById", id).then((res) => {
         console.log("LOG HANDLE UPDATE ", id)
         if (res.resultCode === 'SUCCESS') {
           this.model = lichCongTacModel.fromJson(res.data);
@@ -176,7 +176,7 @@ export default {
       });
     },
     async handleDetail(id) {
-      await this.$store.dispatch("licCongTacStore/getById", id).then((res) => {
+      await this.$store.dispatch("lichCongTacStore/getById", id).then((res) => {
         if (res.resultCode === 'SUCCESS') {
           this.model = lichCongTacModel.fromJson(res.data);
           this.showDetail = true;
@@ -187,7 +187,7 @@ export default {
     },
     async handleDelete() {
       if (this.model.id != 0 && this.model.id != null && this.model.id) {
-        await this.$store.dispatch("licCongTacStore/delete", this.model.id).then((res) => {
+        await this.$store.dispatch("lichCongTacStore/delete", this.model.id).then((res) => {
           if (res.resultCode === 'SUCCESS') {
             this.fnGetList();
             this.showDeleteModal = false;
@@ -580,6 +580,22 @@ export default {
                   >
                     <template v-slot:cell(STT)="data">
                       {{ data.index + ((currentPage - 1) * perPage) + 1 }}
+                    </template>
+                    <template v-slot:cell(chuTri)="data">
+                      <span v-if="data.item.chuTri" class="badge bg-success"> {{ data.item.chuTri.fullName }}</span>
+                    </template>
+                    <template v-slot:cell(thanhPhanThamDu)="data">
+                      <div
+                          class="d-flex p-2"
+                      >
+                        <span
+                            class="badge bg-info me-2"
+                            v-for='(item, index) in data.item.thanhPhanThamDu'
+                            :key="index"
+                        >
+                          {{item.fullName}}
+                        </span>
+                      </div>
                     </template>
                     <template v-slot:cell(process)="data">
                       <button
