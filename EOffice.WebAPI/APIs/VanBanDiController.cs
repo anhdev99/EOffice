@@ -1,15 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using EOffice.WebAPI.Data;
 using EOffice.WebAPI.Exceptions;
 using EOffice.WebAPI.Helpers;
 using EOffice.WebAPI.Interfaces;
 using EOffice.WebAPI.Models;
 using EOffice.WebAPI.Params;
+using EOffice.WebAPI.Services.SignDigital;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Driver;
 using EResultResponse = EOffice.WebAPI.Helpers.EResultResponse;
 
 namespace EOffice.WebAPI.APIs
@@ -20,11 +24,13 @@ namespace EOffice.WebAPI.APIs
     {
         private IVanBanDiService _vanBanDiService;
         private readonly IWebHostEnvironment _hostingEnvironment;
+        private DataContext _context;
 
-        public VanBanDiController(IVanBanDiService vanBanDiService, IWebHostEnvironment hostingEnvironment)
+        public VanBanDiController(IVanBanDiService vanBanDiService, IWebHostEnvironment hostingEnvironment, DataContext context)
         {
             _vanBanDiService = vanBanDiService;
             _hostingEnvironment = hostingEnvironment;
+            _context = context;
         }
 
         [HttpGet]
@@ -440,6 +446,31 @@ namespace EOffice.WebAPI.APIs
                         .WithMessage(ex.ResultString)
                 );
             }
+        }
+        [HttpPost]
+        [Route("ky-so-phap-ly")]
+        public ResponseMessage KySoPhapLyAsync([FromBody] PhanCongKySo model)
+        {
+            var vanBanDi = _context.VanBanDi.Find(x => x.Id == model.VanBanDiId).FirstOrDefault();
+            var fileId = vanBanDi.File.FirstOrDefault();
+            var file = _context.Files.Find(x => x.Id == fileId.FileId).FirstOrDefault();
+            string user = model.UserName;
+            string pass = model.Password;
+            string content = model.Content;
+            string fileName = file.FileName;
+            string xPosition = "0";
+            string yPosition = "0";
+            string pageNumber = "1";
+            byte[] fileInput = null;
+            MemoryStream memory = new MemoryStream();
+            using (FileStream stream = new FileStream(file.Path, FileMode.Open, FileAccess.Read))
+            {
+                 stream.CopyTo(memory);
+                fileInput = memory.ToArray();
+                string s = Convert.ToBase64String(fileInput);
+            }
+            ResponseMessage result = SmartCA.getSignFile(user, pass, content, fileName, fileInput, pageNumber, xPosition, yPosition);
+            return result;
         }
     }
 }

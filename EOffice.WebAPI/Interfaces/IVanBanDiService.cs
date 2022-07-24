@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using EOffice.WebAPI.Models;
 using EOffice.WebAPI.Params;
+using EOffice.WebAPI.ViewModels;
 
 namespace EOffice.WebAPI.Interfaces
 {
@@ -32,5 +33,6 @@ namespace EOffice.WebAPI.Interfaces
         Task<VanBanDi> CapSoVanBan();
         Task<PagingModel<VanBanDi>> GetPagingCapSo(VanBanDiParam param);
         Task<VanBanDi> CapSoVanBanDi(VanBanDi model);
+        Task XacThuc(XacMinhVM model);
     }
 }

@@ -19,11 +19,18 @@ export const actions = {
     async create({commit}, values) {
         return apiClient.post(controller + "/create", values);
     },
+    async xacThuc({commit}, values) {
+        return apiClient.post("SignDigital" + "/xac-thuc", values);
+    },
     async capSoVanBanDi({commit}, values) {
         return apiClient.post(controller + "/cap-so-van-ban-di", values);
     },
     async assignOrReject({commit}, values) {
         return apiClient.post(controller + "/assign-or-reject", values);
+    },
+    async assignOrRejectPhapLy({commit}, values) {
+        console.log(values)
+        return apiClient.post(controller + "/ky-so-phap-ly", values);
     },
     async assignSign({commit}, values) {
         return apiClient.post(controller + "/them-nguoi-ky-so", values);
