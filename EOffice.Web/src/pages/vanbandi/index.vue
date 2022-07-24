@@ -588,7 +588,6 @@ export default {
                                     track-by="id"
                                     label="ten"
                                     placeholder="Chọn loại văn bản"
-
                                 ></multiselect>
                                 <div
                                     v-if="submitted && $v.model.loaiVanBan.$error"

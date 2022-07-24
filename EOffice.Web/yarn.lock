@@ -1330,7 +1330,7 @@
     consola "^2.15.0"
     node-fetch "^2.6.1"
 
-"@pdftron/webviewer@^8.0.0":
+"@pdftron/webviewer@^8.7.0":
   version "8.7.0"
   resolved "https://registry.yarnpkg.com/@pdftron/webviewer/-/webviewer-8.7.0.tgz#747847a565471dd7c3a8b54f3a363d8e11b3e423"
   integrity sha512-Ji0a6A+2HFNMlTpBmTNO10sgizQnmybqZOkJkanU46CLegn4rRaTMBEmAlXWoUaY0M/bx2Br1FHHeS6MTjhb1w==

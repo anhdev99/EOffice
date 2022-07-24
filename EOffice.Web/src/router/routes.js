@@ -761,5 +761,11 @@ export default [{
         name: " Xác nhận ký số nội bộ",
         // meta: {},
         component: () => import("../pages/xacNhanKySo"),
+    },
+    {
+        path: "/lich-cong-tac",
+        name: "Lịch công tác",
+        // meta: {},
+        component: () => import("../pages/lichcongtac"),
     }
 ]
