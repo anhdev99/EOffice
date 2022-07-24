@@ -449,7 +449,7 @@ namespace EOffice.WebAPI.APIs
         }
         [HttpPost]
         [Route("ky-so-phap-ly")]
-        public async Task<ResponseMessage> KySoPhapLyAsync([FromBody] PhanCongKySo model)
+        public ResponseMessage KySoPhapLyAsync([FromBody] PhanCongKySo model)
         {
             var vanBanDi = _context.VanBanDi.Find(x => x.Id == model.VanBanDiId).FirstOrDefault();
             var fileId = vanBanDi.File.FirstOrDefault();
@@ -458,23 +458,16 @@ namespace EOffice.WebAPI.APIs
             string pass = model.Password;
             string content = model.Content;
             string fileName = file.FileName;
-            string xPosition = "1";
-            string yPosition = "1";
+            string xPosition = "0";
+            string yPosition = "0";
             string pageNumber = "1";
             byte[] fileInput = null;
             MemoryStream memory = new MemoryStream();
             using (FileStream stream = new FileStream(file.Path, FileMode.Open, FileAccess.Read))
             {
-                await stream.CopyToAsync(memory);
+                 stream.CopyTo(memory);
                 fileInput = memory.ToArray();
                 string s = Convert.ToBase64String(fileInput);
-            }
-            using (var ms = new MemoryStream())
-            {
-                
-                fileInput = ms.ToArray();
-                string s = Convert.ToBase64String(fileInput);
-                // act on the Base64 data
             }
             ResponseMessage result = SmartCA.getSignFile(user, pass, content, fileName, fileInput, pageNumber, xPosition, yPosition);
             return result;
