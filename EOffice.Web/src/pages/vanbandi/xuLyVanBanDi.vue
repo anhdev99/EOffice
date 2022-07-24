@@ -72,9 +72,11 @@ export default {
         reject: false,
         password: null,
         content: null,
-        ngayKyString: null
+        ngayKyString: null,
+        userName: null
       },
       showModelAcceptKySo: false,
+      showModalKySoPhapLy: false,
       modelButPhe: butPheModel.baseJson(),
       modelPhanCong: phanCongModel.baseJson(),
       pagination: pagingModel.baseJson(),
@@ -268,7 +270,17 @@ export default {
         }
       });
     },
-
+    async handleKySoPhapLy(id) {
+      await this.$store.dispatch("vanBanDiStore/getById", id).then((res) => {
+        if (res.resultCode == "SUCCESS") {
+          console.log("res", res.data)
+          this.modelKySo.vanBanDiId = res.data.id;
+          this.showModalKySoPhapLy = true;
+        } else {
+          // this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+        }
+      });
+    },
     handleCreate(id) {
       this.model= vanBanDiModel.baseJson();
       this.showModal = true;
@@ -305,6 +317,24 @@ export default {
           if (res.resultCode === 'SUCCESS') {
             this.showModelAcceptKySo = false;
             this.showModalMembers = false;
+            loader.hide();
+          }
+          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+        }).finally(() => {
+          loader.hide();
+        });
+      }
+    },
+    async handleAssignOrRejectPhapLy() {
+      let loader = this.$loading.show({
+        container: this.$refs.modalKySoPhapLy,
+      });
+      console.log(this.modelKySo.vanBanDiId)
+      if (this.modelKySo.vanBanDiId  != null) {
+        this.modelKySo.ngayKyString = moment().format();
+        await this.$store.dispatch("vanBanDiStore/assignOrRejectPhapLy", this.modelKySo).then((res) => {
+          if (res.resultCode === 'SUCCESS') {
+            this.showModelAcceptKySo = false;
             loader.hide();
           }
           this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
@@ -1085,11 +1115,12 @@ export default {
                         <i class="fas fa-eye  text-warning me-1"></i>
                       </button>
                       <button
+                          v-if="getCurrentUser().userName == 'admin' || getCurrentUser().userName == 'hieutruong'"
                           type="button"
                           size="sm"
                           class="btn btn-outline btn-sm"
                           data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
-                          v-on:click="handleUpdate(data.item.id)">
+                          v-on:click="handleKySoPhapLy(data.item.id)">
                         <i class="fas fa-pencil-alt text-success me-1"></i>
                       </button>
 <!--                      <button-->
@@ -1284,6 +1315,73 @@ export default {
           </div>
         </b-modal>
 
+        <b-modal
+            v-model="showModalKySoPhapLy"
+            centered
+            title=" Ký số pháp lý"
+            title-class="font-18"
+            no-close-on-backdrop
+
+        >
+          <div class="row" ref="modalKySoPhapLy">
+
+            <div class="col-md-12 mt-2">
+              <label class="form-label" for="validationCustom01"> Tài khoản</label> <span
+                class="text-danger">*</span>
+              <input
+                  id="validationCustom01"
+                  v-model="modelKySo.userName"
+                  type="text"
+                  class="form-control"
+              />
+            </div>
+            <div class="col-md-12 mt-2">
+              <label class="form-label" for="validationCustom01"> Mật khẩu</label> <span
+                class="text-danger">*</span>
+              <input
+                  id="validationCustom01"
+                  v-model="modelKySo.password"
+                  type="password"
+                  class="form-control"
+              />
+            </div>
+            <div class="col-md-12 mt-2">
+              <label class="form-label" for="validationCustom01"> Nội dung</label> <span
+                class="text-danger">*</span>
+              <textarea
+                  id="validationCustom01"
+                  v-model="modelKySo.content"
+                  type="text"
+                  class="form-control"
+              />
+            </div>
+
+            <div class="text-end pt-2 mt-3">
+              <b-button v-b-modal.modal-close_visit
+                        size="sm"
+                        class="btn btn-outline-info w-md"
+                        v-on:click="showModelAcceptKySo = false">
+                Đóng
+              </b-button>
+              <b-button v-if="!modelKySo.reject" v-b-modal.modal-close_visit
+                        size="sm"
+                        variant="primary"
+                        type="button"
+                        class="w-md"
+                        v-on:click="handleAssignOrRejectPhapLy">
+                Đồng ý
+              </b-button>
+              <b-button v-if="modelKySo.reject" v-b-modal.modal-close_visit
+                        size="sm"
+                        variant="danger"
+                        type="button"
+                        class="w-md"
+                        v-on:click="handleAssignOrRejectPhapLy">
+                Từ chối
+              </b-button>
+            </div>
+          </div>
+        </b-modal>
 
 
         <b-modal

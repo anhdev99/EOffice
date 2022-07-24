@@ -28,6 +28,10 @@ export const actions = {
     async assignOrReject({commit}, values) {
         return apiClient.post(controller + "/assign-or-reject", values);
     },
+    async assignOrRejectPhapLy({commit}, values) {
+        console.log(values)
+        return apiClient.post(controller + "/ky-so-phap-ly", values);
+    },
     async assignSign({commit}, values) {
         return apiClient.post(controller + "/them-nguoi-ky-so", values);
     },
