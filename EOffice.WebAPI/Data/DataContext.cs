@@ -86,7 +86,7 @@ namespace EOffice.WebAPI.Data
             _notify = _context.GetCollection<Notify>(_settings.NotifyCollectionName);
             _vanBanDen = _context.GetCollection<VanBanDen>(_settings.VanBanDenCollectionName);
             _vanBanDi = _context.GetCollection<VanBanDi>(_settings.VanBanDiCollectionName);
-            _lichCongTac = _context.GetCollection<LichCongTac>(_settings.VanBanDiCollectionName);
+            _lichCongTac = _context.GetCollection<LichCongTac>(_settings.LichCongTacCollectionName);
             _loaiVanBan = _context.GetCollection<LoaiVanBan>(_settings.LoaiVanBanCollectionName);
             _hinhThucGui = _context.GetCollection<HinhThucGui>(_settings.HinhThucGuiCollectionName);
             _coQuan = _context.GetCollection<CoQuan>(_settings.CoQuanCollectionName);
