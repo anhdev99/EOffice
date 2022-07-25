@@ -63,23 +63,25 @@ namespace EOffice.WebAPI.Services.SignDigital
             // Property: Lý do ký số
             ((PdfHashSigner)signer).SetReason("Xác nhận tài liệu");
             // Hình ảnh hiển thị trên chữ ký (mặc định là logo VNPT)
-            var imgBytes = File.ReadAllBytes("logo_vnpt.png");
-            var x = Convert.ToBase64String(imgBytes);
-            ((PdfHashSigner)signer).SetCustomImage(imgBytes);
+            // var imgBytes = File.ReadAllBytes("logo_vnpt.png");
+            // var x = Convert.ToBase64String(imgBytes);
+            // ((PdfHashSigner)signer).SetCustomImage(imgBytes);
             // Signing page (@deprecated)
             //((PdfHashSigner)signer).SetSigningPage(1);
             // Vị trí và kích thước chữ ký (@deprecated)
             //((PdfHashSigner)signer).SetSignaturePosition(20, 20, 220, 50);
             // Kiểu hiển thị chữ ký (OPTIONAL/DEFAULT=TEXT_WITH_BACKGROUND)
-            ((PdfHashSigner)signer).SetRenderingMode(PdfHashSigner.RenderMode.TEXT_WITH_BACKGROUND);
+            ((PdfHashSigner)signer).SetRenderingMode(PdfHashSigner.RenderMode.TEXT_ONLY);
             // Nội dung text trên chữ ký (OPTIONAL)
-            //((PdfHashSigner)signer).SetLayer2Text("Ký bởi: Subject name\nNgày ký: Datetime.now");
+            // ((PdfHashSigner)signer).SetLayer2Text("Ký bởi: Subject name\nNgày ký: Datetime.now");
+            ((PdfHashSigner)signer).SetLayer2Text("");
             // Fontsize cho text trên chữ ký (OPTIONAL/DEFAULT = 10)
             ((PdfHashSigner)signer).SetFontSize(13);
 
-            ((PdfHashSigner)signer).SetLayer2Text($"Ký bởi: {userInfo.fullName}\nNgày ký: {DateTime.Now}");
+            ((PdfHashSigner)signer).SetLayer2Text($"");
+            // ((PdfHashSigner)signer).SetLayer2Text($"Ký bởi: {userInfo.fullName}\nNgày ký: {DateTime.Now}");
             // Màu text trên chữ ký (OPTIONAL/DEFAULT=000000)
-            ((PdfHashSigner)signer).SetFontColor("0000ff");
+            ((PdfHashSigner)signer).SetFontColor("000000");
             // Kiểu chữ trên chữ ký
             ((PdfHashSigner)signer).SetFontStyle(PdfHashSigner.FontStyle.Normal);
             // Font chữ trên chữ ký

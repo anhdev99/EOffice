@@ -19,7 +19,7 @@
     "@fullcalendar/list": "^5.7.2",
     "@fullcalendar/timegrid": "^5.7.1",
     "@fullcalendar/vue": "^5.11.0",
-    "@pdftron/webviewer": "^8.7.0",
+    "@pdftron/webviewer": "^8.0.0",
     "@riophae/vue-treeselect": "^0.4.0",
     "apexcharts": "^3.27.1",
     "axios": "^0.27.2",
@@ -58,7 +58,7 @@
     "vuex": "^3.6.2"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.1.0",
+    "@vue/cli-plugin-babel": "^4.5.19",
     "@vue/cli-plugin-eslint": "^4.1.0",
     "@vue/cli-service": "^4.1.0",
     "babel-eslint": "^10.0.3",

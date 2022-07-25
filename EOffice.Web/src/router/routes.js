@@ -767,5 +767,17 @@ export default [{
         name: "Lịch công tác",
         // meta: {},
         component: () => import("../pages/lichcongtac"),
+    },
+    {
+        path: "/sign-digital",
+        name: "Lịch công tác",
+        // meta: {},
+        component: () => import("../pages/signDigital"),
+    },
+    {
+        path: "/xac-nhan-ky-so",
+        name: "Xác nhận ký số nội bộ",
+        // meta: {},
+        component: () => import("../pages/xacNhanKySo/pages"),
     }
 ]

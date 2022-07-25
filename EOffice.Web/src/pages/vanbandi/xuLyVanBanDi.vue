@@ -73,7 +73,9 @@ export default {
         password: null,
         content: null,
         ngayKyString: null,
-        userName: null
+        userName: null,
+        path: null,
+        fileName: null
       },
       showModelAcceptKySo: false,
       showModalKySoPhapLy: false,
@@ -274,7 +276,11 @@ export default {
       await this.$store.dispatch("vanBanDiStore/getById", id).then((res) => {
         if (res.resultCode == "SUCCESS") {
           console.log("res", res.data)
+
           this.modelKySo.vanBanDiId = res.data.id;
+          this.modelKySo.fileName = res.data.filePDF[0].fileName;
+          this.modelKySo.path =  this.urlView + res.data.filePDF[0].fileId;
+
           this.showModalKySoPhapLy = true;
         } else {
           // this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
@@ -331,16 +337,18 @@ export default {
       });
       console.log(this.modelKySo.vanBanDiId)
       if (this.modelKySo.vanBanDiId  != null) {
-        this.modelKySo.ngayKyString = moment().format();
-        await this.$store.dispatch("vanBanDiStore/assignOrRejectPhapLy", this.modelKySo).then((res) => {
-          if (res.resultCode === 'SUCCESS') {
-            this.showModelAcceptKySo = false;
-            loader.hide();
-          }
-          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
-        }).finally(() => {
-          loader.hide();
-        });
+        localStorage.setItem("kysophaply", JSON.stringify( this.modelKySo));
+        this.$router.push("/ky-so")
+        // this.modelKySo.ngayKyString = moment().format();
+        // await this.$store.dispatch("vanBanDiStore/assignOrRejectPhapLy", this.modelKySo).then((res) => {
+        //   if (res.resultCode === 'SUCCESS') {
+        //     this.showModelAcceptKySo = false;
+        //     loader.hide();
+        //   }
+        //   this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+        // }).finally(() => {
+        //   loader.hide();
+        // });
       }
     },
     handleDetail(id) {

@@ -11,7 +11,7 @@ export default {
     title: "Ký số",
     meta: [{name: "description", content: appConfig.description}],
   },
-  components: {Layout, PageHeader, FormWizard, TabContent, vueDropzone: vue2Dropzone,},
+  components: {Layout, PageHeader},
   data() {
     return {
       title: "Ký số",
@@ -25,6 +25,7 @@ export default {
           active: true,
         }
       ],
+      getKySiIframe: "https://localhost:5003",
       files: null,
       apiUrl: process.env.VUE_APP_API_URL,
       url: `${process.env.VUE_APP_API_URL}files/upload`,
@@ -41,7 +42,20 @@ export default {
       showModal: false,
     };
   },
+  created() {
+    this.loadKySoLocalStoage();
+  },
   methods: {
+    loadKySoLocalStoage(){
+      let dataJSON = localStorage.getItem("kysophaply");
+      if(dataJSON){
+        let convertData = JSON.parse(dataJSON);
+        if(convertData){
+          this.getKySiIframe += "?userName=" + convertData.userName + "&password=" + convertData.password + "&fileName=" + convertData.fileName + "&path=" + convertData.path + "&vanBanDiId=" + convertData.vanBanDiId;
+        }
+      }
+      console.log(this.getKySiIframe)
+    },
     removeThisFile(file, error, xhr) {
       let fileCongViec = JSON.parse(file.xhr.response);
       if (fileCongViec.data && fileCongViec.data.id) {
@@ -80,80 +94,10 @@ export default {
         <div class="card">
           <div class="card-body">
             <div class="row">
-              <div class="col-md-12">
-                <form-wizard
-                    color="#00568C"
-                    finish-button-text="Ký số"
-                    nextButtonText="Chuyển tiếp"
-                    prevButtonText="Trở lại"
-                    @on-complete="onComplete"
-                >
-                  <tab-content icon="fas fa-file-upload">
-                    <div class="row">
-                      <div class="col-12">
-                        <vue-dropzone
-                            id="dropzone"
-                            ref="myVueDropzone"
-                            :use-custom-slot="true"
-                            :options="dropzoneOptions"
-                            v-on:vdropzone-removed-file="removeThisFile"
-                            v-on:vdropzone-success="addThisFile"
-                        >
-                          <div class="dropzone-custom-content">
-                            <i
-                                class="display-1 text-muted fas fa-cloud-upload-alt"
-                                style="font-size: 70px"
-                            ></i>
-                            <h4>
-                              Kéo thả tệp tin hoặc bấm vào để tải tệp tin
-                            </h4>
-                          </div>
-                        </vue-dropzone>
-                      </div>
-                      <!-- end col -->
-                    </div>
-                    <!-- end row -->
-                  </tab-content>
-                  <tab-content icon="fas fa-pen-alt">
-                    <div class="row">
-                      <div class="col-12">
-                        file thông tin ký số
-                      </div>
-                      <!-- end col -->
-                    </div>
-                    <!-- end row -->
-                  </tab-content>
-                </form-wizard>
-                <!--                Modal -->
-                <b-modal
-                    v-model="showModal"
-                    id="modal-lg"
-                    size="lg"
-                    title="Large modal"
-                    title-class="font-18"
-                    hide-header
-                    hide-footer
-                >
-                  <template>
-                    <div class="text-end">
-                      <a @click="showModal = false">
-                        <i class="fas fa-times"></i>
-                      </a>
-                    </div>
-                    <div class="title mb-3">
-                        <h4>Xác nhận ký tài liệu</h4>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-6">
-
-                      </div>
-                      <div class="col-md-6">
-
-                      </div>
-                    </div>
-                  </template>
-                </b-modal>
+              <div class="col-12">
+                <iframe style="height: 80vh; width: 100%" :src="getKySiIframe"></iframe>
               </div>
+              <!-- end col -->
             </div>
           </div>
         </div>
