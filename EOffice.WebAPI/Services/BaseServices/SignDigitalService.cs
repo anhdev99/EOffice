@@ -143,7 +143,12 @@ namespace EOffice.WebAPI.Services
 
             // var ind1Sign = TextFromPDF.IndexOf(StartSignD);
             var indEndSign = TextFromPDF.IndexOf(EndSignD);
-
+            if (indEndSign == -1 || indEndText == -1)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage("Xác thực thất bại với tài khoản: " + user.UserName + ": " + user.FullName);
+            }
 
             Console.WriteLine();
             Console.WriteLine("Dsign trich xuat tu pdf:");
