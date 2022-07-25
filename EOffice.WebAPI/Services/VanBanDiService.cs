@@ -50,8 +50,10 @@ namespace EOffice.WebAPI.Services
 
         public async Task<VanBanDi> CapSoVanBan()
         {
-            var vanBanDi = _collection.Find(x => x.IsDeleted != true).ToList();
-            var identiyList = vanBanDi.Max(x => x.Identity);
+            var vanBanDi = _context.VanBanDi.Find(x => x.IsDeleted != true).ToList();
+            var identiyList = 1;
+            if(vanBanDi.Count > 0)
+             identiyList = vanBanDi.Max(x => x.Identity);
             var max = 0;
             if (identiyList != default)
             {
