@@ -129,9 +129,9 @@ export default {
             <div class="home-wrapper mt-5">
               <div class="mb-4">
                 <img
-                    src="@/assets/images/logo-eoffice.png"
+                    src="@/assets/images/logo-eoffice.svg"
                     alt="logo"
-                    height="22"
+                    height="50"
                 />
               </div>
 
