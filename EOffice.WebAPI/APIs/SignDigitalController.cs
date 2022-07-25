@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using EOffice.WebAPI.Data;
 using EOffice.WebAPI.Exceptions;
 using EOffice.WebAPI.Helpers;
 using EOffice.WebAPI.Interfaces;
@@ -19,11 +20,12 @@ namespace EOffice.WebAPI.APIs
     {
         private IVanBanDiService _vanBanDiService;
         private readonly IWebHostEnvironment _hostingEnvironment;
-
-        public SignDigitalController(IVanBanDiService vanBanDiService, IWebHostEnvironment hostingEnvironment)
+        private DataContext _context;
+        public SignDigitalController(IVanBanDiService vanBanDiService, IWebHostEnvironment hostingEnvironment, DataContext context)
         {
             _vanBanDiService = vanBanDiService;
-            _hostingEnvironment = hostingEnvironment;
+            _context = context;
+            _hostingEnvironment = hostingEnvironment; 
         }
         [HttpPost] 
         public ResponseMessage Pdf(IFormCollection data, IFormFile fileUpload)
@@ -46,7 +48,10 @@ namespace EOffice.WebAPI.APIs
             ResponseMessage result = SmartCA.getSignFile(user, pass, content, fileName, fileInput, pageNumber, xPosition, yPosition);
             return result;
         }
-        
+
+
+
+
         [HttpPost]
         [Route("xac-thuc")]
         public async Task<IActionResult> XacMinh([FromBody] XacMinhVM model)

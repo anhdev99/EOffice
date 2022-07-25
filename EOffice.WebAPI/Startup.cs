@@ -52,6 +52,7 @@ namespace EOffice.WebAPI
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .WithOrigins("http://localhost:8080", 
+                            "https://localhost:5003",
                             "https://eoffice2.dthu.edu.vn")
                         .AllowCredentials()
                 );
