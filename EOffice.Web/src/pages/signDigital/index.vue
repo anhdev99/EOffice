@@ -5,22 +5,24 @@ import appConfig from "@/app.config";
 
 export default {
   page: {
-    title: "Danh mục Menu",
+    title: "Ký số pháp lý",
     meta: [{name: "description", content: appConfig.description}],
   },
-  components: {},
+  components: {Layout, PageHeader},
   data() {
     return {
+      title: "Lĩnh vực",
     };
   },
-};
+}
 </script>
-
 <template>
   <Layout>
     <PageHeader :title="title" :items="items"/>
     <div class="row">
-   abc
-    </div>
+
+      <iframe style="height: 100vh" width="800" src="https://localhost:5003/"></iframe>
+        </div>
   </Layout>
 </template>
+
