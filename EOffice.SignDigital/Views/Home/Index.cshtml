@@ -1,4 +1,5 @@
-﻿@{ 
+﻿@model EOffice.SignDigital.Models.SignDigital
+@{ 
     Layout = null;
 }
 <!DOCTYPE html>
@@ -168,9 +169,9 @@
         @* <div class="tool"> *@
         @*     <button id="pdf-zoom-out" class="btn btn-danger btn-sm">Clear Page</button> *@
         @* </div> *@
-        @* <div class="tool"> *@
-        @*     <button class="btn btn-info btn-sm" onclick="showPdfData()">{}</button> *@
-        @* </div> *@
+        <div class="tool">
+            <button class="btn btn-info btn-sm" onclick="showPdfData()">{}</button>
+        </div>
         <div class="tool">
             <button class="btn btn-light btn-sm btn-save-sign" onclick="savePDF()"><i class="fa fa-save"></i> Hoàn thành ký số</button>
         </div>
@@ -318,6 +319,7 @@ Arrow.prototype.onMouseDown = function(o) {
   var pointer = inst.canvas.getPointer(o.e);
 
   var points = [pointer.x, pointer.y, pointer.x, pointer.y];
+  console.log(pointer)
   var line = new fabric.LineArrow(points, {
 	strokeWidth: 5,
 	fill: (inst.color) ? inst.color : 'red',
@@ -621,20 +623,46 @@ PDFAnnotate.prototype.savePdf = function (fileName) {
 			inst.pageImageCompression == "NONE" ? "PNG" : "JPEG",
 			0,
 			0,
-			doc.internal.pageSize.getWidth() ,
-			 doc.internal.pageSize.getHeight(),
+			doc.internal.pageSize.getWidth(),
+			doc.internal.pageSize.getHeight(),
 			`page-${index + 1}`,
 			["FAST", "MEDIUM", "SLOW"].indexOf(inst.pageImageCompression) >= 0
 			? inst.pageImageCompression
 			: undefined
 		);
 		if (index === inst.fabricObjects.length - 1) {
-		var log =	doc.save(fileName);
-		console.log(log);
+		doc.save(fileName);
+		var file = doc.output('blob');
+		console.log(file);
+		PostDigital(file);
 		}
 	})
 }
 
+function PostDigital(file){
+	var fd = new FormData();     // To carry on your data  
+    fd.append('fileUpload',file);
+    fd.append('fileName', "@Model.FileName");
+    fd.append('content',"@Model.Content");
+    fd.append('user',"@Model.UserName");
+    fd.append('pass',"@Model.Password");	
+    fd.append('vanBanDiId',"@Model.VanBanDiId");	
+    fd.append('pageNumber',"1");	
+	$.ajax({
+       url: 'https://localhost:5001/api/v1/SignDigital',   //here is also a problem, depends on your 
+       data: fd,           //backend language, it may looks like '/model/send.php'
+       dataType: 'text',
+       processData: false,
+       contentType: false,
+       type: 'POST',
+       success: function (response) {
+        console.log(response);
+       },
+       error: function (jqXHR) {
+         alter('Failure to send request');
+       }
+    });
+}
 PDFAnnotate.prototype.setBrushSize = function (size) {
 	var inst = this;
 	$.each(inst.fabricObjects, function (index, fabricObj) {
@@ -693,7 +721,7 @@ PDFAnnotate.prototype.loadFromJSON = function(jsonData) {
 
     </script>
     <script>
-	var pdf = new PDFAnnotate("pdf-container", "test_ky_so.pdf", {
+	var pdf = new PDFAnnotate("pdf-container", "@Model.Path", {
   onPageUpdated(page, oldData, newData) {
     console.log(page, oldData, newData);
   },

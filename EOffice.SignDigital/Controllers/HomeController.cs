@@ -18,9 +18,16 @@ namespace EOffice.SignDigital.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public IActionResult Index(string UserName, string Password, string FileName, string Path, string VanBanDiId)
         {
-            return View();
+            var model = new Models.SignDigital();
+            model.UserName = UserName;
+            model.Password = Password;
+            model.FileName = FileName;
+            model.Path = Path;
+            model.VanBanDiId = VanBanDiId;
+            return View(model);
         }
 
         public IActionResult Privacy()

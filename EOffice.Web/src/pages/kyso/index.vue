@@ -25,6 +25,7 @@ export default {
           active: true,
         }
       ],
+      getKySiIframe: "https://localhost:5003",
       files: null,
       apiUrl: process.env.VUE_APP_API_URL,
       url: `${process.env.VUE_APP_API_URL}files/upload`,
@@ -41,7 +42,20 @@ export default {
       showModal: false,
     };
   },
+  created() {
+    this.loadKySoLocalStoage();
+  },
   methods: {
+    loadKySoLocalStoage(){
+      let dataJSON = localStorage.getItem("kysophaply");
+      if(dataJSON){
+        let convertData = JSON.parse(dataJSON);
+        if(convertData){
+          this.getKySiIframe += "?userName=" + convertData.userName + "&password=" + convertData.password + "&fileName=" + convertData.fileName + "&path=" + convertData.path + "&vanBanDiId=" + convertData.vanBanDiId;
+        }
+      }
+      console.log(this.getKySiIframe)
+    },
     removeThisFile(file, error, xhr) {
       let fileCongViec = JSON.parse(file.xhr.response);
       if (fileCongViec.data && fileCongViec.data.id) {
@@ -81,7 +95,7 @@ export default {
           <div class="card-body">
             <div class="row">
               <div class="col-12">
-                <iframe style="height: 80vh; width: 100%" src="https://localhost:5003/"></iframe>
+                <iframe style="height: 80vh; width: 100%" :src="getKySiIframe"></iframe>
               </div>
               <!-- end col -->
             </div>
