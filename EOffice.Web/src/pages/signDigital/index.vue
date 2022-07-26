@@ -21,7 +21,7 @@ export default {
     <PageHeader :title="title" :items="items"/>
     <div class="row">
 
-      <iframe style="height: 100vh" width="800" src="https://localhost:5003/"></iframe>
+      <iframe style="height: 100vh" width="800" src="https://signdigital.dthu.edu.vn/"></iframe>
         </div>
   </Layout>
 </template>

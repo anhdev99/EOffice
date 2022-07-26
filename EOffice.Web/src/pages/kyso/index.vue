@@ -25,7 +25,7 @@ export default {
           active: true,
         }
       ],
-      getKySiIframe: "https://localhost:5003",
+      getKySiIframe: "https://signdigital.dthu.edu.vn/",
       files: null,
       apiUrl: process.env.VUE_APP_API_URL,
       url: `${process.env.VUE_APP_API_URL}files/upload`,

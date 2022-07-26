@@ -649,7 +649,7 @@ function PostDigital(file){
     fd.append('vanBanDiId',"@Model.VanBanDiId");	
     fd.append('pageNumber',"1");	
 	$.ajax({
-       url: 'https://localhost:5001/api/v1/SignDigital',   //here is also a problem, depends on your 
+       url: 'https://apieoffice.dthu.edu.vn/api/v1/SignDigital',   //here is also a problem, depends on your 
        data: fd,           //backend language, it may looks like '/model/send.php'
        dataType: 'text',
        processData: false,

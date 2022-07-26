@@ -736,26 +736,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\ntkie\\.nuget\\packages\\": {}
+    "/Users/kietnguyen/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\anhdev99\\EOffice\\EOffice.SignDigital\\EOffice.SignDigital.csproj",
+      "projectUniqueName": "/Users/kietnguyen/Data/anhdev99/DThUGroup/EOffice/EOffice.SignDigital/EOffice.SignDigital.csproj",
       "projectName": "EOffice.SignDigital",
-      "projectPath": "D:\\anhdev99\\EOffice\\EOffice.SignDigital\\EOffice.SignDigital.csproj",
-      "packagesPath": "C:\\Users\\ntkie\\.nuget\\packages\\",
-      "outputPath": "D:\\anhdev99\\EOffice\\EOffice.SignDigital\\obj\\",
+      "projectPath": "/Users/kietnguyen/Data/anhdev99/DThUGroup/EOffice/EOffice.SignDigital/EOffice.SignDigital.csproj",
+      "packagesPath": "/Users/kietnguyen/.nuget/packages/",
+      "outputPath": "/Users/kietnguyen/Data/anhdev99/DThUGroup/EOffice/EOffice.SignDigital/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\ntkie\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/Users/kietnguyen/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net5.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -785,10 +783,25 @@
           "net47",
           "net471",
           "net472",
-          "net48"
+          "net48",
+          "net481"
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[5.0.0, 5.0.0]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.osx-x64",
+            "version": "[5.0.17, 5.0.17]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[5.0.0, 5.0.0]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.AspNetCore.App": {
             "privateAssets": "none"
@@ -797,7 +810,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.410\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.400-preview.22330.6/RuntimeIdentifierGraph.json"
       }
     }
   }
