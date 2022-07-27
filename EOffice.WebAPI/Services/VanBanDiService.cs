@@ -123,7 +123,8 @@ namespace EOffice.WebAPI.Services
                 BanChinh = model.BanChinh,
                 HienThiThongBao = model.HienThiThongBao,
                 MucDoBaoMat = model.MucDoBaoMat,
-                MucDoTinhChat = model.MucDoTinhChat
+                MucDoTinhChat = model.MucDoTinhChat,
+                TrinhLanhDaoTruong = model.TrinhLanhDaoTruong
             };
 
 
@@ -237,6 +238,7 @@ namespace EOffice.WebAPI.Services
             entity.MucDoBaoMat = model.MucDoBaoMat;
             entity.MucDoTinhChat = model.MucDoTinhChat;
             entity.File = model.File;
+            entity.TrinhLanhDaoTruong = model.TrinhLanhDaoTruong;
 
 
             if (model.UploadFiles != default)
@@ -363,12 +365,12 @@ namespace EOffice.WebAPI.Services
             var result = new PagingModel<VanBanDi>();
             var builder = Builders<VanBanDi>.Filter;
             var filter = builder.Empty;
-
+            filter = builder.And(filter, builder.Where(x =>  x.IsDeleted == false));
             var checkQuyenThuKy =
-                CurrentUser.Roles.Find(x => x.Ten == "Thư ký hiệu trường" || x.Ten == "Văn thư trường");
+                CurrentUser.Roles.Find(x => x.Code == RoleConstants.VAN_THU_TRUONG || x.Code == RoleConstants.THU_KY_HIEU_TRUONG);
             if (checkQuyenThuKy != default)
             {
-                filter = builder.And(filter, builder.Where(x => x.IsDeleted == false));
+                filter = builder.And(filter, builder.Where(x => x.TrinhLanhDaoTruong == true));
             }
             else
             {

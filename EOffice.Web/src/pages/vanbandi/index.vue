@@ -982,6 +982,10 @@ export default {
                             <!--                            Điều kiện-->
                             <div class="col-md-12">
                               <div class="mb-2 d-flex align-items-center">
+                                <switches v-model="model.trinhLanhDaoTruong" color="primary" class="ml-1 mx-2"></switches>
+                                <label for=""> Trình lãnh đạo trường</label>
+                              </div>
+                              <div class="mb-2 d-flex align-items-center">
                                 <switches v-model="model.congVanChiDoc" color="primary" class="ml-1 mx-2"></switches>
                                 <label for="">Là công văn chỉ đọc</label>
                               </div>
@@ -993,6 +997,7 @@ export default {
                                 <switches v-model="model.hienThiThongBao" color="primary" class="ml-1 mx-2"></switches>
                                 <label for="">Hiển thị mục thông báo</label>
                               </div>
+
                             </div>
                           </div>
                         </div>

@@ -183,10 +183,10 @@ namespace EOffice.WebAPI.Services
                     builder.Where(x => x.Ten.Trim().ToLower().Contains(param.Content.Trim().ToLower())));
             }
 
-            string sortBy = "ThuTu";
+            string sortBy = "Code";
             result.TotalRows = await _context.Roles.CountDocumentsAsync(filter);
             result.Data = await _context.Roles.Find(filter)
-                .Sort(param.SortDesc
+                .Sort(false
                 ? Builders<Role>
                 .Sort.Ascending(sortBy)    
                 : Builders<Role>

@@ -46,6 +46,7 @@ const toJson = (item) => {
         butphe: item.butphe,
         donViNhanXuLy: item.donViNhanXuLy,
         phanCong: item.phanCong,
+        trinhLanhDaoTruong: item.trinhLanhDaoTruong,
     }
 }
 const fromJson = (item) => {
@@ -95,6 +96,7 @@ const fromJson = (item) => {
         butphe: item.butphe,
         donViNhanXuLy: item.donViNhanXuLy,
         phanCong: item.phanCong,
+        trinhLanhDaoTruong: item.trinhLanhDaoTruong,
     }
 }
 
@@ -147,6 +149,7 @@ const baseJson = (items) => {
         filePDF: null,
         uploadFiles: null,
         nguoiPhanCong: null,
+        trinhLanhDaoTruong: false,
     }
 }
 

@@ -50,6 +50,7 @@ namespace EOffice.WebAPI.Models
         public bool CongVanChiDoc { get; set; }
         public bool BanChinh { get; set; }
         public bool HienThiThongBao { get; set; }
+        public bool TrinhLanhDaoTruong { get; set; }
         public User NguoiKy { get; set; }
         public DateTime? NgayKy { get; set; }
         public string FileKySoPhapLy { get; set; }
