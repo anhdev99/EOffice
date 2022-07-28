@@ -568,7 +568,35 @@ export default {
       this.modelTrangThai.currentTrangThai = currentStatus;
       this.modelTrangThai.vanBanDiId = vanBanDiId;
       this.showTrangThaiModal = true;
-    }
+    },
+    async handleChuyenTrangThaiVanBan() {
+      this.submitted = true;
+      this.$v.$touch();
+      if (this.$v.modelTrangThai.$invalid) {
+        return;
+      } else {
+        let loader = this.$loading.show({
+          container: this.$refs.formContainer,
+        });
+        if (
+            this.modelTrangThai
+            && this.modelTrangThai.vanBanDiId != null
+        ) {
+          //Update model
+          await this.$store.dispatch("vanBanDiStore/chuyenTrangThaiVanBan", this.modelTrangThai).then((res) => {
+            if (res.resultCode === 'SUCCESS') {
+              this.showTrangThaiModal = false;
+              this.model = trangThaiModel.currentBaseJson()
+              this.$refs.tblList.refresh();
+            }
+            this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+          })
+        }
+        loader.hide();
+      }
+      this.submitted = false;
+
+    },
   }
 };
 </script>
@@ -1758,11 +1786,11 @@ export default {
             </b-button>
             <b-button v-b-modal.modal-close_visit
                       size="sm"
-                      variant="danger"
+                      variant="primary"
                       type="button"
                       class="w-md"
-                      v-on:click="handleChuyenTrangThai">
-              Xóa
+                      v-on:click="handleChuyenTrangThaiVanBan">
+              Chuyển trạng thái
             </b-button>
           </template>
         </b-modal>
@@ -1808,9 +1836,14 @@ export default {
                                     Không có dữ liệu
                                   </span>
                       </div>
-                      <p
-                          class="mb-2"
-                      >{{item.content}}</p>
+                   <div v-if="item.content" style=" margin-top: 8px; display: flex">
+                   <span style="font-weight: bold;">
+                      Nội dung:
+                   </span>
+                     <p
+                         class="mb-2 " style="margin-left: 8px"
+                     >{{item.content}}</p>
+                   </div>
                       <div class="date bg-primary" style="top: 10px">
                         <h6 class="mt-0">{{ item.createdAtShow }}</h6>
                         <!--                       -->

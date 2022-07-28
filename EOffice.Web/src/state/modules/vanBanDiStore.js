@@ -52,5 +52,8 @@ export const actions = {
     },
     async getVaCapSo({commit}, id) {
         return apiClient.get(controller + "/cap-so-khi-tao-van-ban");
-    }
+    },
+    async chuyenTrangThaiVanBan({commit}, values) {
+        return apiClient.post(controller + "/chuyen-trang-thai-van-ban", values);
+    },
 };

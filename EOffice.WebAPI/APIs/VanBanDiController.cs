@@ -472,5 +472,28 @@ namespace EOffice.WebAPI.APIs
             ResponseMessage result = SmartCA.getSignFile(user, pass, content, fileName, fileInput, pageNumber, xPosition, yPosition);
             return result;
         }
+        
+        [HttpPost]
+        [Route("chuyen-trang-thai-van-ban")]
+        public async Task<IActionResult> Update([FromBody] TrangThaiParam model)
+        {
+            try
+            {
+                await _vanBanDiService.ChuyenTrangThaiVanBan(model);
+
+                return Ok(
+                    new ResultMessageResponse()
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage("Chuyển trạng thái thành công")
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
     }
 }
