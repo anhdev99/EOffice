@@ -45,7 +45,8 @@ namespace EOffice.WebAPI.Services
             _logger = logger.WithCollectionName(_settings.VanBanDiCollectionName)
                 .WithDatabaseName(_settings.DatabaseName)
                 .WithUserName(CurrentUserName);
-            _history = history;
+            _history = history.WithUserName(CurrentUserName);
+            
         }
 
         public async Task<VanBanDi> CapSoVanBan()
@@ -124,7 +125,8 @@ namespace EOffice.WebAPI.Services
                 HienThiThongBao = model.HienThiThongBao,
                 MucDoBaoMat = model.MucDoBaoMat,
                 MucDoTinhChat = model.MucDoTinhChat,
-                TrinhLanhDaoTruong = model.TrinhLanhDaoTruong
+                TrinhLanhDaoTruong = model.TrinhLanhDaoTruong,
+                Ower = CurrentUserShort
             };
 
 
@@ -188,12 +190,12 @@ namespace EOffice.WebAPI.Services
             }
 
 
-            await _history.WithQuestionId(entity.Id)
-                .WithAction(EAction.CREATE)
-                .WithStatus(entity.TrangThai?.Ten, entity.TrangThai?.Ten)
-                .WithType(ETypeHistory.Question, null)
-                .WithTitle("Tạo văn bản đến")
-                .SaveChangeHistoryQuestion();
+            await _history.WithVanBanId(entity.Id)
+                .WithAction(nameof(VanBanAction.CREATE))
+                .WithStatus(entity.TrangThai)
+                .WithType(null)
+                .WithTitle(VanBanAction.CREATE)
+                .SaveChangeHistory();
             return entity;
         }
 
@@ -239,7 +241,6 @@ namespace EOffice.WebAPI.Services
             entity.MucDoTinhChat = model.MucDoTinhChat;
             entity.File = model.File;
             entity.TrinhLanhDaoTruong = model.TrinhLanhDaoTruong;
-
 
             if (model.UploadFiles != default)
             {
@@ -303,12 +304,12 @@ namespace EOffice.WebAPI.Services
                     .WithMessage(DefaultMessage.UPDATE_FAILURE);
             }
 
-            await _history.WithQuestionId(entity.Id)
-                .WithAction(EAction.UPDATE)
-                .WithStatus(entity.TrangThai?.Ten, entity.TrangThai?.Ten)
-                .WithType(ETypeHistory.Question, oldValue)
-                .WithTitle("Cập nhật văn bản đi.")
-                .SaveChangeHistoryQuestion();
+            await _history.WithVanBanId(entity.Id)
+                .WithAction(nameof(VanBanAction.UPDATE))
+                .WithStatus(entity.TrangThai)
+                .WithType(oldValue)
+                .WithTitle(VanBanAction.UPDATE)
+                .SaveChangeHistory();
             return entity;
         }
 
@@ -339,12 +340,12 @@ namespace EOffice.WebAPI.Services
                     .WithMessage(DefaultMessage.DELETE_FAILURE);
             }
 
-            await _history.WithQuestionId(entity.Id)
-                .WithType(ETypeHistory.Question, entity)
-                .WithStatus(entity.TrangThai?.Ten, entity.TrangThai?.Ten)
-                .WithAction(EAction.DELETE)
-                .WithTitle("Xóa văn bản đi.")
-                .SaveChangeHistoryQuestion();
+            await _history.WithVanBanId(entity.Id)
+                .WithType(entity)
+                .WithStatus(entity.TrangThai)
+                .WithAction(nameof(VanBanAction.DELETE))
+                .WithTitle(VanBanAction.DELETE)
+                .SaveChangeHistory();
         }
 
         public async Task<List<VanBanDi>> Get()
@@ -370,12 +371,12 @@ namespace EOffice.WebAPI.Services
                 CurrentUser.Roles.Find(x => x.Code == RoleConstants.VAN_THU_TRUONG || x.Code == RoleConstants.THU_KY_HIEU_TRUONG);
             if (checkQuyenThuKy != default)
             {
-                filter = builder.And(filter, builder.Where(x => x.TrinhLanhDaoTruong == true));
+                filter = builder.And(filter, builder.Where(x =>  x.CreatedBy == CurrentUserName ));
             }
             else
             {
                 filter = builder.And(filter,
-                    builder.Where(x => x.IsDeleted == false && x.CreatedBy == CurrentUserName));
+                    builder.Where(x => x.CreatedBy == CurrentUserName));
             }
 
             // filter = filter & builder.In(x => x.IdOwner, CurrentUser.DonViIds);
@@ -548,12 +549,12 @@ namespace EOffice.WebAPI.Services
                     .WithMessage(DefaultMessage.UPDATE_FAILURE);
             }
 
-            await _history.WithQuestionId(entity.Id)
-                .WithAction(EAction.UPDATE)
-                .WithStatus(entity.TrangThai.Ten, entity.TrangThai?.Ten)
-                .WithType(ETypeHistory.Question, oldValue)
-                .WithTitle("Cập nhật văn bản đi.")
-                .SaveChangeHistoryQuestion();
+            await _history.WithVanBanId(entity.Id)
+                .WithAction(nameof(VanBanAction.PHAN_CONG_VAN_BAN))
+                .WithStatus(entity.TrangThai)
+                .WithType(oldValue)
+                .WithTitle(VanBanAction.PHAN_CONG_VAN_BAN)
+                .SaveChangeHistory();
             return entity;
         }
 
@@ -649,12 +650,12 @@ namespace EOffice.WebAPI.Services
                     .WithMessage(DefaultMessage.UPDATE_FAILURE);
             }
 
-            await _history.WithQuestionId(vanBanDi.Id)
-                .WithAction(EAction.UPDATE)
-                .WithStatus(vanBanDi.TrangThai?.Ten, vanBanDi.TrangThai?.Ten)
-                .WithType(ETypeHistory.Question, vanBanDi)
-                .WithTitle("Xóa thành viên ký số")
-                .SaveChangeHistoryQuestion();
+            await _history.WithVanBanId(vanBanDi.Id)
+                .WithAction(nameof(VanBanAction.KY_SO_NOI_BO))
+                .WithStatus(vanBanDi.TrangThai)
+                .WithType(vanBanDi)
+                .WithTitle("Xóa thành viên ký số: " + model.NguoiKy?.UserName)
+                .SaveChangeHistory();
 
             return vanBanDi;
         }
@@ -720,12 +721,12 @@ namespace EOffice.WebAPI.Services
                     .WithMessage(DefaultMessage.UPDATE_FAILURE);
             }
 
-            await _history.WithQuestionId(vanBanDi.Id)
-                .WithAction(EAction.UPDATE)
-                .WithStatus(vanBanDi.TrangThai?.Ten, vanBanDi.TrangThai?.Ten)
-                .WithType(ETypeHistory.Question, vanBanDi)
+            await _history.WithVanBanId(vanBanDi.Id)
+                .WithAction(nameof(VanBanAction.KY_SO_NOI_BO))
+                .WithStatus(vanBanDi.TrangThai)
+                .WithType(vanBanDi)
                 .WithTitle("Thêm thành viên ký số: " + newNguoiKy.UserName)
-                .SaveChangeHistoryQuestion();
+                .SaveChangeHistory();
 
             return vanBanDi;
         }
@@ -775,12 +776,12 @@ namespace EOffice.WebAPI.Services
                 if (model.Reject)
                 {
                     // vanBanDi.PhanCongKySo = new List<PhanCongKySo>();
-                    await _history.WithQuestionId(vanBanDi.Id)
-                        .WithAction(EAction.UPDATE)
-                        .WithStatus(vanBanDi.TrangThai?.Ten, vanBanDi.TrangThai?.Ten)
-                        .WithType(ETypeHistory.Question, vanBanDi)
-                        .WithTitle("Đã có thành viên từ chối")
-                        .SaveChangeHistoryQuestion();
+                    // await _history.WithQuestionId(vanBanDi.Id)
+                    //     .WithAction(EAction.UPDATE)
+                    //     .WithStatus(vanBanDi.TrangThai?.Ten, vanBanDi.TrangThai?.Ten)
+                    //     .WithType(ETypeHistory.Question, vanBanDi)
+                    //     .WithTitle("Đã có thành viên từ chối")
+                    //     .SaveChangeHistoryQuestion();
                 }
 
                 vanBanDi.PhanCongKySo[tempUserExistIndex].NgayKy = DateTime.Now;
@@ -797,12 +798,12 @@ namespace EOffice.WebAPI.Services
                     .WithMessage(DefaultMessage.UPDATE_FAILURE);
             }
 
-            await _history.WithQuestionId(vanBanDi.Id)
-                .WithAction(EAction.UPDATE)
-                .WithStatus(vanBanDi.TrangThai?.Ten, vanBanDi.TrangThai?.Ten)
-                .WithType(ETypeHistory.Question, vanBanDi)
+            await _history.WithVanBanId(vanBanDi.Id)
+                .WithAction(nameof(VanBanAction.KY_SO_NOI_BO))
+                .WithStatus(vanBanDi.TrangThai)
+                .WithType(vanBanDi)
                 .WithTitle("Ký thành công: " + CurrentUserName)
-                .SaveChangeHistoryQuestion();
+                .SaveChangeHistory();
 
             var vanBanNew = _collection.Find(x => x.Id == model.VanBanDiId).FirstOrDefault();
 
@@ -831,7 +832,14 @@ namespace EOffice.WebAPI.Services
                             vanBanDi.FilePDF.Add(newFile);
                         }
 
-                        var newTrangThai = _context.TrangThai.Find(x => x.Code == "Hoàn thành ký số").FirstOrDefault();
+                        var newTrangThai = _context.TrangThai.AsQueryable().Where(x => x.Code == "Hoàn thành ký số")
+                            .Select(x => new TrangThaiShort()
+                            {
+                                Id = x.Id,
+                                Ten = x.Ten,
+                                Code = x.Code
+                            })
+                            .FirstOrDefault();
                         if (newTrangThai != default)
                         {
                             vanBanNew.TrangThai = newTrangThai;
@@ -939,12 +947,12 @@ namespace EOffice.WebAPI.Services
                     .WithMessage(DefaultMessage.UPDATE_FAILURE);
             }
 
-            await _history.WithQuestionId(vanBanDi.Id)
-                .WithAction(EAction.UPDATE)
-                .WithStatus(vanBanDi.TrangThai?.Ten, vanBanDi.TrangThai?.Ten)
-                .WithType(ETypeHistory.Question, vanBanDi)
+            await _history.WithVanBanId(vanBanDi.Id)
+                .WithAction(nameof(VanBanAction.CAP_SO_VAN_BAN))
+                .WithStatus(vanBanDi.TrangThai)
+                .WithType(vanBanDi)
                 .WithTitle("Cấp số văn bản đi.")
-                .SaveChangeHistoryQuestion();
+                .SaveChangeHistory();
             return vanBanDi;
         }
 
@@ -965,6 +973,41 @@ namespace EOffice.WebAPI.Services
             {
                 SignDigitalService.ValidDsign(file.Path, model.User);
             }
+        }
+
+        public async Task ChuyenTrangThaiVanBan(TrangThaiParam model)
+        {
+            if (model == default)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.DATA_NOT_EMPTY);
+            }
+
+            var vanBanDi = _context.VanBanDi.Find(x => x.Id == model.VanBanDiId).FirstOrDefault();
+            if (vanBanDi == default)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage("Không tìm thấy văn bản!");
+            }
+
+            vanBanDi.TrangThai = model.NewTrangThai;
+            var result = await BaseMongoDb.UpdateAsync(vanBanDi);
+            if (!result.Success)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.UPDATE_FAILURE);
+            }
+
+            await _history.WithVanBanId(vanBanDi.Id)
+                .WithAction(nameof(VanBanAction.CHUYEN_TRANG_THAI))
+                .WithStatus(vanBanDi.TrangThai)
+                .WithType(vanBanDi)
+                .WithTitle(VanBanAction.CHUYEN_TRANG_THAI)
+                .WithContent($"Chuyển trạng thái từ: {model.CurrentTrangThai.Ten} sang {model.NewTrangThai.Ten}")
+                .SaveChangeHistory();
         }
     }
 }

@@ -34,5 +34,6 @@ namespace EOffice.WebAPI.Interfaces
         Task<PagingModel<VanBanDi>> GetPagingCapSo(VanBanDiParam param);
         Task<VanBanDi> CapSoVanBanDi(VanBanDi model);
         Task XacThuc(XacMinhVM model);
+        Task ChuyenTrangThaiVanBan(TrangThaiParam model);
     }
 }

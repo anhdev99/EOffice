@@ -123,12 +123,12 @@ namespace EOffice.WebAPI.Services
                     .WithMessage(DefaultMessage.CREATE_FAILURE);
             }
             
-            await _history.WithQuestionId(entity.Id)
-                .WithAction(EAction.CREATE)
-                .WithStatus(entity.TrangThai.Id, entity.TrangThaiTen)
-                .WithType(ETypeHistory.Question, null)
-                .WithTitle("Thêm thành công")
-                .SaveChangeHistoryQuestion();
+            // await _history.WithQuestionId(entity.Id)
+            //     .WithAction(EAction.CREATE)
+            //     .WithStatus(entity.TrangThai.Id, entity.TrangThaiTen)
+            //     .WithType(ETypeHistory.Question, null)
+            //     .WithTitle("Thêm thành công")
+            //     .SaveChangeHistoryQuestion();
             return entity;
         }
 
@@ -211,12 +211,12 @@ namespace EOffice.WebAPI.Services
                     .WithMessage(DefaultMessage.UPDATE_FAILURE);
             }
 
-            await _history.WithQuestionId(entity.Id)
-                .WithAction(EAction.UPDATE)
-                .WithStatus(entity.TrangThai.Id, entity.TrangThaiTen)
-                .WithType(ETypeHistory.Question, oldValue)
-                .WithTitle("Cập nhập thành công.")
-                .SaveChangeHistoryQuestion();
+            // await _history.WithQuestionId(entity.Id)
+            //     .WithAction(EAction.UPDATE)
+            //     .WithStatus(entity.TrangThai.Id, entity.TrangThaiTen)
+            //     .WithType(ETypeHistory.Question, oldValue)
+            //     .WithTitle("Cập nhập thành công.")
+            //     .SaveChangeHistoryQuestion();
             return entity;
         }
         public async Task<VanBanDen> ButPhe(ButPhe model)
@@ -288,12 +288,12 @@ namespace EOffice.WebAPI.Services
                     .WithCode(EResultResponse.FAIL.ToString())
                     .WithMessage(DefaultMessage.UPDATE_FAILURE);
             }
-            await _history.WithQuestionId(entity.Id)
-                .WithAction(EAction.UPDATE)
-                .WithStatus(entity.TrangThai.Id, entity.TrangThaiTen)
-                .WithType(ETypeHistory.Question, entity)
-                .WithTitle("Bút phê thành công.")
-                .SaveChangeHistoryQuestion();
+            // await _history.WithQuestionId(entity.Id)
+            //     .WithAction(EAction.UPDATE)
+            //     .WithStatus(entity.TrangThai.Id, entity.TrangThaiTen)
+            //     .WithType(ETypeHistory.Question, entity)
+            //     .WithTitle("Bút phê thành công.")
+            //     .SaveChangeHistoryQuestion();
             return entity;
         }
 
@@ -345,12 +345,12 @@ namespace EOffice.WebAPI.Services
                     .WithMessage(DefaultMessage.UPDATE_FAILURE);
             }
 
-            await _history.WithQuestionId(entity.Id)
-                .WithAction(EAction.UPDATE)
-                .WithStatus(entity.TrangThai?.Ten, entity.TrangThai?.Ten)
-                .WithType(ETypeHistory.Question, entity)
-                .WithTitle("Thêm nhóm thực hiện thành công.")
-                .SaveChangeHistoryQuestion();
+            // await _history.WithQuestionId(entity.Id)
+            //     .WithAction(EAction.UPDATE)
+            //     .WithStatus(entity.TrangThai?.Ten, entity.TrangThai?.Ten)
+            //     .WithType(ETypeHistory.Question, entity)
+            //     .WithTitle("Thêm nhóm thực hiện thành công.")
+            //     .SaveChangeHistoryQuestion();
             return entity;
         }
         
@@ -380,13 +380,13 @@ namespace EOffice.WebAPI.Services
                     .WithCode(EResultResponse.FAIL.ToString())
                     .WithMessage(DefaultMessage.DELETE_FAILURE);
             }
-
-            await _history.WithQuestionId(entity.Id)
-                .WithType(ETypeHistory.Question, entity)
-                .WithStatus(entity.TrangThai.Id, entity.TrangThaiTen)
-                .WithAction(EAction.DELETE)
-                .WithTitle("Xóa văn bản đi.")
-                .SaveChangeHistoryQuestion();
+            //
+            // await _history.WithQuestionId(entity.Id)
+            //     .WithType(ETypeHistory.Question, entity)
+            //     .WithStatus(entity.TrangThai.Id, entity.TrangThaiTen)
+            //     .WithAction(EAction.DELETE)
+            //     .WithTitle("Xóa văn bản đi.")
+            //     .SaveChangeHistoryQuestion();
         }
 
         public async Task<List<VanBanDen>> Get()
@@ -473,12 +473,12 @@ namespace EOffice.WebAPI.Services
                     .WithMessage(DefaultMessage.UPDATE_FAILURE);
             }
 
-            await _history.WithQuestionId(entity.Id)
-                .WithAction(EAction.UPDATE)
-                .WithStatus(entity.TrangThai.Id, entity.TrangThaiTen)
-                .WithType(ETypeHistory.Question, oldValue)
-                .WithTitle("Cập nhật văn bản đi.")
-                .SaveChangeHistoryQuestion();
+            // await _history.WithQuestionId(entity.Id)
+            //     .WithAction(EAction.UPDATE)
+            //     .WithStatus(entity.TrangThai.Id, entity.TrangThaiTen)
+            //     .WithType(ETypeHistory.Question, oldValue)
+            //     .WithTitle("Cập nhật văn bản đi.")
+            //     .SaveChangeHistoryQuestion();
             return entity;
         }
         

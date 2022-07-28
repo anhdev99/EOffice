@@ -2,7 +2,7 @@ import {apiClient} from "@/state/modules/apiClient";
 const controller = "auth";
 export const state = {
     currentUser: localStorage.getItem('userToken'),
-    authUser: {}
+    authUser: localStorage.getItem('auth-user') ? JSON.parse(localStorage.getItem('auth-user')): {},
 }
 
 export const mutations = {

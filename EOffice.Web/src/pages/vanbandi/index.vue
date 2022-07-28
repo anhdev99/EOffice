@@ -19,6 +19,8 @@ import {butPheModel} from "@/models/butPheModel";
 import {phanCongModel} from "@/models/phanCongModel";
 import {notifyModel} from "@/models/notifyModel";
 import {vanBanDiModel} from "@/models/vanBanDiModel";
+import {trangThaiModel} from "@/models/trangThaiModel";
+import {CURRENT_USER} from "@/helpers/currentUser";
 
 /**
  * Advanced table component
@@ -62,6 +64,7 @@ export default {
       listCoQuan: [],
       listRole: [],
       showModalMembers: false,
+      showTrangThaiModal: false,
       model: vanBanDiModel.baseJson(),
       modelKySo: {
         choPhepKy: true,
@@ -89,50 +92,64 @@ export default {
         {
           key: 'STT',
           label: 'STT',
-          thStyle: {width: '50px', minWidth: '50px'},
+          thStyle: {width: '30px', minWidth: '30px'},
           class: "text-center"
         },
         {
           key: "soLuuCV",
           label: "Số lưu CV",
-          thStyle: {width: '10px', minWidth: '160px'},
+          thStyle: {width: '150px', minWidth: '100px'},
           class: "px-1",
-          sortable: true,
+          sortable: false ,
         },
         {
           key: "soVBDi",
           label: "Số CV đi",
-          thStyle: {width: '160px', minWidth: '160px'},
+          thStyle: {width: '150px', minWidth: '100px'},
           class: "px-1",
+          sortable: false ,
         },
         {
           key: "trichYeu",
           label: "Trích yếu",
-          thStyle: {width: '100px', minWidth: '100px'},
+          thStyle: {width: 'auto', minWidth: 'auto'},
           class: "px-1",
+          sortable: false ,
         },
         {
           key: "loaiVanBan",
           label: "Loại văn bản",
-          thStyle: {width: '100px', minWidth: '100px'},
-          class: "px-1",
+          thStyle: {width: '150px', minWidth: '100px'},
+          class: "text-center",
+          sortable: false ,
+
         },
         {
           key: "trangThai",
           label: "Trạng thái",
-          thStyle: {width: '100px', minWidth: '100px'},
-          class: "px-1",
+          thStyle: {width: '150px', minWidth: '100px'},
+          class: "text-center",
+          sortable: false ,
         },
         {
           key: "ngayNhap",
           label: "Ngày nhập",
           thStyle: {width: '100px', minWidth: '100px'},
-          class: "px-1",
+          class: "text-center"
+        },
+        {
+          key: 'chuyenTrangThai',
+          label: '',
+          thStyle: {width: '110px', minWidth: '110px'},
+          class: "text-center",
+          sortable: false ,
         },
         {
           key: 'process',
-          label: 'Xử lý',
-          thStyle: {width: '110px', minWidth: '110px'},
+          label: '',
+          thStyle: {width: '140px', minWidth: '100px'},
+          class: "text-center",
+          sortable: false ,
         }
       ],
       optionsLoaiVanBan: [],
@@ -142,7 +159,7 @@ export default {
       optionsHinhThucNhan: [],
       optionsMucDo: [],
       optionsTrangThai: [],
-      listPhanCongKySo:[],
+      listPhanCongKySo: [],
       editor: ClassicEditor,
       editorConfig: {
         height: '200px'
@@ -158,30 +175,32 @@ export default {
         maxFilesize: 30,
         headers: {"My-Awesome-Header": "header value"},
         addRemoveLinks: true,
-        acceptedFiles: ".jpeg,.jpg,.png,.gif,.doc,.docx,.xlsx,.pptx,.pdf",
+        acceptedFiles: ".doc,.docx,.pdf",
       },
       showModalButPhe: false,
       showModalPhanCong: false,
       phanCong: [{id: 1}],
+      currentStatus: null,
+      modelTrangThai: trangThaiModel.currentBaseJson(),
+      currentUserName: CURRENT_USER.USERNAME,
+      showHistoryModal: false,
+      listHistoryQuestion: []
     };
   },
   validations: {
     model: {
       loaiVanBan: {required},
       trangThai: {required},
+    },
+    modelTrangThai: {
+      currentTrangThai: {required},
+      newTrangThai: {required},
     }
   },
-  computed: {
-    /**
-     * Total no. of records
-     */
-    rows() {
-      return this.data.length;
-    },
-  },
+
   async created() {
     this.getLoaiVanBan();
-    this.getTrangThai();
+
     this.getDonVi();
     this.getUser();
     this.getLinhVuc();
@@ -215,62 +234,92 @@ export default {
 
     async handleSubmit(e) {
       e.preventDefault();
-      if (
-          this.model.id != 0 &&
-          this.model.id != null &&
-          this.model.id
-      ) {
-        //Update model
-        await this.$store.dispatch("vanBanDiStore/update", this.model).then((res) => {
-          if (res.resultCode === 'SUCCESS') {
-            this.showModal = false;
-            this.model = vanBanDenModel.baseJson()
-            this.$refs.tblList.refresh();
-          }
-          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
-        })
+      this.submitted = true;
+      this.$v.$touch();
+      if (this.$v.model.$invalid) {
+        return;
       } else {
-        //Create modelhandleSubmit
-        this.model.version = 1;
-        await this.$store.dispatch("vanBanDiStore/create", this.model).then((res) => {
-          if (res.resultCode === 'SUCCESS') {
-            this.showModal = false;
-            this.model = vanBanDenModel.baseJson()
-            this.$refs.tblList.refresh();
-          }
-          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+        let loader = this.$loading.show({
+          container: this.$refs.formContainer,
         });
+        if (
+            this.model.id != 0 &&
+            this.model.id != null &&
+            this.model.id
+        ) {
+          //Update model
+          await this.$store.dispatch("vanBanDiStore/update", this.model).then((res) => {
+            if (res.resultCode === 'SUCCESS') {
+              this.showModal = false;
+              this.model = vanBanDenModel.baseJson()
+              this.$refs.tblList.refresh();
+            }
+            this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+          })
+        } else {
+          //Create modelhandleSubmit
+          this.model.version = 1;
+          await this.$store.dispatch("vanBanDiStore/create", this.model).then((res) => {
+            if (res.resultCode === 'SUCCESS') {
+              this.showModal = false;
+              this.model = vanBanDenModel.baseJson()
+              this.$refs.tblList.refresh();
+            }
+            this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+          });
+        }
+        loader.hide();
       }
+      this.submitted = false;
+
+    },
+    async handleHistory(id) {
+      let loader = this.$loading.show({
+        container: this.$refs.formContainer,
+      });
+      await this.$store.dispatch("historyVanBanStore/getHistoryVanBanDi", id).then((res) => {
+        if (res.resultCode == "SUCCESS") {
+          this.listHistoryQuestion = res.data;
+          this.showHistoryModal = true;
+
+          loader.hide();
+        }
+      });
     },
     async handleUpdate(id) {
+      let loader = this.$loading.show({
+        container: this.$refs.formContainer,
+      });
       await this.$store.dispatch("vanBanDiStore/getById", id).then((res) => {
         if (res.resultCode == "SUCCESS") {
-          console.log("res", res.data)
           this.model = res.data;
           this.showModal = true;
+          this.getTrangThai(this.model.trangThai)
+          loader.hide();
         } else {
           // this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
         }
       });
     },
 
-   async handleCreate() {
-     await this.$store.dispatch("vanBanDiStore/getVaCapSo").then((res) => {
-       if (res.resultCode === 'SUCCESS') {
-         this.model= res.data;
-         this.showModal = true;
-       }
-     });
+    async handleCreate() {
+      await this.$store.dispatch("vanBanDiStore/getVaCapSo").then((res) => {
+        if (res.resultCode === 'SUCCESS') {
+          this.model = res.data;
+          this.showModal = true;
+        }
+      });
+      this.getTrangThai(null);
     },
     handleShowDeleteModal(id) {
       this.model.id = id;
       this.showDeleteModal = true;
     },
     handleDeleteFile(index) {
-      if(this.model){
-      if( this.model.file){
-        this.model.file.splice(index,1);
-      }
+      if (this.model) {
+        if (this.model.file) {
+          this.model.file.splice(index, 1);
+        }
 
       }
     },
@@ -305,9 +354,12 @@ export default {
         }
       });
     },
-    async getTrangThai() {
+    async getTrangThai(currentTrangThai) {
       try {
-        await this.$store.dispatch("trangThaiStore/getTrangThai").then(resp => {
+        await this.$store.dispatch("trangThaiStore/getNextTrangThai", {
+          loaiTrangThai: "VBDi",
+          currentTrangThai: currentTrangThai
+        }).then(resp => {
           if (resp.resultCode == "SUCCESS") {
             let items = resp.data;
             this.loading = false
@@ -511,6 +563,12 @@ export default {
         })
       }
     },
+    handleChuyenTrangThai: function(currentStatus, vanBanDiId){
+      this.getTrangThai(currentStatus)
+      this.modelTrangThai.currentTrangThai = currentStatus;
+      this.modelTrangThai.vanBanDiId = vanBanDiId;
+      this.showTrangThaiModal = true;
+    }
   }
 };
 </script>
@@ -588,20 +646,36 @@ export default {
                                     track-by="id"
                                     label="ten"
                                     placeholder="Chọn loại văn bản"
+                                    :class="{
+                                'is-invalid':
+                                  submitted && $v.model.loaiVanBan.$error,
+                                }"
                                 ></multiselect>
                                 <div
-                                    v-if="submitted && $v.model.loaiVanBan.$error"
+                                    v-if="submitted && !$v.model.loaiVanBan.required"
                                     class="invalid-feedback"
                                 >
-                                <span v-if="!$v.model.loaiVanBan.required"
-                                >Vui lòng chọn loại văn bản đi.</span
-                                >
+                                  Loại văn bản không được để trống.
                                 </div>
                               </div>
                             </div>
                             <!--                            Trạng thái-->
                             <div class="col-md-6">
-                              <div class="mb-2">
+
+                              <div v-if="model.trangThai" class="mb-2">
+                                <label class="form-label" for="validationCustom01">Trạng thái</label> <span
+                                  class="text-danger">*</span>
+                                <input
+                                    id="validationCustom01"
+                                    :value="model.trangThai.ten"
+                                    type="text"
+                                    class="form-control"
+                                    placeholder=""
+                                    disabled
+                                />
+                              </div>
+
+                              <div v-else class="mb-2">
                                 <label class="form-label" for="validationCustom01">Trạng thái</label> <span
                                   class="text-danger">*</span>
                                 <multiselect
@@ -610,78 +684,69 @@ export default {
                                     track-by="id"
                                     label="ten"
                                     placeholder="Chọn trạng thái"
-
+                                    :class="{
+                                'is-invalid':
+                                  submitted && $v.model.trangThai.$error,
+                                }"
                                 ></multiselect>
+                                <div
+                                    v-if="submitted && !$v.model.trangThai.required"
+                                    class="invalid-feedback"
+                                >
+                                  Trạng thái không được để trống.
+                                </div>
                               </div>
                             </div>
                             <!--                              Số lưu -->
                             <div class="col-md-4">
                               <div class="mb-2">
-                                <label class="form-label" for="validationCustom01">Số lưu CV</label> <span
-                                  class="text-danger">*</span>
+                                <label class="form-label" for="validationCustom01">Số lưu CV</label>
+                                <!--                                <span-->
+                                <!--                                  class="text-danger">*</span>-->
                                 <input
                                     id="validationCustom01"
                                     v-model="model.soLuuCV"
                                     type="text"
                                     class="form-control"
                                     placeholder=""
-                                    :class="{
-                                      'is-invalid': submitted && $v.model.soLuuCV.$error,
-                                    }"
                                 />
-                                <div
-                                    v-if="submitted && $v.model.soLuuCV.$error"
-                                    class="invalid-feedback"
-                                >
-                                <span v-if="!$v.model.soLuuCV.required"
-                                >Vui lòng thêm số lưu CV.</span
-                                >
-                                </div>
                               </div>
                             </div>
                             <!--                            Số VB đến -->
                             <div class="col-md-4">
                               <div class="mb-2">
-                                <label class="form-label" for="validationCustom01">Số CV đi</label> <span
-                                  class="text-danger">*</span>
+                                <label class="form-label" for="validationCustom01">Số CV đi</label>
+                                <!--                                <span-->
+                                <!--                                  class="text-danger">*</span>-->
                                 <input
                                     id="validationSoVBDen"
                                     v-model="model.soVBDi"
                                     type="text"
                                     class="form-control"
                                     placeholder=""
-                                    :class="{
-                                      'is-invalid': submitted && $v.model.soVBDi.$error,
-                                    }"
+
                                 />
-                                <div
-                                    v-if="submitted && $v.model.soVBDi.$error"
-                                    class="invalid-feedback"
-                                >
-                                <span v-if="!$v.model.soVBDi.required"
-                                >Vui lòng thêm số văn bản đi.</span
-                                >
-                                </div>
                               </div>
                             </div>
                             <!--                            Ngày nhận -->
                             <div class="col-md-4">
                               <div class="mb-2">
                                 <label class="form-label" for="validationCustom01">Ngày nhập</label>
-<!--                                <date-picker-->
-<!--                                    v-model="model.ngayNhap"-->
-<!--                                    format="DD/MM/YYYY"-->
-<!--                                    :first-day-of-week="1"-->
-<!--                                    lang="en"-->
-<!--                                    placeholder="Chọn ngày nhập"-->
-<!--                                ></date-picker>-->
+                                <!--                                <date-picker-->
+                                <!--                                    v-model="model.ngayNhap"-->
+                                <!--                                    format="DD/MM/YYYY"-->
+                                <!--                                    :first-day-of-week="1"-->
+                                <!--                                    lang="en"-->
+                                <!--                                    placeholder="Chọn ngày nhập"-->
+                                <!--                                ></date-picker>-->
                                 <date-picker v-model="model.ngayNhap"
                                              format="DD/MM/YYYY"
                                              value-type="format"
                                 >
                                   <div slot="input">
-                                    <input  v-model="model.ngayNhap"
-                                           v-mask="'##/##/####'" type="text" class="form-control" placeholder="Nhập ngày nhập"/>
+                                    <input v-model="model.ngayNhap"
+                                           v-mask="'##/##/####'" type="text" class="form-control"
+                                           placeholder="Nhập ngày nhập"/>
                                   </div>
                                 </date-picker>
                               </div>
@@ -689,8 +754,9 @@ export default {
                             <!--                              Số lưu -->
                             <div class="col-md-4">
                               <div class="mb-2">
-                                <label class="form-label" for="validationCustom01"> Trả lời CV số</label> <span
-                                  class="text-danger">*</span>
+                                <label class="form-label" for="validationCustom01"> Trả lời CV số</label>
+                                <!--                                <span-->
+                                <!--                                  class="text-danger">*</span>-->
                                 <input
                                     id="validationCustom01"
                                     v-model="model.traLoiCVSo"
@@ -709,8 +775,9 @@ export default {
                                              value-type="format"
                                 >
                                   <div slot="input">
-                                    <input  v-model="model.ngayTraLoi"
-                                            v-mask="'##/##/####'" type="text" class="form-control" placeholder="Nhập ngày trả lời"/>
+                                    <input v-model="model.ngayTraLoi"
+                                           v-mask="'##/##/####'" type="text" class="form-control"
+                                           placeholder="Nhập ngày trả lời"/>
                                   </div>
                                 </date-picker>
                               </div>
@@ -718,8 +785,9 @@ export default {
                             <!--                            Số VB đến -->
                             <div class="col-md-4">
                               <div class="mb-2">
-                                <label class="form-label" for="validationCustom01"> Số bản</label> <span
-                                  class="text-danger">*</span>
+                                <label class="form-label" for="validationCustom01"> Số bản</label>
+                                <!--                                <span-->
+                                <!--                                  class="text-danger">*</span>-->
                                 <input
                                     id="validationSoVBDen"
                                     v-model="model.soBan"
@@ -730,20 +798,34 @@ export default {
                                 />
                               </div>
                             </div>
-                            <!--                            Người ký-->
                             <div class="col-md-6">
                               <div class="mb-2">
-                                <label class="form-label" for="validationCustom01">Người ký</label>
+                                <label class="form-label" for="validationCustom01"> Người ký</label>
                                 <multiselect
                                     v-model="model.nguoiKy"
                                     :options="optionsUser"
                                     track-by="id"
                                     label="fullName"
-                                    placeholder="Chọn người ký"
+                                    placeholder="Chọn cán bộ soạn"
                                     deselect-label="Nhấn để xoá"
                                     selectLabel="Nhấn enter để chọn"
                                     selectedLabel="Đã chọn"
-                                ></multiselect>
+                                >
+                                  <template slot="singleLabel" slot-scope="{ option }">
+                                    <strong>{{ option.fullName }}</strong>
+
+                                    <span v-if="option.donVi" style="color:red">&nbsp;{{ option.donVi.ten }}</span>
+                                  </template>
+                                  <template slot="option" slot-scope="{ option }">
+                                    <div class="option__desc">
+          <span class="option__title">
+            <strong>{{ option.fullName }}&nbsp;</strong>
+          </span>
+                                      <span v-if="option.donVi" class="option__small"
+                                            style="color:green">{{ option.donVi.ten }}</span>
+                                    </div>
+                                  </template>
+                                </multiselect>
                               </div>
                             </div>
                             <!--                            Ngày Ký-->
@@ -755,8 +837,9 @@ export default {
                                              value-type="format"
                                 >
                                   <div slot="input">
-                                    <input  v-model="model.ngayKy"
-                                            v-mask="'##/##/####'" type="text" class="form-control" placeholder="Nhập ngày ký"/>
+                                    <input v-model="model.ngayKy"
+                                           v-mask="'##/##/####'" type="text" class="form-control"
+                                           placeholder="Nhập ngày ký"/>
                                   </div>
                                 </date-picker>
                               </div>
@@ -764,8 +847,9 @@ export default {
                             <!--                            Trích yếu -->
                             <div class="col-md-12">
                               <div class="mb-2">
-                                <label class="form-label" for="validationCustom01">Trích yếu</label> <span
-                                  class="text-danger">*</span>
+                                <label class="form-label" for="validationCustom01">Trích yếu</label>
+                                <!--                                <span-->
+                                <!--                                  class="text-danger">*</span>-->
                                 <ckeditor
                                     v-model="model.trichYeu"
                                     :editor="editor"
@@ -775,7 +859,7 @@ export default {
                             </div>
                             <div v-if="model.filePDF != null  && model.filePDF.length > 0" class="col-md-12">
                               <label for="">Danh sách đã ký (Nhấn vào để tải xuống)</label>
-                              <template >
+                              <template>
                                 <div v-for="(file, index) in model.filePDF" :key="index">
                                   <a
                                       :href="`${apiUrl}files/view/${file.fileId}`"
@@ -783,7 +867,7 @@ export default {
                                   ><i
                                       :class="`mdi font-size-16 align-middle me-2`"
                                   ></i>
-                                    {{index + 1}}: {{ file.fileName }}</a
+                                    {{ index + 1 }}: {{ file.fileName }}</a
                                   >
                                 </div>
                               </template>
@@ -802,7 +886,7 @@ export default {
                                   ><i
                                       :class="`mdi font-size-16 align-middle me-2`"
                                   ></i>
-                                    {{index + 1}}: {{ file.fileName }}</a
+                                    {{ index + 1 }}: {{ file.fileName }}</a
                                   >
                                   <button
                                       type="button"
@@ -819,7 +903,8 @@ export default {
 
                             <!--                            file đính kèm-->
                             <div class="col-md-12">
-                              <label for="">File đính kèm</label>
+                              <label for="">Tệp tin đính kèm</label>
+                              <div style="color: red">Lưu ý: Tệp tin pdf hoặc word</div>
                               <vue-dropzone
                                   id="dropzone"
                                   ref="myVueDropzone"
@@ -843,7 +928,7 @@ export default {
 
                         </div>
 
-                        <div  class="col-md-5">
+                        <div class="col-md-5">
                           <div class="row">
                             <div class="col-md-12">
                               <div class="mb-2">
@@ -885,7 +970,8 @@ export default {
           <span class="option__title">
             <strong>{{ option.fullName }}&nbsp;</strong>
           </span>
-                                      <span v-if="option.donVi" class="option__small" style="color:green">{{ option.donVi.ten }}</span>
+                                      <span v-if="option.donVi" class="option__small"
+                                            style="color:green">{{ option.donVi.ten }}</span>
                                     </div>
                                   </template>
                                 </multiselect>
@@ -980,25 +1066,26 @@ export default {
                               </div>
                             </div>
                             <!--                            Điều kiện-->
-                            <div class="col-md-12">
-                              <div class="mb-2 d-flex align-items-center">
-                                <switches v-model="model.trinhLanhDaoTruong" color="primary" class="ml-1 mx-2"></switches>
-                                <label for=""> Trình lãnh đạo trường</label>
-                              </div>
-                              <div class="mb-2 d-flex align-items-center">
-                                <switches v-model="model.congVanChiDoc" color="primary" class="ml-1 mx-2"></switches>
-                                <label for="">Là công văn chỉ đọc</label>
-                              </div>
-                              <div class="mb-2 d-flex align-items-center">
-                                <switches v-model="model.banChinh" color="primary" class="ml-1 mx-2"></switches>
-                                <label for=""> Là bản chính</label>
-                              </div>
-                              <div class="mb-2 d-flex align-items-center">
-                                <switches v-model="model.hienThiThongBao" color="primary" class="ml-1 mx-2"></switches>
-                                <label for="">Hiển thị mục thông báo</label>
-                              </div>
+<!--                            <div class="col-md-12">-->
+<!--                              <div class="mb-2 d-flex align-items-center">-->
+<!--                                <switches v-model="model.trinhLanhDaoTruong" color="primary"-->
+<!--                                          class="ml-1 mx-2"></switches>-->
+<!--                                <label for=""> Trình lãnh đạo trường</label>-->
+<!--                              </div>-->
+<!--                              <div class="mb-2 d-flex align-items-center">-->
+<!--                                <switches v-model="model.congVanChiDoc" color="primary" class="ml-1 mx-2"></switches>-->
+<!--                                <label for="">Là công văn chỉ đọc</label>-->
+<!--                              </div>-->
+<!--                              <div class="mb-2 d-flex align-items-center">-->
+<!--                                <switches v-model="model.banChinh" color="primary" class="ml-1 mx-2"></switches>-->
+<!--                                <label for=""> Là bản chính</label>-->
+<!--                              </div>-->
+<!--                              <div class="mb-2 d-flex align-items-center">-->
+<!--                                <switches v-model="model.hienThiThongBao" color="primary" class="ml-1 mx-2"></switches>-->
+<!--                                <label for="">Hiển thị mục thông báo</label>-->
+<!--                              </div>-->
 
-                            </div>
+<!--                            </div>-->
                           </div>
                         </div>
                       </div>
@@ -1060,6 +1147,7 @@ export default {
                     <template v-slot:cell(process)="data">
 
                       <button
+                          v-if="currentUserName == data.item.createdBy"
                           type="button"
                           size="sm"
                           class="btn btn-outline btn-sm"
@@ -1067,7 +1155,15 @@ export default {
                           v-on:click="handleUpdate(data.item.id)">
                         <i class="fas fa-pencil-alt text-success me-1"></i>
                       </button>
-                      <template   v-if="data.item.trangThai">
+                      <button
+                          type="button"
+                          size="sm"
+                          class="btn btn-outline btn-sm"
+                          data-toggle="tooltip" data-placement="bottom" title="Lịch sử"
+                          v-on:click="handleHistory(data.item.id)">
+                        <i class="fas fa-history text-info me-1"></i>
+                      </button>
+                      <template v-if="data.item.trangThai">
                         <button
                             v-if="data.item.trangThai.ten == 'Ký số'"
                             type="button"
@@ -1079,15 +1175,16 @@ export default {
                         </button>
                       </template>
 
+<!--                      <button-->
+<!--                          type="button"-->
+<!--                          size="sm"-->
+<!--                          class="btn btn-outline btn-sm"-->
+<!--                          data-toggle="tooltip" data-placement="bottom" title="Cập nhật"-->
+<!--                          v-on:click="handleShowButPhe(data.item.id)">-->
+<!--                        <i class="fas fa-feather-alt text-primary me-1"></i>-->
+<!--                      </button>-->
                       <button
-                          type="button"
-                          size="sm"
-                          class="btn btn-outline btn-sm"
-                          data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
-                          v-on:click="handleShowButPhe(data.item.id)">
-                        <i class="fas fa-feather-alt text-primary me-1"></i>
-                      </button>
-                      <button
+                          v-if="currentUserName == data.item.createdBy"
                           type="button"
                           size="sm"
                           class="btn btn-outline btn-sm"
@@ -1095,10 +1192,23 @@ export default {
                           v-on:click="handleShowDeleteModal(data.item.id)">
                         <i class="fas fa-trash-alt text-danger me-1"></i>
                       </button>
+
                     </template>
                     <template v-slot:cell(ten)="data">&nbsp;&nbsp;
                       {{ data.item.ten }}
                     </template>
+                    <template v-slot:cell(chuyenTrangThai)="data">
+                      <b-button
+                          type="button"
+                          size="sm"
+                          class="btn btn-light"
+                          data-toggle="tooltip" data-placement="bottom" title="Xóa"
+                          v-on:click="handleChuyenTrangThai(data.item.trangThai,data.item.id)">
+                        <i class="fas fa-exchange-alt  me-1"></i>
+                        Xử lý VB
+                      </b-button>
+                    </template>
+
                   </b-table>
                   <template v-if="isBusy">
                     <div align="center">Đang tải dữ liệu</div>
@@ -1191,22 +1301,23 @@ export default {
                   </tr>
                   </thead>
                   <tbody>
-                  <template v-if="listPhanCongKySo == null || (listPhanCongKySo != null && listPhanCongKySo.length <= 0)">
+                  <template
+                      v-if="listPhanCongKySo == null || (listPhanCongKySo != null && listPhanCongKySo.length <= 0)">
                     <tr>
                       <td colspan="5">Không có dữ liệu</td>
                     </tr>
                   </template>
                   <template v-else>
                     <tr v-for="(item, index) in listPhanCongKySo" :key="index">
-                      <td>{{++index}}</td>
-                      <td>{{item.userName}}</td>
-                      <td>{{item.fullName}}</td>
+                      <td>{{ ++index }}</td>
+                      <td>{{ item.userName }}</td>
+                      <td>{{ item.fullName }}</td>
                       <td>
                         <span v-if="item.choPhepKy">Ký số</span>
                         <span v-else>Xem duyệt</span>
                       </td>
                       <td>
-                        <b-button @click="handleRemoveAssignSign(item.userName)"  variant="danger">Xóa</b-button>
+                        <b-button @click="handleRemoveAssignSign(item.userName)" variant="danger">Xóa</b-button>
                       </td>
                     </tr>
                   </template>
@@ -1229,7 +1340,7 @@ export default {
             no-close-on-backdrop
             size="xl"
         >
-          <form @submit.prevent="handleButPhe" ref="formContainer">
+          <form @submit.prevent="handleButPhe" ref="">
             <div class="row">
               <div class="col-md-6">
                 <!--                Số lưu and số văn bản đi -->
@@ -1448,7 +1559,7 @@ export default {
             no-close-on-backdrop
             size="xl"
         >
-          <form @submit.prevent="handlePhanCong" ref="formContainer">
+          <form @submit.prevent="handlePhanCong" ref="">
             <div class="row">
               <div class="col-md-12">
                 <div class="customAddElement">
@@ -1586,6 +1697,140 @@ export default {
             </b-button>
           </template>
         </b-modal>
+
+<!--        Trạng thái-->
+        <b-modal
+            v-model="showTrangThaiModal"
+            centered
+            title="Chuyển trạng thái văn bản"
+            title-class="font-18"
+            no-close-on-backdrop
+            size="lg"
+        >
+          <div class="row">
+            <div class="col-md-6">
+
+              <div v-if="modelTrangThai.currentTrangThai" class="mb-2">
+                <label class="form-label" for="validationCustom01">TT Hiện tại</label> <span
+                  class="text-danger">*</span>
+                <input
+                    id="validationCustom01"
+                    :value="modelTrangThai.currentTrangThai.ten"
+                    type="text"
+                    class="form-control"
+                    placeholder=""
+                    disabled
+                />
+              </div>
+
+            </div>
+            <div class="col-md-6">
+
+              <div class="mb-2">
+                <label class="form-label" for="validationCustom01">TT Tiếp theo</label> <span
+                  class="text-danger">*</span>
+                <multiselect
+                    v-model="modelTrangThai.newTrangThai"
+                    :options="optionsTrangThai"
+                    track-by="id"
+                    label="ten"
+                    placeholder="Chọn trạng thái"
+                    :class="{
+                                'is-invalid':
+                                  submitted && $v.modelTrangThai.newTrangThai.$error,
+                                }"
+                ></multiselect>
+                <div
+                    v-if="submitted && !$v.modelTrangThai.newTrangThai.required"
+                    class="invalid-feedback"
+                >
+                  Trạng thái không được để trống.
+                </div>
+              </div>
+            </div>
+          </div>
+          <template #modal-footer>
+            <b-button v-b-modal.modal-close_visit
+                      size="sm"
+                      class="btn btn-outline-info w-md"
+                      v-on:click="showTrangThaiModal = false">
+              Đóng
+            </b-button>
+            <b-button v-b-modal.modal-close_visit
+                      size="sm"
+                      variant="danger"
+                      type="button"
+                      class="w-md"
+                      v-on:click="handleChuyenTrangThai">
+              Xóa
+            </b-button>
+          </template>
+        </b-modal>
+
+<!--        history-->
+        <b-modal
+            v-model="showHistoryModal"
+            centered
+            title="Lịch sử hoạt động"
+            title-class="font-18"
+            no-close-on-backdrop
+            size="lg"
+        >
+          <div class="row">
+            <div class="col-lg-12">
+              <div id="cd-timeline" style="margin: 0">
+                <ul v-if="listHistoryQuestion && listHistoryQuestion.length > 0" class="timeline list-unstyled" style="padding: 0">
+                  <li  v-for="(item, index) in listHistoryQuestion" class="timeline-list" :key="index" style="padding-left: 90px; padding-right: 0; padding-top: 10px; padding-bottom: 10px">
+                    <div class="cd-timeline-content p-2" style="width: 100%;" >
+                      <h5 class="mt-0 mb-3">
+                            <span style="font-weight: bold" class="text-success">
+                                                                #{{listHistoryQuestion.length - index}}  {{item.title}}
+                                                     </span></h5>
+                      <div style="font-weight: bold">Trạng thái:  <span class="badge font-size-small min-width-30 p-2 btn-xs badge-soft-primary  font-weight-semibold" v-if="item.trangThai">{{item.trangThai.ten}}</span></div>
+
+
+                      <div
+                          v-if="item.userName"
+                          class="mt-1"
+                      >
+                                  <span style="font-weight: bold">
+                                    Người thao tác:
+                                  </span>
+                        <span>
+                                    {{item.userName}} - {{item.fullName}}
+                                  </span>
+                      </div>
+                      <div v-else >
+                                  <span style="font-weight: bold">
+                                       Người thao tác:
+                                  </span>
+                        <span>
+                                    Không có dữ liệu
+                                  </span>
+                      </div>
+                      <p
+                          class="mb-2"
+                      >{{item.content}}</p>
+                      <div class="date bg-primary" style="top: 10px">
+                        <h6 class="mt-0">{{ item.createdAtShow }}</h6>
+                        <!--                       -->
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+                <div v-else>Không có dữ liệu</div>
+              </div>
+            </div>
+          </div>
+          <template #modal-footer>
+            <b-button v-b-modal.modal-close_visit
+                      size="sm"
+                      class="btn btn-outline-info w-md"
+                      v-on:click="showHistoryModal = false">
+              Đóng
+            </b-button>
+          </template>
+        </b-modal>
       </div>
     </div>
   </Layout>
@@ -1606,32 +1851,32 @@ export default {
   line-height: 30px;
 }
 
-.hidden-sortable:after, .hidden-sortable:before {
-  display: none !important;
-}
+/*.hidden-sortable:after, .hidden-sortable:before {*/
+/*  display: none !important;*/
+/*}*/
 
-.ck-editor__editable {
-  min-height: 100px !important;
-}
+/*.ck-editor__editable {*/
+/*  min-height: 100px !important;*/
+/*}*/
 
-.ck-content {
-  height: 100px !important;
-}
+/*.ck-content {*/
+/*  height: 100px !important;*/
+/*}*/
 
-.customAddElement {
-  position: absolute;
-  top: 8px;
-  left: -20px;
-}
+/*.customAddElement {*/
+/*  position: absolute;*/
+/*  top: 8px;*/
+/*  left: -20px;*/
+/*}*/
 
-.custom-ribon {
-  position: absolute;
-  width: 130px;
-  top: 15px;
-  left: -15px;
-}
+/*.custom-ribon {*/
+/*  position: absolute;*/
+/*  width: 130px;*/
+/*  top: 15px;*/
+/*  left: -15px;*/
+/*}*/
 
-.custom-ribon > div {
-  border-radius: 3px;
-}
+/*.custom-ribon > div {*/
+/*  border-radius: 3px;*/
+/*}*/
 </style>

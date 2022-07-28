@@ -49,14 +49,20 @@ export default {
           thClass: 'hidden-sortable' },
         {
           key: "code",
-          label: "Loại trạng thái",
-          class:  "text-center",
+          label: "Mã loại TT",
+          class:  "text-left",
           thClass: 'hidden-sortable'
         },
         {
           key: "Ten",
-          label: "Tên",
-          class:  "text-center",
+          label: "Tên loại TT",
+          class:  "text-left",
+          thClass: 'hidden-sortable'
+        },
+        {
+          key: "listTrangThai",
+          label: "Trạng thái",
+          class:  "text-left",
           thClass: 'hidden-sortable'
         },
         {
@@ -537,10 +543,18 @@ export default {
                     <template v-slot:cell(STT)="data">
                       {{ data.index + ((currentPage-1)*perPage) + 1  }}
                     </template>
+                    <template v-slot:cell(code)="data">&nbsp;&nbsp;
+                      {{data.item.code}}
+                    </template>
                     <template v-slot:cell(ten)="data">&nbsp;&nbsp;
-                      <div style="text-align: left ; margin-top: -30px ; margin-left: 30px">
-                        {{data.item.ten}}
-                      </div>
+                      {{data.item.ten}}
+                    </template>
+                    <template v-slot:cell(listTrangThai)="data">&nbsp;&nbsp;
+                      <template v-if="data.item.listTrangThai != null && data.item.listTrangThai.length > 0">
+                        <div  v-for="(value, index) in data.item.listTrangThai" :key="index">
+                          {{value.ten}}
+                        </div>
+                      </template>
                     </template>
                     <template v-slot:cell(process)="data">
                       <button

@@ -50,7 +50,7 @@ namespace EOffice.WebAPI.Services
 
         public async Task<IEnumerable<User>> Get()
         {
-            return await _context.Users.Find(x => x.IsDeleted != true).ToListAsync();
+            return await _context.Users.Find(x => x.DonVi != null && x.IsDeleted != true).SortByDescending(x => x.DonVi.Ten).ToListAsync();
         }
 
         public async Task<User> GetById(string id)

@@ -4,7 +4,10 @@ const toJson = (item) => {
         id: item.id,
         ten: item.ten,
         thuTu: item.thuTu,
-        code: item.code
+        code: item.code,
+        nextTrangThai: item.nextTrangThai,
+        actions: item.actions,
+        color: item.color
     }
 }
 const fromJson = (item) => {
@@ -13,14 +16,14 @@ const fromJson = (item) => {
         ten: item.ten,
         thuTu: item.thuTu,
         code: item.code,
-        //createdAt: moment(item.createdAt).format('YYYY-MM-DD'),
-        createAt:item.createAt,
-        // modifiedAt: moment(item.modifiedAt).format('YYYY-MM-DD'),
+        color: item.color,
         modifiedAt: item.modifiedAt,
         createdBy: item.createdBy,
         modifiedBy: item.modifiedBy,
         lastModifiedShow: item.lastModifiedShow,
-        createdAtShow : item.createdAtShow
+        createdAtShow : item.createdAtShow,
+        nextTrangThai: item.nextTrangThai,
+        actions: item.actions,
     }
 }
 
@@ -34,6 +37,17 @@ const baseJson = () => {
         modifiedAt: null,
         createdBy: null,
         modifiedBy: null,
+        nextTrangThai: null,
+        actions: null,
+        color: null
+    }
+}
+
+const currentBaseJson = () =>{
+    return {
+        currentTrangThai: null,
+        newTrangThai: null,
+        vanBanDiId: null
     }
 }
 
@@ -49,5 +63,5 @@ const toListModel = (items) =>{
 }
 
 export const trangThaiModel = {
-    toJson, fromJson, baseJson, toListModel
+    toJson, fromJson, baseJson, toListModel, currentBaseJson
 }

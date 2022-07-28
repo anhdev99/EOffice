@@ -13,7 +13,7 @@ namespace EOffice.WebAPI.Models
         public int Number { get; set; }
         public int Identity { get; set; }
         public LoaiVanBan LoaiVanBan { get; set; }
-        public TrangThai TrangThai { get; set; }
+        public TrangThaiShort TrangThai { get; set; }
         public string SoLuuCV { get; set; }
         public string SoVBDi{ get; set; }
         public DateTime? NgayNhap { get; set; }
@@ -60,6 +60,7 @@ namespace EOffice.WebAPI.Models
         [BsonIgnore]
         public List<FileShort> UploadFiles{ get; set; }
         public List<NguoiPhanCong> NguoiPhanCong { get; set; }
+        public UserShort Ower { get; set; }
     }
 
     public class PhanCongKySo

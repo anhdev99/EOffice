@@ -141,7 +141,28 @@ namespace EOffice.WebAPI.APIs
                 );
             }
         }
-        
+        [HttpPost]
+        [Route("get-next-trangthai")]
+        public async Task<IActionResult> GetNextTrangThai([FromBody] TrangThaiParam param)
+        {
+            try
+            {
+                var response = await _trangThaiService.GetNextTrangThai(param);
+                return Ok(
+                    new ResultResponse<List<TrangThaiShort>>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
         [HttpGet]
         [Route("get-all")]
         public async Task<IActionResult> GetAll()

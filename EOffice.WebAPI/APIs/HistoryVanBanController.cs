@@ -11,24 +11,24 @@ using EResultResponse = EOffice.WebAPI.Helpers.EResultResponse;
 namespace EOffice.WebAPI.APIs
 {
     [Route("api/v1/[controller]")]
-    public class HistoryQuestionController : ControllerBase
+    public class HistoryVanBanController : ControllerBase
     {
-        private HistoryQuestionService _questionService;
-        public HistoryQuestionController(HistoryQuestionService questionService)
+        private HistoryVanBanDiService _historyVanBanDi;
+        public HistoryVanBanController(HistoryVanBanDiService historyVanBanDi)
         {
-            _questionService = questionService;
+            _historyVanBanDi = historyVanBanDi;
         }
         
         [HttpGet]
-        [Route("get-by-question-id/{id}")]
+        [Route("get-van-ban-di-id/{id}")]
         public async Task<IActionResult> GetById(string id)
         {
             try
             {
-                var response = await _questionService.GetHistoryByQuestionId(id);
+                var response = await _historyVanBanDi.GetHistoryByQuestionId(id);
 
                 return Ok(
-                    new ResultResponse<List<HistoryQuestion>>()
+                    new ResultResponse<dynamic>()
                         .WithData(response)
                         .WithCode(EResultResponse.SUCCESS.ToString())
                         .WithMessage(DefaultMessage.GET_DATA_SUCCESS)

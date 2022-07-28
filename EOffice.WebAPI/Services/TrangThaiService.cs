@@ -52,10 +52,11 @@ namespace EOffice.WebAPI.Services
                 Code = model.Code,
                 ThuTu = model.ThuTu,
                 Ten = model.Ten,
+                Color = model.Color,
                 CreatedBy = CurrentUserName,
                 ModifiedBy = CurrentUserName,
-                CreatedAt = DateTime.Now,
-                ModifiedAt = DateTime.Now
+                Actions = model.Actions,
+                NextTrangThai = model.NextTrangThai
             };
 
             var result = await BaseMongoDb.CreateAsync(entity);
@@ -96,9 +97,12 @@ namespace EOffice.WebAPI.Services
             
             entity.Code = model.Code;
             entity.Ten = model.Ten;
+            entity.Color = model.Color;
             entity.ThuTu = model.ThuTu;
             entity.ModifiedBy = CurrentUserName;
             entity.ModifiedAt = DateTime.Now;
+            entity.Actions = model.Actions;
+            entity.NextTrangThai = model.NextTrangThai;
 
             var result = await BaseMongoDb.UpdateAsync(entity);
             if (!result.Success)
@@ -200,6 +204,33 @@ namespace EOffice.WebAPI.Services
                 .Select(x => new TrangThaiTreeVM(x))
                 .ToList();
             return data;
+        }
+
+        public async Task<List<TrangThaiShort>> GetNextTrangThai(TrangThaiParam param)
+        {
+            var loaiTrangThai = await _context.LoaiTrangThai
+                .Find(x => x.Code == param.LoaiTrangThai
+                           && x.IsDeleted != true)
+                .FirstOrDefaultAsync();
+            
+            if (loaiTrangThai == default)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage("Không tìm thấy loại trạng thái");
+            }
+
+            if (param.CurrentTrangThai != default)
+            {
+                var currentTrangThai = _context.TrangThai.Find(x => x.Id == param.CurrentTrangThai.Id).FirstOrDefault();
+                if (currentTrangThai != default)
+                   return currentTrangThai.NextTrangThai;
+            }
+
+            if (loaiTrangThai.ListTrangThai != default)
+                return loaiTrangThai.ListTrangThai;
+
+            return  new List<TrangThaiShort>();
         }
     }
 }

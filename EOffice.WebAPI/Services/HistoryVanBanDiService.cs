@@ -16,8 +16,8 @@ namespace EOffice.WebAPI.Services
     public class HistoryVanBanDiService : BaseService
     {
         private DataContext _context;
-        private BaseMongoDb<HistoryQuestion, string> BaseMongoDb;
-        private IMongoCollection<HistoryQuestion> _collection;
+        private BaseMongoDb<HistoryVanBanDi, string> BaseMongoDb;
+        private IMongoCollection<HistoryVanBanDi> _collection;
         private IDbSettings _settings;
         private ILoggingService _logger;
 
@@ -26,21 +26,21 @@ namespace EOffice.WebAPI.Services
             : base(context, contextAccessor)
         {
             _context = context;
-            BaseMongoDb = new BaseMongoDb<HistoryQuestion, string>(_context.HistoryQuestions);
-            _collection = context.HistoryQuestions;
+            BaseMongoDb = new BaseMongoDb<HistoryVanBanDi, string>(_context.HistoryVanBanDi);
+            _collection = context.HistoryVanBanDi;
             _settings = settings;
-            _logger = logger.WithCollectionName(_settings.HistoryQuestionCollectionName)
+            _logger = logger.WithCollectionName(_settings.HistoryVanBanDiCollectionName)
                 .WithDatabaseName(_settings.DatabaseName)
                 .WithUserName(CurrentUserName);
-            history = new HistoryQuestion();
+            history = new HistoryVanBanDi();
             history.CreatedBy = CurrentUserName;
         }
 
-        public async Task<List<HistoryQuestion>> GetHistoryByQuestionId(string questionId)
+        public async Task<List<HistoryVanBanDi>> GetHistoryByQuestionId(string vanBanId)
         {
-            return await _collection.Find(x => x.QuestionId == questionId).SortByDescending(x => x.ModifiedAt).ToListAsync();
+            return await _collection.Find(x => x.VanBanId == vanBanId).SortByDescending(x => x.ModifiedAt).ToListAsync();
         }
-        public async Task<bool> SaveChangeHistoryQuestion()
+        public async Task<bool> SaveChangeHistory()
         {
             if (history == default)
                 return false;
@@ -61,12 +61,20 @@ namespace EOffice.WebAPI.Services
 
             return this;
         }
-        public HistoryVanBanDiService WithStatus(string trangThai, string trangThaiTen)
+        public HistoryVanBanDiService WithContent(string content)
+        {
+            if (!string.IsNullOrEmpty(content))
+            {
+                history.Content = content;
+            }
+
+            return this;
+        }
+        public HistoryVanBanDiService WithStatus(TrangThaiShort trangThai)
         {
             if (trangThai != default)
             {
                 history.TrangThai = trangThai;
-                history.TrangThaiTen = trangThaiTen;
             }
 
             return this;
@@ -80,40 +88,26 @@ namespace EOffice.WebAPI.Services
                     return this;
 
                 history.UserName = user.UserName;
-                history.UserFullName = user.FullName;
+                history.FullName = user.FullName;
             }
 
             return this;
         }
 
-        public HistoryVanBanDiService WithDepartment(string departmentId)
-        {
-            if (!string.IsNullOrEmpty(departmentId))
-            {
-                var entity = _context.DonVis.Find(x => x.Id == departmentId).FirstOrDefault();
-                if (entity == default)
-                    return this;
 
-                history.DepartmentId = entity.Id;
-                history.DepartmentName = entity.Ten;
+        public HistoryVanBanDiService WithVanBanId(string vanBanId)
+        {
+            if (!string.IsNullOrEmpty(vanBanId))
+            {
+                history.VanBanId = vanBanId;
             }
 
             return this;
         }
-        public HistoryVanBanDiService WithQuestionId(string questionId)
+        public HistoryVanBanDiService WithType(dynamic oldValue)
         {
-            if (!string.IsNullOrEmpty(questionId))
+            if (oldValue != null)
             {
-                history.QuestionId = questionId;
-            }
-
-            return this;
-        }
-        public HistoryVanBanDiService WithType(ETypeHistory type, dynamic oldValue)
-        {
-            if (!string.IsNullOrEmpty(type.GetDisplayName()))
-            {
-                history.TypeHistory = type.GetDisplayName();
                 history.OldValue = oldValue;
             }
 
@@ -131,28 +125,19 @@ namespace EOffice.WebAPI.Services
 
             return this;
         }
-        public HistoryVanBanDiService WithHistoryAction(HistoryAction action)
-        {
-            if (action != default)
-            {
-                history.HistoryAction = action;
-            }
-
-            return this;
-        }
 
         private void Hash()
         {
             var hash = StringExtensions.SHA256(history.CreatedAt.ToString() + history.CreatedBy + history.Id);
             history.Hash = hash;
-            var pre = _collection.Find(x => x.QuestionId == history.QuestionId)
+            var pre = _collection.Find(x => x.VanBanId == history.VanBanId)
                 .SortByDescending(x => x.CreatedAt).FirstOrDefault();
             if (pre != default)
                 history.ReferenceHash = pre.Hash;
         }
         #region Properties
 
-        private HistoryQuestion history;
+        private HistoryVanBanDi history;
 
         #endregion
     }

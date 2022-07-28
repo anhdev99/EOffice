@@ -8,13 +8,14 @@ import {notifyModel} from "@/models/notifyModel";
 import {pagingModel} from "@/models/pagingModel";
 import {CONSTANTS} from "@/helpers/constants";
 import {trangThaiModel} from "@/models/trangThaiModel";
+import Treeselect from "@riophae/vue-treeselect";
 
 export default {
   page: {
     title: "Trạng thái",
     meta: [{name: "description", content: appConfig.description}],
   },
-  components: {Layout, PageHeader},
+  components: {Layout, PageHeader, Treeselect},
   data() {
     return {
       title: "Trạng thái",
@@ -35,21 +36,19 @@ export default {
       showDeleteModal: false,
       submitted: false,
       model: trangThaiModel.baseJson(),
-      listCoQuan: [],
-      listRole: [],
       pagination: pagingModel.baseJson(),
       totalRows: 1,
       todoTotalRows: 1,
       currentPage: 1,
       numberOfElement: 1,
-      perPage: 10,
+      perPage: 50,
       pageOptions: [5,10, 25, 50, 100],
       filter: null,
       todoFilter: null,
       filterOn: [],
       todofilterOn: [],
       isBusy: false,
-      sortBy: "age",
+      sortBy: "code",
       sortDesc: false,
       fields: [
         { key: 'STT', label: 'STT', class: 'td-stt', sortable: false,thClass: 'hidden-sortable' },
@@ -62,6 +61,12 @@ export default {
         {
           key: "ten",
           label: "Tên",
+          sortable: true,
+          thStyle:"text-align:left",
+        },
+        {
+          key: "nextTrangThai",
+          label: "Trạng thái tiếp theo",
           sortable: true,
           thStyle:"text-align:left",
         },
@@ -79,6 +84,8 @@ export default {
           sortable: false
         }
       ],
+      optionTrangThai: [],
+      optionActions: []
     };
   },
   validations: {
@@ -90,6 +97,8 @@ export default {
   },
   created() {
     this.fnGetList();
+    this.getAllTrangThai();
+    this.getActions();
   },
   watch: {
     model: {
@@ -109,6 +118,55 @@ export default {
     },
   },
   methods: {
+    async getActions() {
+      await this.$store.dispatch("moduleStore/getTreeModule").then((res) => {
+        if (res.resultCode === 'SUCCESS') {
+          this.optionActions = res.data
+        }
+      });
+    },
+    async getAllTrangThai() {
+      await this.$store.dispatch("trangThaiStore/getTree").then((res) => {
+        if (res.resultCode === 'SUCCESS') {
+          this.optionTrangThai = res.data
+        }
+      });
+    },
+    normalizer(node) {
+      if (node.children == null || node.children == 'null') {
+        delete node.children;
+      }
+    },
+    formatRemoveAction(node, instanceId) {
+      let value = this.model.actions?.find(x => x.id == node.id);
+      if (value != null) {
+        this.model.actions = this.model.actions.filter(x => x.id != value.id);
+      }
+    },
+    formatAction(node, instanceId) {
+      let index = this.model.actions?.findIndex(x => x.id == node.id);
+      if (index == -1 || index == undefined) {
+        if (!this.model.actions) {
+          this.model.actions = [];
+        }
+        this.model.actions.push({id: node.id, ten: node.label, code: node.code});
+      }
+    },
+    formatRemoveTrangThai(node, instanceId) {
+      let value = this.model.nextTrangThai?.find(x => x.id == node.id);
+      if (value != null) {
+        this.model.nextTrangThai = this.model.nextTrangThai.filter(x => x.id != value.id);
+      }
+    },
+    formatTrangThai(node, instanceId) {
+      let index = this.model.nextTrangThai?.findIndex(x => x.id == node.id);
+      if (index == -1 || index == undefined) {
+        if (!this.model.nextTrangThai) {
+          this.model.nextTrangThai = [];
+        }
+        this.model.nextTrangThai.push({id: node.id, ten: node.label, code: node.code});
+      }
+    },
     async fnGetList() {
       await this.onPageChange();
     },
@@ -123,7 +181,9 @@ export default {
     async handleUpdate(id) {
       await this.$store.dispatch("trangThaiStore/getById", id).then((res) => {
         if (res.resultCode === 'SUCCESS') {
+
           this.model = trangThaiModel.fromJson(res.data);
+          console.log(this.model);
           this.showModal = true;
         } else {
           this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
@@ -135,6 +195,7 @@ export default {
       await this.$store.dispatch("trangThaiStore/getById", id).then((res) => {
         if (res.resultCode === 'SUCCESS') {
           this.model = trangThaiModel.fromJson(res.data);
+
           this.showDetail = true;
         } else {
           this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
@@ -175,7 +236,6 @@ export default {
           // Update model
           await this.$store.dispatch("trangThaiStore/update", this.model).then((res) => {
             if (res.resultCode === 'SUCCESS') {
-              this.fnGetList();
               this.showModal = false;
               this.$refs.tblList.refresh()
             }
@@ -272,7 +332,7 @@ export default {
                     <form @submit.prevent="handleSubmit"
                           ref="formContainer">
                       <div class="row">
-                        <div class="col-12">
+                        <div class="col-6">
                           <div class="mb-3">
                             <label class="text-left"> Code</label>
                             <span style="color: red">&nbsp;*</span>
@@ -282,6 +342,7 @@ export default {
                                 type="text"
                                 class="form-control"
                                 placeholder="Nhập code"
+                                style="text-transform:uppercase"
                                 :class="{
                                 'is-invalid':
                                   submitted && $v.model.code.$error,
@@ -295,7 +356,7 @@ export default {
                             </div>
                           </div>
                         </div>
-                        <div class="col-12">
+                        <div class="col-6">
                           <div class="mb-3">
                             <label class="text-left">Tên trạng thái</label>
                             <span style="color: red">&nbsp;*</span>
@@ -319,7 +380,7 @@ export default {
                             </div>
                           </div>
                         </div>
-                        <div class="col-12">
+                        <div class="col-6">
                           <div class="mb-3">
                             <label class="text-left">Nhập số thứ tự</label>
                             <span style="color: red">&nbsp;*</span>
@@ -343,6 +404,75 @@ export default {
                             >
                               Thứ tự không được để trống.
                             </div>
+                          </div>
+                        </div>
+                        <div class="col-6">
+                          <div class="mb-3">
+                            <label class="text-left">Màu sắc</label>
+                            <span style="color: red">&nbsp;*</span>
+                            <b-form-input
+                                style="width: 100%; max-width: 100%"
+                                class="form-control-color"
+                                id="color"
+                                type="color"
+                                name="color"
+                                v-model="model.color"
+                                value="#556ee6"
+                            ></b-form-input>
+                          </div>
+                        </div>
+                        <div class="col-12">
+                          <div class="mb-3">
+                            <label class="text-left">Trạng thái tiếp theo</label>
+                            <treeselect
+                                v-on:select="formatTrangThai"
+                                v-on:deselect="formatRemoveTrangThai"
+                                :multiple="true"
+                                :options="optionTrangThai"
+                                :value="model.nextTrangThai"
+                                :searchable="true"
+                                :flat="true"
+                                :show-count="true"
+                                :default-expand-level="1"
+                                :normalizer="normalizer"
+                                value-format="object"
+                            >
+
+                              <label slot="option-label"
+                                     slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }"
+                                     :class="labelClassName">
+                                {{ node.label }}
+                                <span v-if="shouldShowCount" :class="countClassName">({{ count }})</span>
+                              </label>
+                            </treeselect>
+                          </div>
+                        </div>
+                        <div class="col-12">
+                          <div class="mb-3">
+                            <label class="text-left">Hành động</label>
+                            <treeselect
+                                v-on:select="formatAction"
+                                v-on:deselect="formatRemoveAction"
+                                :multiple="true"
+                                :options="optionActions"
+                                :value="model.actions"
+                                :searchable="true"
+                                :flat="true"
+                                :show-count="true"
+                                :default-expand-level="1"
+                                :normalizer="normalizer"
+                                value-format="object"
+                                :disable-branch-nodes="true"
+                                search-nested
+                            >
+
+                              <label slot="option-label"
+                                     slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }"
+                                     :class="labelClassName">
+                                {{ node.label }}
+                                <span v-if="shouldShowCount" :class="countClassName">({{ count }})</span>
+                              </label>
+                            </treeselect>
                           </div>
                         </div>
                       </div>
@@ -482,14 +612,14 @@ export default {
                       {{ data.index + ((currentPage-1)*perPage) + 1  }}
                     </template>
                     <template v-slot:cell(process)="data">
-                      <button
-                          type="button"
-                          size="sm"
-                          class="btn btn-outline btn-sm"
-                          data-toggle="tooltip" data-placement="bottom" title="Chi tiết"
-                          v-on:click="handleDetail(data.item.id)">
-                        <i class="fas fa-eye  text-warning me-1"></i>
-                      </button>
+<!--                      <button-->
+<!--                          type="button"-->
+<!--                          size="sm"-->
+<!--                          class="btn btn-outline btn-sm"-->
+<!--                          data-toggle="tooltip" data-placement="bottom" title="Chi tiết"-->
+<!--                          v-on:click="handleDetail(data.item.id)">-->
+<!--                        <i class="fas fa-eye  text-warning me-1"></i>-->
+<!--                      </button>-->
                       <button
                           type="button"
                           size="sm"
@@ -509,6 +639,13 @@ export default {
                     </template>
                     <template v-slot:cell(ten)="data">&nbsp;&nbsp;
                       {{data.item.ten}}
+                    </template>
+                    <template v-slot:cell(nextTrangThai)="data">&nbsp;&nbsp;
+                      <template v-if="data.item.nextTrangThai != null && data.item.nextTrangThai.length > 0">
+                        <div  v-for="(value, index) in data.item.nextTrangThai" :key="index">
+                          {{value.ten}}
+                        </div>
+                      </template>
                     </template>
                   </b-table>
                   <template v-if="isBusy">

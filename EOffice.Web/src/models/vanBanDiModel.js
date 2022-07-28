@@ -1,4 +1,3 @@
-import moment from "moment";
 const toJson = (item) => {
     return {
         id: item.id,
@@ -47,6 +46,7 @@ const toJson = (item) => {
         donViNhanXuLy: item.donViNhanXuLy,
         phanCong: item.phanCong,
         trinhLanhDaoTruong: item.trinhLanhDaoTruong,
+        ower: item.ower,
     }
 }
 const fromJson = (item) => {
@@ -97,6 +97,7 @@ const fromJson = (item) => {
         donViNhanXuLy: item.donViNhanXuLy,
         phanCong: item.phanCong,
         trinhLanhDaoTruong: item.trinhLanhDaoTruong,
+        ower: item.ower,
     }
 }
 
@@ -150,6 +151,7 @@ const baseJson = (items) => {
         uploadFiles: null,
         nguoiPhanCong: null,
         trinhLanhDaoTruong: false,
+        ower: null
     }
 }
 

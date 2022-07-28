@@ -23,14 +23,14 @@ namespace EOffice.WebAPI.Installers
             services.AddScoped<IModuleService, ModuleService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<ILoggingService, LoggingService>();
-            services.AddScoped<IQuestionService, QuestionService>();
+            // services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<IDonViService, DonViService>();
             services.AddScoped<IChucVuService, ChucVuService>();
             services.AddScoped<ILinhVucService, LinhVucService>();
             services.AddScoped<IRefreshTokenService, RefreshTokenService>();
             services.AddScoped<IDMHanhChinhService, DMHanhChinhService>();
-            services.AddScoped<IAnswerService, AnswerService>();
-            services.AddScoped<HistoryQuestionService>();
+
+            services.AddScoped<HistoryVanBanDiService>();
             services.AddScoped<IWarningService, WarningService>();
             services.AddScoped<ITrangThaiService, TrangThaiService>();
             services.AddScoped<IModuleTrangThaiService, ModuleTrangThaiService>();

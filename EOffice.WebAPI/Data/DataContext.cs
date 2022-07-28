@@ -26,7 +26,7 @@ namespace EOffice.WebAPI.Data
 
         private readonly IMongoCollection<Question> _question;
         private readonly IMongoCollection<Answer> _answer;
-        private readonly IMongoCollection<HistoryQuestion> _historyQuestion;
+        private readonly IMongoCollection<HistoryVanBanDi> _historyVanBanDi;
         private readonly IMongoCollection<Warning> _warning;
         private readonly IMongoCollection<TrangThai> _trangThai;
         private readonly IMongoCollection<ModuleTrangThai> _moduleTrangThai;
@@ -79,7 +79,7 @@ namespace EOffice.WebAPI.Data
             
             _question = _context.GetCollection<Question>(_settings.QuestionCollectionName);
             _answer = _context.GetCollection<Answer>(_settings.AnswerCollectionName);
-            _historyQuestion = _context.GetCollection<HistoryQuestion>(_settings.HistoryQuestionCollectionName);
+            _historyVanBanDi = _context.GetCollection<HistoryVanBanDi>(_settings.HistoryVanBanDiCollectionName);
             _warning = _context.GetCollection<Warning>(_settings.WarningCollectionName);
             _trangThai = _context.GetCollection<TrangThai>(_settings.TrangThaiCollectionName);
             _moduleTrangThai = _context.GetCollection<ModuleTrangThai>(_settings.ModuleTrangThaiCollectionName);
@@ -118,7 +118,7 @@ namespace EOffice.WebAPI.Data
         public IMongoCollection<Huyen> Huyen { get => _huyen; }
         public IMongoCollection<Question> Questions { get => _question; }
         public IMongoCollection<Answer> Answers { get => _answer; }
-        public IMongoCollection<HistoryQuestion> HistoryQuestions { get => _historyQuestion; }
+        public IMongoCollection<HistoryVanBanDi> HistoryVanBanDi { get => _historyVanBanDi; }
         public IMongoCollection<Warning> Warning { get => _warning; }
         public IMongoCollection<TrangThai> TrangThai { get => _trangThai; }
         public IMongoCollection<ModuleTrangThai> ModuleTrangThai { get => _moduleTrangThai; }

@@ -234,7 +234,7 @@ namespace EOffice.WebAPI.Services
                 if (currentUser.Roles == null)
                     return new List<string>();
                 var permissions = currentUser.Roles
-                    .SkipWhile(x => x.Permissions == null)
+                    .Where(x => x.Permissions != null)
                     .SelectMany(x => x.Permissions)
                     .Select(x => x.Action)
                     .Distinct()

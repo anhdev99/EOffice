@@ -23,7 +23,8 @@ namespace EOffice.WebAPI.Data
         public string HuyenCollectionName { get; set; }
         public string QuestionCollectionName { get; set; }
         public string AnswerCollectionName { get; set; }
-        public string HistoryQuestionCollectionName { get; set; }
+        public string HistoryVanBanDiCollectionName { get; set; }
+        public string HistoryVanBanDenCollectionName { get; set; }
         public string WarningCollectionName { get; set; }
         public string TrangThaiCollectionName { get; set; }
         public string ModuleTrangThaiCollectionName { get; set; }
@@ -59,7 +60,8 @@ namespace EOffice.WebAPI.Data
         string HuyenCollectionName { get; set; }
         string QuestionCollectionName { get; set; }
         string AnswerCollectionName { get; set; }
-        string HistoryQuestionCollectionName { get; set; }
+        string HistoryVanBanDiCollectionName { get; set; }
+        string HistoryVanBanDenCollectionName { get; set; }
         string WarningCollectionName { get; set; }
         string TrangThaiCollectionName { get; set; }
         string ModuleTrangThaiCollectionName { get; set; }

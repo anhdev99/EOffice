@@ -10,7 +10,10 @@ namespace EOffice.WebAPI.Models
         public string Id { get; set; }
         public string Code { get; set; }
         public string Ten { get; set; }
+        public string Color { get; set; }
         public int ThuTu { get; set; }
+        public List<TrangThaiShort> NextTrangThai { get; set; }
+        public List<PermissionShort> Actions { get; set; }
     }
     
     public class TrangThaiName

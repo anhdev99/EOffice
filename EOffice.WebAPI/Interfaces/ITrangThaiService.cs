@@ -15,5 +15,6 @@ namespace EOffice.WebAPI.Interfaces
         Task<PagingModel<TrangThai>> GetPaging(TrangThaiParam param);
         Task<List<TrangThai>> GetAll();
         Task<List<TrangThaiTreeVM>> GetTree();
+        Task<List<TrangThaiShort>> GetNextTrangThai(TrangThaiParam param);
     }
 }
