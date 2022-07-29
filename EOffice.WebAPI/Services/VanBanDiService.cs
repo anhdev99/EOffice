@@ -129,7 +129,10 @@ namespace EOffice.WebAPI.Services
                 Ower = CurrentUserShort
             };
 
-
+            if (entity.ListOwerId != default)
+            {
+                entity.ListOwerId.Add(CurrentUserName);
+            }
             if (model.UploadFiles != default)
             {
                 var exps = model.UploadFiles.Select(x => x.Ext).ToList();
@@ -245,7 +248,13 @@ namespace EOffice.WebAPI.Services
             entity.MucDoTinhChat = model.MucDoTinhChat;
             entity.File = model.File;
             entity.TrinhLanhDaoTruong = model.TrinhLanhDaoTruong;
-
+            if (entity.ListOwerId != default)
+            {
+                var checkUserOwer = entity.ListOwerId.Where(x => x.ToUpper() == CurrentUserName.ToUpper())
+                    .FirstOrDefault();
+                if(checkUserOwer == default)
+                    entity.ListOwerId.Add(CurrentUserName);
+            }
             if (model.UploadFiles != default)
             {
                 var exps = model.UploadFiles.Select(x => x.Ext).ToList();
@@ -1000,6 +1009,25 @@ namespace EOffice.WebAPI.Services
             if (vanBanDi.TrangThai != default && vanBanDi.TrangThai.Code == DefaultRoleCode.TRINH_LANH_DAO_TRUONG)
             {
                 vanBanDi.NhomNguoiTiepNhanVBTrinhLD = GenerateNhomNguoiTiepNhanVBTrinhLD();
+            }
+
+            if (vanBanDi.NhomNguoiTiepNhanVBTrinhLD != default && vanBanDi.NhomNguoiTiepNhanVBTrinhLD.Count > 0)
+            {
+                var nguoiTiepNhanIndex = vanBanDi.NhomNguoiTiepNhanVBTrinhLD
+                    .FindIndex(x => x.NguoiXuLy != default
+                                    && x.NguoiXuLy.UserName == model.UserName);
+                if (nguoiTiepNhanIndex >= 0)
+                {
+                    vanBanDi.NhomNguoiTiepNhanVBTrinhLD[nguoiTiepNhanIndex].NoiDung = model.NoiDung;
+                    vanBanDi.NhomNguoiTiepNhanVBTrinhLD[nguoiTiepNhanIndex].TrangThaiXuLy = model.NewTrangThai;
+                }
+                else
+                {
+                    throw new ResponseMessageException()
+                        .WithCode(EResultResponse.FAIL.ToString())
+                        .WithMessage("Tài khoản không có quyền xét duyệt!");
+                }
+             
             }
             var result = await BaseMongoDb.UpdateAsync(vanBanDi);
             if (!result.Success)

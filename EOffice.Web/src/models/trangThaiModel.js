@@ -47,7 +47,9 @@ const currentBaseJson = () =>{
     return {
         currentTrangThai: null,
         newTrangThai: null,
-        vanBanDiId: null
+        vanBanDiId: null,
+        noiDung: null,
+        userName: null
     }
 }
 
