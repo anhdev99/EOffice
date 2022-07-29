@@ -566,6 +566,7 @@ export default {
     handleChuyenTrangThai: function(currentStatus, vanBanDiId){
       this.getTrangThai(currentStatus)
       this.modelTrangThai.currentTrangThai = currentStatus;
+      this.modelTrangThai.newTrangThai = null;
       this.modelTrangThai.vanBanDiId = vanBanDiId;
       this.showTrangThaiModal = true;
     },
@@ -690,7 +691,7 @@ export default {
                             <!--                            Trạng thái-->
                             <div class="col-md-6">
 
-                              <div v-if="model.trangThai" class="mb-2">
+                              <div v-if="model.trangThai && model.id" class="mb-2">
                                 <label class="form-label" for="validationCustom01">Trạng thái</label> <span
                                   class="text-danger">*</span>
                                 <input

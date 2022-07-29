@@ -179,6 +179,10 @@ namespace EOffice.WebAPI.Services
             if (model.TrangThai != default)
             {
                 entity.TrangThai = model.TrangThai;
+                if (entity.TrangThai != default && entity.TrangThai.Code.ToUpper() == DefaultRoleCode.TRINH_LANH_DAO_TRUONG.ToUpper())
+                {
+                    entity.NhomNguoiTiepNhanVBTrinhLD = GenerateNhomNguoiTiepNhanVBTrinhLD();
+                }
             }
 
             var result = await BaseMongoDb.CreateAsync(entity);
@@ -368,10 +372,10 @@ namespace EOffice.WebAPI.Services
             var filter = builder.Empty;
             filter = builder.And(filter, builder.Where(x =>  x.IsDeleted == false));
             var checkQuyenThuKy =
-                CurrentUser.Roles.Find(x => x.Code == RoleConstants.VAN_THU_TRUONG || x.Code == RoleConstants.THU_KY_HIEU_TRUONG);
+                CurrentUser.Roles.Find(x => x.Code.ToUpper() == RoleConstants.VAN_THU_TRUONG.ToUpper() || x.Code.ToUpper() == RoleConstants.THU_KY_HIEU_TRUONG.ToUpper());
             if (checkQuyenThuKy != default)
             {
-                filter = builder.And(filter, builder.Where(x =>  x.CreatedBy == CurrentUserName ));
+                filter = builder.And(filter, builder.Where(x => (x.TrangThai != default && x.TrangThai.Code.ToUpper() == DefaultRoleCode.TRINH_LANH_DAO_TRUONG) ||  x.CreatedBy == CurrentUserName ));
             }
             else
             {
@@ -993,6 +997,10 @@ namespace EOffice.WebAPI.Services
             }
 
             vanBanDi.TrangThai = model.NewTrangThai;
+            if (vanBanDi.TrangThai != default && vanBanDi.TrangThai.Code == DefaultRoleCode.TRINH_LANH_DAO_TRUONG)
+            {
+                vanBanDi.NhomNguoiTiepNhanVBTrinhLD = GenerateNhomNguoiTiepNhanVBTrinhLD();
+            }
             var result = await BaseMongoDb.UpdateAsync(vanBanDi);
             if (!result.Success)
             {
@@ -1008,6 +1016,63 @@ namespace EOffice.WebAPI.Services
                 .WithTitle(VanBanAction.CHUYEN_TRANG_THAI)
                 .WithContent($"Chuyển trạng thái từ: {model.CurrentTrangThai.Ten} sang {model.NewTrangThai.Ten}")
                 .SaveChangeHistory();
+        }
+
+        public List<NhomNguoiTiepNhanVBTrinhLD> GenerateNhomNguoiTiepNhanVBTrinhLD()
+        {
+            var list = new List<NhomNguoiTiepNhanVBTrinhLD>();
+
+            var vanThuTruong = _context.Users.AsQueryable().Where(x => x.Roles.Any(p => p.Code.ToUpper() == DefaultRoleCode.VAN_THU_TRUONG.ToUpper()) && x.IsDeleted != true).Select(x => new UserShort()
+            {
+                Id = x.Id,
+                UserName = x.UserName,
+                FullName = x.FullName,
+                DonVi = x.DonVi,
+                ChucVu = x.ChucVu,
+            }).FirstOrDefault();
+            var thuKyHieuTruong =_context.Users.AsQueryable().Where(x => x.Roles.Any(p => p.Code.ToUpper() == DefaultRoleCode.THU_KY_HIEU_TRUONG.ToUpper())  && x.IsDeleted != true).Select(x => new UserShort()
+            {
+                Id = x.Id,
+                UserName = x.UserName,
+                FullName = x.FullName,
+                DonVi = x.DonVi,
+                ChucVu = x.ChucVu,
+            }).FirstOrDefault();
+            var hieuTruong = _context.Users.AsQueryable().Where(x => x.Roles.Any(p => p.Code.ToUpper() == DefaultRoleCode.HIEU_TRUONG.ToUpper())  && x.IsDeleted != true).Select(x => new UserShort()
+            {
+                Id = x.Id,
+                UserName = x.UserName,
+                FullName = x.FullName,
+                DonVi = x.DonVi,
+                ChucVu = x.ChucVu,
+            }).FirstOrDefault();
+
+            for (int i = 0; i < 3; i++)
+            {
+                var temp = new NhomNguoiTiepNhanVBTrinhLD();
+                if (i == 0)
+                {
+                    temp.NguoiXuLy = vanThuTruong;
+                    temp.ThuTu = i;
+                    temp.RoleCode = DefaultRoleCode.VAN_THU_TRUONG;
+                }
+                if (i == 1)
+                {
+                    temp.NguoiXuLy = thuKyHieuTruong;
+                    temp.ThuTu = i;
+                    temp.RoleCode = DefaultRoleCode.THU_KY_HIEU_TRUONG;
+                }
+                if (i == 2)
+                {
+                    temp.NguoiXuLy = hieuTruong;
+                    temp.ThuTu = i;
+                    temp.RoleCode = DefaultRoleCode.HIEU_TRUONG;
+                }
+                
+                list.Add(temp);
+            }
+
+            return list;
         }
     }
 }

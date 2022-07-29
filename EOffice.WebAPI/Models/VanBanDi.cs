@@ -61,6 +61,7 @@ namespace EOffice.WebAPI.Models
         public List<FileShort> UploadFiles{ get; set; }
         public List<NguoiPhanCong> NguoiPhanCong { get; set; }
         public UserShort Ower { get; set; }
+        public List<NhomNguoiTiepNhanVBTrinhLD> NhomNguoiTiepNhanVBTrinhLD { get; set; }
     }
 
     public class PhanCongKySo
