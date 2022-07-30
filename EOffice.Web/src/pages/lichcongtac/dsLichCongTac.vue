@@ -103,6 +103,13 @@ export default {
       deep: true,
       handler(val) {
         this.loaiLichCongTac = val;
+        if(val == 'lctt'){
+          this.title = "Lịch công tác trường"
+        }else if(val == 'lctdv'){
+          this.title = "Lịch công tác đơn vị"
+        }else{
+          this.title = "Lịch công tác cá nhân"
+        }
         this.myProvider();
       }
     }
@@ -150,10 +157,6 @@ export default {
       <div class="card">
         <div class="card-body">
           <div class="row" style="display: flex;align-items: center">
-            <b-card-title>
-              Chọn ngày công tác
-            </b-card-title>
-
             <div class="col-md-4">
               <date-picker
                   v-model="selectDay"
