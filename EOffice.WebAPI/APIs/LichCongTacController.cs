@@ -89,7 +89,29 @@ namespace EOffice.WebAPI.APIs
                 );
             }
         }
+        [HttpPost]
+        [Route("get-paging-params-canhan")]
+        public async Task<IActionResult> GetPagingParam([FromBody] LichCongTacParam param)
+        {
+            try
+            {
+                var response = await _lichCongTacService.GetPagingCaNhan(param);
 
+                return Ok(
+                    new ResultResponse<PagingModel<LichCongTac>>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
         [HttpGet]
         [Route("get-by-id/{id}")]
         public async Task<IActionResult> GetById(string id)

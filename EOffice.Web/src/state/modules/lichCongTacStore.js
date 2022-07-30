@@ -7,8 +7,8 @@ export const actions = {
     async getByDateNow({commit}) {
         return apiClient.get(controller + "/get-by-date-now");
     },
-    async getPagingParams({commit}, params) {
-        return apiClient.post(controller + "/get-paging-params", params);
+    async getPagingParamsCaNhan({commit}, params) {
+        return apiClient.post(controller + "/get-paging-params-canhan", params);
     },
     async create({commit}, values) {
         return apiClient.post(controller + "/create", values);

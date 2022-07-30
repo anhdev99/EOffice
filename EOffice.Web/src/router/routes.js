@@ -775,6 +775,12 @@ export default [{
         component: () => import("../pages/lichcongtac/lichcongtaccanhan"),
     },
     {
+        path: "/cong-viec/:id",
+        name: "congviec",
+        // meta: {},
+        component: () => import("../pages/lichcongtac/danhSachCongViec"),
+    },
+    {
         path: "/sign-digital",
         name: "Lịch công tác",
         // meta: {},

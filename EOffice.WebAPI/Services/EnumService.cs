@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using EOffice.WebAPI.Data;
 using EOffice.WebAPI.Extensions;
+using EOffice.WebAPI.Helpers;
 using EOffice.WebAPI.Interfaces;
 using EOffice.WebAPI.Models;
 using Microsoft.AspNetCore.Http;
@@ -30,6 +31,27 @@ namespace EOffice.WebAPI.Services
             {
                 Code = EMucDo.THAP.ToString(),
                 Name = "Thấp"
+            });
+            result.Add(new EnumModel
+            {
+                Code = EMucDo.TRUNGBINH.ToString(),
+                Name = "Trung bình"
+            });
+            result.Add(new EnumModel
+            {
+                Code = EMucDo.CAO.ToString(),
+                Name = "Cao"
+            });
+            return await Task.FromResult(result);
+        }
+        
+        public async Task<List<EnumModel>> GetLoaiLichCongTac()
+        {
+            List<EnumModel> result = new List<EnumModel>();
+            result.Add(new EnumModel
+            {
+                Code = LoaiLichCongTac.LICH_CONG_TAC_TRUONG,
+                Name = "Lịch công tác trường"
             });
             result.Add(new EnumModel
             {

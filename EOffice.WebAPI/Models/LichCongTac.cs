@@ -12,6 +12,7 @@ namespace EOffice.WebAPI.Models
         public DateTime NgayXepLich { get; set; }
         public List<UserShort> ChuTri { get; set; }
         public List<CongViec> CongViecs { get; set; }
+        public string LoaiLichCongTac { get; set; }
     }
 
     public class CongViec
@@ -27,6 +28,7 @@ namespace EOffice.WebAPI.Models
         public List<UserShort> ThanhPhanThamDu { get; set; }
         public string ThanhPhan { get; set; }
         public FileShort File { get; set; }
+        public FileShort FileUpload { get; set; }
         public string LichCongTacId { get; set; }
     }
 

@@ -11,20 +11,23 @@ import {CONSTANTS} from "@/helpers/constants";
 import DatePicker from "vue2-datepicker";
 import Multiselect from "vue-multiselect";
 import {congViecModel} from "@/models/congViecModel";
+import CKEditor from "@ckeditor/ckeditor5-vue";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 export default {
   page: {
-    title: "Lịch công tác",
+    title: "Công việc",
     meta: [{name: "description", content: appConfig.description}],
   },
-  components: {Layout, PageHeader, DatePicker, Multiselect},
+  // eslint-disable-next-line vue/no-unused-components
+  components: {Layout, PageHeader, DatePicker, Multiselect,     ckeditor: CKEditor.component,},
   data() {
     return {
-      title: "Lịch công tác cá nhân",
+      title: "Công việc",
       items: [
         {
-          text: "Lịch công tác cá nhân",
-          href: "/lich-cong-tac-ca-nhan",
+          text: "Công việc",
+          href: "#",
           // active: true,
         },
         {
@@ -58,21 +61,45 @@ export default {
       fields: [
         {key: 'STT', label: 'STT', class: 'td-stt', sortable: false, thClass: 'hidden-sortable'},
         {
-          key: "ngayXepLich",
-          label: "Từ ngày",
+          key: "tuNgay",
+          label: "ngày",
           class: "px-2",
           sortable: true,
-          thStyle: {width: '150px', minWidth: '110px'},
+          thStyle: {width: '100px', minWidth: '100px'},
         },
         {
-          key: "chuTri",
-          label: "Chủ trì",
+          key: "thoiGian",
+          label: "Thời gian",
           thClass: 'hidden-sortable',
+          thStyle: {width: '100px', minWidth: '100px'},
           sortable: false,
         },
         {
-          key: 'congViec',
-          label: "Công việc",
+          key: 'noiDung',
+          label: "Nội dung",
+          thClass: 'hidden-sortable',
+          sortable: false,
+
+          class: "text-center"
+        },
+        {
+          key: 'diaDiem',
+          label: "Địa điểm",
+          thClass: 'hidden-sortable',
+          sortable: false,
+          thStyle: {width: '100px', minWidth: '100px'},
+          class: "text-center"
+        },
+        {
+          key: 'thanhPhan',
+          label: "Thành phần",
+          thClass: 'hidden-sortable',
+          sortable: false,
+          class: "text-center"
+        },
+        {
+          key: 'ghiChu',
+          label: "Ghi chú",
           thClass: 'hidden-sortable',
           sortable: false,
           thStyle: {width: '100px', minWidth: '100px'},
@@ -87,7 +114,24 @@ export default {
         }
       ],
       optionsUser: [],
-      showCongViecModel: false
+      showCongViecModel: false,
+      editor: ClassicEditor,
+      editorConfig: {
+        plugins: [
+
+        ],
+
+        toolbar: {
+          items: [
+            'bold',
+            'italic',
+            'link',
+            'undo',
+            'redo'
+          ]
+        }
+      }
+
     };
   },
   validations: {
@@ -97,7 +141,12 @@ export default {
     },
   },
   created() {
-    this.fnGetList();
+    // this.fnGetList();
+    let lichCongTacId = this.$route.params.id;
+    if(lichCongTacId == null){
+      this.$router.push('/lich-cong-tac-ca-nhan');
+    }
+    this.handleDetail(this.$route.params.id)
     this.getUser();
   },
   watch: {
@@ -148,6 +197,7 @@ export default {
           this.showDetail = true;
         } else {
           this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+          this.$router.push("/lich-cong-tac-ca-nhan")
         }
       });
     },
@@ -238,8 +288,9 @@ export default {
         this.loading = false
       }
     },
-    handleShowCongViecModal(id) {
-      this.$router.push('/cong-viec/'+id);
+    handleShowCongViecModal(data) {
+      this.modelCongViec.lichCongTacId = this.$route.params.id;
+      this.showCongViecModel = true;
     },
   }
 }
@@ -254,14 +305,12 @@ export default {
             <div class="row mb-2">
               <div class="col-sm-4">
                 <div class="search-box me-2 mb-2 d-inline-block">
-                  <div class="position-relative">
-                    <input
-                        v-model="filter"
-                        type="text"
-                        class="form-control"
-                        placeholder="Tìm kiếm ..."
-                    />
-                    <i class="bx bx-search-alt search-icon"></i>
+                  <div class="position-relative" style="display: flex; flex-direction: column;">
+                  <h5>{{model.ngayXepLich}}</h5>
+                    <h6>Người chủ trì: </h6>
+                    <span v-for="(value, index) in model.chuTri" :key="index">
+                      {{index+1}}.{{value.fullName}} - {{value.donVi.ten}}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -271,7 +320,7 @@ export default {
                       variant="primary"
                       type="button"
                       class="btn w-md btn-primary"
-                      @click="showModal = true"
+                      @click="handleShowCongViecModal"
                       size="sm"
                   >
                     <i class="mdi mdi-plus me-1"></i> Thêm mới
@@ -290,65 +339,42 @@ export default {
                     <form @submit.prevent="handleSubmit"
                           ref="formContainer">
                       <div class="row">
-                        <div class="col-12">
-                          <div class="mb-3">
-                            <label class="text-left">Tiêu đề</label>
-                            <span style="color: red">&nbsp;*</span>
-                            <input type="hidden" v-model="model.id"/>
-                            <input
-                                id="ten"
-                                v-model.trim="model.tieuDe"
-                                type="text"
-                                class="form-control"
-                                placeholder="Nhập tiêu đề "
-                                :class="{
-                                'is-invalid':
-                                  submitted && $v.model.tieuDe.$error,
-                              }"
-                            />
-                            <div
-                                v-if="submitted && !$v.model.tieuDe.required"
-                                class="invalid-feedback"
-                            >
-                              Tiêu đề không được để trống.
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col-12">
+                        <div class="col-4">
                           <div class="mb-3">
                             <label class="text-left">Ngày bắt đầu</label>
                             <span style="color: red">&nbsp;*</span>
-                            <input type="hidden" v-model="model.id"/>
-                            <date-picker v-model="model.tuNgay"
+                            <input type="hidden" v-model="modelCongViec.id"/>
+                            <date-picker v-model="model.ngayXepLich"
                                          format="DD/MM/YYYY"
                                          value-type="format"
+                                         readonly=""
                             >
                               <div slot="input">
-                                <input v-model="model.tuNgay"
+                                <input v-model="model.ngayXepLich"
                                        v-mask="'##/##/####'" type="text" class="form-control"
-                                       placeholder="Nhập ngày bắt đầu"/>
+                                       placeholder="Nhập ngày bắt đầu"
+                                readonly
+                                />
                               </div>
                             </date-picker>
                           </div>
                         </div>
-                        <div class="col-12">
+                        <div class="col-4">
                           <div class="mb-3">
                             <label class="text-left">Ngày kết thúc</label>
-                            <span style="color: red">&nbsp;*</span>
-                            <input type="hidden" v-model="model.id"/>
-                            <date-picker v-model="model.denNgay"
+                            <date-picker v-model="modelCongViec.denNgay"
                                          format="DD/MM/YYYY"
                                          value-type="format"
                             >
                               <div slot="input">
-                                <input v-model="model.denNgay"
+                                <input v-model="modelCongViec.denNgay"
                                        v-mask="'##/##/####'" type="text" class="form-control"
                                        placeholder="Nhập ngày kết thúc"/>
                               </div>
                             </date-picker>
                           </div>
                         </div>
-                        <div class="col-12">
+                        <div class="col-4">
                           <div class="mb-3">
                             <label class="text-left">Thời gian</label>
                             <input
@@ -362,9 +388,22 @@ export default {
                         </div>
                         <div class="col-12">
                           <div class="mb-3">
+                            <label class="text-left">Nội dung</label>
+                            <span style="color: red">&nbsp;*</span>
+                            <textarea
+                                id="ten"
+                                v-model.trim="modelCongViec.noiDung"
+                                type="text"
+                                class="form-control"
+                                placeholder="Nhập nội dung công việc"
+                            />
+                          </div>
+                        </div>
+                        <div class="col-12">
+                          <div class="mb-3">
                             <label class="text-left">Địa điểm</label>
                             <span style="color: red">&nbsp;*</span>
-                            <input
+                            <textarea
                                 id="ten"
                                 v-model.trim="model.diaDiem"
                                 type="text"
@@ -373,6 +412,7 @@ export default {
                             />
                           </div>
                         </div>
+
                         <div class="col-md-12">
                           <div class="mb-3">
                             <label class="text-left">Màu sắc</label>
@@ -382,21 +422,6 @@ export default {
                                 id="example-color-input"
                                 v-model="model.mauSac"
                             />
-                          </div>
-                        </div>
-                        <div class="col-12">
-                          <div class="mb-3">
-                            <label class="text-left">Chủ trì</label>
-                            <multiselect
-                                v-model="model.chuTri"
-                                :options="optionsUser"
-                                track-by="id"
-                                label="fullName"
-                                placeholder="Chọn người chủ trì"
-                                deselect-label="Nhấn để xoá"
-                                selectLabel="Nhấn enter để chọn"
-                                selectedLabel="Đã chọn"
-                            ></multiselect>
                           </div>
                         </div>
                         <div class="col-12">
@@ -415,10 +440,22 @@ export default {
                             ></multiselect>
                           </div>
                         </div>
+                        <div class="col-md-12">
+                          <div class="mb-2">
+                            <label class="form-label" for="validationCustom01">Thành phần</label>
+                            <!--                                <span-->
+                            <!--                                  class="text-danger">*</span>-->
+                            <ckeditor
+                                v-model="model.trichYeu"
+                                :editor="editor"
+                                :config="editorConfig"
+                            ></ckeditor>
+                          </div>
+                        </div>
                         <div class="col-12">
                           <div class="mb-3">
                             <label class="text-left">Ghi chú</label>
-                            <input
+                            <textarea
                                 id="ghichu"
                                 v-model.trim="model.ghiChu"
                                 type="text"
@@ -438,115 +475,15 @@ export default {
                       </div>
                     </form>
                   </b-modal>
-                  <!--                  Modal detail -->
-                  <b-modal
-                      v-model="showDetail"
-                      title="Thông tin chi tiết lĩnh vực"
-                      title-class="text-black font-18"
-                      body-class="p-3"
-                      hide-footer
-                      centered
-                      no-close-on-backdrop
-                      size="lg"
-                  >
-                    <form @submit.prevent="handleSubmit"
-                          ref="formContainer">
-                      <div class="row">
-                        <div class="col-12">
-                          <div class="mb-3">
-                            <label class="text-left">Tên lĩnh vực : </label>
-                            <input
-                                v-model="model.ten"
-                                type="text"
-                                class="form-control"
-                            />
-                          </div>
-                        </div>
-                        <div class="col-12">
-                          <div class="mb-3">
-                            <label class="text-left">Thứ tự : </label>
-                            <input
-                                v-model="model.thuTu"
-                                type="number"
-                                min="0"
-                                oninput="validity.valid||(value='');"
-                                class="form-control"
-                            />
-                          </div>
-                        </div>
-                        <div class="col-12">
-                          <div class="mb-3">
-                            <label class="text-left">Người tạo : </label>
-                            <input
-                                v-model="model.createdBy"
-                                type="text"
-                                class="form-control"
-                            />
-                          </div>
-                        </div>
-                        <div class="col-12">
-                          <div class="mb-3">
-                            <label class="text-left">Ngày tạo: </label>
-                            <input
-                                v-model="model.createdAtShow"
-                                type="text"
-                                class="form-control"
-                            />
-                          </div>
-                        </div>
-                        <div class="col-12">
-                          <div class="mb-3">
-                            <label class="text-left">Người cập nhật : </label>
-                            <input
-                                v-model="model.modifiedBy"
-                                type="text"
-                                class="form-control"
-                            />
-                          </div>
-                        </div>
-                        <div class="col-12">
-                          <div class="mb-3">
-                            <label class="text-left">Ngày cập nhật : </label>
-                            <input
-                                v-model="model.lastModifiedShow"
-                                type="text"
-                                class="form-control"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      <div class="text-end pt-2 mt-3">
-                        <b-button variant="light" @click="showDetail = false">
-                          Đóng
-                        </b-button>
-                      </div>
-                    </form>
-                  </b-modal>
                 </div>
               </div>
             </div>
             <div class="row">
               <div class="col-12">
-                <div class="row mb-3">
-                  <div class="col-sm-12 col-md-6">
-                    <div id="tickets-table_length" class="dataTables_length">
-                      <label class="d-inline-flex align-items-center">
-                        Hiện
-                        <b-form-select
-                            class="form-select form-select-sm"
-                            v-model="perPage"
-                            size="sm"
-                            :options="pageOptions"
-                        ></b-form-select
-                        >&nbsp;dòng
-                      </label>
-                    </div>
-                  </div>
-                </div>
                 <div class="table-responsive-sm">
                   <b-table
                       class="datatables"
-                      :items="myProvider"
+                      :items="model.congViecs"
                       :fields="fields"
                       striped
                       bordered
@@ -564,29 +501,29 @@ export default {
                     <template v-slot:cell(STT)="data">
                       {{ data.index + ((currentPage - 1) * perPage) + 1 }}
                     </template>
-                    <template v-slot:cell(chuTri)="data">
-                      <div v-if="data.item.chuTri  && data.item.chuTri.length > 0" style="display: flex; flex-direction: column; margin-left: 10px">
-                            <div   v-for="(value, index) in data.item.chuTri" :key="index">
-                        {{value.fullName}} - {{value.donVi.ten}}
-                      </div>
-                      </div>
+<!--                    <template v-slot:cell(chuTri)="data">-->
+<!--                      <div v-if="data.item.chuTri  && data.item.chuTri.length > 0" style="display: flex; flex-direction: column; margin-left: 10px">-->
+<!--                        <div   v-for="(value, index) in data.item.chuTri" :key="index">-->
+<!--                          {{value.fullName}} - {{value.donVi.ten}}-->
+<!--                        </div>-->
+<!--                      </div>-->
 
-                    </template>
-                    <template v-slot:cell(congViec)="data">
-                      <button
-                          type="button"
-                          size="sm"
-                          class="btn btn-primary btn-sm"
-                          data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
-                          v-on:click="handleShowCongViecModal(data.item.id)">
+<!--                    </template>-->
+<!--                    <template v-slot:cell(congViec)="data">-->
+<!--                      <button-->
+<!--                          type="button"-->
+<!--                          size="sm"-->
+<!--                          class="btn btn-primary btn-sm"-->
+<!--                          data-toggle="tooltip" data-placement="bottom" title="Cập nhật"-->
+<!--                          v-on:click="handleShowCongViecModal(data.item)">-->
 
-                        <span v-if="data.item.congViecs && data.item.congViecs.length>0">
-                           {{data.item.congViecs.length}}
-                        </span>
-                        <span v-else>0</span>
-                      </button>
+<!--                        <span v-if="data.item.congViecs && data.item.congViecs.length>0">-->
+<!--                           {{data.item.congViecs.length}}-->
+<!--                        </span>-->
+<!--                        <span v-else>0</span>-->
+<!--                      </button>-->
 
-                    </template>
+<!--                    </template>-->
                     <template v-slot:cell(process)="data">
                       <button
                           type="button"
@@ -616,25 +553,6 @@ export default {
                     <div align="center">Không có dữ liệu</div>
                   </template>
                 </div>
-                <div class="row">
-                  <b-col>
-                    <div>Hiển thị {{ numberOfElement }} trên tổng số {{ totalRows }} dòng</div>
-                  </b-col>
-                  <div class="col">
-                    <div
-                        class="dataTables_paginate paging_simple_numbers float-end">
-                      <ul class="pagination pagination-rounded mb-0">
-                        <!-- pagination -->
-                        <b-pagination
-                            v-model="currentPage"
-                            :total-rows="totalRows"
-                            :per-page="perPage"
-                        ></b-pagination>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-
               </div>
             </div>
           </div>

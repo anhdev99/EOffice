@@ -100,6 +100,26 @@ namespace EOffice.WebAPI.Services
             return entity;
         }
 
+        public async Task<PagingModel<LichCongTac>> GetPagingCaNhan(LichCongTacParam param)
+        {
+            var result = new PagingModel<LichCongTac>();
+            var builder = Builders<LichCongTac>.Filter;
+            var filter = builder.Empty;
+            filter = builder.And(filter, builder.Where(x =>x.CreatedBy == CurrentUserName && x.IsDeleted == false));
+            
+            string sortBy = nameof(LichCongTac.NgayXepLich);
+            result.TotalRows = await _collection.CountDocumentsAsync(filter);
+            result.Data = await _collection.Find(filter)
+                .Sort(param.SortDesc
+                    ? Builders<LichCongTac>
+                        .Sort.Descending(sortBy)
+                    : Builders<LichCongTac>
+                        .Sort.Ascending(sortBy))
+                .Skip(param.Skip)
+                .Limit(param.Limit)
+                .ToListAsync();
+            return result;
+        }
         public async Task Delete(string id)
         {
             if (id == default)

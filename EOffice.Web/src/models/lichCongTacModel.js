@@ -1,45 +1,29 @@
-import moment from "moment";
 const toJson = (item) => {
     return {
         id: item.id,
-        tuNgay: item.tuNgay,
-        denNgay: item.denNgay,
-        thoiGian: item.thoiGian,
+        ngayXepLich: item.ngayXepLich,
         chuTri: item.chuTri,
-        mauSac: item.mauSac,
-        diaDiem: item.diaDiem,
-        tieuDe: item.tieuDe,
-        ghiChu: item.ghiChu,
-        thanhPhanThamDu: item.thanhPhanThamDu,
+        congViecs: item.congViecs,
+        loaiLichCongTac: item.loaiLichCongTac
     }
 }
 const fromJson = (item) => {
     return {
         id: item.id,
-        tuNgay: item.tuNgay,
-        denNgay: item.denNgay,
-        thoiGian: item.thoiGian,
+        ngayXepLich: item.ngayXepLich,
         chuTri: item.chuTri,
-        mauSac: item.mauSac,
-        diaDiem: item.diaDiem,
-        tieuDe: item.tieuDe,
-        ghiChu: item.ghiChu,
-        thanhPhanThamDu: item.thanhPhanThamDu,
+        congViecs: item.congViecs,
+        loaiLichCongTac: item.loaiLichCongTac
     }
 }
 
 const baseJson = () => {
     return {
         id: null,
-        tuNgay: null,
-        denNgay: null,
-        thoiGian: null,
+        ngayXepLich: null,
         chuTri: null,
-        mauSac: null,
-        diaDiem: null,
-        tieuDe: null,
-        ghiChu: null,
-        thanhPhanThamDu: null,
+        congViecs: null,
+        loaiLichCongTac: null
     }
 }
 

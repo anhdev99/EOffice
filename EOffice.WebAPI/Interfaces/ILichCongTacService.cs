@@ -11,6 +11,7 @@ namespace EOffice.WebAPI.Interfaces
         Task<LichCongTac> Update(LichCongTac model);
         Task Delete(string id);
         Task<LichCongTac> GetById(string id);
+        Task<PagingModel<LichCongTac>> GetPagingCaNhan(LichCongTacParam param);
 
         #region CongViec
         Task<LichCongTac> CreateCongViec(CongViec model);
