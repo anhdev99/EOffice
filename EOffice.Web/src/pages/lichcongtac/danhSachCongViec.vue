@@ -19,7 +19,6 @@ export default {
     title: "Công việc",
     meta: [{name: "description", content: appConfig.description}],
   },
-  // eslint-disable-next-line vue/no-unused-components
   components: {Layout, PageHeader, DatePicker, Multiselect,     ckeditor: CKEditor.component,},
   data() {
     return {
@@ -54,7 +53,6 @@ export default {
       filter: null,
       todoFilter: null,
       filterOn: [],
-      todofilterOn: [],
       isBusy: false,
       sortBy: "age",
       sortDesc: false,
@@ -63,9 +61,9 @@ export default {
         {
           key: "tuNgay",
           label: "Ngày",
-          class: "px-2",
           sortable: true,
           thStyle: {width: '100px', minWidth: '100px'},
+          class: "text-center"
         },
         {
           key: "thoiGian",
@@ -73,36 +71,35 @@ export default {
           thClass: 'hidden-sortable',
           thStyle: {width: '100px', minWidth: '100px'},
           sortable: false,
+          class: "text-center"
         },
         {
           key: 'noiDung',
           label: "Nội dung",
           thClass: 'hidden-sortable',
           sortable: false,
-
-          class: "text-center"
+          class: "px-2",
         },
         {
           key: 'diaDiem',
           label: "Địa điểm",
           thClass: 'hidden-sortable',
           sortable: false,
-          thStyle: {width: '100px', minWidth: '100px'},
-          class: "text-center"
+          class: "px-2",
         },
         {
           key: 'thanhPhan',
           label: "Thành phần",
           thClass: 'hidden-sortable',
           sortable: false,
+          class: "px-2",
         },
         {
           key: 'ghiChu',
           label: "Ghi chú",
           thClass: 'hidden-sortable',
           sortable: false,
-          thStyle: {width: '100px', minWidth: '100px'},
-          class: "text-center"
+          class: "px-2",
         },
         {
           key: 'process',
@@ -118,7 +115,6 @@ export default {
       editorConfig: {
         height: "200px"
       }
-
     };
   },
   validations: {
@@ -169,8 +165,8 @@ export default {
     async onPageChange() {
       this.$refs.tblList?.refresh()
     },
-    async handleUpdate(idTemp, lichCongTacIdTemp) {
-      await this.$store.dispatch("lichCongTacStore/getByIdCongViec", {id: idTemp, lichCongTacId: lichCongTacIdTemp}).then((res) => {
+    async handleUpdate(value) {
+      await this.$store.dispatch("lichCongTacStore/getByIdCongViec", value).then((res) => {
         if (res.resultCode === 'SUCCESS') {
           this.modelCongViec = congViecModel.fromJson(res.data);
 
@@ -193,20 +189,20 @@ export default {
       });
     },
     async handleDelete() {
-      if (this.model.id != 0 && this.model.id != null && this.model.id) {
-        await this.$store.dispatch("lichCongTacStore/delete", this.model.id).then((res) => {
+      if (this.modelCongViec.id != 0 && this.modelCongViec.id != null && this.modelCongViec.id) {
+        await this.$store.dispatch("lichCongTacStore/deleteCongViec", this.modelCongViec).then((res) => {
           if (res.resultCode === 'SUCCESS') {
-            this.fnGetList();
+            this.modelCongViec = congViecModel.baseJson();
+            this.handleDetail(this.$route.params.id)
             this.showDeleteModal = false;
-            this.$refs.tblList.refresh()
           }
           this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
           // });
         });
       }
     },
-    handleShowDeleteModal(id) {
-      this.model.id = id;
+    handleShowDeleteModal(value) {
+      this.modelCongViec = value;
       this.showDeleteModal = true;
     },
     async handleSubmit(e) {
@@ -325,6 +321,18 @@ export default {
                       no-close-on-backdrop
                       size="xl"
                   >
+                    <template #modal-header="{ close }">
+                      <!-- Emulate built in modal header close button action -->
+                      <h5> Thông tin công việc</h5>
+                      <div class="text-end">
+                        <b-button variant="light" class="w-md" size="sm" @click="showCongViecModel = false">
+                          Đóng
+                        </b-button>
+                        <b-button @click="handleSubmit" variant="primary" size="sm" class="ms-1 w-md">
+                          Lưu
+                        </b-button>
+                      </div>
+                    </template>
                     <form @submit.prevent="handleSubmit"
                           ref="formContainer">
                       <div class="row">
@@ -421,9 +429,7 @@ export default {
                         </div>
                         <div class="col-md-6">
                           <div class="mb-2">
-                            <label class="form-label" for="validationCustom01">Thành phần</label>
-                            <!--                                <span-->
-                            <!--                                  class="text-danger">*</span>-->
+                            <label class="form-label" for="validationCustom01">Thành phần khác</label>
                             <ckeditor
                                 v-model="modelCongViec.thanhPhan"
                                 :editor="editor"
@@ -434,8 +440,6 @@ export default {
                         <div class="col-md-6">
                         <div class="mb-2">
                           <label class="form-label" for="validationCustom01">Ghi chú</label>
-                          <!--                                <span-->
-                          <!--                                  class="text-danger">*</span>-->
                           <ckeditor
                               v-model="modelCongViec.ghiChu"
                               :editor="editor"
@@ -444,14 +448,7 @@ export default {
                         </div>
                       </div>
                       </div>
-                      <div class="text-end pt-2 mt-3">
-                        <b-button variant="light" class="w-md" size="sm" @click="showModal = false">
-                          Đóng
-                        </b-button>
-                        <b-button type="submit" variant="primary" size="sm" class="ms-1 w-md">
-                          Lưu
-                        </b-button>
-                      </div>
+
                     </form>
                   </b-modal>
                 </div>
@@ -480,6 +477,15 @@ export default {
                     <template v-slot:cell(STT)="data">
                       {{ data.index + ((currentPage - 1) * perPage) + 1 }}
                     </template>
+                    <template v-slot:cell(tuNgay)="data">
+                      <div>{{data.item.tuNgay}}</div>
+                      <div v-if="data.item.denNgay">
+                        -{{data.item.denNgay}}
+                      </div>
+                      <div v-else>
+                        -...
+                      </div>
+                    </template>
                     <template v-slot:cell(noiDung)="data">
                       <div v-if="data.item.noiDung" :inner-html.prop="data.item.noiDung">
                       </div>
@@ -494,49 +500,24 @@ export default {
                     </template>
                     <template v-slot:cell(thanhPhan)="data">
                       <div v-if="data.item.thanhPhanThamDu && data.item.thanhPhanThamDu.length">
-                        <div>Thành phần tham dự: </div>
-
-                        <div v-for="(value, index) in data.item.thanhPhanThamDu" :key="index">
-                          {{value.fullName}}-{{value.donVi.ten}}
-                        </div>
+                        <div class="title-capso">Thành phần tham dự: </div>
+                            <div class="badge font-size-small min-width-30 p-2 btn-xs font-weight-semibold bg-success" v-for="(value, index) in data.item.thanhPhanThamDu" :key="index">
+                              {{value.fullName}}-<span style="color: #560404">{{value.donVi.ten}}</span>
+                            </div>
                       </div>
                       <div  v-if="data.item.thanhPhan">
-                        <div>Thành phần khác: </div>
+                        <div class="title-capso">Thành phần khác: </div>
                         <div :inner-html.prop="data.item.thanhPhan">
                         </div>
                       </div>
-
                     </template>
-<!--                    <template v-slot:cell(chuTri)="data">-->
-<!--                      <div v-if="data.item.chuTri  && data.item.chuTri.length > 0" style="display: flex; flex-direction: column; margin-left: 10px">-->
-<!--                        <div   v-for="(value, index) in data.item.chuTri" :key="index">-->
-<!--                          {{value.fullName}} - {{value.donVi.ten}}-->
-<!--                        </div>-->
-<!--                      </div>-->
-
-<!--                    </template>-->
-<!--                    <template v-slot:cell(congViec)="data">-->
-<!--                      <button-->
-<!--                          type="button"-->
-<!--                          size="sm"-->
-<!--                          class="btn btn-primary btn-sm"-->
-<!--                          data-toggle="tooltip" data-placement="bottom" title="Cập nhật"-->
-<!--                          v-on:click="handleShowCongViecModal(data.item)">-->
-
-<!--                        <span v-if="data.item.congViecs && data.item.congViecs.length>0">-->
-<!--                           {{data.item.congViecs.length}}-->
-<!--                        </span>-->
-<!--                        <span v-else>0</span>-->
-<!--                      </button>-->
-
-<!--                    </template>-->
                     <template v-slot:cell(process)="data">
                       <button
                           type="button"
                           size="sm"
                           class="btn btn-outline btn-sm"
                           data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
-                          v-on:click="handleUpdate(data.item.id, data.item.lichCongTacId)">
+                          v-on:click="handleUpdate(data.item)">
                         <i class="fas fa-pencil-alt text-success me-1"></i>
                       </button>
                       <button
@@ -544,7 +525,7 @@ export default {
                           size="sm"
                           class="btn btn-outline btn-sm"
                           data-toggle="tooltip" data-placement="bottom" title="Xóa"
-                          v-on:click="handleShowDeleteModal(data.item.id)">
+                          v-on:click="handleShowDeleteModal(data.item)">
                         <i class="fas fa-trash-alt text-danger me-1"></i>
                       </button>
                     </template>
@@ -590,103 +571,6 @@ export default {
             </b-button>
           </template>
         </b-modal>
-
-        <!--                  Modal create -->
-<!--        <b-modal-->
-<!--            v-model="showModal"-->
-<!--            title="Thông tin lịch công tác"-->
-<!--            title-class="text-black font-18"-->
-<!--            body-class="p-3"-->
-<!--            hide-footer-->
-<!--            centered-->
-<!--            no-close-on-backdrop-->
-<!--            size="lg"-->
-<!--        >-->
-<!--          <form @submit.prevent="handleSubmit"-->
-<!--                ref="formContainer">-->
-<!--            <div class="row">-->
-<!--              <div class="col-12">-->
-<!--                <div class="mb-3">-->
-<!--                  <label class="text-left">Ngày bắt đầu</label>-->
-<!--                  <span style="color: red">&nbsp;*</span>-->
-<!--                  <input type="hidden" v-model="model.id"/>-->
-<!--                  <date-picker v-model="model.ngayXepLich"-->
-<!--                               format="DD/MM/YYYY"-->
-<!--                               value-type="format"-->
-<!--                               :class="{-->
-<!--                                'is-invalid':-->
-<!--                                  submitted && $v.model.ngayXepLich.$error,-->
-<!--                                }"-->
-<!--                  >-->
-<!--                    <div slot="input">-->
-<!--                      <input v-model="model.ngayXepLich"-->
-<!--                             v-mask="'##/##/####'" type="text" class="form-control"-->
-<!--                             placeholder="Nhập ngày bắt đầu"-->
-
-<!--                      />-->
-<!--                    </div>-->
-<!--                  </date-picker>-->
-<!--                  <div-->
-<!--                      v-if="submitted && !$v.model.ngayXepLich.required"-->
-<!--                      class="invalid-feedback"-->
-<!--                  >-->
-<!--                    Ngày xếp lịch công được trống-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--              <div class="col-12">-->
-<!--                <div class="mb-3">-->
-<!--                  <label class="text-left">Chủ trì</label>-->
-<!--                  <span style="color: red">&nbsp;*</span>-->
-<!--                  <multiselect-->
-<!--                      v-model="model.chuTri"-->
-<!--                      :options="optionsUser"-->
-<!--                      :multiple=true-->
-<!--                      track-by="id"-->
-<!--                      label="fullName"-->
-<!--                      placeholder="Chọn người chủ trì"-->
-<!--                      deselect-label="Nhấn để xoá"-->
-<!--                      selectLabel="Nhấn enter để chọn"-->
-<!--                      selectedLabel="Đã chọn"-->
-<!--                      :class="{-->
-<!--                                'is-invalid':-->
-<!--                                  submitted && $v.model.chuTri.$error,-->
-<!--                                }"-->
-<!--                  >-->
-<!--                    <template slot="singleLabel" slot-scope="{ option }">-->
-<!--                      <strong>{{ option.fullName }}</strong>-->
-
-<!--                      <span v-if="option.donVi" style="color:red">&nbsp;{{ option.donVi.ten }}</span>-->
-<!--                    </template>-->
-<!--                    <template slot="option" slot-scope="{ option }">-->
-<!--                      <div class="option__desc">-->
-<!--          <span class="option__title">-->
-<!--            <strong>{{ option.fullName }}&nbsp;</strong>-->
-<!--          </span>-->
-<!--                        <span v-if="option.donVi" class="option__small"-->
-<!--                              style="color:green">{{ option.donVi.ten }}</span>-->
-<!--                      </div>-->
-<!--                    </template>-->
-<!--                  </multiselect>-->
-<!--                  <div-->
-<!--                      v-if="submitted && !$v.model.chuTri.required"-->
-<!--                      class="invalid-feedback"-->
-<!--                  >-->
-<!--                    Người chủ trì không được trống-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--            <div class="text-end pt-2 mt-3">-->
-<!--              <b-button variant="light" class="w-md" size="sm" @click="showModal = false">-->
-<!--                Đóng-->
-<!--              </b-button>-->
-<!--              <b-button type="submit" variant="primary" size="sm" class="ms-1 w-md">-->
-<!--                Lưu-->
-<!--              </b-button>-->
-<!--            </div>-->
-<!--          </form>-->
-<!--        </b-modal>-->
       </div>
     </div>
   </Layout>
@@ -713,5 +597,9 @@ export default {
 
 .ck-editor__editable{
   min-height: 100px !important;
+}
+.title-capso{
+  font-weight: 500; color: #00568C; margin-right: 10px;
+
 }
 </style>

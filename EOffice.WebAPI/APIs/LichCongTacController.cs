@@ -206,7 +206,7 @@ namespace EOffice.WebAPI.APIs
 
         [HttpPost]
         [Route("delete-congviec")]
-        public async Task<IActionResult> DeleteCongViec(CongViec model)
+        public async Task<IActionResult> DeleteCongViec([FromBody]CongViec model)
         {
             try
             {
@@ -229,7 +229,7 @@ namespace EOffice.WebAPI.APIs
 
         [HttpPost]
         [Route("get-by-id-congviec")]
-        public async Task<IActionResult> GetByIdCongViec(CongViec model)
+        public async Task<IActionResult> GetByIdCongViec([FromBody]CongViec model)
         {
             try
             {
