@@ -1265,7 +1265,7 @@ export default {
 <!--                        <i class="fas fa-feather-alt text-primary me-1"></i>-->
 <!--                      </button>-->
                       <button
-                          v-if="currentUserName == data.item.createdBy && data.item.trangThai.code == 'ktvb'"
+                          v-if="currentUserName == data.item.createdBy && (data.item.trangThai.code == 'ktvb' || data.item.trangThai.code == 'VTTTC')"
                           type="button"
                           size="sm"
                           class="btn btn-outline btn-sm"
@@ -1884,7 +1884,7 @@ export default {
                             <span style="font-weight: bold" class="text-success">
                                                                 #{{listHistoryQuestion.length - index}}  {{item.title}}
                                                      </span></h5>
-                      <div style="font-weight: bold">Trạng thái:  <span class="badge font-size-small min-width-30 p-2 btn-xs bg-danger  font-weight-semibold" v-if="item.trangThai">{{item.trangThai.ten}}</span></div>
+                      <div style="font-weight: bold">Trạng thái:  <span class="badge font-size-small min-width-30 p-2 btn-xs  font-weight-semibold" :class="'bg-' + item.trangThai.bgColor" v-if="item.trangThai">{{item.trangThai.ten}}</span></div>
 
 
                       <div
@@ -1935,7 +1935,7 @@ export default {
             </b-button>
           </template>
         </b-modal>
-
+<!-- Check Van ban model-->
         <b-modal
             v-model="showCheckVanBanModal"
             centered
@@ -2033,7 +2033,7 @@ export default {
             <h5 style="min-width: 200px"> Văn bản đi</h5>
             <div style="width: 100%; display: flex; justify-content: flex-end" class="text-end">
               <div v-if="optionsTrangThai && optionsTrangThai.length">
-                <b-button v-for="(value, index) in optionsTrangThai" :key="index" type="button" variant="primary" class="ms-1" style="min-width: 80px;" size="sm"
+                <b-button v-for="(value, index) in optionsTrangThai" :key="index" type="button" :class="'btn-' + value.bgColor" class="ms-1"  style="min-width: 80px;" size="sm"
                           @click="handleChuyenTrangThaiVanBan(value)"
                 >
                   {{ value.ten }}

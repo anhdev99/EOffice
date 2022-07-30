@@ -226,7 +226,18 @@ namespace EOffice.WebAPI.Services
             {
                 var currentTrangThai = _context.TrangThai.Find(x => x.Code.ToUpper() == param.CurrentTrangThai.Code.ToUpper()).FirstOrDefault();
                 if (currentTrangThai != default)
-                   return currentTrangThai.NextTrangThai;
+                {
+                    var nextTrangThaiId = currentTrangThai.NextTrangThai.Select(x => x.Id);
+                    return  _context.TrangThai.AsQueryable().Where(x => nextTrangThaiId.Contains(x.Id)).Select(x => new TrangThaiShort()
+                    {
+                        Id = x.Id,
+                        Ten = x.Ten,
+                        Code = x.Code,
+                        Color = x.Code,
+                        BgColor = x.BgColor
+                    }).ToList();
+                }
+      
             }
 
             if (loaiTrangThai.ListTrangThai != default)

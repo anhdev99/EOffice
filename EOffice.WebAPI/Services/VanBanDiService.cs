@@ -1063,7 +1063,9 @@ namespace EOffice.WebAPI.Services
                         {
                             Id = x.Id,
                             Code = x.Code,
-                            Ten = x.Ten
+                            Ten = x.Ten,
+                            BgColor = x.BgColor,
+                            Color = x.BgColor
                         }).FirstOrDefault();
                 vanBanDi.TrangThai = trangThai;
                 vanBanDi.Ower = vanBanDi.GetOwerWithRole(DefaultRoleCode.VAN_THU_TRUONG);
@@ -1079,7 +1081,9 @@ namespace EOffice.WebAPI.Services
                         {
                             Id = x.Id,
                             Code = x.Code,
-                            Ten = x.Ten
+                            Ten = x.Ten,
+                            BgColor = x.BgColor,
+                            Color = x.BgColor
                         }).FirstOrDefault();
                 vanBanDi.TrangThai = trangThai;
                 vanBanDi.Ower = vanBanDi.GetOwerWithRole(DefaultRoleCode.VAN_THU_TRUONG);
@@ -1095,7 +1099,9 @@ namespace EOffice.WebAPI.Services
                     {
                         Id = x.Id,
                         Code = x.Code,
-                        Ten = x.Ten
+                        Ten = x.Ten,
+                        BgColor = x.BgColor,
+                        Color = x.BgColor
                     }).FirstOrDefault();
                 vanBanDi.TrangThai = trangThai;
                 vanBanDi.Ower = vanBanDi.GetOwerWithRole(DefaultRoleCode.THU_KY_HIEU_TRUONG);
@@ -1112,7 +1118,9 @@ namespace EOffice.WebAPI.Services
                     {
                         Id = x.Id,
                         Code = x.Code,
-                        Ten = x.Ten
+                        Ten = x.Ten,
+                        BgColor = x.BgColor,
+                        Color = x.BgColor
                     }).FirstOrDefault();
                 vanBanDi.TrangThai = trangThai;
                 vanBanDi.Ower = vanBanDi.GetOwerWithRole(DefaultRoleCode.THU_KY_HIEU_TRUONG);
@@ -1135,7 +1143,9 @@ namespace EOffice.WebAPI.Services
                     {
                         Id = x.Id,
                         Code = x.Code,
-                        Ten = x.Ten
+                        Ten = x.Ten,
+                        BgColor = x.BgColor,
+                        Color = x.BgColor
                     }).FirstOrDefault();
                 vanBanDi.TrangThai = trangThai;
                 var userOwer = _context.Users.AsQueryable().Where(x => x.UserName == vanBanDi.CreatedBy)
@@ -1171,7 +1181,9 @@ namespace EOffice.WebAPI.Services
                         {
                             Id = x.Id,
                             Code = x.Code,
-                            Ten = x.Ten
+                            Ten = x.Ten,
+                            BgColor = x.BgColor,
+                            Color = x.BgColor
                         }).FirstOrDefault();
                 vanBanDi.TrangThai = trangThai;
                 var userOwer = _context.Users.AsQueryable().Where(x => x.UserName == vanBanDi.ModifiedBy)
