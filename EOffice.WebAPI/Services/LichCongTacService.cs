@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using EOffice.WebAPI.Data;
@@ -158,16 +159,44 @@ namespace EOffice.WebAPI.Services
         }
         public async Task<dynamic> GetAll()
         {
+      
+            CultureInfo vietNam = new CultureInfo("vi-VN");
             var data = await _context.LichCongTac.Find(x => x.IsDeleted != true)
                 .ToListAsync();
             var results = data.GroupBy(
                 p => p.NgayXepLich, 
                 p => p,
-                (key, g) => new { NgayXepLich = key, LichCongTac = g.ToList() });
+                (key, g) => new { NgayXepLich = key.ToString("dddd", vietNam) + " ngày " + key.ToString("dd/MM/yyyy", vietNam) + $"{GetDateOfChineseNewYear(key.ToLocalTime())}", LichCongTac = g.ToList() });
 
             return results;
         }
         #region CongViec
+        public string GetDateOfChineseNewYear(DateTime date)
+        {
+            ChineseLunisolarCalendar chinese   = new ChineseLunisolarCalendar();
+
+            DateTime utcNow = date;
+            Int32 year  = chinese.GetYear( date );
+            Int32 month = chinese.GetMonth( date );
+            Int32 day   = chinese.GetDayOfMonth( date );
+
+            var dayString = day.ToString();
+            var monthString = month.ToString();
+            if (day < 10)
+            {
+                dayString = "0" + day.ToString();
+            }
+            if (month < 10)
+            {
+                monthString = "0" + month.ToString();
+            }
+            return $" ({dayString}/{monthString}/{year.ToString()}  âm lịch)";
+        }
+        private string  NgayAmLich(DateTime date)
+        {
+            ChineseLunisolarCalendar a = new ChineseLunisolarCalendar();
+            return $"{a.GetDayOfYear(date).ToString()}/{a.GetMonth(date).ToString()}/{a.GetYear(date).ToString()}  âm lịch"; 
+        }
         public async Task<LichCongTac> CreateCongViec(CongViec model)
         {
             if (model == default)
