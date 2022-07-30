@@ -1,14 +1,26 @@
-<script>
-/**
+<script>/**
  * Topbar component
  */
+import simplebar from "simplebar-vue";
+import {thongBaoModel} from "@/models/thongBaoModel";
+import {userModel} from "@/models/userModel";
+
 export default {
   data() {
     return {
       currentUserAuth: null,
       url:  process.env.VUE_APP_API_URL + 'files/view/' ,
+      model: thongBaoModel.baseJson(),
+      modelUser: userModel.baseJson(),
+      listNotify: [],
+      showModal: false
     };
   },
+  components:{simplebar},
+  mounted() {
+    this.getListNotify();
+  },
+
   created() {
     let authUser = localStorage.getItem("auth-user");
     if(authUser){
@@ -17,6 +29,10 @@ export default {
     }
   },
   methods: {
+    handleXemTatCa(){
+      if(this.$route.path != '/thong-bao')
+       this.$router.push('/thong-bao')
+    },
     handleThongTinCaNhan(){
       if (this.$route.path != '/thong-tin-ca-nhan') {
         this.$router.push("/thong-tin-ca-nhan");
@@ -65,6 +81,33 @@ export default {
         this.$router.push("/dang-nhap");
         return;
       }
+    },
+    async handleNotifyDetail(id) {
+      await this.$store
+          .dispatch("notificationStore/getById", id)
+          .then((res) => {
+            this.model = res;
+            this.showModal = true;
+          });
+    },
+    async handleDetailUser(id) {
+      await this.$store.dispatch("userStore/getById", id).then((res) => {
+        this.modelUser = userModel.fromJson(res.data);
+        this.showModal = true;
+      });
+    },
+    async handleChangeStatus(id) {
+      this.model.id = id;
+      await this.$store.dispatch("notifyStore/changeStatus", this.model).then((res) => {
+        if (res.resultCode === 'SUCCESS') {
+          this.getListNotify();
+        }
+      });
+    },
+    getListNotify() {
+      this.$store.dispatch("notifyStore/getListNotify").then((res) => {
+        this.listNotify = res.data || [];
+      });
     },
   },
 };
@@ -233,153 +276,78 @@ export default {
             <i class="mdi mdi-fullscreen text-white"></i>
           </button>
         </div>
+        <!-- ./start Notify -->
         <b-dropdown
-          class="d-inline-block"
-          toggle-class="header-item noti-icon"
-          menu-class="dropdown-menu-lg p-0 dropdown-menu-end"
-          right
-          variant="white"
+            class="d-inline-block"
+            toggle-class="header-item noti-icon"
+            menu-class="dropdown-menu-lg p-0 dropdown-menu-end"
+            right
+            variant="white"
         >
           <template v-slot:button-content>
             <i class="mdi mdi-bell-outline text-white"></i>
-            <span class="badge bg-danger rounded-pill">3</span>
+            <span v-if="listNotify.number > 0" class="badge bg-danger rounded-pill"
+            >{{ listNotify.number }}
+            </span>
           </template>
           <div class="p-3">
             <div class="row align-items-center">
               <div class="col">
-                <h5 class="m-0 font-size-16"> Thông báo </h5>
+                <h6 class="m-0">Thông báo</h6>
+              </div>
+              <div class="col-auto">
+                <a href="/thong-bao" class="small"> Tất cả </a>
               </div>
             </div>
           </div>
-          <div data-simplebar style="max-height: 230px;">
-
-            <a href="javascript:void(0);" class="text-reset notification-item">
-              <div class="d-flex">
-
-                <div class="flex-grow-1">
-                  <p class="font-size-12 text-muted" style="margin: 0px"> Không có thông báo</p>
+          <simplebar style="max-height: 300px">
+            <a
+                href="javascript: void(0);"
+                class="text-reset notification-item"
+                v-for="items in listNotify.listNotify"
+                :key="items.id"
+                @click="handleNotifyDetail(items.id),handleDetailUser(items.senderId),handleChangeStatus(items.id)"
+            >
+              <div>
+                <div class="d-flex align-items-center">
+                  <div class="avatar-xs me-3">
+                    <span
+                        class="bg-primary rounded-circle font-size-16 text-light p-2 mt-2"
+                    >
+                      <i class="fas fa-scroll"></i>
+                    </span>
+                  </div>
+                  <div class="flex-grow-1 notify-content-box px-2">
+                    <h6 class="mt-0 mb-1  title-capso">
+                      {{ items.title }}
+                    </h6>
+                    <div class="font-size-12 text-muted ntf-content">
+                      <p class="mb-1" :inner-html.prop="items.content | truncate(150)">
+                      </p>
+                    </div>
+                  </div>
+                  <div class="icon-box p-2">
+                    <i v-if="items.read == true" class="bx bxs-circle text-light"></i>
+                    <i v-else-if="items.read == false" class="bx bxs-circle text-primary"></i>
+                  </div>
                 </div>
               </div>
             </a>
-<!--            -->
-<!--            <a href="javascript:void(0);" class="text-reset notification-item">-->
-<!--              <div class="d-flex">-->
-<!--                <div class="flex-shrink-0 me-3">-->
-<!--                  <div class="avatar-xs">-->
-<!--                    <span-->
-<!--                      class="avatar-title bg-success rounded-circle font-size-16"-->
-<!--                    >-->
-<!--                      <i class="mdi mdi-cart-outline"></i>-->
-<!--                    </span>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--                <div class="flex-grow-1">-->
-<!--                  <h6 class="mb-1">Your order is placed</h6>-->
-<!--                  <div class="font-size-12 text-muted">-->
-<!--                    <p class="mb-1">-->
-<!--                      Dummy text of the printing and typesetting industry.-->
-<!--                    </p>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </a>-->
 
-<!--            <a href class="text-reset notification-item">-->
-<!--              <div class="d-flex">-->
-<!--                <div class="flex-shrink-0 me-3">-->
-<!--                  <div class="avatar-xs">-->
-<!--                    <span-->
-<!--                      class="avatar-title bg-warning rounded-circle font-size-16"-->
-<!--                    >-->
-<!--                      <i class="mdi mdi-message-text-outline"></i>-->
-<!--                    </span>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--                <div class="flex-grow-1">-->
-<!--                  <h6 class="mt-0 mb-1">New Message received</h6>-->
-<!--                  <div class="font-size-12 text-muted">-->
-<!--                    <p class="mb-1">You have 87 unread messages</p>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </a>-->
-
-<!--            <a href class="text-reset notification-item">-->
-<!--              <div class="d-flex">-->
-<!--                <div class="flex-shrink-0 me-3">-->
-<!--                  <div class="avatar-xs">-->
-<!--                    <span-->
-<!--                      class="avatar-title bg-info rounded-circle font-size-16"-->
-<!--                    >-->
-<!--                      <i class="mdi mdi-glass-cocktail"></i>-->
-<!--                    </span>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--                <div class="flex-grow-1">-->
-<!--                  <h6 class="mt-0 mb-1">Your item is shipped</h6>-->
-<!--                  <div class="font-size-12 text-muted">-->
-<!--                    <p class="mb-1">-->
-<!--                      It is a long established fact that a reader will-->
-<!--                    </p>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </a>-->
-
-<!--            <a href class="text-reset notification-item">-->
-<!--              <div class="d-flex">-->
-<!--                <div class="flex-shrink-0 me-3">-->
-<!--                  <div class="avatar-xs">-->
-<!--                    <span-->
-<!--                      class="avatar-title bg-primary rounded-circle font-size-16"-->
-<!--                    >-->
-<!--                      <i class="mdi mdi-cart-outline"></i>-->
-<!--                    </span>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--                <div class="flex-grow-1">-->
-<!--                  <h6 class="mt-0 mb-1">Your order is placed</h6>-->
-<!--                  <div class="font-size-12 text-muted">-->
-<!--                    <p class="mb-1">-->
-<!--                      Dummy text of the printing and typesetting industry.-->
-<!--                    </p>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </a>-->
-
-<!--            <a href class="text-reset notification-item">-->
-<!--              <div class="d-flex">-->
-<!--                <div class="flex-shrink-0 me-3">-->
-<!--                  <div class="avatar-xs">-->
-<!--                    <span-->
-<!--                      class="avatar-title bg-danger rounded-circle font-size-16"-->
-<!--                    >-->
-<!--                      <i class="mdi mdi-message-text-outline"></i>-->
-<!--                    </span>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--                <div class="flex-grow-1">-->
-<!--                  <h6 class="mt-0 mb-1">New Message received</h6>-->
-<!--                  <div class="font-size-12 text-muted">-->
-<!--                    <p class="mb-1">You have 87 unread messages</p>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </a>-->
-          </div>
+          </simplebar>
           <div class="p-2 border-top">
             <div class="d-grid">
               <a
-                class="btn btn-sm btn-link font-size-14 text-center"
-                href="javascript:void(0)"
+                  class="btn btn-sm btn-link font-size-14 text-center"
+                  href="javascript:void(0)"
+                  @click="handleXemTatCa"
               >
-               Xem tất cả
+                Xem tất cả
               </a>
             </div>
           </div>
         </b-dropdown>
-
+        <!-- ./ end Notify -->
         <b-dropdown
           class="d-inline-block"
           right
@@ -449,17 +417,61 @@ export default {
             Đăng xuất
           </a>
         </b-dropdown>
-
-<!--        <div class="dropdown d-inline-block">-->
-<!--          <button-->
-<!--            type="button"-->
-<!--            class="btn header-item noti-icon right-bar-toggle toggle-right"-->
-<!--            @click="toggleRightSidebar"-->
-<!--          >-->
-<!--            <i class="mdi mdi-cog-outline toggle-right"></i>-->
-<!--          </button>-->
-<!--        </div>-->
       </div>
     </div>
+    <b-modal
+        v-model="showModal"
+        id="modal-lg"
+        size="lg"
+        body-class="p-0"
+        hide-footer
+    >
+      <template #modal-header="{ close }">
+        <!-- Emulate built in modal header close button action -->
+        <h5> Thông báo</h5>
+        <div class="text-end">
+          <b-button variant="light" size="sm" style="width: 80px" @click="showModal = false">
+            Đóng
+          </b-button>
+        </div>
+      </template>
+      <div class="card-body p-3">
+        <h4 class="mt-0 font-size-16 title-capso" style="font-weight: bold">{{model.title}}</h4>
+        <div class="d-flex mb-2  mt-2">
+          <span>
+              <span v-if="modelUser.avatar">
+                <img
+                    :src="url + `${modelUser.avatar.fileId}`"
+                    alt="Avatar"
+                    class="d-flex me-3 rounded-circle avatar-sm"
+                />
+
+              </span>
+              <span v-else>
+                <img
+                    class="d-flex me-3 rounded-circle avatar-sm"
+                    src="@/assets/images/4.png"
+                    alt="Avatar"
+                />
+              </span></span>&nbsp;
+          <div class="flex-grow-1">
+            <h5 class="font-size-14 mt-1">{{model.sender}}</h5>
+            <small class="text-muted">tới {{model.recipient}}</small>
+
+          </div>
+          <div class="flex-grow-2">
+            <small class="text-muted" style="float: right"><i>Ngày gửi: {{ model.createdAtShow }} {{model.createdAtTimeShow}}</i></small>
+          </div>
+        </div>
+        <p v-if="model.content" :inner-html.prop="model.content">
+        </p>
+      </div>
+    </b-modal>
   </header>
 </template>
+<style>
+.title-capso{
+  font-weight: bold; color: #00568C; margin-right: 10px;
+
+}
+</style>
