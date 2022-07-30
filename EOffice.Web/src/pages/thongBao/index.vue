@@ -143,7 +143,7 @@ export default {
                       </div>
                       <div class="col-mail col-mail-2" style="display: flex; justify-content: space-between; justify-items: center"
                       >
-                        <div class="title-capso" v-if="item.content" :inner-html.prop="item.content">
+                        <div class="title-capso" v-if="item.content" :inner-html.prop="item.content | truncate(110)" >
                         </div>
                         <div  > {{ item.createdAtShow }} {{item.createdAtTimeShow}}</div>
                       </div>
