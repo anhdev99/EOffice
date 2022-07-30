@@ -21,6 +21,7 @@ import {notifyModel} from "@/models/notifyModel";
 import {vanBanDiModel} from "@/models/vanBanDiModel";
 import {trangThaiModel} from "@/models/trangThaiModel";
 import {CURRENT_USER} from "@/helpers/currentUser";
+import Treeselect from "@riophae/vue-treeselect";
 
 /**
  * Advanced table component
@@ -37,7 +38,8 @@ export default {
     ckeditor: CKEditor.component,
     Switches,
     DatePicker,
-    vueDropzone: vue2Dropzone
+    vueDropzone: vue2Dropzone,
+    Treeselect
   },
   data() {
     return {
@@ -155,6 +157,7 @@ export default {
       ],
       optionsLoaiVanBan: [],
       optionsDonVi: [],
+      optionsDonViTree: [],
       optionsLinhVuc: [],
       optionsUser: [],
       optionsHinhThucNhan: [],
@@ -187,7 +190,8 @@ export default {
       showHistoryModal: false,
       listHistoryQuestion: [],
       noiDungTuChoi: null,
-      showModalNoiDungTuChoi : false
+      showModalNoiDungTuChoi : false,
+      valueConsistsOf: 'ALL_WITH_INDETERMINATE',
     };
   },
   validations: {
@@ -210,6 +214,7 @@ export default {
     this.getLinhVuc();
     this.getHinhThuc();
     this.getMucDo();
+    this.getDonViTree();
   },
   mounted() {
     // Set the initial number of items
@@ -404,6 +409,20 @@ export default {
             let items = resp.data
             this.loading = false
             this.optionsDonVi = items;
+          }
+          return [];
+        });
+      } finally {
+        this.loading = false
+      }
+    },
+    async getDonViTree() {
+      try {
+        await this.$store.dispatch("donViStore/getTree").then(resp => {
+          if (resp.resultCode == "SUCCESS") {
+            let items = resp.data
+            this.loading = false
+            this.optionsDonViTree = items;
           }
           return [];
         });
@@ -627,6 +646,22 @@ export default {
           // this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
         }
       });
+    },
+    formatRemoveDonVi(node, instanceId) {
+      let value = this.modelTrangThai.donVi?.find(x => x.id == node.id);
+      if (value != null) {
+        this.modelTrangThai.donVi = this.modelTrangThai.donVi.filter(x => x.id != value.id);
+      }
+    },
+    formatDonVi(node, instanceId) {
+      let index = this.modelTrangThai.donVi?.findIndex(x => x.id == node.id);
+      if (index == -1 || index == undefined) {
+        if (!this.modelTrangThai.donVi) {
+          this.modelTrangThai.donVi = [];
+        }
+        this.modelTrangThai.donVi.push({id: node.id, ten: node.label, code: node.code});
+
+      }
     },
   }
 };
@@ -1880,6 +1915,32 @@ export default {
               </div>
             </div>
           </div>
+          <div class="row" v-if="modelTrangThai.newTrangThai && modelTrangThai.newTrangThai.code == 'BH'">
+            <div class="col-md-12">
+              <div class="mb-2">
+                <label class="form-label" for="validationCustom01"> Đơn vị ban hành</label>
+                <treeselect
+                    v-on:select="formatDonVi"
+                    v-on:deselect="formatRemoveDonVi"
+                    :multiple="true"
+                    :options="optionsDonViTree"
+                    :value="modelTrangThai.donVi"
+                    :searchable="true"
+                    :value-consists-of="valueConsistsOf"
+                    :normalizer="normalizer"
+                    value-format="object"
+                >
+
+                  <label slot="option-label"
+                         slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }"
+                         :class="labelClassName">
+                    {{ node.label }}
+                    <span v-if="shouldShowCount" :class="countClassName">({{ count }})</span>
+                  </label>
+                </treeselect>
+              </div>
+            </div>
+          </div>
           <template #modal-footer>
             <b-button v-b-modal.modal-close_visit
                       size="sm"
@@ -1895,6 +1956,15 @@ export default {
                       :disabled="modelTrangThai.lanhDaoDonVi == null"
                       v-on:click="handleChuyenTrangThaiVanBan(null)">
               Trình lãnh đạo đơn vị
+            </b-button>
+            <b-button v-else-if="modelTrangThai.newTrangThai && modelTrangThai.newTrangThai.code == 'BH'" v-b-modal.modal-close_visit
+                      size="sm"
+                      variant="primary"
+                      type="button"
+                      class="w-md"
+                      :disabled="modelTrangThai.donVi == null"
+                      v-on:click="handleChuyenTrangThaiVanBan(null)">
+              Ban hành văn bản
             </b-button>
             <b-button v-else v-b-modal.modal-close_visit
                       size="sm"

@@ -27,11 +27,13 @@ namespace EOffice.WebAPI.Services
         private readonly IDbSettings _settings;
         private readonly IFileService _fileService;
         private ILoggingService _logger;
+        private INotifyService _notifyService;
         private readonly HistoryVanBanDiService _history;
         private List<String> filePicture = new List<string>() { ".jpeg", ".jpg", ".gif", ".png" };
         private List<String> fileOffice = new List<string>() { ".docx", ".doc", ".pdf" };
 
         public VanBanDiService(HistoryVanBanDiService history, ILoggingService logger, IDbSettings settings,
+            INotifyService notifyService,
             DataContext context,
             IFileService fileService,
             IHttpContextAccessor contextAccessor)
@@ -42,6 +44,7 @@ namespace EOffice.WebAPI.Services
             _collection = context.VanBanDi;
             _settings = settings;
             _fileService = fileService;
+            _notifyService = notifyService;
             _logger = logger.WithCollectionName(_settings.VanBanDiCollectionName)
                 .WithDatabaseName(_settings.DatabaseName)
                 .WithUserName(CurrentUserName);
@@ -1032,6 +1035,32 @@ namespace EOffice.WebAPI.Services
             vanBanDi.TrangThai = model.NewTrangThai;
             vanBanDi.NoiDungTuChoi = null;
 
+            #region Ban hành
+
+            if (vanBanDi.TrangThai != default &&
+                vanBanDi.TrangThai.Code.ToUpper() == DefaultRoleCode.BAN_HANH)
+            {
+                var donViIds = model.DonVi?.Select(x => x.Id).ToList();
+                var userIds = _context.Users.AsQueryable().Where(x => donViIds.Contains(x.DonVi.Id) && x.IsDeleted != true).Select(x => x.Id).ToList();
+                vanBanDi.NguoiDuocBanHanh = userIds;
+                try
+                {
+                    var notify = new Notify()
+                    {
+                        Title =
+                            $"Văn bản số {vanBanDi.SoLuuCV} được ban hành!",
+                        Content =
+                            $"Văn bản số {vanBanDi.SoLuuCV} được ban hành. <br /> Trích yếu: {vanBanDi.TrichYeu} <br /> Ngày ký: {vanBanDi.NgayKy} <a href='/van-ban-di'> Xem chi tiết</a>"
+                    };
+                    await  _notifyService.WithNotify(notify).WithRecipients(userIds).PushNotify();
+
+                }
+                catch (Exception e)
+                {
+                }
+            }
+
+            #endregion
             #region Trình lãnh đạo đơn vị
             if (vanBanDi.TrangThai != default &&
                 vanBanDi.TrangThai.Code.ToUpper() == DefaultRoleCode.TRINH_LANH_DAO_DON_VI)

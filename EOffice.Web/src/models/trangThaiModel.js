@@ -53,7 +53,8 @@ const currentBaseJson = () =>{
         vanBanDiId: null,
         noiDung: null,
         userName: null,
-        lanhDaoDonVi: null
+        lanhDaoDonVi: null,
+        donVi: null
     }
 }
 

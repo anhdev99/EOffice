@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using EOffice.WebAPI.Models;
 
 namespace EOffice.WebAPI.Params
@@ -11,5 +12,6 @@ namespace EOffice.WebAPI.Params
         public string NoiDung { get; set; }
         public string UserName { get; set; }
         public UserShort LanhDaoDonVi { get; set; }
+        public List<DonVi> DonVi { get; set; }
     }
 }
