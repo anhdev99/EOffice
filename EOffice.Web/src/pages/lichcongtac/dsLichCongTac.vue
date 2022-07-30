@@ -97,7 +97,6 @@ export default {
         await this.$store.dispatch("userStore/getAll").then(resp => {
           if (resp.resultCode == "SUCCESS") {
             let items = resp.data
-            console.log("user", resp.data);
             this.loading = false
             this.optionsUser = items;
           }
@@ -112,9 +111,7 @@ export default {
         this.$store.dispatch("lichCongTacStore/getAll").then(resp => {
           if (resp.resultCode == CONSTANTS.SUCCESS) {
             let data = resp.data;
-            console.log("data", data);
             this.model = resp.data;
-            console.log("model", this.model);
             this.loading = false
           } else {
             return [];
@@ -156,66 +153,93 @@ export default {
     <!--    Danh sach lic cong tac -->
     <section>
       <div v-for="(item, index) in model" :key="index">
-        <b-card>
-          <b-card-header
-              class="fw-bold mb-3 text-white bg-primary"
+        <b-card style="padding: 0" class="card-lichcongtac">
+
+          <b-card-header v-if="item"
+              class="fw-bold text-white bg-primary"
           >
-            <i class="fas fa-calendar-alt me-2"></i>
+            <i class="fas fa-calendar-alt me-1"></i>
             {{ item.ngayXepLich }}
           </b-card-header>
 
           <!--              Table -->
-          <table class="table table-striped table-bordered">
+          <table style="margin: 0px" class="table table-bordered">
             <thead>
             <tr>
-              <th width="15%">Người chủ trì</th>
-              <th>Thời gian</th>
-              <th>Nội dung</th>
-              <th>Địa điểm</th>
-              <th>Thành phần</th>
-              <th>Ghi chú</th>
+              <th width="15%" class="title-capso">Người chủ trì</th>
+              <th class="text-center title-capso" width="100px">Thời gian</th>
+              <th  class="title-capso">Nội dung</th>
+              <th  class="title-capso" width="20%">Địa điểm</th>
+              <th class="title-capso"  width="20%">Thành phần</th>
+              <th  class="title-capso" width="10%">Ghi chú</th>
             </tr>
             </thead>
-            <tbody>
+            <tbody v-if="item">
             <tr
                 v-for="(cv, index) in item.congViecs"
                 :key="index"
             >
-              <td v-if="cv.rowSpan > 0" :rowspan="`${cv.rowSpan}`" style="vertical-align : middle;text-align:left;">
-                <div v-for="(value, index) in cv.chuTri" :key="index">
+              <td v-if="cv.rowSpan > 0" :rowspan="`${cv.rowSpan}`" style="vertical-align : middle;text-align:left;" class="px-1">
+                <div  v-for="(value, index) in cv.chuTri" :key="index">
                   {{value.fullName}}
                 </div>
               </td>
-              <td>{{cv.thoiGian}}</td>
-              <td>
-                <div v-if="cv.noiDung" :inner-html.prop="cv.noiDung">
+              <td class="text-center" style="vertical-align : middle;text-align:left;" >
+                <div  v-if="cv.tuNgay && cv.denNgay">
+                  {{cv.tuNgay}} - {{cv.denNgay}}
+                </div>
+                <div v-else-if="cv.thoiGian">
+                  {{cv.thoiGian}}
+                </div>
+                <div v-else>
+                  {{cv.tuNgay}}
                 </div>
               </td>
-              <td>
-                <div v-if="cv.diaDiem" :inner-html.prop="cv.diaDiem">
+              <td class="px-1" style="vertical-align : middle;text-align:left;" >
+                <div v-if="cv.noiDung" :inner-html.prop="cv.noiDung" >
                 </div>
               </td>
-              <td>
-                <template v-if="cv.thanhPhanThamDu">
-                  <div  v-for="(value, index) in cv.thanhPhanThamDu" :key="index">
-                    {{value.fullName}}
+              <td class="px-2" style="vertical-align : middle;text-align:left;" >
+                <div v-if="cv.diaDiem" :inner-html.prop="cv.diaDiem" >
+                </div>
+              </td>
+              <td class="px-1" style="vertical-align : middle;text-align:left;" >
+                <div v-if="cv.thanhPhanThamDu" >
+                  <div class="title-capso">Thành phần tham dự:</div>
+                  <span  v-for="(value, index) in cv.thanhPhanThamDu" :key="index">
+                    <span>
+                        {{value.fullName}},
+                    </span>
+                  </span>
+                </div>
+                <div v-if="cv.thanhPhan">
+                  <div class="title-capso">Thành phần khác:</div>
+                  <div v-if="cv.thanhPhan" :inner-html.prop="cv.thanhPhan" >
                   </div>
-                </template>
+                </div>
 
               </td>
-              <td>
+              <td style="vertical-align : middle;text-align:left;" >
                 <div v-if="cv.ghiChu" :inner-html.prop="cv.ghiChu">
                 </div>
               </td>
             </tr>
             </tbody>
           </table>
+
         </b-card>
       </div>
     </section>
 
   </Layout>
 </template>
-<style lang="scss">
+<style>
+.title-capso{
+  font-weight: bold; color: #00568C;
 
+}
+
+.card-lichcongtac .card-body{
+  padding: 0px;
+}
 </style>
