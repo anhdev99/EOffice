@@ -112,6 +112,30 @@ namespace EOffice.WebAPI.APIs
                 );
             }
         }
+        [HttpPost]
+        [Route("get-paging")]
+        public async Task<IActionResult> GetPaging([FromBody] LichCongTacParam param)
+        {
+            try
+            {
+                var response = await _lichCongTacService.GetPaging(param);
+
+                return Ok(
+                    new ResultResponse<dynamic>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+        
         [HttpGet]
         [Route("get-all")]
         public async Task<IActionResult> GetAll()

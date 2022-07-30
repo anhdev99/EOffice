@@ -4,7 +4,8 @@ namespace EOffice.WebAPI.Params
 {
     public class LichCongTacParam : PagingParam
     {
-        
+        public string LoaiLichCongTac { get; set; }
+        public DateTime? SelectDay { get; set; }
     }
     
     public class PagingParamDate

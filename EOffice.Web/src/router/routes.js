@@ -763,7 +763,7 @@ export default [{
         component: () => import("../pages/xacNhanKySo"),
     },
     {
-        path: "/lich-cong-tac",
+        path: "/lich-cong-tac/:loaiLichCongTac",
         name: "Lịch công tác",
         // meta: {},
         component: () => import("../pages/lichcongtac/index"),
@@ -787,7 +787,7 @@ export default [{
         component: () => import("../pages/signDigital"),
     },
     {
-        path: "/danh-sach-lich-cong-tac",
+        path: "/xem-lich-cong-tac/:loaiLichCongTac?",
         name: "Danh sách lịch công tác",
         // meta: {},
         component: () => import("../pages/lichcongtac/dsLichCongTac"),

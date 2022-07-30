@@ -10,14 +10,14 @@ import {lichCongTacModel} from "@/models/lichCongTacModel";
 import {CONSTANTS} from "@/helpers/constants";
 import DatePicker from "vue2-datepicker";
 import Multiselect from "vue-multiselect";
-import {FunctionalCalendar} from 'vue-functional-calendar';
+import {congViecModel} from "@/models/congViecModel";
 
 export default {
   page: {
     title: "Lịch công tác",
     meta: [{name: "description", content: appConfig.description}],
   },
-  components: {Layout, PageHeader, DatePicker, Multiselect, FunctionalCalendar},
+  components: {Layout, PageHeader, DatePicker, Multiselect},
   data() {
     return {
       title: "Lịch công tác",
@@ -33,11 +33,13 @@ export default {
         }
       ],
       data: [],
+      loaiLichCongTac: this.$route.params.loaiLichCongTac,
       showModal: false,
       showDetail: false,
       showDeleteModal: false,
       submitted: false,
       model: lichCongTacModel.baseJson(),
+      modelCongViec: congViecModel.baseJson(),
       listCoQuan: [],
       listRole: [],
       pagination: pagingModel.baseJson(),
@@ -54,45 +56,54 @@ export default {
       isBusy: false,
       sortBy: "age",
       sortDesc: false,
-      optionsUser: [],
-      calendarData: {},
-      markedDates: ["6-3-2021"],
-      calendarConfigs: {
-        sundayStart: false,
-        dateFormat: 'dd/mm/yyyy',
-        isDatePicker: false,
-        isDateRange: false
-      },
-      dayNames: ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'],
-      monthNames: [
-        "Tháng 1",
-        "Tháng 2",
-        "Tháng 3",
-        "Tháng 4",
-        "Tháng 5",
-        "Tháng 6",
-        "Tháng 7",
-        "Tháng 8",
-        "Tháng 9",
-        "Tháng 10",
-        "Tháng 11",
-        "Tháng 12",
+      fields: [
+        {key: 'STT', label: 'STT', class: 'td-stt', sortable: false, thClass: 'hidden-sortable'},
+        {
+          key: "ngayXepLich",
+          label: "Từ ngày",
+          class: "px-2",
+          sortable: true,
+          thStyle: {width: '150px', minWidth: '110px'},
+        },
+        {
+          key: "chuTri",
+          label: "Chủ trì",
+          thClass: 'hidden-sortable',
+          sortable: false,
+        },
+        {
+          key: 'congViec',
+          label: "Công việc",
+          thClass: 'hidden-sortable',
+          sortable: false,
+          thStyle: {width: '100px', minWidth: '100px'},
+          class: "text-center"
+        },
+        {
+          key: 'process',
+          label: 'Xử lý',
+          class: 'td-xuly',
+          thClass: 'hidden-sortable',
+          sortable: false
+        }
       ],
-      dataRange: {
-        start: new Date(),
-        end: "",
-      },
+      optionsUser: [],
+      showCongViecModel: false
     };
   },
   validations: {
     model: {
-      tieuDe: {required},
+      ngayXepLich: {required},
+      chuTri: {required}
     },
   },
   created() {
     this.fnGetList();
     this.getUser();
-    this.getByDateNow();
+    if(this.$route.params.loaiLichCongTac == null){
+      window.location.href = '/'
+    }
+    console.log("loaiLichCongTac", this.loaiLichCongTac)
   },
   watch: {
     model: {
@@ -100,30 +111,19 @@ export default {
       handler(val) {
         // addCoQuanToModel()
         // this.saveValueToLocalStorage()
-        console.log("markedDates", this.markedDates);
-      },
+      }
     },
-    calendarData:{
+    '$route.params.loaiLichCongTac':{
       deep: true,
       handler(val) {
-        console.log("getByDate", this.calendarData);
-        this.$store.dispatch("lichCongTacStore/getByDate", this.calendarData).then(resp => {
-          if (resp.resultCode == CONSTANTS.SUCCESS) {
-            this.model = resp.data;
-          } else {
-            return [];
-          }
-        })
+        if(val == null){
+          window.location.href = '/'
+        }
+        console.log("loaiLichCongTac", val)
+        this.loaiLichCongTac = val;
+        this.$refs.tblList.refresh()
       }
-    },
-    showModal(status) {
-      if (status == false) this.model = lichCongTacModel.baseJson();
-    },
-    showDeleteModal(val) {
-      if (val == false) {
-        this.model.id = null;
-      }
-    },
+    }
   },
   methods: {
     async fnGetList() {
@@ -134,7 +134,6 @@ export default {
         await this.$store.dispatch("userStore/getAll").then(resp => {
           if (resp.resultCode == "SUCCESS") {
             let items = resp.data
-            console.log("user", resp.data);
             this.loading = false
             this.optionsUser = items;
           }
@@ -144,23 +143,17 @@ export default {
         this.loading = false
       }
     },
-    async onPageChange(page = 1) {
-      console.log("LOG ON PAGE CHAGNE : ")
-      this.pagination.currentPage = page;
-      const params = {
-        pageNumber: this.pagination.currentPage,
-        pageSize: this.pagination.pageSize,
-      }
+    async onPageChange() {
       this.$refs.tblList?.refresh()
     },
     async handleUpdate(id) {
-      console.log("LOG HANDLE UPDATE ", id)
       await this.$store.dispatch("lichCongTacStore/getById", id).then((res) => {
         if (res.resultCode === 'SUCCESS') {
-          this.model = res.data;
+          this.model = lichCongTacModel.fromJson(res.data);
           this.showModal = true;
         } else {
           this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+          this.$refs.tblList.refresh()
         }
       });
     },
@@ -178,8 +171,9 @@ export default {
       if (this.model.id != 0 && this.model.id != null && this.model.id) {
         await this.$store.dispatch("lichCongTacStore/delete", this.model.id).then((res) => {
           if (res.resultCode === 'SUCCESS') {
-            // this.fnGetList();
+            this.fnGetList();
             this.showDeleteModal = false;
+            this.$refs.tblList.refresh()
           }
           this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
           // });
@@ -195,12 +189,15 @@ export default {
       this.submitted = true;
       console.log("handleSubmit");
       this.$v.$touch();
-      if (this.$v.$invalid) {
+      if (this.$v.model.$invalid) {
         return;
       } else {
         let loader = this.$loading.show({
           container: this.$refs.formContainer,
         });
+        if(this.loaiLichCongTac && this.loaiLichCongTac != null){
+          this.model.loaiLichCongTac = this.loaiLichCongTac;
+        }
         if (
             this.model.id != 0 &&
             this.model.id != null &&
@@ -208,10 +205,11 @@ export default {
         ) {
           // Update model
           await this.$store.dispatch("lichCongTacStore/update", this.model).then((res) => {
+            console.log('model up', this.model)
             if (res.resultCode === 'SUCCESS') {
-              // this.fnGetList();
+              this.fnGetList();
               this.showModal = false;
-              this.model = {};
+              this.$refs.tblList.refresh()
             }
             this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res))
           });
@@ -219,8 +217,9 @@ export default {
           // Create model
           await this.$store.dispatch("lichCongTacStore/create", lichCongTacModel.toJson(this.model)).then((res) => {
             if (res.resultCode === 'SUCCESS') {
-              // this.fnGetList();
+              this.fnGetList();
               this.showModal = false;
+              this.$refs.tblList.refresh()
               this.model = {};
             }
             this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res))
@@ -230,29 +229,6 @@ export default {
       }
       this.submitted = false;
     },
-    markDates() {
-      let someDate = new Date();
-      someDate.setDate(someDate.getDate() - 1);
-      let yesterday = this.getFormatedDate(someDate);
-      someDate.setDate(someDate.getDate() + 2);
-      let tommorow = this.getFormatedDate(someDate);
-
-      this.markedDates = [yesterday, tommorow];
-
-      // this.$set(this.$data, "markedDates", ["7-3-2021"]);
-    },
-    async getByDateNow(){
-      try {
-        await this.$store.dispatch("lichCongTacStore/getByDateNow").then(resp => {
-          if (resp.resultCode == "SUCCESS") {
-            this.model = resp.data;
-          }
-          return [];
-        });
-      } finally {
-        this.loading = false
-      }
-    },
     myProvider(ctx) {
       const params = {
         start: ctx.currentPage,
@@ -260,14 +236,14 @@ export default {
         content: this.filter,
         sortBy: ctx.sortBy,
         sortDesc: ctx.sortDesc,
+        loaiLichCongTac: this.loaiLichCongTac
       }
       this.loading = true
       try {
-        let promise = this.$store.dispatch("lichCongTacStore/getPagingParams", params)
+        let promise = this.$store.dispatch("lichCongTacStore/getPagingParamsCaNhan", params)
         return promise.then(resp => {
           if (resp.resultCode == CONSTANTS.SUCCESS) {
             let data = resp.data;
-            console.log("data", data);
             this.totalRows = data.totalRows
             let items = data.data
             this.numberOfElement = items.length
@@ -280,7 +256,10 @@ export default {
       } finally {
         this.loading = false
       }
-    }
+    },
+    handleShowCongViecModal(id) {
+      this.$router.push('/cong-viec/'+id);
+    },
   }
 }
 </script>
@@ -288,431 +267,296 @@ export default {
   <Layout>
     <PageHeader :title="title" :items="items"/>
     <div class="row">
-      <div class="col-xl-4 col-lg-5 col-md-6 col-sm-12">
+      <div class="col-12">
         <div class="card">
           <div class="card-body">
-            <div class="text-lg-start mb-3">
-              <b-button
-                  variant="primary"
-                  type="button"
-                  class="btn w-100 btn-primary"
-                  @click="showModal = true"
-              >
-                <i class="mdi mdi-plus me-1"></i> Thêm mới
-              </b-button>
-              <b-modal
-                  v-model="showModal"
-                  title="Thông tin lịch công tác"
-                  title-class="text-black font-18"
-                  body-class="p-3"
-                  hide-footer
-                  centered
-                  no-close-on-backdrop
-                  size="lg"
-              >
-                <form @submit.prevent="handleSubmit"
-                      ref="formContainer">
-                  <div class="row">
-                    <div class="col-12">
-                      <div class="mb-3">
-                        <label class="text-left">Tiêu đề</label>
-                        <span style="color: red">&nbsp;*</span>
-                        <input type="hidden" v-model="model.id"/>
-                        <input
-                            id="ten"
-                            v-model.trim="model.tieuDe"
-                            type="text"
-                            class="form-control"
-                            placeholder="Nhập tiêu đề "
-                            :class="{
-                                'is-invalid':
-                                  submitted && $v.model.tieuDe.$error,
-                              }"
-                        />
-                        <div
-                            v-if="submitted && !$v.model.tieuDe.required"
-                            class="invalid-feedback"
-                        >
-                          Tiêu đề không được để trống.
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-12">
-                      <div class="mb-3">
-                        <label class="text-left">Ngày bắt đầu</label>
-                        <span style="color: red">&nbsp;*</span>
-                        <input type="hidden" v-model="model.id"/>
-                        <date-picker v-model="model.tuNgay"
-                                     format="DD/MM/YYYY"
-                                     value-type="format"
-                        >
-                          <div slot="input">
-                            <input v-model="model.tuNgay"
-                                   v-mask="'##/##/####'" type="text" class="form-control"
-                                   placeholder="Nhập ngày bắt đầu"/>
-                          </div>
-                        </date-picker>
-                      </div>
-                    </div>
-                    <div class="col-12">
-                      <div class="mb-3">
-                        <label class="text-left">Ngày kết thúc</label>
-                        <span style="color: red">&nbsp;*</span>
-                        <input type="hidden" v-model="model.id"/>
-                        <date-picker v-model="model.denNgay"
-                                     format="DD/MM/YYYY"
-                                     value-type="format"
-                        >
-                          <div slot="input">
-                            <input v-model="model.denNgay"
-                                   v-mask="'##/##/####'" type="text" class="form-control"
-                                   placeholder="Nhập ngày kết thúc"/>
-                          </div>
-                        </date-picker>
-                      </div>
-                    </div>
-                    <div class="col-12">
-                      <div class="mb-3">
-                        <label class="text-left">Thời gian</label>
-                        <input
-                            id="ten"
-                            v-model.trim="model.thoiGian"
-                            type="time"
-                            class="form-control"
-                            placeholder="Nhập thời gian"
-                        />
-                      </div>
-                    </div>
-                    <div class="col-12">
-                      <div class="mb-3">
-                        <label class="text-left">Địa điểm</label>
-                        <span style="color: red">&nbsp;*</span>
-                        <input
-                            id="ten"
-                            v-model.trim="model.diaDiem"
-                            type="text"
-                            class="form-control"
-                            placeholder="Nhập địa điểm"
-                        />
-                      </div>
-                    </div>
-                    <div class="col-md-12">
-                      <div class="mb-3">
-                        <label class="text-left">Màu sắc</label>
-                        <input
-                            type="color"
-                            class="form-control-color mw-100 form-control"
-                            id="example-color-input"
-                            v-model="model.mauSac"
-                        />
-                      </div>
-                    </div>
-                    <div class="col-12">
-                      <div class="mb-3">
-                        <label class="text-left">Chủ trì</label>
-                        <multiselect
-                            v-model="model.chuTri"
-                            :options="optionsUser"
-                            track-by="id"
-                            label="fullName"
-                            placeholder="Chọn người chủ trì"
-                            deselect-label="Nhấn để xoá"
-                            selectLabel="Nhấn enter để chọn"
-                            selectedLabel="Đã chọn"
-                        ></multiselect>
-                      </div>
-                    </div>
-                    <div class="col-12">
-                      <div class="mb-3">
-                        <label class="text-left">Thành phần tham dự</label>
-                        <multiselect
-                            :multiple="true"
-                            v-model="model.thanhPhanThamDu"
-                            :options="optionsUser"
-                            track-by="id"
-                            label="fullName"
-                            placeholder="Chọn người tham dự"
-                            deselect-label="Nhấn để xoá"
-                            selectLabel="Nhấn enter để chọn"
-                            selectedLabel="Đã chọn"
-                        ></multiselect>
-                      </div>
-                    </div>
-                    <div class="col-12">
-                      <div class="mb-3">
-                        <label class="text-left">Ghi chú</label>
-                        <input
-                            id="ghichu"
-                            v-model.trim="model.ghiChu"
-                            type="text"
-                            class="form-control"
-                            placeholder="Nhập ghi chú"
-                        />
-                      </div>
-                    </div>
+            <div class="row mb-2">
+              <div class="col-sm-4">
+                <div class="search-box me-2 mb-2 d-inline-block">
+                  <div class="position-relative">
+                    <input
+                        v-model="filter"
+                        type="text"
+                        class="form-control"
+                        placeholder="Tìm kiếm ..."
+                    />
+                    <i class="bx bx-search-alt search-icon"></i>
                   </div>
-                  <div class="text-end pt-2 mt-3">
-                    <b-button variant="light" class="w-md" size="sm" @click="showModal = false">
-                      Đóng
-                    </b-button>
-                    <b-button type="submit" variant="primary" size="sm" class="ms-1 w-md">
-                      Lưu
-                    </b-button>
-                  </div>
-                </form>
-              </b-modal>
-              <b-modal
-                  v-model="showDetail"
-                  title="Thông tin chi tiết lĩnh vực"
-                  title-class="text-black font-18"
-                  body-class="p-3"
-                  hide-footer
-                  centered
-                  no-close-on-backdrop
-                  size="lg"
-              >
-                <form @submit.prevent="handleSubmit"
-                      ref="formContainer">
-                  <div class="row">
-                    <div class="col-12">
-                      <div class="mb-3">
-                        <label class="text-left">Tên lĩnh vực : </label>
-                        <input
-                            v-model="model.ten"
-                            type="text"
-                            class="form-control"
-                        />
-                      </div>
-                    </div>
-                    <div class="col-12">
-                      <div class="mb-3">
-                        <label class="text-left">Thứ tự : </label>
-                        <input
-                            v-model="model.thuTu"
-                            type="number"
-                            min="0"
-                            oninput="validity.valid||(value='');"
-                            class="form-control"
-                        />
-                      </div>
-                    </div>
-                    <div class="col-12">
-                      <div class="mb-3">
-                        <label class="text-left">Người tạo : </label>
-                        <input
-                            v-model="model.createdBy"
-                            type="text"
-                            class="form-control"
-                        />
-                      </div>
-                    </div>
-                    <div class="col-12">
-                      <div class="mb-3">
-                        <label class="text-left">Ngày tạo: </label>
-                        <input
-                            v-model="model.createdAtShow"
-                            type="text"
-                            class="form-control"
-                        />
-                      </div>
-                    </div>
-                    <div class="col-12">
-                      <div class="mb-3">
-                        <label class="text-left">Người cập nhật : </label>
-                        <input
-                            v-model="model.modifiedBy"
-                            type="text"
-                            class="form-control"
-                        />
-                      </div>
-                    </div>
-                    <div class="col-12">
-                      <div class="mb-3">
-                        <label class="text-left">Ngày cập nhật : </label>
-                        <input
-                            v-model="model.lastModifiedShow"
-                            type="text"
-                            class="form-control"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div class="text-end pt-2 mt-3">
-                    <b-button variant="light" @click="showDetail = false">
-                      Đóng
-                    </b-button>
-                  </div>
-                </form>
-              </b-modal>
-            </div>
-            <functional-calendar
-                v-model="calendarData"
-                :day-names="dayNames"
-                :month-names="monthNames"
-                :is-date-range="true"
-                :date-format="'dd-mm-yyyy'"
-                :change-month-function="true"
-                :change-year-function="true"
-                :markedDates="markedDates"
-                class="calendar multiple"
-                ref="Calendar"
-            >
-            </functional-calendar>
-          </div>
-        </div>
-      </div>
-      <div class="col-xl-8 col-lg-7 col-md-6 col-sm-12">
-        {{model.lenght}}
-        <div v-for="(item, index) in model" :key="index">
-          <b-card>
-            <b-card-header
-                class="fw-bold mb-3 text-white"
-                :style="`background: ${item.mauSac}`"
-            >
-              <i class="fas fa-calendar-alt me-2"></i>
-              {{item.tuNgay}} - {{item.denNgay}}
-            </b-card-header>
-            <div class="row d-flex px-3">
-              <div class="col-xxl-2 col-md-4 text-primary">
-                Tiêu đề:
+                </div>
               </div>
-              <div class="col-xxl-10 col-md-8 d-flex">
-                <b-card-text
-                    class="bg-info px-3 text-white"
-                    style="border-radius: 99px;"
-                >
-                  {{item.tieuDe}}
-                </b-card-text>
-              </div>
-            </div>
-            <hr class="bg-blue-grey m-2">
-            <div class="row px-3">
-              <div class="col-xxl-2 col-md-4 text-primary">
-                Địa điểm:
-              </div>
-              <div class="col-xxl-10 col-md-8">
-                <b-card-text>
-                  {{item.diaDiem}}
-                </b-card-text>
-              </div>
-            </div>
-            <hr class="bg-blue-grey m-2">
-            <div v-if="item.ghiChu" class="row px-3">
-              <div class="col-xxl-2 col-md-4 text-primary">
-                Ghi chú:
-              </div>
-              <div class="col-xxl-10 col-md-8">
-                <b-card-text>
-                  {{item.ghiChu}}
-                </b-card-text>
-              </div>
-            </div>
-            <hr class="bg-blue-grey m-2">
-            <div v-if="item.ghiChu" class="row px-3">
-              <div class="col-xxl-2 col-md-4 text-primary">
-                Thành phần tham dự:
-              </div>
-              <div class="col-xxl-10 col-md-8 d-flex mb-3 justify-content-start flex-row flex-wrap">
-                <div
-                    v-for="(i, index) in item.thanhPhanThamDu"
-                    :key="index"
-                    class="me-1 mb-1"
-                >
-                  <b-card-text
-                      class="bg-info px-3 text-white w-100"
-                      style="border-radius: 99px;"
+              <div class="col-sm-8">
+                <div class="text-sm-end">
+                  <b-button
+                      variant="primary"
+                      type="button"
+                      class="btn w-md btn-primary"
+                      @click="showModal = true"
+                      size="sm"
                   >
-                    {{i.fullName}} - {{i.donVi.ten}}
-                  </b-card-text>
+                    <i class="mdi mdi-plus me-1"></i> Thêm mới
+                  </b-button>
                 </div>
               </div>
             </div>
-            <hr class="bg-blue-grey m-2">
             <div class="row">
-              <div class="col-12 d-flex justify-content-end">
-                <b-button
-                    pill
-                    variant="primary"
-                    class="me-2"
-                    size="sm"
-                    @click="handleUpdate(item.id)"
-                >
-                  <i class="fas fa-pencil-alt"></i>
-                  Chỉnh sửa
-                </b-button>
-                <b-button
-                    pill
-                    variant="danger"
-                    class="me-2"
-                    size="sm"
-                    @click="HandleDelete(item.id)"
-                >
-                  <i class="fas fa-trash"></i>
-                  Xoá
-                </b-button>
+              <div class="col-12">
+                <div class="row mb-3">
+                  <div class="col-sm-12 col-md-6">
+                    <div id="tickets-table_length" class="dataTables_length">
+                      <label class="d-inline-flex align-items-center">
+                        Hiện
+                        <b-form-select
+                            class="form-select form-select-sm"
+                            v-model="perPage"
+                            size="sm"
+                            :options="pageOptions"
+                        ></b-form-select
+                        >&nbsp;dòng
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="table-responsive-sm">
+                  <b-table
+                      class="datatables"
+                      :items="myProvider"
+                      :fields="fields"
+                      striped
+                      bordered
+                      responsive="sm"
+                      :per-page="perPage"
+                      :current-page="currentPage"
+                      :sort-by.sync="sortBy"
+                      :sort-desc.sync="sortDesc"
+                      :filter="filter"
+                      :filter-included-fields="filterOn"
+                      ref="tblList"
+                      primary-key="id"
+                      :busy.sync="isBusy"
+                  >
+                    <template v-slot:cell(STT)="data">
+                      {{ data.index + ((currentPage - 1) * perPage) + 1 }}
+                    </template>
+                    <template v-slot:cell(chuTri)="data">
+                      <div v-if="data.item.chuTri  && data.item.chuTri.length > 0" style="display: flex; flex-direction: column; margin-left: 10px">
+                        <div   v-for="(value, index) in data.item.chuTri" :key="index">
+                          {{value.fullName}} - {{value.donVi.ten}}
+                        </div>
+                      </div>
+
+                    </template>
+                    <template v-slot:cell(congViec)="data">
+                      <button
+                          type="button"
+                          size="sm"
+                          class="btn btn-primary btn-sm"
+                          data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
+                          v-on:click="handleShowCongViecModal(data.item.id)">
+
+                        <span v-if="data.item.congViecs && data.item.congViecs.length>0">
+                           {{data.item.congViecs.length}}
+                        </span>
+                        <span v-else>0</span>
+                      </button>
+
+                    </template>
+                    <template v-slot:cell(process)="data">
+                      <button
+                          type="button"
+                          size="sm"
+                          class="btn btn-outline btn-sm"
+                          data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
+                          v-on:click="handleUpdate(data.item.id)">
+                        <i class="fas fa-pencil-alt text-success me-1"></i>
+                      </button>
+                      <button
+                          type="button"
+                          size="sm"
+                          class="btn btn-outline btn-sm"
+                          data-toggle="tooltip" data-placement="bottom" title="Xóa"
+                          v-on:click="handleShowDeleteModal(data.item.id)">
+                        <i class="fas fa-trash-alt text-danger me-1"></i>
+                      </button>
+                    </template>
+                    <template v-slot:cell(ten)="data">&nbsp;&nbsp;
+                      {{ data.item.ten }}
+                    </template>
+                  </b-table>
+                  <template v-if="isBusy">
+                    <div align="center">Đang tải dữ liệu</div>
+                  </template>
+                  <template v-if="totalRows <= 0 && !isBusy">
+                    <div align="center">Không có dữ liệu</div>
+                  </template>
+                </div>
+                <div class="row">
+                  <b-col>
+                    <div>Hiển thị {{ numberOfElement }} trên tổng số {{ totalRows }} dòng</div>
+                  </b-col>
+                  <div class="col">
+                    <div
+                        class="dataTables_paginate paging_simple_numbers float-end">
+                      <ul class="pagination pagination-rounded mb-0">
+                        <!-- pagination -->
+                        <b-pagination
+                            v-model="currentPage"
+                            :total-rows="totalRows"
+                            :per-page="perPage"
+                        ></b-pagination>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
-          </b-card>
+          </div>
         </div>
+        <b-modal
+            v-model="showDeleteModal"
+            centered
+            title="Xóa dữ liệu"
+            title-class="font-18"
+            no-close-on-backdrop
+        >
+          <p>
+            Dữ liệu xóa sẽ không được phục hồi!
+          </p>
+          <template #modal-footer>
+            <b-button v-b-modal.modal-close_visit
+                      size="sm"
+                      class="btn btn-outline-info w-md"
+                      v-on:click="showDeleteModal = false">
+              Đóng
+            </b-button>
+            <b-button v-b-modal.modal-close_visit
+                      size="sm"
+                      variant="danger"
+                      type="button"
+                      class="w-md"
+                      v-on:click="handleDelete">
+              Xóa
+            </b-button>
+          </template>
+        </b-modal>
 
+        <!--                  Modal create -->
+        <b-modal
+            v-model="showModal"
+            title="Thông tin lịch công tác"
+            title-class="text-black font-18"
+            body-class="p-3"
+            hide-footer
+            centered
+            no-close-on-backdrop
+            size="lg"
+        >
+          <form @submit.prevent="handleSubmit"
+                ref="formContainer">
+            <div class="row">
+              <div class="col-12">
+                <div class="mb-3">
+                  <label class="text-left">Ngày bắt đầu</label>
+                  <span style="color: red">&nbsp;*</span>
+                  <input type="hidden" v-model="model.id"/>
+                  <date-picker v-model="model.ngayXepLich"
+                               format="DD/MM/YYYY"
+                               value-type="format"
+                               :class="{
+                                'is-invalid':
+                                  submitted && $v.model.ngayXepLich.$error,
+                                }"
+                  >
+                    <div slot="input">
+                      <input v-model="model.ngayXepLich"
+                             v-mask="'##/##/####'" type="text" class="form-control"
+                             placeholder="Nhập ngày bắt đầu"
+
+                      />
+                    </div>
+                  </date-picker>
+                  <div
+                      v-if="submitted && !$v.model.ngayXepLich.required"
+                      class="invalid-feedback"
+                  >
+                    Ngày xếp lịch công được trống
+                  </div>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="mb-3">
+                  <label class="text-left">Chủ trì</label>
+                  <span style="color: red">&nbsp;*</span>
+                  <multiselect
+                      v-model="model.chuTri"
+                      :options="optionsUser"
+                      :multiple=true
+                      track-by="id"
+                      label="fullName"
+                      placeholder="Chọn người chủ trì"
+                      deselect-label="Nhấn để xoá"
+                      selectLabel="Nhấn enter để chọn"
+                      selectedLabel="Đã chọn"
+                      :class="{
+                                'is-invalid':
+                                  submitted && $v.model.chuTri.$error,
+                                }"
+                  >
+                    <template slot="singleLabel" slot-scope="{ option }">
+                      <strong>{{ option.fullName }}</strong>
+
+                      <span v-if="option.donVi" style="color:red">&nbsp;{{ option.donVi.ten }}</span>
+                    </template>
+                    <template slot="option" slot-scope="{ option }">
+                      <div class="option__desc">
+          <span class="option__title">
+            <strong>{{ option.fullName }}&nbsp;</strong>
+          </span>
+                        <span v-if="option.donVi" class="option__small"
+                              style="color:green">{{ option.donVi.ten }}</span>
+                      </div>
+                    </template>
+                  </multiselect>
+                  <div
+                      v-if="submitted && !$v.model.chuTri.required"
+                      class="invalid-feedback"
+                  >
+                    Người chủ trì không được trống
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="text-end pt-2 mt-3">
+              <b-button variant="light" class="w-md" size="sm" @click="showModal = false">
+                Đóng
+              </b-button>
+              <b-button type="submit" variant="primary" size="sm" class="ms-1 w-md">
+                Lưu
+              </b-button>
+            </div>
+          </form>
+        </b-modal>
       </div>
     </div>
   </Layout>
 </template>
-<style lang="scss">
-$white: #ffffff !default;
-$black: #000000 !default;
-$mirage: #1a202c !default;
-$ebony: #0a0c19 !default;
-$mineShaft: #333333 !default;
-$tundora: #464646 !default;
-$licorice: #2d3748 !default;
-$lightgrey: #d9d9d9 !default;
-$lightgreyHover: #dadada !default;
-$powderblue: #b0e0e6 !default;
-$lightskyblue: #8fd8ec !default;
-$royalblue: #66b3cc !default;
-$steelblue: #4682b4 !default;
-$pictionBlue: #4299e1 !default;
-$astronaut: #28456c !default;
-$keppel: #38b2ac !default;
-$gainsboro: #bfbfbf !default;
-$lightred: #ff8498 !default;
-$charade: #292d36 !default;
-$silver_chalice: #aaaaaa !default;
-$silver: #cccccc !default;
-$gallery: #efefef !default;
-$alto: #dbdbdb !default;
-$trout: #495057 !default;
-$porcelain: #f0f1f2 !default;
-$boulder: #7d7d7d !default;
-
-.green-line {
-  width: 20px;
-  position: absolute;
-  height: 2px;
-  background-color: #45cc0d;
-  bottom: 1px;
-  left: calc(50% - 10px);
+<style>
+.td-stt {
+  text-align: center;
+  width: 50px;
 }
 
-.green-point {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background-color: #45cc0d;
-  bottom: 1px;
-  left: calc(50% - 4px);
+.td-xuly {
+  text-align: center;
+  width: 130px;
 }
 
-.orange-point {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background-color: #eb9800;
-  bottom: 1px;
-  left: calc(50% - 4px);
+.table > tbody > tr > td {
+  padding: 0px;
+  line-height: 30px;
+}
+
+.hidden-sortable:after, .hidden-sortable:before {
+  display: none !important;
 }
 </style>

@@ -53,6 +53,7 @@ namespace EOffice.WebAPI.Services
             {
                 ChuTri = model.ChuTri,
                 NgayXepLich = model.NgayXepLich,
+                LoaiLichCongTac = model.LoaiLichCongTac,
                 CreatedBy = CurrentUserName,
                 ModifiedBy = CurrentUserName,
                 CreatedAt = DateTime.Now,
@@ -87,6 +88,7 @@ namespace EOffice.WebAPI.Services
                     .WithMessage(DefaultMessage.DATA_NOT_FOUND);
             }
             entity.ChuTri = model.ChuTri;
+            entity.LoaiLichCongTac = model.LoaiLichCongTac;
             entity.NgayXepLich = model.NgayXepLich;
             entity.ModifiedAt = DateTime.Now;
             entity.ModifiedBy = CurrentUserName;
@@ -107,8 +109,15 @@ namespace EOffice.WebAPI.Services
             var result = new PagingModel<LichCongTac>();
             var builder = Builders<LichCongTac>.Filter;
             var filter = builder.Empty;
-            filter = builder.And(filter, builder.Where(x =>x.CreatedBy == CurrentUserName && x.IsDeleted == false));
-            
+            if (!string.IsNullOrEmpty(param.LoaiLichCongTac))
+            {
+                filter = builder.And(filter, builder.Where(x =>x.CreatedBy == CurrentUserName && x.LoaiLichCongTac == param.LoaiLichCongTac && x.IsDeleted == false));
+            }
+            else
+            {
+                filter = builder.And(filter, builder.Where(x =>x.CreatedBy == CurrentUserName && x.IsDeleted == false));
+            }
+
             string sortBy = nameof(LichCongTac.NgayXepLich);
             result.TotalRows = await _collection.CountDocumentsAsync(filter);
             result.Data = await _collection.Find(filter)
@@ -160,7 +169,6 @@ namespace EOffice.WebAPI.Services
         }
         public async Task<dynamic> GetAll()
         {
-      
             CultureInfo vietNam = new CultureInfo("vi-VN");
             var data = await _context.LichCongTac.Find(x => x.IsDeleted != true)
                 .ToListAsync();
@@ -196,6 +204,90 @@ namespace EOffice.WebAPI.Services
                       
                         itemLCT.CongViecs.Add(cv);
                     }
+ 
+                }
+                lichCongTac.Add(itemLCT);
+                
+            }
+            return lichCongTac;
+        }
+        
+        public async Task<dynamic> GetPaging(LichCongTacParam param)
+        {
+            var builder = Builders<LichCongTac>.Filter;
+            var filter = builder.Empty;
+            filter = builder.And(filter, builder.Where(x => x.IsDeleted == false));
+            if (param.SelectDay != default)
+            {
+                DateTime startDate = DateTime.SpecifyKind((DateTime)param.SelectDay, DateTimeKind.Utc);
+                DateTime endDate = startDate.AddDays(6);
+                filter = builder.And(filter, builder.Where(x => x.NgayXepLich <= endDate && x.NgayXepLich >= startDate));
+            }
+            else
+            {
+                DateTime startDate = DateTime.Now;
+                DateTime endDate = startDate.AddDays(6);
+                filter = builder.And(filter, builder.Where(x => x.NgayXepLich <= endDate && x.NgayXepLich >= startDate));
+            }
+
+            if (!String.IsNullOrEmpty(param.LoaiLichCongTac))
+            {
+                if (param.LoaiLichCongTac == "lctt")
+                {
+                    filter = builder.And(filter,
+                        builder.Where(x => x.LoaiLichCongTac == param.LoaiLichCongTac));
+                }
+                else if (param.LoaiLichCongTac == "lctdv")
+                {
+                    var currentDonVi = CurrentUser.DonVi;
+                    filter = builder.And(filter,
+                        builder.Where(x => x.ChuTri.Any(x => x.DonVi != default && x.DonVi.Id == currentDonVi.Id) && x.LoaiLichCongTac == param.LoaiLichCongTac));
+                }
+            }
+            else
+            {
+                filter = builder.And(filter,
+                    builder.Where(x => x.ChuTri.Any(x => x.UserName == CurrentUserName) || (x.CongViecs != default && x.CongViecs.Any(p => p.ThanhPhanThamDu.Any(e => e.UserName == CurrentUserName)))));
+            }
+            CultureInfo vietNam = new CultureInfo("vi-VN");
+            var data = await _context.LichCongTac.Find(filter).SortBy(x => x.NgayXepLich)
+                .ToListAsync();
+            var results = data.GroupBy(
+                p => p.NgayXepLich, 
+                p => p,
+                (key, g) => new { NgayXepLich = key.ToString("dddd", vietNam) + " ngày " + key.ToString("dd/MM/yyyy", vietNam) + $"{GetDateOfChineseNewYear(key.ToLocalTime())}", LichCongTac = g.ToList() });
+
+            var lichCongTac = new List<LichCongTacVM>();
+            foreach (var item in results)
+            {
+                var itemLCT = new LichCongTacVM();
+                itemLCT.NgayXepLich = item.NgayXepLich;
+            
+                foreach (var lct in item.LichCongTac)
+                {
+                    if (itemLCT.CongViecs == default)
+                    {
+                        itemLCT.CongViecs = new List<CongViec>();
+                    }
+
+                    int rowspan = 1;
+                    bool first = true;
+                    if (lct.CongViecs != default)
+                    {
+                        foreach (CongViec cv in lct.CongViecs)
+                        {
+                            if (first)
+                            {
+                                first = false;
+                                cv.ChuTri = lct.ChuTri;
+                                cv.RowSpan = lct.CongViecs.Count;
+                            }
+
+                      
+                            itemLCT.CongViecs.Add(cv);
+                        }
+                    }
+       
  
                 }
                 lichCongTac.Add(itemLCT);

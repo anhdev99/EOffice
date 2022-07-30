@@ -50,4 +50,7 @@ export const actions = {
         console.log("value", values)
         return apiClient.post(controller + "/get-by-id-congviec" , values);
     },
+    async getPaging({commit}, values) {
+        return apiClient.post(controller +"/get-paging", values);
+    },
 };

@@ -21,5 +21,6 @@ namespace EOffice.WebAPI.Interfaces
         #endregion
 
         Task<dynamic> GetAll();
+        Task<dynamic> GetPaging(LichCongTacParam param);
     }
 }
