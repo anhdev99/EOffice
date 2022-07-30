@@ -68,18 +68,6 @@ export default {
       try {
         this.$store.dispatch("notificationStore/getPagingParams", params)
         .then(resp => {
-          // if(resp.resultCode == CONSTANTS.SUCCESS){
-          //   let data = resp.data;
-          //   this.totalRows = data.totalRows
-          //   let items = data.data
-          //   this.numberOfElement = items.length
-          //   this.loading = false
-          //   console.log(items)
-          //   this.data = items;
-          //   return items || []
-          // }else{
-          //   return [];
-          // }
           let items = resp.data
           this.totalRows = resp.totalRows
           this.numberOfElement = resp.data.length
@@ -102,7 +90,7 @@ export default {
     async handleDetail(id) {
       console.log(id)
       await this.$store.dispatch("notificationStore/getById", id).then((res) => {
-        this.model = thongBaoModel.fromJson(res);
+        this.model = res;
         console.log('model',this.model)
         this.showModal = true;
       });
@@ -111,7 +99,6 @@ export default {
       console.log(id)
       await this.$store.dispatch("userStore/getById", id).then((res) => {
         this.modelUser = userModel.fromJson(res.data);
-        console.log(userModel)
         this.showModal = true;
       });
     }
@@ -154,19 +141,11 @@ export default {
                         <span :class="`star-toggle far fa-star text-${item.id}`"></span>
                         <a href="#" class="title" style="font-weight: bold; width: 280px" v-on:click="handleDetail(item.id), handleDetailUser(item.senderId)">{{ item.sender }}</a>
                       </div>
-                      <div class="col-mail col-mail-2" style="position: absolute;
-                                top: 0;
-                                left: 240px;
-                                right: 0;
-                                bottom: 0;font-weight: bold"
+                      <div class="col-mail col-mail-2" style="display: flex; justify-content: space-between; justify-items: center"
                       >
-                        <div class="col-mail col-mail-1">
-                          <span class="title" style="min-width: 300px">{{ item.content }}</span>
+                        <div class="title-capso" v-if="item.content" :inner-html.prop="item.content">
                         </div>
-                        <div class="date" style="float: right">01/06/2022</div>
-                        <div class="icon" style="float: right">
-                          <i class="bx bxs-circle text-primary"></i>
-                        </div>
+                        <div  > {{ item.createdAtShow }} {{item.createdAtTimeShow}}</div>
                       </div>
                     </li>
                   </div>
@@ -187,7 +166,7 @@ export default {
                                 bottom: 0;"
                       >
                         <div class="col-mail col-mail-1"><span class="title" style="min-width: 300px">{{ item.content }}</span></div>
-                        <div class="date" style="float: right">01/06/2022</div>
+                        <div class="date" style="float: right"> {{ item.createdAtShow }} {{item.createdAtTimeShow}}}</div>
                       </div>
                     </li>
                   </div>
@@ -211,51 +190,6 @@ export default {
           </div>
 
         </div>
-<!--        <div class="table-responsive p-0">-->
-<!--          <b-table-->
-<!--              class="datatables"-->
-<!--              :items="myProvider"-->
-<!--              bordered-->
-<!--              outlined-->
-<!--              responsive="sm"-->
-<!--              :per-page="perPage"-->
-<!--              :current-page="currentPage"-->
-<!--              :sort-by.sync="sortBy"-->
-<!--              :sort-desc.sync="sortDesc"-->
-<!--              :filter="filter"-->
-<!--              :filter-included-fields="filterOn"-->
-<!--              ref="tblList"-->
-<!--              primary-key="id"-->
-<!--          >-->
-<!--            &lt;!&ndash;                      <template v-slot:cell(STT)="data">&ndash;&gt;-->
-<!--            &lt;!&ndash;                        {{ data.index + ((currentPage - 1) * perPage) + 1 }}&ndash;&gt;-->
-<!--            &lt;!&ndash;                      </template>&ndash;&gt;-->
-<!--            &lt;!&ndash;                      <template v-slot:cell(process)="data">&ndash;&gt;-->
-<!--            &lt;!&ndash;                        <button&ndash;&gt;-->
-<!--            &lt;!&ndash;                            type="button"&ndash;&gt;-->
-<!--            &lt;!&ndash;                            size="sm"&ndash;&gt;-->
-<!--            &lt;!&ndash;                            class="btn btn-outline btn-sm"&ndash;&gt;-->
-<!--            &lt;!&ndash;                            data-toggle="tooltip" data-placement="bottom" title="Xem thông báo"&ndash;&gt;-->
-<!--            &lt;!&ndash;                            v-on:click="handleDetail(data.item.id)">&ndash;&gt;-->
-<!--            &lt;!&ndash;                          <i class="fas fa-eye  text-warning me-1"></i>&ndash;&gt;-->
-<!--            &lt;!&ndash;                        </button>&ndash;&gt;-->
-<!--            &lt;!&ndash;                      </template>&ndash;&gt;-->
-<!--            &lt;!&ndash;                      <template v-slot:cell(read)="data">&ndash;&gt;-->
-<!--            &lt;!&ndash;                      <span&ndash;&gt;-->
-<!--            &lt;!&ndash;                          class="badge font-size-small min-width-30 p-2 btn-xs"&ndash;&gt;-->
-<!--            &lt;!&ndash;                          :class="{&ndash;&gt;-->
-<!--            &lt;!&ndash;                        'badge-soft-success font-weight-semibold':`${data.item.read}` === true,&ndash;&gt;-->
-
-<!--            &lt;!&ndash;                        'badge-soft-warning  font-weight-semibold': `${data.item.read}` === false,&ndash;&gt;-->
-
-<!--            &lt;!&ndash;                      }"&ndash;&gt;-->
-<!--            &lt;!&ndash;                      >&ndash;&gt;-->
-<!--            &lt;!&ndash;                        <span v-if="data.item.read" class="badge-soft-success font-weight-semibold">Đã xem</span>&ndash;&gt;-->
-<!--            &lt;!&ndash;                        <span v-else class="badge-soft-warning  font-weight-semibold">Chưa xem</span>&ndash;&gt;-->
-<!--            &lt;!&ndash;                      </span>&ndash;&gt;-->
-<!--            &lt;!&ndash;                      </template>&ndash;&gt;-->
-<!--          </b-table>-->
-<!--        </div>-->
       </div>
     </div>
     <b-modal
@@ -263,34 +197,21 @@ export default {
         id="modal-lg"
         size="lg"
         body-class="p-0"
+        hide-footer
+        no-close-on-backdrop
     >
-      <template #modal-title>
-        Thông tin chi tiết
+      <template #modal-header="{ close }">
+        <!-- Emulate built in modal header close button action -->
+        <h5> Thông báo</h5>
+        <div class="text-end">
+          <b-button variant="light" size="sm" style="width: 80px" @click="showModal = false">
+            Đóng
+          </b-button>
+        </div>
       </template>
-
-      <!--      <div class="row">-->
-      <!--        <div class="col-12">-->
-      <!--          <div class="col-12 pb-0">-->
-      <!--            <h5 style="color: red">{{ model.title }}</h5>-->
-      <!--          </div>-->
-      <!--          <div class="col-12 text-end pt-0">-->
-      <!--            <i>Người gửi: {{ model.sender }}</i>-->
-      <!--          </div>-->
-      <!--        </div>-->
-      <!--      </div>-->
-      <!--      <p class="mb-0">-->
-      <!--        {{ model.content }}-->
-      <!--      </p>-->
       <div class="card-body pb-0">
         <h4 class="mt-0 font-size-16 pb-3" style="font-weight: bold">{{model.title}}</h4>
         <div class="d-flex mb-4">
-          <!--              <div>-->
-          <!--                <img-->
-          <!--                    class="d-flex me-3 rounded-circle avatar-sm"-->
-          <!--                    src="@/assets/images/4.png"-->
-          <!--                    alt="Generic placeholder image"-->
-          <!--                />-->
-          <!--              </div>-->
           <span>
               <span v-if="modelUser.avatar">
                 <img
@@ -308,49 +229,16 @@ export default {
                 />
               </span></span>&nbsp;
           <div class="flex-grow-1">
-            <h5 class="font-size-14 mt-1">{{model.sender}} <small class="text-muted">&lt;{{modelUser.email}}&gt;</small></h5>
+            <h5 class="font-size-14 mt-1">{{model.sender}}</h5>
             <small class="text-muted">tới {{model.recipient}}</small>
 
           </div>
           <div class="flex-grow-2">
-            <small class="text-muted" style="float: right"><i>Ngày gửi: 01/06/2022</i></small>
+            <small class="text-muted" style="float: right"><i>Ngày gửi: {{ model.createdAtShow }} {{model.createdAtTimeShow}}</i></small>
           </div>
         </div>
-
-        <p>{{model.content}}</p>
-        <!--            <hr />-->
-        <!--            <div class="row pb-0">-->
-        <!--              <div class="title pb-3 pt-0">-->
-        <!--                <h4 class="mt-0 font-size-13 font-weight-semibold">Tệp đính kèm</h4>-->
-        <!--              </div>-->
-        <!--              <div class="col-xl-2 col-6 pb-0">-->
-        <!--                <div class="card">-->
-        <!--                  <img-->
-        <!--                      class="card-img-top img-fluid"-->
-        <!--                      src="@/assets/images/small/img-3.jpg"-->
-        <!--                      alt="Card image cap"-->
-        <!--                  />-->
-        <!--                  <div class="py-2 text-center">-->
-        <!--                    <a href class="fw-medium">Tải xuống</a>-->
-        <!--                  </div>-->
-        <!--                </div>-->
-        <!--              </div>-->
-        <!--              <div class="col-xl-2 col-6 pb-0">-->
-        <!--                <div class="card">-->
-        <!--                  <img-->
-        <!--                      class="card-img-top img-fluid"-->
-        <!--                      src="@/assets/images/small/img-4.jpg"-->
-        <!--                      alt="Card image cap"-->
-        <!--                  />-->
-        <!--                  <div class="py-2 text-center">-->
-        <!--                    <a href class="fw-medium">Tải xuống</a>-->
-        <!--                  </div>-->
-        <!--                </div>-->
-        <!--              </div>-->
-        <!--            </div>-->
-        <!--            <a href="javascript: void(0);" class="btn btn-secondary waves-effect mt-4">-->
-        <!--              <i class="mdi mdi-reply"></i> Reply-->
-        <!--            </a>-->
+        <p v-if="model.content" :inner-html.prop="model.content">
+        </p>
       </div>
     </b-modal>
   </Layout>
@@ -394,5 +282,9 @@ export default {
 
 .hidden-sortable:after, .hidden-sortable:before {
   display: none !important;
+}
+.title-capso{
+  font-weight: bold; color: #00568C;
+
 }
 </style>

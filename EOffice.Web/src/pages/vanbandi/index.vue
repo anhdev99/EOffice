@@ -1293,7 +1293,7 @@ export default {
                       </b-button>
 
                       <b-button
-                          v-else-if="data.item.ower && data.item.ower.userName == currentUserName && (data.item.trangThai.code == 'ktvb' || data.item.trangThai.code == 'VTTTC' )"
+                          v-else-if="data.item.ower && data.item.ower.userName == currentUserName && (data.item.trangThai.code == 'ktvb' || data.item.trangThai.code == 'VTTTC' || data.item.trangThai.code == 'HTD' )"
                           type="button"
                           size="sm"
                           class="btn btn-light btn-danger"

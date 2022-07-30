@@ -25,9 +25,10 @@ namespace EOffice.WebAPI.Services
         private BaseMongoDb<LichCongTac, string> BaseMongoDb;
         private IMongoCollection<LichCongTac> _collection;
         private IDbSettings _settings;
+        private INotifyService _notifyService;
         private ILoggingService _logger;
 
-        public LichCongTacService(ILoggingService logger, IDbSettings settings, DataContext context,
+        public LichCongTacService(ILoggingService logger, IDbSettings settings, DataContext context,INotifyService notifyService,
             IHttpContextAccessor contextAccessor)
             : base(context, contextAccessor)
         {
@@ -35,6 +36,7 @@ namespace EOffice.WebAPI.Services
             BaseMongoDb = new BaseMongoDb<LichCongTac, string>(_context.LichCongTac);
             _collection = context.LichCongTac;
             _settings = settings;
+            _notifyService = notifyService;
             _logger = logger.WithCollectionName(_settings.LichCongTacCollectionName)
                 .WithDatabaseName(_settings.DatabaseName)
                 .WithUserName(CurrentUserName);
@@ -68,6 +70,23 @@ namespace EOffice.WebAPI.Services
                     .WithMessage(DefaultMessage.CREATE_FAILURE);
             }
 
+            try
+            {
+                
+                var notify = new Notify()
+                {
+                    Title =
+                        $"Bạn có một lịch công tác mới!",
+                    Content =
+                        $"Nội dung: Bạn có một lịch công tác vào ngày {entity.NgayXepLich.ToShortDateString()} <a href='/xem-lich-cong-tac'> Xem lịch công tác</a>"
+                };
+
+                var listUser = entity.ChuTri.Select(x => x.Id).ToList();
+                await  _notifyService.WithNotify(notify).WithRecipients(listUser).PushNotify();
+            }
+            catch (Exception e)
+            {
+            }
             return entity;
         }
 
@@ -101,6 +120,23 @@ namespace EOffice.WebAPI.Services
                     .WithMessage(DefaultMessage.UPDATE_FAILURE);
             }
 
+            try
+            {
+                
+                var notify = new Notify()
+                {
+                    Title =
+                        $"Bạn có một lịch công tác mới!",
+                    Content =
+                        $"Nội dung: Bạn có một lịch công tác vào ngày {entity.NgayXepLich.ToShortDateString()} <a href='/xem-lich-cong-tac'> Xem lịch công tác</a>"
+                };
+
+                var listUser = entity.ChuTri.Select(x => x.Id).ToList();
+                await  _notifyService.WithNotify(notify).WithRecipients(listUser).PushNotify();
+            }
+            catch (Exception e)
+            {
+            }
             return entity;
         }
 
@@ -351,6 +387,28 @@ namespace EOffice.WebAPI.Services
                     .WithMessage("Thêm công việc không thành công!");
             }
 
+            // Thông báo đến người tham dự
+            try
+            {
+                var listUser = new List<string>();
+                foreach (var item in  lichCongTac.CongViecs)
+                {
+                    var notify = new Notify()
+                    {
+                        Title =
+                            $"Bạn có một lịch công tác mới!",
+                        Content =
+                            $"Bạn có một lịch công tác vào ngày {item.TuNgay?.ToShortDateString()} <a href='/xem-lich-cong-tac'> Xem lịch công tác</a> <br /> " +
+                            $"Nôi dung công việc: <br />" +
+                            $"{item.NoiDung}"
+                    };
+                    await  _notifyService.WithNotify(notify).WithRecipients(item.ThanhPhanThamDu?.Select(x => x.Id).ToList()).PushNotify();
+                }
+
+            }
+            catch (Exception e)
+            {
+            }
             return lichCongTac;
         }
 
@@ -390,7 +448,31 @@ namespace EOffice.WebAPI.Services
                     .WithCode(EResultResponse.FAIL.ToString())
                     .WithMessage(DefaultMessage.UPDATE_FAILURE);
             }
+            try
+            {
+                var listUser = new List<string>();
+                if (entity.CongViecs != default)
+                {
+                    foreach (var item in  entity.CongViecs)
+                    {
+                        var notify = new Notify()
+                        {
+                            Title =
+                                $"Bạn có một lịch công tác mới!",
+                            Content =
+                                $"Bạn có một lịch công tác vào ngày {item.TuNgay?.ToShortDateString()} <a href='/xem-lich-cong-tac'> Xem lịch công tác</a> <br /> " +
+                                $"Nôi dung công việc: <br />" +
+                                $"{item.NoiDung}"
+                        };
+                        await  _notifyService.WithNotify(notify).WithRecipients(item.ThanhPhanThamDu?.Select(x => x.Id).ToList()).PushNotify();
+                    }
+                }
 
+
+            }
+            catch (Exception e)
+            {
+            }
             return entity;
         }
 
