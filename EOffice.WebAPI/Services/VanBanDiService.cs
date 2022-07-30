@@ -1032,6 +1032,85 @@ namespace EOffice.WebAPI.Services
             vanBanDi.TrangThai = model.NewTrangThai;
             vanBanDi.NoiDungTuChoi = null;
 
+            #region Trình lãnh đạo đơn vị
+            if (vanBanDi.TrangThai != default &&
+                vanBanDi.TrangThai.Code.ToUpper() == DefaultRoleCode.TRINH_LANH_DAO_DON_VI)
+            {
+                if( vanBanDi.LanhDaoDonVi == default)
+                    vanBanDi.LanhDaoDonVi = new NhomNguoiTiepNhanVBTrinhLD();
+                vanBanDi.LanhDaoDonVi.NguoiXuLy = model.LanhDaoDonVi;
+                vanBanDi.Ower = model.LanhDaoDonVi;
+                vanBanDi.ListOwerId.Add(model.LanhDaoDonVi.UserName);
+            }
+            if (model.CurrentTrangThai != default &&
+                model.CurrentTrangThai.Code.ToUpper() == DefaultRoleCode.TRINH_LANH_DAO_DON_VI && vanBanDi.TrangThai.Code.ToUpper() == DefaultRoleCode.DA_DUYET)
+            {
+                if( vanBanDi.LanhDaoDonVi == default)
+                    vanBanDi.LanhDaoDonVi = new NhomNguoiTiepNhanVBTrinhLD();
+                vanBanDi.LanhDaoDonVi.NguoiXuLy = model.LanhDaoDonVi;
+                vanBanDi.LanhDaoDonVi.TrangThaiXuLy = model.NewTrangThai;
+                vanBanDi.Ower =  _context.Users.AsQueryable().Where(x => x.UserName == vanBanDi.CreatedBy)
+                    .Select(x => new UserShort()
+                    {
+                        Id = x.Id,
+                        UserName = x.UserName,
+                        FullName = x.FullName,
+                        DonVi = x.DonVi,
+                        ChucVu = x.ChucVu,
+                        Avatar = x.Avatar,
+                        Note = x.Note,
+                        PhoneNumber = x.PhoneNumber,
+                        Email = x.Email,
+                    })
+                    .FirstOrDefault();
+                var trangThai = _context.TrangThai.AsQueryable()
+                    .Where(x => x.Code.ToUpper() == DefaultRoleCode.LANH_DAO_DON_VI_DUYET.ToUpper()).Select(x =>
+                        new TrangThaiShort()
+                        {
+                            Id = x.Id,
+                            Code = x.Code,
+                            Ten = x.Ten,
+                            BgColor = x.BgColor,
+                            Color = x.BgColor
+                        }).FirstOrDefault();
+                vanBanDi.TrangThai = trangThai;
+            }
+            if (model.CurrentTrangThai != default &&
+                model.CurrentTrangThai.Code.ToUpper() == DefaultRoleCode.TRINH_LANH_DAO_DON_VI && vanBanDi.TrangThai.Code.ToUpper() == DefaultRoleCode.TU_CHOI)
+            {
+                if( vanBanDi.LanhDaoDonVi == default)
+                    vanBanDi.LanhDaoDonVi = new NhomNguoiTiepNhanVBTrinhLD();
+                vanBanDi.LanhDaoDonVi.NguoiXuLy = model.LanhDaoDonVi;
+                vanBanDi.LanhDaoDonVi.TrangThaiXuLy = model.NewTrangThai;
+                vanBanDi.Ower =  _context.Users.AsQueryable().Where(x => x.UserName == vanBanDi.CreatedBy)
+                    .Select(x => new UserShort()
+                    {
+                        Id = x.Id,
+                        UserName = x.UserName,
+                        FullName = x.FullName,
+                        DonVi = x.DonVi,
+                        ChucVu = x.ChucVu,
+                        Avatar = x.Avatar,
+                        Note = x.Note,
+                        PhoneNumber = x.PhoneNumber,
+                        Email = x.Email,
+                    })
+                    .FirstOrDefault();
+                var trangThai = _context.TrangThai.AsQueryable()
+                    .Where(x => x.Code.ToUpper() == DefaultRoleCode.LANH_DAO_DON_VI_TU_CHOI.ToUpper()).Select(x =>
+                        new TrangThaiShort()
+                        {
+                            Id = x.Id,
+                            Code = x.Code,
+                            Ten = x.Ten,
+                            BgColor = x.BgColor,
+                            Color = x.BgColor
+                        }).FirstOrDefault();
+                vanBanDi.TrangThai = trangThai;
+                vanBanDi.NoiDungTuChoi = model.NoiDung;
+            }
+            #endregion
+
             if (vanBanDi.TrangThai != default && DefaultRoleCode.TrangThaiGhiNhanThongTin.Contains(  vanBanDi.TrangThai.Code.ToUpper()) &&
                 vanBanDi.NhomNguoiTiepNhanVBTrinhLD != default && vanBanDi.NhomNguoiTiepNhanVBTrinhLD.Count > 0)
             {
@@ -1068,6 +1147,7 @@ namespace EOffice.WebAPI.Services
                             Color = x.BgColor
                         }).FirstOrDefault();
                 vanBanDi.TrangThai = trangThai;
+                vanBanDi.NoiDungTuChoi = model.NoiDung;
                 vanBanDi.Ower = vanBanDi.GetOwerWithRole(DefaultRoleCode.VAN_THU_TRUONG);
             }
 

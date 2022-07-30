@@ -10,6 +10,9 @@ namespace EOffice.WebAPI.Helpers
         
         public const string TRINH_LANH_DAO_TRUONG = "TLDT";
         public const string TRINH_THU_KY_HIEU_TRUONG = "TKHTXN";
+        public const string TRINH_LANH_DAO_DON_VI = "TLDDV";
+        public const string LANH_DAO_DON_VI_DUYET = "LDDVD";
+        public const string LANH_DAO_DON_VI_TU_CHOI = "LDDVTC";
         public const string KY_SO_PHAP_LY = "HTKS";
         public const string TU_CHOI = "TC";
         public const string BAN_HANH = "BH";

@@ -591,7 +591,7 @@ export default {
         return;
       } else {
         let loader = this.$loading.show({
-          container: this.$refs.formContainer,
+          container: this.$refs.formContainerTrangThai,
         });
         if (
             this.modelTrangThai
@@ -1282,7 +1282,7 @@ export default {
                     <template v-slot:cell(chuyenTrangThai)="data">
                       <b-button
                           v-if="(data.item.trangThai.code == 'tldt' || data.item.trangThai.code == 'tkhtxn'
-                          || data.item.trangThai.code == 'kpl' || data.item.trangThai.code == 'DVBPL' || data.item.trangThai.code == 'TKHTTC' || data.item.trangThai.code == 'HTK') && data.item.ower && data.item.ower.userName == currentUserName"
+                          || data.item.trangThai.code == 'kpl' || data.item.trangThai.code == 'DVBPL' || data.item.trangThai.code == 'TKHTTC' || data.item.trangThai.code == 'HTK' || data.item.trangThai.code == 'tlddv') && data.item.ower && data.item.ower.userName == currentUserName"
                           type="button"
                           size="sm"
                           class="btn btn-light "
@@ -1293,7 +1293,7 @@ export default {
                       </b-button>
 
                       <b-button
-                          v-else-if="data.item.ower && data.item.ower.userName == currentUserName && (data.item.trangThai.code == 'ktvb' || data.item.trangThai.code == 'VTTTC' || data.item.trangThai.code == 'HTD' )"
+                          v-else-if="data.item.ower && data.item.ower.userName == currentUserName && (data.item.trangThai.code == 'ktvb' || data.item.trangThai.code == 'VTTTC' || data.item.trangThai.code == 'HTD' || data.item.trangThai.code =='LDDVTC' || data.item.trangThai.code =='LDDVD')"
                           type="button"
                           size="sm"
                           class="btn btn-light btn-danger"
@@ -1804,6 +1804,7 @@ export default {
             title-class="font-18"
             no-close-on-backdrop
             size="lg"
+            ref="formContainerTrangThai"
         >
           <div class="row">
             <div class="col-md-6">
@@ -1847,6 +1848,38 @@ export default {
               </div>
             </div>
           </div>
+          <div class="row" v-if="modelTrangThai.newTrangThai && modelTrangThai.newTrangThai.code == 'tlddv'">
+            <div class="col-md-12">
+              <div class="mb-2">
+                <label class="form-label" for="validationCustom01"> Lãnh đạo đơn vị</label>
+                <multiselect
+                    v-model="modelTrangThai.lanhDaoDonVi"
+                    :options="optionsUser"
+                    track-by="id"
+                    label="fullName"
+                    placeholder="Chọn  lãnh đạo đơn vị"
+                    deselect-label="Nhấn để xoá"
+                    selectLabel="Nhấn enter để chọn"
+                    selectedLabel="Đã chọn"
+                >
+                  <template slot="singleLabel" slot-scope="{ option }">
+                    <strong>{{ option.fullName }}</strong>
+
+                    <span v-if="option.donVi" style="color:red">&nbsp;{{ option.donVi.ten }}</span>
+                  </template>
+                  <template slot="option" slot-scope="{ option }">
+                    <div class="option__desc">
+          <span class="option__title">
+            <strong>{{ option.fullName }}&nbsp;</strong>
+          </span>
+                      <span v-if="option.donVi" class="option__small"
+                            style="color:green">{{ option.donVi.ten }}</span>
+                    </div>
+                  </template>
+                </multiselect>
+              </div>
+            </div>
+          </div>
           <template #modal-footer>
             <b-button v-b-modal.modal-close_visit
                       size="sm"
@@ -1854,7 +1887,16 @@ export default {
                       v-on:click="showTrangThaiModal = false">
               Đóng
             </b-button>
-            <b-button v-b-modal.modal-close_visit
+            <b-button v-if="modelTrangThai.newTrangThai && modelTrangThai.newTrangThai.code == 'tlddv'" v-b-modal.modal-close_visit
+                      size="sm"
+                      variant="primary"
+                      type="button"
+                      class="w-md"
+                      :disabled="modelTrangThai.lanhDaoDonVi == null"
+                      v-on:click="handleChuyenTrangThaiVanBan(null)">
+              Trình lãnh đạo đơn vị
+            </b-button>
+            <b-button v-else v-b-modal.modal-close_visit
                       size="sm"
                       variant="primary"
                       type="button"

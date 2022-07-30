@@ -65,6 +65,7 @@ namespace EOffice.WebAPI.Models
         public UserShort Ower { get; set; }
         public List<string> ListOwerId { get; set; } = new List<string>();
         public List<NhomNguoiTiepNhanVBTrinhLD> NhomNguoiTiepNhanVBTrinhLD { get; set; }
+        public NhomNguoiTiepNhanVBTrinhLD LanhDaoDonVi { get; set; }
         
         public UserShort GetOwerWithRole(string role)
         {

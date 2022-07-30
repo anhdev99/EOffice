@@ -10,5 +10,6 @@ namespace EOffice.WebAPI.Params
         public string VanBanDiId { get; set; }
         public string NoiDung { get; set; }
         public string UserName { get; set; }
+        public UserShort LanhDaoDonVi { get; set; }
     }
 }

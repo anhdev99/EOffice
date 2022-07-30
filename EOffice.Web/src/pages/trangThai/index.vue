@@ -657,17 +657,17 @@ export default {
                         <i class="fas fa-trash-alt text-danger me-1"></i>
                       </button>
                     </template>
-                    <template v-slot:cell(ten)="data">&nbsp;&nbsp;
+                    <template v-slot:cell(ten)="data">
                       {{data.item.ten}}
                     </template>
-                    <template v-slot:cell(nextTrangThai)="data">&nbsp;&nbsp;
+                    <template v-slot:cell(nextTrangThai)="data">
                       <template v-if="data.item.nextTrangThai != null && data.item.nextTrangThai.length > 0">
                         <div  v-for="(value, index) in data.item.nextTrangThai" :key="index">
                           {{value.ten}}
                         </div>
                       </template>
                     </template>
-                    <template v-slot:cell(actions)="data">&nbsp;&nbsp;
+                    <template v-slot:cell(actions)="data">
                       <template v-if="data.item.actions != null && data.item.actions.length > 0">
                         <div  v-for="(value, index) in data.item.actions" :key="index">
                           {{value.action}}
