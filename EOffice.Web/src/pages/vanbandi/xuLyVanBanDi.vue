@@ -1246,9 +1246,6 @@ export default {
                         <span v-else>Xem duyệt</span>
                       </td>
                       <td>{{item.ngayKyString}}</td>
-<!--                      <td>-->
-<!--                        <b-button @click="handleShowModelAcceptKySo" size="sm"  variant="primary"> Ký số/Từ chối</b-button>-->
-<!--                      </td>-->
                     </tr>
                   </template>
                   </tbody>
@@ -1260,6 +1257,7 @@ export default {
           </div>
 
         </b-modal>
+
         <b-modal
             v-model="showModelAcceptKySo"
             centered

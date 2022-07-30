@@ -17,6 +17,7 @@ using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.X509;
 using Spire.Doc;
+using Spire.Doc.Collections;
 using Spire.Doc.Documents;
 using Spire.Doc.Fields;
 using Spire.Doc.Formatting;
@@ -291,7 +292,8 @@ namespace EOffice.WebAPI.Services
         {
             Document doc = new Document();
             doc.LoadFromFile(pathWord);
-
+            int i;
+    
             //Section sec = doc.AddSection();// them moi section
             Section sec = doc.LastSection; // khong them moi sextion
 
@@ -334,15 +336,16 @@ namespace EOffice.WebAPI.Services
 
 
             Table table = sec.AddTable(true);
-            // table.TableFormat.Borders.BorderType = Spire.Doc.Documents.BorderStyle.None;
+             table.TableFormat.Borders.BorderType = Spire.Doc.Documents.BorderStyle.None;
             table.ResetCells(num_row, 2); // set so dong/cot
 
             //table.ApplyHorizontalMerge(1,0, 1); //merge cell
 
-            int i = 0;
+            i = 0;
             for (int r = 0; r < num_row; r++)
             {
                 TableRow DataRow = table.Rows[r];
+                
 
                 //C Represents Column 1.
                 //Cell Alignment
@@ -351,8 +354,10 @@ namespace EOffice.WebAPI.Services
                 Paragraph p2 = DataRow.Cells[0].AddParagraph();
                 p2.Format.HorizontalAlignment = HorizontalAlignment.Center;
                 CharacterFormat formatHSignp2 = new CharacterFormat(doc);
+                CharacterFormat formatHSignp21 = new CharacterFormat(doc);
                 formatHSignp2.Bold = true;
                 formatHSignp2.FontSize = 12;
+                formatHSignp21.FontSize = 12;
                 // p2.AppendText("CHỮ KÝ HỢP LỆ").ApplyCharacterFormat(formatHSignp2);
                 p2.AppendText(listuser[i].ChucVu?.Ten).ApplyCharacterFormat(formatHSignp2);
                 p2.AppendBreak(BreakType.LineBreak);
@@ -368,6 +373,10 @@ namespace EOffice.WebAPI.Services
                 p2.AppendBreak(BreakType.LineBreak);
    
                 p2.AppendText(listuser[i].FullName).ApplyCharacterFormat(formatHSignp2);
+                p2.AppendBreak(BreakType.LineBreak);
+                p2.AppendText("Ký số tại DThU").ApplyCharacterFormat(formatHSignp21);
+                p2.AppendBreak(BreakType.LineBreak);
+                p2.AppendText("Kiểm tra tại:...").ApplyCharacterFormat(formatHSignp21);
                 p2.AppendBreak(BreakType.LineBreak);
                 // CharacterFormat formatHSignp21 = new CharacterFormat(doc);
                 // formatHSignp21.FontSize = 10;
@@ -393,8 +402,10 @@ namespace EOffice.WebAPI.Services
                     p3.Format.HorizontalAlignment = HorizontalAlignment.Center;
                     // p3.AppendText("CHỮ KÝ HỢP LỆ").ApplyCharacterFormat(formatHSign);
                     CharacterFormat formatHSignp3 = new CharacterFormat(doc);
+                    CharacterFormat formatHSignp31 = new CharacterFormat(doc);
                     formatHSignp3.Bold = true;
                     formatHSignp3.FontSize = 12;
+                    formatHSignp31.FontSize = 12;
                     p3.AppendText(listuser[i].ChucVu?.Ten).ApplyCharacterFormat(formatHSignp3);
                     p3.AppendBreak(BreakType.LineBreak);
                     p3.AppendBreak(BreakType.LineBreak);
@@ -410,6 +421,10 @@ namespace EOffice.WebAPI.Services
                     p3.AppendBreak(BreakType.LineBreak);
                     p3.AppendText(listuser[i].FullName).ApplyCharacterFormat(formatHSignp3);
                     p3.AppendBreak(BreakType.LineBreak);
+                    p3.AppendText("Ký số tại DThU").ApplyCharacterFormat(formatHSignp31);
+                    p3.AppendBreak(BreakType.LineBreak);
+                    p3.AppendText("Kiểm tra tại:...").ApplyCharacterFormat(formatHSignp31);
+                    p3.AppendBreak(BreakType.LineBreak);
                     // CharacterFormat formatHSignp31 = new CharacterFormat(doc);
                     // formatHSignp31.FontSize = 10;
                     // p3.AppendText(listuser[i].DonVi?.Ten).ApplyCharacterFormat(formatHSignp31);
@@ -419,8 +434,7 @@ namespace EOffice.WebAPI.Services
                     i = i + 1;
                 }
             }
-
-
+            
             // doc.SaveToFile(pathPDF, Spire.Doc.FileFormat.PDF);
             //
             try

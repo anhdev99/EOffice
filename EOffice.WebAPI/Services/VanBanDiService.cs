@@ -414,7 +414,7 @@ namespace EOffice.WebAPI.Services
             else
             {
                 filter = builder.And(filter,
-                    builder.Where(x => x.CreatedBy == CurrentUserName));
+                    builder.Where(x =>x.ListOwerId.Contains(CurrentUserName) || x.CreatedBy == CurrentUserName));
             }
 
             // filter = filter & builder.In(x => x.IdOwner, CurrentUser.DonViIds);
@@ -852,8 +852,9 @@ namespace EOffice.WebAPI.Services
                 var checkPhanCongKy = vanBanNew.PhanCongKySo.Where(x => x.NgayKyString == null && x.ChoPhepKy).ToList();
                 if (checkPhanCongKy.Count <= 0)
                 {
-                    var resultFile = await TienHanhKySo(vanBanDi.PhanCongKySo, path,
-                        vanBanDi.File.Select(x => x.FileId).ToList());
+                 
+                    var resultFile = await TienHanhKySo(vanBanNew.PhanCongKySo, path,
+                        vanBanNew.File.Select(x => x.FileId).ToList());
 
                     if (resultFile != default)
                     {
@@ -863,33 +864,44 @@ namespace EOffice.WebAPI.Services
                             newFile.FileId = item.Id;
                             newFile.FileName = item.FileName;
                             newFile.Ext = item.Ext;
-                            if (vanBanDi.FilePDF == default)
+                            if (vanBanNew.FilePDF == default)
                             {
-                                vanBanDi.FilePDF = new List<FileShort>();
+                                vanBanNew.FilePDF = new List<FileShort>();
                             }
 
-                            vanBanDi.FilePDF.Add(newFile);
+                            vanBanNew.FilePDF.Add(newFile);
                         }
 
-                        var newTrangThai = _context.TrangThai.AsQueryable().Where(x => x.Code == "Hoàn thành ký số")
-                            .Select(x => new TrangThaiShort()
-                            {
-                                Ten = x.Ten,
-                                Code = x.Code
-                            })
-                            .FirstOrDefault();
+                        var newTrangThai = _context.TrangThai.AsQueryable()
+                            .Where(x => x.Code.ToUpper() == DefaultRoleCode.DA_KY_SO_DUYET.ToUpper()).Select(x =>
+                                new TrangThaiShort()
+                                {
+                                    Id = x.Id,
+                                    Code = x.Code,
+                                    Ten = x.Ten,
+                                    BgColor = x.BgColor,
+                                    Color = x.BgColor
+                                }).FirstOrDefault();
                         if (newTrangThai != default)
                         {
                             vanBanNew.TrangThai = newTrangThai;
                         }
 
-                        var resultNew = await BaseMongoDb.UpdateAsync(vanBanDi);
+                        var resultNew = await BaseMongoDb.UpdateAsync(vanBanNew);
                         if (!result.Success)
                         {
                             throw new ResponseMessageException()
                                 .WithCode(EResultResponse.FAIL.ToString())
                                 .WithMessage(DefaultMessage.UPDATE_FAILURE);
                         }
+                        _history.WithVanBanId(vanBanDi.Id)
+                            .WithAction(nameof(VanBanAction.CHUYEN_TRANG_THAI))
+                            .WithStatus(vanBanNew.TrangThai)
+                            .WithType(vanBanNew)
+                            .WithTitle("Ký số nội bộ thành công");
+                        
+                            _history.WithContent("Hoàn thành ký số nội bộ.");
+                        await _history.SaveChangeHistory();
                     }
                 }
             }
@@ -1040,7 +1052,31 @@ namespace EOffice.WebAPI.Services
             if (vanBanDi.TrangThai != default &&
                 vanBanDi.TrangThai.Code.ToUpper() == DefaultRoleCode.DA_THIET_LAP_KY_SO)
             {
-                
+                var userIds = model.ListPhanCongKySo.Select(x => x.UserName).ToList();
+                if (vanBanDi.ListOwerId == default)
+                {
+                    vanBanDi.ListOwerId = new List<string>();
+                }
+                vanBanDi.ListOwerId.AddRange(userIds);
+                var users = _context.Users.Find((x => userIds.Contains(x.UserName))).ToList();
+                if (vanBanDi.PhanCongKySo == default)
+                {
+                    vanBanDi.PhanCongKySo = new List<PhanCongKySo>();
+                }
+                foreach (var user in model.ListPhanCongKySo)
+                {
+                    var userTemp = users.Where(x => x.UserName == user.UserName).FirstOrDefault();
+                    var newNguoiKy = new PhanCongKySo();
+                    newNguoiKy.Id = user.Id;
+                    newNguoiKy.FullName = user?.FullName;
+                    newNguoiKy.UserName = user?.UserName;
+                    newNguoiKy.SignImage = userTemp?.KySo;
+                    newNguoiKy.ChoPhepKy = user.ChoPhepKy;
+                    newNguoiKy.ThuTu = user.ThuTu;
+                    newNguoiKy.VanBanDiId = model.VanBanDiId;
+                    vanBanDi.PhanCongKySo.Add(newNguoiKy);
+                }
+
             }
             
 
