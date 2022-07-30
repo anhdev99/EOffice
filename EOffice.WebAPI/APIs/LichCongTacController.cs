@@ -114,16 +114,85 @@ namespace EOffice.WebAPI.APIs
             }
         }
         
-        [HttpGet]
-        [Route("get")]
-        public async Task<IActionResult> Get()
+                [HttpPost]
+        [Route("create-congviec")]
+        public async Task<IActionResult> CreateCongViec([FromBody] CongViec model)
         {
             try
             {
-                var response = await _lichCongTacService.Get();
+                var response = await _lichCongTacService.CreateCongViec(model);
+                return Ok(
+                    new ResultResponse<LichCongTac>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.CREATE_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+        [HttpPost]
+        [Route("update-congviec")]
+        public async Task<IActionResult> Update([FromBody] CongViec model)
+        {
+            try
+            {
+                var response = await _lichCongTacService.UpdateCongViec(model);
 
                 return Ok(
-                    new ResultResponse<List<LichCongTac>>()
+                    new ResultResponse<LichCongTac>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.UPDATE_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+
+        [HttpPost]
+        [Route("delete-congviec")]
+        public async Task<IActionResult> DeleteCongViec(CongViec model)
+        {
+            try
+            {
+                await _lichCongTacService.DeleteCongViec(model);
+
+                return Ok(
+                    new ResultMessageResponse()
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.DELETE_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+
+        [HttpPost]
+        [Route("get-by-id-congviec")]
+        public async Task<IActionResult> GetByIdCongViec(CongViec model)
+        {
+            try
+            {
+                var response = await _lichCongTacService.GetByIdCongViec(model);
+
+                return Ok(
+                    new ResultResponse<CongViec>()
                         .WithData(response)
                         .WithCode(EResultResponse.SUCCESS.ToString())
                         .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
@@ -138,76 +207,5 @@ namespace EOffice.WebAPI.APIs
             }
         }
         
-        [HttpGet]
-        [Route("get-by-date-now")]
-        public async Task<IActionResult> GetByDateNow()
-        {
-            try
-            {
-                var response = await _lichCongTacService.GetByDateNow();
-
-                return Ok(
-                    new ResultResponse<List<LichCongTac>>()
-                        .WithData(response)
-                        .WithCode(EResultResponse.SUCCESS.ToString())
-                        .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
-                );
-            }
-            catch (ResponseMessageException ex)
-            {
-                return Ok(
-                    new ResultMessageResponse().WithCode(ex.ResultCode)
-                        .WithMessage(ex.ResultString)
-                );
-            }
-        }
-        
-        [HttpPost]
-        [Route("get-by-date")]
-        public async Task<IActionResult> GetByDate([FromBody] PagingParamDate param)
-        {
-            try
-            {
-                var response = await _lichCongTacService.GetByDate(param);
-
-                return Ok(
-                    new ResultResponse<List<LichCongTac>>()
-                        .WithData(response)
-                        .WithCode(EResultResponse.SUCCESS.ToString())
-                        .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
-                );
-            }
-            catch (ResponseMessageException ex)
-            {
-                return Ok(
-                    new ResultMessageResponse().WithCode(ex.ResultCode)
-                        .WithMessage(ex.ResultString)
-                );
-            }
-        }
-
-        [HttpPost]
-        [Route("get-paging-params")]
-        public async Task<IActionResult> GetPagingParam([FromBody] LichCongTacParam param)
-        {
-            try
-            {
-                var response = await _lichCongTacService.GetPaging(param);
-
-                return Ok(
-                    new ResultResponse<PagingModel<LichCongTac>>()
-                        .WithData(response)
-                        .WithCode(EResultResponse.SUCCESS.ToString())
-                        .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
-                );
-            }
-            catch (ResponseMessageException ex)
-            {
-                return Ok(
-                    new ResultMessageResponse().WithCode(ex.ResultCode)
-                        .WithMessage(ex.ResultString)
-                );
-            }
-        }
     }
 }

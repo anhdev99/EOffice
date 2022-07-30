@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using EOffice.WebAPI.Data;
 using EOffice.WebAPI.Enums;
@@ -48,15 +49,8 @@ namespace EOffice.WebAPI.Services
 
             var entity = new LichCongTac
             {
-                TuNgay = model.TuNgay,
-                DenNgay = model.DenNgay,
-                ThoiGian = model.ThoiGian,
                 ChuTri = model.ChuTri,
-                MauSac = model.MauSac,
-                DiaDiem = model.DiaDiem,
-                TieuDe = model.TieuDe,
-                ThanhPhanThamDu = model.ThanhPhanThamDu,
-                GhiChu = model.GhiChu,
+                NgayXepLich = model.NgayXepLich,
                 CreatedBy = CurrentUserName,
                 ModifiedBy = CurrentUserName,
                 CreatedAt = DateTime.Now,
@@ -90,16 +84,8 @@ namespace EOffice.WebAPI.Services
                     .WithCode(EResultResponse.FAIL.ToString())
                     .WithMessage(DefaultMessage.DATA_NOT_FOUND);
             }
-
-            entity.TuNgay = model.TuNgay;
-            entity.DenNgay = model.DenNgay;
-            entity.ThoiGian = model.ThoiGian;
             entity.ChuTri = model.ChuTri;
-            entity.MauSac = model.MauSac;
-            entity.DiaDiem = model.DiaDiem;
-            entity.TieuDe = model.TieuDe;
-            entity.ThanhPhanThamDu = model.ThanhPhanThamDu;
-            entity.GhiChu = model.GhiChu;
+            entity.NgayXepLich = model.NgayXepLich;
             entity.ModifiedAt = DateTime.Now;
             entity.ModifiedBy = CurrentUserName;
 
@@ -144,97 +130,152 @@ namespace EOffice.WebAPI.Services
                     .WithMessage(DefaultMessage.DELETE_FAILURE);
             }
         }
-
-        public async Task<List<LichCongTac>> Get()
-        {
-            return await _context.LichCongTac.Find(x => x.IsDeleted != true).SortByDescending(x => x.TuNgay)
-                .ToListAsync();
-        }
         
-        public async Task<List<LichCongTac>> GetByDateNow()
-        {
-            DateTime today = DateTime.Now;
-            var today_fm = today.ToString("dd/MM/yyyy");
-            var entity = await  _context.LichCongTac.Find(x => x.IsDeleted != true).ToListAsync();
-            List<LichCongTac> list = new List<LichCongTac>();
-            foreach (var item in entity)
-            {
-                var tungay_fm = item.TuNgay.ToString("dd/MM/yyyy");
-                if (tungay_fm == today_fm)
-                {
-                    list.Add(item);
-                }
-            }
-            return list;
-        }
-
         public async Task<LichCongTac> GetById(string id)
         {
             return await _context.LichCongTac.Find(x => x.Id == id && x.IsDeleted != true)
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<PagingModel<LichCongTac>> GetPaging(PagingParam param)
+        #region CongViec
+        public async Task<LichCongTac> CreateCongViec(CongViec model)
         {
-            PagingModel<LichCongTac> result = new PagingModel<LichCongTac>();
-            var builder = Builders<LichCongTac>.Filter;
-            var filter = builder.Empty;
-            filter = builder.And(filter, builder.Where(x => x.IsDeleted == false));
-
-            string sortBy = nameof(LichCongTac.TuNgay);
-            result.TotalRows = await _collection.CountDocumentsAsync(filter);
-            result.Data = await _collection.Find(filter)
-                .Sort(param.SortDesc
-                    ? Builders<LichCongTac>
-                        .Sort.Descending(sortBy)
-                    : Builders<LichCongTac>
-                        .Sort.Ascending(sortBy))
-                .Skip(param.Skip)
-                .Limit(param.Limit)
-                .ToListAsync();
-            return result;
-        }
-        public async Task<List<LichCongTac>> GetByDate(PagingParamDate param)
-        {
-            DateTime start = Convert.ToDateTime(param.DateRange.start);
-            DateTime end = new DateTime();
-            if (param.DateRange.end != "")
+            if (model == default)
             {
-                end = Convert.ToDateTime(param.DateRange.end);
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.DATA_NOT_EMPTY);
             }
-           
-            String.Format("{0:d/M/yyyy HH:mm:ss}", start);
-            String.Format("{0:d/M/yyyy HH:mm:ss}", end);
-            var entity = await  _context.LichCongTac.Find(x => x.IsDeleted != true).ToListAsync();
+
+            var lichCongTac = await _context.LichCongTac.Find(x => x.Id == model.LichCongTacId).FirstOrDefaultAsync();
+            
+            if (lichCongTac == default)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage("Không tìm thấy lịch công tác.");
+            }
+
+            if (lichCongTac.CongViecs == default)
+            {
+                lichCongTac.CongViecs = new List<CongViec>();
+            }
+
+            model.Id = BsonObjectId.GenerateNewId().ToString();
+            lichCongTac.CongViecs.Add(model);
+
+            var result = await BaseMongoDb.CreateAsync(lichCongTac);
+            if (result.Entity.Id == default || !result.Success)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage("Thêm công việc không thành công!");
+            }
+
+            return lichCongTac;
+        }
+
+        public async Task<LichCongTac> UpdateCongViec(CongViec model)
+        {
+            if (model == default)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.DATA_NOT_EMPTY);
+            }
+
+            var entity = _context.LichCongTac.Find(x => x.Id == model.LichCongTacId).FirstOrDefault();
             if (entity == default)
             {
                 throw new ResponseMessageException()
                     .WithCode(EResultResponse.FAIL.ToString())
                     .WithMessage(DefaultMessage.DATA_NOT_FOUND);
             }
-            List<LichCongTac> list = new List<LichCongTac>();
-            foreach (var item in entity)
+
+            var indexCongViec = entity.CongViecs.FindIndex(x => x.Id == model.Id);
+            if (indexCongViec != -1)
             {
-                String.Format("{0:d/M/yyyy HH:mm:ss}", item.TuNgay);
-                if (param.DateRange.end == "")
-                {
-                    int compare = DateTime.Compare(start, item.TuNgay);
-                    if (compare > 0)
-                    {
-                        list.Add(item);
-                    }
-                }
-                else
-                {
-                    int compareStart = DateTime.Compare(start, item.TuNgay);
-                    int compareEnd = DateTime.Compare(end, item.TuNgay);
-                    if (compareStart <= 0 && compareEnd >= 0)
-                    {
-                        list.Add(item);
-                    }
-                }
+                entity.CongViecs[indexCongViec] = model;
             }
-            return list;
+            else
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage("Không tìm thấy công việc hoặc lịch công tác.");
+            }
+            entity.ModifiedAt = DateTime.Now;
+            var result = await BaseMongoDb.UpdateAsync(entity);
+            if (!result.Success)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.UPDATE_FAILURE);
+            }
+
+            return entity;
         }
+
+        public async Task DeleteCongViec(CongViec model)
+        {
+            if (model == default)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.DATA_NOT_EMPTY);
+            }
+
+
+            var entity = _context.LichCongTac.Find(x => x.Id == model.LichCongTacId && x.IsDeleted != true).FirstOrDefault();
+            if (entity == default)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.DATA_NOT_FOUND);
+            }
+
+            var indexCongViec = entity.CongViecs.FindIndex(x => x.Id == model.Id);
+            if (indexCongViec != -1)
+            {
+                entity.CongViecs.RemoveAt(indexCongViec);
+            }
+            else
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage("Không tìm thấy công việc hoặc lịch công tác.");
+            }
+            entity.ModifiedAt = DateTime.Now;
+            var result = await BaseMongoDb.DeleteAsync(entity);
+
+            if (!result.Success)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.DELETE_FAILURE);
+            }
+        }
+
+        public async Task<CongViec> GetByIdCongViec(CongViec model)
+        {
+            var lichCongTac = await  _context.LichCongTac.Find(x => x.Id == model.LichCongTacId && x.IsDeleted != true)
+                .FirstOrDefaultAsync();
+            if (lichCongTac == default)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage("Không tìm thấy lịch công tác!");
+            }
+
+            var congViec = lichCongTac.CongViecs.Where(x => x.Id == model.Id).FirstOrDefault();
+            if (congViec == default)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage("Không tìm thấy công việc!");
+            }
+            return congViec;
+        }
+
+        #endregion
     }
 }

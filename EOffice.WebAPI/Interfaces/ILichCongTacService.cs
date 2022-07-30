@@ -10,10 +10,14 @@ namespace EOffice.WebAPI.Interfaces
         Task<LichCongTac> Create(LichCongTac model);
         Task<LichCongTac> Update(LichCongTac model);
         Task Delete(string id);
-        Task<List<LichCongTac>> GetByDateNow();
-        Task<List<LichCongTac>> Get();
         Task<LichCongTac> GetById(string id);
-        Task<PagingModel<LichCongTac>> GetPaging(PagingParam param);
-        Task<List<LichCongTac>> GetByDate(PagingParamDate param);
+
+        #region CongViec
+        Task<LichCongTac> CreateCongViec(CongViec model);
+        Task<LichCongTac> UpdateCongViec(CongViec model);
+        Task DeleteCongViec(CongViec model);
+        Task<CongViec> GetByIdCongViec(CongViec model);
+        #endregion
+ 
     }
 }
