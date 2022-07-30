@@ -192,11 +192,6 @@ namespace EOffice.WebAPI.Services
             }
             return $" ({dayString}/{monthString}/{year.ToString()}  âm lịch)";
         }
-        private string  NgayAmLich(DateTime date)
-        {
-            ChineseLunisolarCalendar a = new ChineseLunisolarCalendar();
-            return $"{a.GetDayOfYear(date).ToString()}/{a.GetMonth(date).ToString()}/{a.GetYear(date).ToString()}  âm lịch"; 
-        }
         public async Task<LichCongTac> CreateCongViec(CongViec model)
         {
             if (model == default)
