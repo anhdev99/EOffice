@@ -336,7 +336,7 @@ export default {
                     <form @submit.prevent="handleSubmit"
                           ref="formContainer">
                       <div class="row">
-                        <div class="col-3">
+                        <div class=" col-md-3">
                           <div class="mb-3">
                             <label class="text-left">Ngày bắt đầu</label>
                             <span style="color: red">&nbsp;*</span>
@@ -356,7 +356,7 @@ export default {
                             </date-picker>
                           </div>
                         </div>
-                        <div class="col-3">
+                        <div class="col-md-3">
                           <div class="mb-3">
                             <label class="text-left">Ngày kết thúc</label>
                             <date-picker v-model="modelCongViec.denNgay"
@@ -371,7 +371,7 @@ export default {
                             </date-picker>
                           </div>
                         </div>
-                        <div class="col-3">
+                        <div class="col-md-3">
                           <div class="mb-3">
                             <label class="text-left">Thời gian</label>
                             <input v-model.trim="modelCongViec.thoiGian" v-mask="'##:##'" type="text" class="form-control" placeholder="##:##" />
