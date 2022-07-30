@@ -4,6 +4,9 @@ export const actions = {
     async get({commit}) {
         return apiClient.get(controller +"/get");
     },
+    async getAll({commit}) {
+        return apiClient.get(controller +"/get-all");
+    },
     async getByDateNow({commit}) {
         return apiClient.get(controller + "/get-by-date-now");
     },
@@ -34,7 +37,6 @@ export const actions = {
     async deleteFields({commit}, values) {
         return apiClient.post(controller + "/delete-fields", values);
     },
-
     async createCongViec({commit}, values) {
         return apiClient.post(controller + "/create-congviec", values);
     },

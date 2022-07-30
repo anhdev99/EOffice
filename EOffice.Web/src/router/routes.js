@@ -787,6 +787,12 @@ export default [{
         component: () => import("../pages/signDigital"),
     },
     {
+        path: "/danh-sach-lich-cong-tac",
+        name: "Danh sách lịch công tác",
+        // meta: {},
+        component: () => import("../pages/lichcongtac/dsLichCongTac"),
+    },
+    {
         path: "/xac-nhan-ky-so",
         name: "Xác nhận ký số nội bộ",
         // meta: {},

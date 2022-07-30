@@ -23,6 +23,7 @@ const baseJson = () => {
         ngayXepLich: null,
         chuTri: null,
         congViecs: null,
+        lichCongTac: null,
         loaiLichCongTac: null
     }
 }
