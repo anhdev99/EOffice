@@ -77,7 +77,7 @@ const sparklineChartData = {
 
 const salesDonutChart = {
     data: {
-        series: [54, 28, 17],
+        series: [12, 40, 17],
         labels: [1, 2, 3]
     },
     options: {
