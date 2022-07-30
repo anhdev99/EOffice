@@ -30,28 +30,28 @@ export default {
         {
           title: " Văn bản đến",
           image: require("@/assets/images/services-icon/01.png"),
-          value: "185",
+          value: "12",
           subText: "VBD",
           color: "success"
         },
         {
           title: " Văn bản đi",
           image: require("@/assets/images/services-icon/02.png"),
-          value: "68",
+          value: "40",
           subText: "VBD",
           color: "danger"
         },
         {
-          title: " Văn bản đã xử lý",
+          title: "Văn bản đã xử lý",
           image: require("@/assets/images/services-icon/03.png"),
           value: "15",
           subText: "VBDXL",
           color: "info"
         },
         {
-          title: " Hộp thư",
+          title: "Thông báo",
           image: require("@/assets/images/services-icon/04.png"),
-          value: "243",
+          value: "45",
           subText: "HT",
           color: "warning"
         }
