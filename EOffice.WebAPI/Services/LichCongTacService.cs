@@ -115,7 +115,7 @@ namespace EOffice.WebAPI.Services
             }
             else
             {
-                filter = builder.And(filter, builder.Where(x =>x.CreatedBy == CurrentUserName && x.IsDeleted == false));
+                filter = builder.And(filter, builder.Where(x =>x.CreatedBy == CurrentUserName && x.LoaiLichCongTac == null && x.IsDeleted == false));
             }
 
             string sortBy = nameof(LichCongTac.NgayXepLich);
