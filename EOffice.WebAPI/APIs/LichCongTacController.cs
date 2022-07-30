@@ -114,7 +114,6 @@ namespace EOffice.WebAPI.APIs
             }
         }
         
-        
         [HttpGet]
         [Route("get")]
         public async Task<IActionResult> Get()
@@ -122,6 +121,54 @@ namespace EOffice.WebAPI.APIs
             try
             {
                 var response = await _lichCongTacService.Get();
+
+                return Ok(
+                    new ResultResponse<List<LichCongTac>>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+        
+        [HttpGet]
+        [Route("get-by-date-now")]
+        public async Task<IActionResult> GetByDateNow()
+        {
+            try
+            {
+                var response = await _lichCongTacService.GetByDateNow();
+
+                return Ok(
+                    new ResultResponse<List<LichCongTac>>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+        
+        [HttpPost]
+        [Route("get-by-date")]
+        public async Task<IActionResult> GetByDate([FromBody] PagingParamDate param)
+        {
+            try
+            {
+                var response = await _lichCongTacService.GetByDate(param);
 
                 return Ok(
                     new ResultResponse<List<LichCongTac>>()

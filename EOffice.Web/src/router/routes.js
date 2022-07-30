@@ -766,7 +766,13 @@ export default [{
         path: "/lich-cong-tac",
         name: "Lịch công tác",
         // meta: {},
-        component: () => import("../pages/lichcongtac"),
+        component: () => import("../pages/lichcongtac/index"),
+    },
+    {
+        path: "/lich-cong-tac-ca-nhan",
+        name: "Lịch công tác cá nhân",
+        // meta: {},
+        component: () => import("../pages/lichcongtac/lichcongtaccanhan"),
     },
     {
         path: "/sign-digital",

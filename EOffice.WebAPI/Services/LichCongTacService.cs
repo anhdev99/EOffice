@@ -150,6 +150,23 @@ namespace EOffice.WebAPI.Services
             return await _context.LichCongTac.Find(x => x.IsDeleted != true).SortByDescending(x => x.TuNgay)
                 .ToListAsync();
         }
+        
+        public async Task<List<LichCongTac>> GetByDateNow()
+        {
+            DateTime today = DateTime.Now;
+            var today_fm = today.ToString("dd/MM/yyyy");
+            var entity = await  _context.LichCongTac.Find(x => x.IsDeleted != true).ToListAsync();
+            List<LichCongTac> list = new List<LichCongTac>();
+            foreach (var item in entity)
+            {
+                var tungay_fm = item.TuNgay.ToString("dd/MM/yyyy");
+                if (tungay_fm == today_fm)
+                {
+                    list.Add(item);
+                }
+            }
+            return list;
+        }
 
         public async Task<LichCongTac> GetById(string id)
         {
@@ -176,6 +193,48 @@ namespace EOffice.WebAPI.Services
                 .Limit(param.Limit)
                 .ToListAsync();
             return result;
+        }
+        public async Task<List<LichCongTac>> GetByDate(PagingParamDate param)
+        {
+            DateTime start = Convert.ToDateTime(param.DateRange.start);
+            DateTime end = new DateTime();
+            if (param.DateRange.end != "")
+            {
+                end = Convert.ToDateTime(param.DateRange.end);
+            }
+           
+            String.Format("{0:d/M/yyyy HH:mm:ss}", start);
+            String.Format("{0:d/M/yyyy HH:mm:ss}", end);
+            var entity = await  _context.LichCongTac.Find(x => x.IsDeleted != true).ToListAsync();
+            if (entity == default)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage(DefaultMessage.DATA_NOT_FOUND);
+            }
+            List<LichCongTac> list = new List<LichCongTac>();
+            foreach (var item in entity)
+            {
+                String.Format("{0:d/M/yyyy HH:mm:ss}", item.TuNgay);
+                if (param.DateRange.end == "")
+                {
+                    int compare = DateTime.Compare(start, item.TuNgay);
+                    if (compare > 0)
+                    {
+                        list.Add(item);
+                    }
+                }
+                else
+                {
+                    int compareStart = DateTime.Compare(start, item.TuNgay);
+                    int compareEnd = DateTime.Compare(end, item.TuNgay);
+                    if (compareStart <= 0 && compareEnd >= 0)
+                    {
+                        list.Add(item);
+                    }
+                }
+            }
+            return list;
         }
     }
 }

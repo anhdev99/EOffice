@@ -10,6 +10,8 @@ import router from './router/index'
 import store from '@/state/store'
 import vco from "v-click-outside"
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+import FunctionalCalendar from 'vue-functional-calendar';
+
 // Toast
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
@@ -74,6 +76,10 @@ Vue.use(VueGoogleMaps, {
   installComponents: true
 })
 Vue.component('apexchart', VueApexCharts)
+
+Vue.use(FunctionalCalendar, {
+  dayNames: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
+});
 
 new Vue({
   router,

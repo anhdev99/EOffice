@@ -4,11 +4,13 @@ export const actions = {
     async get({commit}) {
         return apiClient.get(controller +"/get");
     },
+    async getByDateNow({commit}) {
+        return apiClient.get(controller + "/get-by-date-now");
+    },
     async getPagingParams({commit}, params) {
         return apiClient.post(controller + "/get-paging-params", params);
     },
     async create({commit}, values) {
-        console.log("handleSubmitValueStore", values);
         return apiClient.post(controller + "/create", values);
     },
     async update({commit, dispatch}, values) {
@@ -22,6 +24,9 @@ export const actions = {
     },
     async getByIdByFields({commit}, params) {
         return apiClient.post(controller + "/get-by-id-by-fields" , params);
+    },
+    async getByDate({commit}, params) {
+        return apiClient.post(controller + "/get-by-date" , params);
     },
     async addFields({commit}, values) {
         return apiClient.post(controller + "/add-fields", values);

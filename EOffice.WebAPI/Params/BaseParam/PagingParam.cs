@@ -20,7 +20,6 @@ namespace EOffice.WebAPI.Params
         }
     }
 
-
     public class ChildPaging : PagingParam
     {
         public  string ParentId { get; set; }
@@ -29,11 +28,13 @@ namespace EOffice.WebAPI.Params
 
 
 
-    public class PagingModel<T>
+    public class PagingModel<T> 
     {
         public long TotalRows { get; set; }
 
         // public long TotalRows { get; set; }
         public IEnumerable<T> Data { get; set; }
     }
+    
+    
 }
