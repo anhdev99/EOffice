@@ -50,9 +50,16 @@ export default {
   },
   validations: {},
   created() {
-    //this.showModal=true;
     this.myProvider();
-    this.fnGetList();
+  },
+  watch: {
+    currentPage: {
+      deep: true,
+      handler(val) {
+        this.currentPage = val;
+        this.myProvider();
+      }
+    }
   },
   methods: {
     myProvider(ctx) {
@@ -63,7 +70,6 @@ export default {
         sortBy: this.sortBy,
         sortDesc: this.sortDesc,
       }
-      console.log('Log param', params)
       this.loading = true
       try {
         this.$store.dispatch("notificationStore/getPagingParams", params)
@@ -77,26 +83,13 @@ export default {
         this.loading = false
       }
     },
-    async onPageChange(page = 1) {
-      this.pagination.currentPage = page;
-      const params = {
-        pageNumber: this.pagination.currentPage,
-        pageSize: this.pagination.pageSize,
-      }
-    },
-    async fnGetList() {
-      await this.onPageChange();
-    },
     async handleDetail(id) {
-      console.log(id)
       await this.$store.dispatch("notificationStore/getById", id).then((res) => {
         this.model = res;
-        console.log('model',this.model)
         this.showModal = true;
       });
     },
     async handleDetailUser(id) {
-      console.log(id)
       await this.$store.dispatch("userStore/getById", id).then((res) => {
         this.modelUser = userModel.fromJson(res.data);
         this.showModal = true;
@@ -115,8 +108,8 @@ export default {
 <!--        <Sidepanel />-->
         <div class=" mb-3">
           <div class="card">
-            <div class="btn-toolbar p-3">
-              <div class="search-box me-2 mb-2 d-inline-block">
+            <div class="btn-toolbar px-3 pt-3">
+              <div class="" style="display: flex; justify-items: center">
                 <div class="position-relative">
                   <input
                       v-model="filter"
@@ -126,10 +119,21 @@ export default {
                   />
                   <i class="bx bx-search-alt search-icon"></i>
                 </div>
+                <div class="col-md-4 " style="margin-left: 20px">
+                  <b-button
+                      variant="primary"
+                      type="button"
+                      class="btn w-md btn-primary"
+                      size="sm"
+                      style="height: 100%"
+                  >
+                    <i class="mdi mdi-plus me-1"></i> Tìm kiếm
+                  </b-button>
+                </div>
               </div>
             </div>
-            <div class="mt-3">
-              <ul class="message-list" >
+            <div class="">
+              <ul class="message-list" style="margin: 0px" >
                 <div v-for="item in data" :key="item.id" class="pe-3">
                   <div v-if="item.read==false" >
                     <li style="background-color: #fff">

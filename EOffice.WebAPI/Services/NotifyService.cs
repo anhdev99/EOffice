@@ -111,14 +111,10 @@ namespace EOffice.WebAPI.Services
                     filter = builder.And(filter,
                         builder.Where(x => x.Title.Trim().ToLower().Contains(param.Content.Trim().ToLower())));
                 }
-                string sortBy = nameof(User.ModifiedAt);
+                string sortBy = nameof(Notify.ModifiedAt);
                 result.TotalRows = await _context.Notify.CountDocumentsAsync(filter);
                 result.Data = await _context.Notify.Find(filter)
-                    .Sort(param.SortDesc
-                        ? Builders<Notify>
-                            .Sort.Descending(sortBy)
-                        : Builders<Notify>
-                            .Sort.Ascending(sortBy))
+                    .SortByDescending(x => x.ModifiedAt)
                     .Skip((param.Start > 0 ? param.Start - 1 : 0) * param.Limit)
                     .Limit(param.Limit)
                     .ToListAsync();
