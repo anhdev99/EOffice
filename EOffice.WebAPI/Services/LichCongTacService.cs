@@ -156,7 +156,17 @@ namespace EOffice.WebAPI.Services
             return await _context.LichCongTac.Find(x => x.Id == id && x.IsDeleted != true)
                 .FirstOrDefaultAsync();
         }
+        public async Task<dynamic> GetAll()
+        {
+            var data = await _context.LichCongTac.Find(x => x.IsDeleted != true)
+                .ToListAsync();
+            var results = data.GroupBy(
+                p => p.NgayXepLich, 
+                p => p,
+                (key, g) => new { PersonId = key, LichCongTac = g.ToList() });
 
+            return results;
+        }
         #region CongViec
         public async Task<LichCongTac> CreateCongViec(CongViec model)
         {

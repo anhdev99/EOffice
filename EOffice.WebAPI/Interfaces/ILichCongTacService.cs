@@ -19,6 +19,7 @@ namespace EOffice.WebAPI.Interfaces
         Task DeleteCongViec(CongViec model);
         Task<CongViec> GetByIdCongViec(CongViec model);
         #endregion
- 
+
+        Task<dynamic> GetAll();
     }
 }

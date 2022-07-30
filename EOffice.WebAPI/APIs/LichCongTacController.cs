@@ -113,6 +113,29 @@ namespace EOffice.WebAPI.APIs
             }
         }
         [HttpGet]
+        [Route("get-all")]
+        public async Task<IActionResult> GetAll()
+        {
+            try
+            {
+                var response = await _lichCongTacService.GetAll();
+
+                return Ok(
+                    new ResultResponse<dynamic>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+        [HttpGet]
         [Route("get-by-id/{id}")]
         public async Task<IActionResult> GetById(string id)
         {
@@ -134,8 +157,7 @@ namespace EOffice.WebAPI.APIs
                         .WithMessage(ex.ResultString)
                 );
             }
-        }
-        
+        } 
                 [HttpPost]
         [Route("create-congviec")]
         public async Task<IActionResult> CreateCongViec([FromBody] CongViec model)
