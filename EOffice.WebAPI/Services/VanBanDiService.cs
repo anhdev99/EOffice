@@ -1035,6 +1035,16 @@ namespace EOffice.WebAPI.Services
             vanBanDi.TrangThai = model.NewTrangThai;
             vanBanDi.NoiDungTuChoi = null;
 
+            #region Ký số
+
+            if (vanBanDi.TrangThai != default &&
+                vanBanDi.TrangThai.Code.ToUpper() == DefaultRoleCode.DA_THIET_LAP_KY_SO)
+            {
+                
+            }
+            
+
+            #endregion
             #region Ban hành
 
             if (vanBanDi.TrangThai != default &&

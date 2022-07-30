@@ -543,13 +543,13 @@ export default {
                     <template v-slot:cell(STT)="data">
                       {{ data.index + ((currentPage-1)*perPage) + 1  }}
                     </template>
-                    <template v-slot:cell(code)="data">&nbsp;&nbsp;
+                    <template v-slot:cell(code)="data">
                       {{data.item.code}}
                     </template>
-                    <template v-slot:cell(ten)="data">&nbsp;&nbsp;
+                    <template v-slot:cell(ten)="data">
                       {{data.item.ten}}
                     </template>
-                    <template v-slot:cell(listTrangThai)="data">&nbsp;&nbsp;
+                    <template v-slot:cell(listTrangThai)="data">
                       <template v-if="data.item.listTrangThai != null && data.item.listTrangThai.length > 0">
                         <div  v-for="(value, index) in data.item.listTrangThai" :key="index">
                           {{value.ten}}

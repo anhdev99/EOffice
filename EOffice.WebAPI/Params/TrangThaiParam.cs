@@ -13,5 +13,6 @@ namespace EOffice.WebAPI.Params
         public string UserName { get; set; }
         public UserShort LanhDaoDonVi { get; set; }
         public List<DonVi> DonVi { get; set; }
+        public List<PhanCongKySo> ListPhanCongKySo { get; set; }
     }
 }
