@@ -184,7 +184,7 @@ namespace EOffice.WebAPI.Services
             model.Id = BsonObjectId.GenerateNewId().ToString();
             lichCongTac.CongViecs.Add(model);
 
-            var result = await BaseMongoDb.CreateAsync(lichCongTac);
+            var result = await BaseMongoDb.UpdateAsync(lichCongTac);
             if (result.Entity.Id == default || !result.Success)
             {
                 throw new ResponseMessageException()

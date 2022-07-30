@@ -62,7 +62,7 @@ export default {
         {key: 'STT', label: 'STT', class: 'td-stt', sortable: false, thClass: 'hidden-sortable'},
         {
           key: "tuNgay",
-          label: "ngày",
+          label: "Ngày",
           class: "px-2",
           sortable: true,
           thStyle: {width: '100px', minWidth: '100px'},
@@ -95,7 +95,6 @@ export default {
           label: "Thành phần",
           thClass: 'hidden-sortable',
           sortable: false,
-          class: "text-center"
         },
         {
           key: 'ghiChu',
@@ -117,19 +116,7 @@ export default {
       showCongViecModel: false,
       editor: ClassicEditor,
       editorConfig: {
-        plugins: [
-
-        ],
-
-        toolbar: {
-          items: [
-            'bold',
-            'italic',
-            'link',
-            'undo',
-            'redo'
-          ]
-        }
+        height: "200px"
       }
 
     };
@@ -139,6 +126,9 @@ export default {
       ngayXepLich: {required},
       chuTri: {required}
     },
+    modelCongViec:{
+      tuNgay: {required},
+    }
   },
   created() {
     // this.fnGetList();
@@ -180,7 +170,7 @@ export default {
       this.$refs.tblList?.refresh()
     },
     async handleUpdate(id) {
-      await this.$store.dispatch("lichCongTacStore/getById", id).then((res) => {
+      await this.$store.dispatch("lichCongTacStore/getByIdCongViec", id).then((res) => {
         if (res.resultCode === 'SUCCESS') {
           this.model = lichCongTacModel.fromJson(res.data);
           this.showModal = true;
@@ -194,6 +184,7 @@ export default {
       await this.$store.dispatch("lichCongTacStore/getById", id).then((res) => {
         if (res.resultCode === 'SUCCESS') {
           this.model = lichCongTacModel.fromJson(res.data);
+          this.modelCongViec.tuNgay = this.model.ngayXepLich;
           this.showDetail = true;
         } else {
           this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
@@ -221,37 +212,35 @@ export default {
     async handleSubmit(e) {
       e.preventDefault();
       this.submitted = true;
-      console.log("handleSubmit");
       this.$v.$touch();
-      if (this.$v.model.$invalid) {
+      if (this.$v.modelCongViec.$invalid) {
         return;
       } else {
         let loader = this.$loading.show({
           container: this.$refs.formContainer,
         });
         if (
-            this.model.id != 0 &&
-            this.model.id != null &&
-            this.model.id
+            this.modelCongViec.id != 0 &&
+            this.modelCongViec.id != null &&
+            this.modelCongViec.id
         ) {
           // Update model
-          await this.$store.dispatch("lichCongTacStore/update", this.model).then((res) => {
-            console.log('model up', this.model)
+          await this.$store.dispatch("lichCongTacStore/updateCongViec", this.modelCongViec).then((res) => {
             if (res.resultCode === 'SUCCESS') {
-              this.fnGetList();
-              this.showModal = false;
-              this.$refs.tblList.refresh()
+              this.modelCongViec = congViecModel.baseJson();
+              this.handleDetail(this.$route.params.id)
+              this.showCongViecModel = false;
             }
             this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res))
           });
         } else {
           // Create model
-          await this.$store.dispatch("lichCongTacStore/create", lichCongTacModel.toJson(this.model)).then((res) => {
+          await this.$store.dispatch("lichCongTacStore/createCongViec", this.modelCongViec).then((res) => {
             if (res.resultCode === 'SUCCESS') {
-              this.fnGetList();
-              this.showModal = false;
-              this.$refs.tblList.refresh()
-              this.model = {};
+              this.modelCongViec = congViecModel.baseJson();
+              this.handleDetail(this.$route.params.id)
+              this.showCongViecModel = false;
+
             }
             this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res))
           });
@@ -334,23 +323,23 @@ export default {
                       hide-footer
                       centered
                       no-close-on-backdrop
-                      size="lg"
+                      size="xl"
                   >
                     <form @submit.prevent="handleSubmit"
                           ref="formContainer">
                       <div class="row">
-                        <div class="col-4">
+                        <div class="col-3">
                           <div class="mb-3">
                             <label class="text-left">Ngày bắt đầu</label>
                             <span style="color: red">&nbsp;*</span>
                             <input type="hidden" v-model="modelCongViec.id"/>
-                            <date-picker v-model="model.ngayXepLich"
+                            <date-picker v-model="modelCongViec.tuNgay"
                                          format="DD/MM/YYYY"
                                          value-type="format"
                                          readonly=""
                             >
                               <div slot="input">
-                                <input v-model="model.ngayXepLich"
+                                <input v-model="modelCongViec.tuNgay"
                                        v-mask="'##/##/####'" type="text" class="form-control"
                                        placeholder="Nhập ngày bắt đầu"
                                 readonly
@@ -359,7 +348,7 @@ export default {
                             </date-picker>
                           </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-3">
                           <div class="mb-3">
                             <label class="text-left">Ngày kết thúc</label>
                             <date-picker v-model="modelCongViec.denNgay"
@@ -374,62 +363,52 @@ export default {
                             </date-picker>
                           </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-3">
                           <div class="mb-3">
                             <label class="text-left">Thời gian</label>
-                            <input
-                                id="ten"
-                                v-model.trim="model.thoiGian"
-                                type="text"
-                                class="form-control"
-                                placeholder="Nhập thời gian"
-                            />
+                            <input v-model.trim="modelCongViec.thoiGian" v-mask="'##:##'" type="text" class="form-control" placeholder="##:##" />
                           </div>
                         </div>
-                        <div class="col-12">
-                          <div class="mb-3">
-                            <label class="text-left">Nội dung</label>
-                            <span style="color: red">&nbsp;*</span>
-                            <textarea
-                                id="ten"
-                                v-model.trim="modelCongViec.noiDung"
-                                type="text"
-                                class="form-control"
-                                placeholder="Nhập nội dung công việc"
-                            />
-                          </div>
-                        </div>
-                        <div class="col-12">
-                          <div class="mb-3">
-                            <label class="text-left">Địa điểm</label>
-                            <span style="color: red">&nbsp;*</span>
-                            <textarea
-                                id="ten"
-                                v-model.trim="model.diaDiem"
-                                type="text"
-                                class="form-control"
-                                placeholder="Nhập địa điểm"
-                            />
-                          </div>
-                        </div>
-
-                        <div class="col-md-12">
+                        <div class="col-md-3">
                           <div class="mb-3">
                             <label class="text-left">Màu sắc</label>
                             <input
                                 type="color"
                                 class="form-control-color mw-100 form-control"
                                 id="example-color-input"
-                                v-model="model.mauSac"
+                                v-model="modelCongViec.mauSac"
                             />
                           </div>
                         </div>
+                        <div class="col-md-6">
+                          <div class="mb-2">
+                            <label class="form-label" for="validationCustom01">Nội dung</label>
+                            <span style="color: red">&nbsp;*</span>
+                            <ckeditor
+                                v-model="modelCongViec.noiDung"
+                                :editor="editor"
+                                :config="editorConfig"
+                            ></ckeditor>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="mb-2">
+                            <label class="form-label" for="validationCustom01">Địa điểm</label>
+                            <span style="color: red">&nbsp;*</span>
+                            <ckeditor
+                                v-model="modelCongViec.diaDiem"
+                                :editor="editor"
+                                :config="editorConfig"
+                            ></ckeditor>
+                          </div>
+                        </div>
+
                         <div class="col-12">
                           <div class="mb-3">
                             <label class="text-left">Thành phần tham dự</label>
                             <multiselect
                                 :multiple="true"
-                                v-model="model.thanhPhanThamDu"
+                                v-model="modelCongViec.thanhPhanThamDu"
                                 :options="optionsUser"
                                 track-by="id"
                                 label="fullName"
@@ -440,30 +419,30 @@ export default {
                             ></multiselect>
                           </div>
                         </div>
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                           <div class="mb-2">
                             <label class="form-label" for="validationCustom01">Thành phần</label>
                             <!--                                <span-->
                             <!--                                  class="text-danger">*</span>-->
                             <ckeditor
-                                v-model="model.trichYeu"
+                                v-model="modelCongViec.thanhPhan"
                                 :editor="editor"
                                 :config="editorConfig"
                             ></ckeditor>
                           </div>
                         </div>
-                        <div class="col-12">
-                          <div class="mb-3">
-                            <label class="text-left">Ghi chú</label>
-                            <textarea
-                                id="ghichu"
-                                v-model.trim="model.ghiChu"
-                                type="text"
-                                class="form-control"
-                                placeholder="Nhập ghi chú"
-                            />
-                          </div>
+                        <div class="col-md-6">
+                        <div class="mb-2">
+                          <label class="form-label" for="validationCustom01">Ghi chú</label>
+                          <!--                                <span-->
+                          <!--                                  class="text-danger">*</span>-->
+                          <ckeditor
+                              v-model="modelCongViec.ghiChu"
+                              :editor="editor"
+                              :config="editorConfig"
+                          ></ckeditor>
                         </div>
+                      </div>
                       </div>
                       <div class="text-end pt-2 mt-3">
                         <b-button variant="light" class="w-md" size="sm" @click="showModal = false">
@@ -500,6 +479,33 @@ export default {
                   >
                     <template v-slot:cell(STT)="data">
                       {{ data.index + ((currentPage - 1) * perPage) + 1 }}
+                    </template>
+                    <template v-slot:cell(noiDung)="data">
+                      <div v-if="data.item.noiDung" :inner-html.prop="data.item.noiDung">
+                      </div>
+                    </template>
+                    <template v-slot:cell(diaDiem)="data">
+                      <div v-if="data.item.diaDiem" :inner-html.prop="data.item.diaDiem">
+                      </div>
+                    </template>
+                    <template v-slot:cell(ghiChu)="data">
+                      <div v-if="data.item.ghiChu" :inner-html.prop="data.item.ghiChu">
+                      </div>
+                    </template>
+                    <template v-slot:cell(thanhPhan)="data">
+                      <div v-if="data.item.thanhPhanThamDu && data.item.thanhPhanThamDu.length">
+                        <div>Thành phần tham dự: </div>
+
+                        <div v-for="(value, index) in data.item.thanhPhanThamDu" :key="index">
+                          {{value.fullName}}-{{value.donVi.ten}}
+                        </div>
+                      </div>
+                      <div  v-if="data.item.thanhPhan">
+                        <div>Thành phần khác: </div>
+                        <div :inner-html.prop="data.item.thanhPhan">
+                        </div>
+                      </div>
+
                     </template>
 <!--                    <template v-slot:cell(chuTri)="data">-->
 <!--                      <div v-if="data.item.chuTri  && data.item.chuTri.length > 0" style="display: flex; flex-direction: column; margin-left: 10px">-->
@@ -586,101 +592,101 @@ export default {
         </b-modal>
 
         <!--                  Modal create -->
-        <b-modal
-            v-model="showModal"
-            title="Thông tin lịch công tác"
-            title-class="text-black font-18"
-            body-class="p-3"
-            hide-footer
-            centered
-            no-close-on-backdrop
-            size="lg"
-        >
-          <form @submit.prevent="handleSubmit"
-                ref="formContainer">
-            <div class="row">
-              <div class="col-12">
-                <div class="mb-3">
-                  <label class="text-left">Ngày bắt đầu</label>
-                  <span style="color: red">&nbsp;*</span>
-                  <input type="hidden" v-model="model.id"/>
-                  <date-picker v-model="model.ngayXepLich"
-                               format="DD/MM/YYYY"
-                               value-type="format"
-                               :class="{
-                                'is-invalid':
-                                  submitted && $v.model.ngayXepLich.$error,
-                                }"
-                  >
-                    <div slot="input">
-                      <input v-model="model.ngayXepLich"
-                             v-mask="'##/##/####'" type="text" class="form-control"
-                             placeholder="Nhập ngày bắt đầu"
+<!--        <b-modal-->
+<!--            v-model="showModal"-->
+<!--            title="Thông tin lịch công tác"-->
+<!--            title-class="text-black font-18"-->
+<!--            body-class="p-3"-->
+<!--            hide-footer-->
+<!--            centered-->
+<!--            no-close-on-backdrop-->
+<!--            size="lg"-->
+<!--        >-->
+<!--          <form @submit.prevent="handleSubmit"-->
+<!--                ref="formContainer">-->
+<!--            <div class="row">-->
+<!--              <div class="col-12">-->
+<!--                <div class="mb-3">-->
+<!--                  <label class="text-left">Ngày bắt đầu</label>-->
+<!--                  <span style="color: red">&nbsp;*</span>-->
+<!--                  <input type="hidden" v-model="model.id"/>-->
+<!--                  <date-picker v-model="model.ngayXepLich"-->
+<!--                               format="DD/MM/YYYY"-->
+<!--                               value-type="format"-->
+<!--                               :class="{-->
+<!--                                'is-invalid':-->
+<!--                                  submitted && $v.model.ngayXepLich.$error,-->
+<!--                                }"-->
+<!--                  >-->
+<!--                    <div slot="input">-->
+<!--                      <input v-model="model.ngayXepLich"-->
+<!--                             v-mask="'##/##/####'" type="text" class="form-control"-->
+<!--                             placeholder="Nhập ngày bắt đầu"-->
 
-                      />
-                    </div>
-                  </date-picker>
-                  <div
-                      v-if="submitted && !$v.model.ngayXepLich.required"
-                      class="invalid-feedback"
-                  >
-                    Ngày xếp lịch công được trống
-                  </div>
-                </div>
-              </div>
-              <div class="col-12">
-                <div class="mb-3">
-                  <label class="text-left">Chủ trì</label>
-                  <span style="color: red">&nbsp;*</span>
-                  <multiselect
-                      v-model="model.chuTri"
-                      :options="optionsUser"
-                      :multiple=true
-                      track-by="id"
-                      label="fullName"
-                      placeholder="Chọn người chủ trì"
-                      deselect-label="Nhấn để xoá"
-                      selectLabel="Nhấn enter để chọn"
-                      selectedLabel="Đã chọn"
-                      :class="{
-                                'is-invalid':
-                                  submitted && $v.model.chuTri.$error,
-                                }"
-                  >
-                    <template slot="singleLabel" slot-scope="{ option }">
-                      <strong>{{ option.fullName }}</strong>
+<!--                      />-->
+<!--                    </div>-->
+<!--                  </date-picker>-->
+<!--                  <div-->
+<!--                      v-if="submitted && !$v.model.ngayXepLich.required"-->
+<!--                      class="invalid-feedback"-->
+<!--                  >-->
+<!--                    Ngày xếp lịch công được trống-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <div class="col-12">-->
+<!--                <div class="mb-3">-->
+<!--                  <label class="text-left">Chủ trì</label>-->
+<!--                  <span style="color: red">&nbsp;*</span>-->
+<!--                  <multiselect-->
+<!--                      v-model="model.chuTri"-->
+<!--                      :options="optionsUser"-->
+<!--                      :multiple=true-->
+<!--                      track-by="id"-->
+<!--                      label="fullName"-->
+<!--                      placeholder="Chọn người chủ trì"-->
+<!--                      deselect-label="Nhấn để xoá"-->
+<!--                      selectLabel="Nhấn enter để chọn"-->
+<!--                      selectedLabel="Đã chọn"-->
+<!--                      :class="{-->
+<!--                                'is-invalid':-->
+<!--                                  submitted && $v.model.chuTri.$error,-->
+<!--                                }"-->
+<!--                  >-->
+<!--                    <template slot="singleLabel" slot-scope="{ option }">-->
+<!--                      <strong>{{ option.fullName }}</strong>-->
 
-                      <span v-if="option.donVi" style="color:red">&nbsp;{{ option.donVi.ten }}</span>
-                    </template>
-                    <template slot="option" slot-scope="{ option }">
-                      <div class="option__desc">
-          <span class="option__title">
-            <strong>{{ option.fullName }}&nbsp;</strong>
-          </span>
-                        <span v-if="option.donVi" class="option__small"
-                              style="color:green">{{ option.donVi.ten }}</span>
-                      </div>
-                    </template>
-                  </multiselect>
-                  <div
-                      v-if="submitted && !$v.model.chuTri.required"
-                      class="invalid-feedback"
-                  >
-                    Người chủ trì không được trống
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="text-end pt-2 mt-3">
-              <b-button variant="light" class="w-md" size="sm" @click="showModal = false">
-                Đóng
-              </b-button>
-              <b-button type="submit" variant="primary" size="sm" class="ms-1 w-md">
-                Lưu
-              </b-button>
-            </div>
-          </form>
-        </b-modal>
+<!--                      <span v-if="option.donVi" style="color:red">&nbsp;{{ option.donVi.ten }}</span>-->
+<!--                    </template>-->
+<!--                    <template slot="option" slot-scope="{ option }">-->
+<!--                      <div class="option__desc">-->
+<!--          <span class="option__title">-->
+<!--            <strong>{{ option.fullName }}&nbsp;</strong>-->
+<!--          </span>-->
+<!--                        <span v-if="option.donVi" class="option__small"-->
+<!--                              style="color:green">{{ option.donVi.ten }}</span>-->
+<!--                      </div>-->
+<!--                    </template>-->
+<!--                  </multiselect>-->
+<!--                  <div-->
+<!--                      v-if="submitted && !$v.model.chuTri.required"-->
+<!--                      class="invalid-feedback"-->
+<!--                  >-->
+<!--                    Người chủ trì không được trống-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div class="text-end pt-2 mt-3">-->
+<!--              <b-button variant="light" class="w-md" size="sm" @click="showModal = false">-->
+<!--                Đóng-->
+<!--              </b-button>-->
+<!--              <b-button type="submit" variant="primary" size="sm" class="ms-1 w-md">-->
+<!--                Lưu-->
+<!--              </b-button>-->
+<!--            </div>-->
+<!--          </form>-->
+<!--        </b-modal>-->
       </div>
     </div>
   </Layout>
@@ -703,5 +709,9 @@ export default {
 
 .hidden-sortable:after, .hidden-sortable:before {
   display: none !important;
+}
+
+.ck-editor__editable{
+  min-height: 100px !important;
 }
 </style>

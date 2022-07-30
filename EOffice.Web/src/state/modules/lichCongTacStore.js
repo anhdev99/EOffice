@@ -34,4 +34,14 @@ export const actions = {
     async deleteFields({commit}, values) {
         return apiClient.post(controller + "/delete-fields", values);
     },
+
+    async createCongViec({commit}, values) {
+        return apiClient.post(controller + "/create-congviec", values);
+    },
+    async updateCongViec({commit, dispatch}, values) {
+        return apiClient.put(controller + "/update-congviec", values);
+    },
+    async deleteCongViec({commit}, id) {
+        return await apiClient.post(controller + "/delete-congviec" ,id);
+    },
 };

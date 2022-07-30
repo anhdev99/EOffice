@@ -67,7 +67,7 @@ export default {
                   </div>
                   <div class="mb-4">
                     <label class="form-label">Hour</label>
-                    <input v-model="hour" v-mask="'##:##:##'" type="text" class="form-control" />
+                    <input v-model="hour" v-mask="'##:##'" type="text" class="form-control" />
                     <span class="font-13 text-muted">e.g "HH:MM:SS"</span>
                   </div>
                   <div class="mb-4">
