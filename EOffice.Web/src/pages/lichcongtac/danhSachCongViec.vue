@@ -169,14 +169,14 @@ export default {
     async onPageChange() {
       this.$refs.tblList?.refresh()
     },
-    async handleUpdate(id) {
-      await this.$store.dispatch("lichCongTacStore/getByIdCongViec", id).then((res) => {
+    async handleUpdate(idTemp, lichCongTacIdTemp) {
+      await this.$store.dispatch("lichCongTacStore/getByIdCongViec", {id: idTemp, lichCongTacId: lichCongTacIdTemp}).then((res) => {
         if (res.resultCode === 'SUCCESS') {
-          this.model = lichCongTacModel.fromJson(res.data);
-          this.showModal = true;
+          this.modelCongViec = congViecModel.fromJson(res.data);
+
+          this.showCongViecModel = true;
         } else {
           this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
-          this.$refs.tblList.refresh()
         }
       });
     },
@@ -536,7 +536,7 @@ export default {
                           size="sm"
                           class="btn btn-outline btn-sm"
                           data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
-                          v-on:click="handleUpdate(data.item.id)">
+                          v-on:click="handleUpdate(data.item.id, data.item.lichCongTacId)">
                         <i class="fas fa-pencil-alt text-success me-1"></i>
                       </button>
                       <button

@@ -39,9 +39,13 @@ export const actions = {
         return apiClient.post(controller + "/create-congviec", values);
     },
     async updateCongViec({commit, dispatch}, values) {
-        return apiClient.put(controller + "/update-congviec", values);
+        return apiClient.post(controller + "/update-congviec", values);
     },
-    async deleteCongViec({commit}, id) {
-        return await apiClient.post(controller + "/delete-congviec" ,id);
+    async deleteCongViec({commit}, values) {
+        return await apiClient.post(controller + "/delete-congviec" ,values);
+    },
+    async getByIdCongViec({commit}, values) {
+        console.log("value", values)
+        return apiClient.post(controller + "/get-by-id-congviec" , values);
     },
 };

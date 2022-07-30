@@ -163,7 +163,7 @@ namespace EOffice.WebAPI.Services
             var results = data.GroupBy(
                 p => p.NgayXepLich, 
                 p => p,
-                (key, g) => new { PersonId = key, LichCongTac = g.ToList() });
+                (key, g) => new { NgayXepLich = key, LichCongTac = g.ToList() });
 
             return results;
         }
