@@ -53,6 +53,7 @@ namespace EOffice.WebAPI.Services
                 ThuTu = model.ThuTu,
                 Ten = model.Ten,
                 Color = model.Color,
+                BgColor = model.BgColor,
                 CreatedBy = CurrentUserName,
                 ModifiedBy = CurrentUserName,
                 Actions = model.Actions,
@@ -98,6 +99,7 @@ namespace EOffice.WebAPI.Services
             entity.Code = model.Code;
             entity.Ten = model.Ten;
             entity.Color = model.Color;
+            entity.BgColor = model.BgColor;
             entity.ThuTu = model.ThuTu;
             entity.ModifiedBy = CurrentUserName;
             entity.ModifiedAt = DateTime.Now;
@@ -222,7 +224,7 @@ namespace EOffice.WebAPI.Services
 
             if (param.CurrentTrangThai != default)
             {
-                var currentTrangThai = _context.TrangThai.Find(x => x.Id == param.CurrentTrangThai.Id).FirstOrDefault();
+                var currentTrangThai = _context.TrangThai.Find(x => x.Code.ToUpper() == param.CurrentTrangThai.Code.ToUpper()).FirstOrDefault();
                 if (currentTrangThai != default)
                    return currentTrangThai.NextTrangThai;
             }

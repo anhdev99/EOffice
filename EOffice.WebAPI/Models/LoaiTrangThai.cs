@@ -15,17 +15,13 @@ namespace EOffice.WebAPI.Models
         public int ThuTu { get; set; }
         public List<TrangThaiShort> ListTrangThai { get; set; }
     }
-    public class MaThongKeShort  
-    {
-        public string Id { get; set; }
-        public string Code { get; set; }
-        public  string Ten { get; set;  }
-    }
 
     public class TrangThaiShort
     {
         public string Id { get; set; }
         public string Ten { get; set; }
         public string Code { get; set; }
+        public string BgColor { get; set; }
+        public string Color { get; set; }
     }
 }

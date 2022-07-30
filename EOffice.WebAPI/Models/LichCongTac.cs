@@ -18,6 +18,7 @@ namespace EOffice.WebAPI.Models
         public string TieuDe { get; set; }
         public string GhiChu { get; set; }
         public List<User> ThanhPhanThamDu { get; set; }
+        public FileShort File { get; set; }
     }
 
     //public class ThanhPhanThamDu

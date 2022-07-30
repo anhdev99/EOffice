@@ -72,7 +72,9 @@ namespace EOffice.WebAPI.Services
                     {
                         Id = x.Id,
                         Code = x.Code,
-                        Ten = x.Ten
+                        Ten = x.Ten,
+                        BgColor = x.BgColor,
+                        Color = x.Color
                     }).ToList();
                     entity.ListTrangThai = trangThai;
             }
@@ -132,7 +134,9 @@ namespace EOffice.WebAPI.Services
                 {
                     Id = x.Id,
                     Code = x.Code,
-                    Ten = x.Ten
+                    Ten = x.Ten,
+                    BgColor = x.BgColor,
+                    Color = x.Color
                 }).ToList();
                 entity.ListTrangThai = trangThai;
             }
@@ -155,8 +159,7 @@ namespace EOffice.WebAPI.Services
                     .WithCode(EResultResponse.FAIL.ToString())
                     .WithMessage(DefaultMessage.DATA_NOT_EMPTY);
             }
-
-
+            
             var entity = _context.LoaiTrangThai.Find(x => x.Id == id && x.IsDeleted != true).FirstOrDefault();
             if (entity == default)
             {

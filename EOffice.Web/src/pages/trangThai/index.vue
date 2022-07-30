@@ -71,6 +71,12 @@ export default {
           thStyle:"text-align:left",
         },
         {
+          key: "actions",
+          label: "Hành động",
+          sortable: true,
+          thStyle:"text-align:left",
+        },
+        {
           key: "thuTu",
           label: "Thứ tự",
           class: 'td-xuly',
@@ -149,7 +155,7 @@ export default {
         if (!this.model.actions) {
           this.model.actions = [];
         }
-        this.model.actions.push({id: node.id, ten: node.label, code: node.code});
+        this.model.actions.push({id: node.id, action: node.label, code: node.code});
       }
     },
     formatRemoveTrangThai(node, instanceId) {
@@ -159,12 +165,14 @@ export default {
       }
     },
     formatTrangThai(node, instanceId) {
+      console.log("node", node)
       let index = this.model.nextTrangThai?.findIndex(x => x.id == node.id);
       if (index == -1 || index == undefined) {
         if (!this.model.nextTrangThai) {
           this.model.nextTrangThai = [];
         }
         this.model.nextTrangThai.push({id: node.id, ten: node.label, code: node.code});
+
       }
     },
     async fnGetList() {
@@ -378,6 +386,18 @@ export default {
                             >
                               Tên trạng thái không được để trống.
                             </div>
+                          </div>
+                        </div>
+                        <div class="col-6">
+                          <div class="mb-3">
+                            <label class="text-left">Background</label>
+                            <input
+                                id="bgColor"
+                                v-model.trim="model.bgColor"
+                                type="text"
+                                class="form-control"
+                                placeholder="Nhập background"
+                            />
                           </div>
                         </div>
                         <div class="col-6">
@@ -644,6 +664,13 @@ export default {
                       <template v-if="data.item.nextTrangThai != null && data.item.nextTrangThai.length > 0">
                         <div  v-for="(value, index) in data.item.nextTrangThai" :key="index">
                           {{value.ten}}
+                        </div>
+                      </template>
+                    </template>
+                    <template v-slot:cell(actions)="data">&nbsp;&nbsp;
+                      <template v-if="data.item.actions != null && data.item.actions.length > 0">
+                        <div  v-for="(value, index) in data.item.actions" :key="index">
+                          {{value.action}}
                         </div>
                       </template>
                     </template>

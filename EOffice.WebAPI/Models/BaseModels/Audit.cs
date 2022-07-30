@@ -18,6 +18,11 @@ namespace EOffice.WebAPI.Models
             get { return CreatedAt.HasValue ? CreatedAt.Value.ToLocalTime().ToString(FormatDate) : ""; }
         }
         [BsonIgnore]
+        public string CreatedAtTimeShow
+        {
+            get { return CreatedAt.HasValue ? CreatedAt.Value.ToLocalTime().ToString(FormatTime) : ""; }
+        }
+        [BsonIgnore]
         public string LastModifiedShow
         {
             get { return ModifiedAt.HasValue ? ModifiedAt.Value.ToLocalTime().ToString(FormatDate) : ""; }
@@ -26,6 +31,11 @@ namespace EOffice.WebAPI.Models
         public string FormatDate
         {
             get { return "dd/MM/yyyy"; }
+        }
+        [BsonIgnore]
+        public string FormatTime
+        {
+            get { return "HH:mm:ss"; }
         }
     }
 }

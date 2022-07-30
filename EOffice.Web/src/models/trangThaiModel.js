@@ -7,7 +7,8 @@ const toJson = (item) => {
         code: item.code,
         nextTrangThai: item.nextTrangThai,
         actions: item.actions,
-        color: item.color
+        color: item.color,
+        bgColor: item.bgColor,
     }
 }
 const fromJson = (item) => {
@@ -24,6 +25,7 @@ const fromJson = (item) => {
         createdAtShow : item.createdAtShow,
         nextTrangThai: item.nextTrangThai,
         actions: item.actions,
+        bgColor: item.bgColor,
     }
 }
 
@@ -39,7 +41,8 @@ const baseJson = () => {
         modifiedBy: null,
         nextTrangThai: null,
         actions: null,
-        color: null
+        color: null,
+        bgColor: null
     }
 }
 

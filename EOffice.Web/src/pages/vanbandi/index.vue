@@ -185,7 +185,9 @@ export default {
       modelTrangThai: trangThaiModel.currentBaseJson(),
       currentUserName: CURRENT_USER.USERNAME,
       showHistoryModal: false,
-      listHistoryQuestion: []
+      listHistoryQuestion: [],
+      noiDungTuChoi: null,
+      showModalNoiDungTuChoi : false
     };
   },
   validations: {
@@ -303,7 +305,11 @@ export default {
         }
       });
     },
+    async handleShowNoiDungTuChoi(value) {
+        this.noiDungTuChoi = value;
+        this.showModalNoiDungTuChoi = true;
 
+    },
     async handleCreate() {
       await this.$store.dispatch("vanBanDiStore/getVaCapSo").then((res) => {
         if (res.resultCode === 'SUCCESS') {
@@ -366,6 +372,7 @@ export default {
             let items = resp.data;
             this.loading = false
             this.optionsTrangThai = items;
+            console.log(   this.optionsTrangThai)
             return items || []
           }
           return [];
@@ -574,6 +581,7 @@ export default {
       this.showTrangThaiModal = true;
     },
     async handleChuyenTrangThaiVanBan(value) {
+      console.log("value",value)
       if(value){
         this.modelTrangThai.newTrangThai = value;
       }
@@ -1189,22 +1197,44 @@ export default {
                       <span v-if="data.item.loaiVanBan"> {{ data.item.loaiVanBan.ten }}</span>
                     </template>
                     <template v-slot:cell(trangThai)="data">
-                      <span v-if="data.item.trangThai" class="badge bg-success"> {{ data.item.trangThai.ten }}</span>
+                      <div style="display: flex; justify-content: center; align-items: center; flex-direction: column">
+                        <div>
+                          <span v-if="data.item.trangThai" class="badge"  :class="'bg-' + data.item.trangThai.bgColor"> {{ data.item.trangThai.ten }}</span>
+                        </div>
+
+<!--                        <button-->
+<!--                            v-if="data.item.noiDungTuChoi != null && data.item.noiDungTuChoi != ''"-->
+<!--                            type="button"-->
+<!--                            size="sm"-->
+<!--                            class="btn btn-outline btn-sm"-->
+<!--                            data-toggle="tooltip" data-placement="bottom" title="Nội dung từ chối"-->
+<!--                            v-on:click="handleShowNoiDungTuChoi(data.item.noiDungTuChoi)">-->
+<!--                          <i class="fas fa-question-circle text-danger me-1"></i>-->
+
+<!--                        </button>-->
+                        <i v-if="data.item.noiDungTuChoi != null && data.item.noiDungTuChoi != ''"
+                           v-on:click="handleShowNoiDungTuChoi(data.item.noiDungTuChoi)"
+                           class="fas fa-question-circle text-danger me-1"
+                           style="margin-left: 6px"
+                        ></i>
+                      </div>
+
+
                     </template>
                     <template v-slot:cell(trichYeu)="data">
                       <div v-if="data.item.trichYeu" :inner-html.prop="data.item.trichYeu | truncate(150)">
                       </div>
                     </template>
                     <template v-slot:cell(process)="data">
-
                       <button
-                          v-if="currentUserName == data.item.createdBy"
+                          v-if="currentUserName == data.item.createdBy && (data.item.trangThai.code == 'ktvb' || data.item.trangThai.code == 'VTTTC')"
                           type="button"
                           size="sm"
                           class="btn btn-outline btn-sm"
                           data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
                           v-on:click="handleUpdate(data.item.id)">
                         <i class="fas fa-pencil-alt text-success me-1"></i>
+
                       </button>
                       <button
                           type="button"
@@ -1235,7 +1265,7 @@ export default {
 <!--                        <i class="fas fa-feather-alt text-primary me-1"></i>-->
 <!--                      </button>-->
                       <button
-                          v-if="currentUserName == data.item.createdBy"
+                          v-if="currentUserName == data.item.createdBy && data.item.trangThai.code == 'ktvb'"
                           type="button"
                           size="sm"
                           class="btn btn-outline btn-sm"
@@ -1248,26 +1278,30 @@ export default {
                     <template v-slot:cell(ten)="data">&nbsp;&nbsp;
                       {{ data.item.ten }}
                     </template>
+
                     <template v-slot:cell(chuyenTrangThai)="data">
                       <b-button
-                          v-if="data.item.trangThai.code == 'tldt'"
+                          v-if="(data.item.trangThai.code == 'tldt' || data.item.trangThai.code == 'tkhtxn'
+                          || data.item.trangThai.code == 'kpl' || data.item.trangThai.code == 'DVBPL' || data.item.trangThai.code == 'TKHTTC' || data.item.trangThai.code == 'HTK') && data.item.ower && data.item.ower.userName == currentUserName"
                           type="button"
                           size="sm"
-                          class="btn btn-light"
+                          class="btn btn-light "
                           data-toggle="tooltip" data-placement="bottom" title="Xóa"
                           v-on:click="handleCheckVanBanModal(data.item.id)">
                         <i class="fas fa-exchange-alt  me-1"></i>
                         Xử lý VB
                       </b-button>
+
                       <b-button
-                          v-else
+                          v-else-if="data.item.ower && data.item.ower.userName == currentUserName && (data.item.trangThai.code == 'ktvb' || data.item.trangThai.code == 'VTTTC' )"
                           type="button"
                           size="sm"
-                          class="btn btn-light"
+                          class="btn btn-light btn-danger"
                           data-toggle="tooltip" data-placement="bottom" title="Xóa"
                           v-on:click="handleChuyenTrangThai(data.item.trangThai,data.item.id)">
                         <i class="fas fa-exchange-alt  me-1"></i>
                         Xử lý VB
+
                       </b-button>
 
 
@@ -1796,7 +1830,7 @@ export default {
                 <multiselect
                     v-model="modelTrangThai.newTrangThai"
                     :options="optionsTrangThai"
-                    track-by="id"
+                    track-by="code"
                     label="ten"
                     placeholder="Chọn trạng thái"
                     :class="{
@@ -1825,7 +1859,7 @@ export default {
                       variant="primary"
                       type="button"
                       class="w-md"
-                      v-on:click="handleChuyenTrangThaiVanBan">
+                      v-on:click="handleChuyenTrangThaiVanBan(null)">
               Chuyển trạng thái
             </b-button>
           </template>
@@ -1844,13 +1878,13 @@ export default {
             <div class="col-lg-12">
               <div id="cd-timeline" style="margin: 0">
                 <ul v-if="listHistoryQuestion && listHistoryQuestion.length > 0" class="timeline list-unstyled" style="padding: 0">
-                  <li  v-for="(item, index) in listHistoryQuestion" class="timeline-list" :key="index" style="padding-left: 90px; padding-right: 0; padding-top: 10px; padding-bottom: 10px">
+                  <li  v-for="(item, index) in listHistoryQuestion" class="timeline-list" :key="index" style="padding: 10px 0 10px 90px;">
                     <div class="cd-timeline-content p-2" style="width: 100%;" >
                       <h5 class="mt-0 mb-3">
                             <span style="font-weight: bold" class="text-success">
                                                                 #{{listHistoryQuestion.length - index}}  {{item.title}}
                                                      </span></h5>
-                      <div style="font-weight: bold">Trạng thái:  <span class="badge font-size-small min-width-30 p-2 btn-xs badge-soft-primary  font-weight-semibold" v-if="item.trangThai">{{item.trangThai.ten}}</span></div>
+                      <div style="font-weight: bold">Trạng thái:  <span class="badge font-size-small min-width-30 p-2 btn-xs bg-danger  font-weight-semibold" v-if="item.trangThai">{{item.trangThai.ten}}</span></div>
 
 
                       <div
@@ -1880,8 +1914,9 @@ export default {
                          class="mb-2 " style="margin-left: 8px"
                      >{{item.content}}</p>
                    </div>
-                      <div class="date bg-primary" style="top: 10px">
-                        <h6 class="mt-0">{{ item.createdAtShow }}</h6>
+                      <div class="date bg-primary" style="top: 10px;">
+                        <h6 class="mt-0 text-center">{{ item.createdAtShow }}</h6>
+                        <h6 class="mt-0 text-center">{{ item.createdAtTimeShow }}</h6>
                         <!--                       -->
                       </div>
                     </div>
@@ -2026,6 +2061,27 @@ export default {
 <!--              Chuyển trạng thái-->
 <!--            </b-button>-->
 <!--          </template>-->
+        </b-modal>
+
+        <!--       Nội dung từ chối-->
+        <b-modal
+            v-model="showModalNoiDungTuChoi"
+            centered
+            title="Lý do không duyệt văn bản"
+            title-class="font-18"
+            no-close-on-backdrop
+        >
+          <p>
+            {{noiDungTuChoi}}
+          </p>
+          <template #modal-footer>
+            <b-button v-b-modal.modal-close_visit
+                      size="sm"
+                      class="btn btn-outline-info w-md"
+                      v-on:click="showModalNoiDungTuChoi = false">
+              Đóng
+            </b-button>
+          </template>
         </b-modal>
       </div>
     </div>

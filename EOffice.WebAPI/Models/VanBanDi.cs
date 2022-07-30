@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace EOffice.WebAPI.Models
@@ -54,6 +55,7 @@ namespace EOffice.WebAPI.Models
         public User NguoiKy { get; set; }
         public DateTime? NgayKy { get; set; }
         public string FileKySoPhapLy { get; set; }
+        public string NoiDungTuChoi { get; set; }
         public List<FileShort> File { get; set; }
         public List<FileShort> FilePDF { get; set; }
         public List<PhanCongKySo> PhanCongKySo { get; set; }
@@ -63,6 +65,15 @@ namespace EOffice.WebAPI.Models
         public UserShort Ower { get; set; }
         public List<string> ListOwerId { get; set; } = new List<string>();
         public List<NhomNguoiTiepNhanVBTrinhLD> NhomNguoiTiepNhanVBTrinhLD { get; set; }
+        
+        public UserShort GetOwerWithRole(string role)
+        {
+            var owerTemp = this.NhomNguoiTiepNhanVBTrinhLD
+                .Where(x => x.RoleCode == role).FirstOrDefault();
+            if (owerTemp != default)
+                return owerTemp.NguoiXuLy;
+            return null;
+        }
     }
 
     public class PhanCongKySo

@@ -46,6 +46,19 @@ namespace EOffice.WebAPI.Models
 
     public class UserShort
     {
+        public UserShort(){}
+
+        public UserShort(User model)
+        {
+            this.Id = model.Id;
+            this.FullName = model.FullName;
+            this.DonVi = model.DonVi;
+            this.ChucVu = model.ChucVu;
+            this.Avatar = model.Avatar;
+            this.Note = model.Note;
+            this.PhoneNumber = model.PhoneNumber;
+            this.Email = model.Email;
+        }
         public string Id { get; set; }
 
         public string UserName { get; set; }
