@@ -168,31 +168,45 @@ export default {
           <table class="table table-striped table-bordered">
             <thead>
             <tr>
-              <th>Người chủ trì</th>
+              <th width="15%">Người chủ trì</th>
               <th>Thời gian</th>
               <th>Nội dung</th>
               <th>Địa điểm</th>
               <th>Thành phần</th>
-              <th>Thành phần tham dự</th>
               <th>Ghi chú</th>
             </tr>
             </thead>
             <tbody>
             <tr
-                v-for="(lct, index) in item.lichCongTac"
+                v-for="(cv, index) in item.congViecs"
                 :key="index"
             >
-              <td :rowspan="`${lct.congViecs.lenght}`">{{ lct.chuTri.fullName }}</td>
-            </tr>
-            <tr v-for="(cv, index) in item.lichCongTac" :key="index">
-              <td>{{cv.thoiGian}}</td>
-              <td>{{cv.noiDung}}</td>
-              <td>{{cv.diaDiem}}</td>
-              <td>{{cv.thanhPhan}}</td>
-              <td v-for="(tptd, index) in cv.thanhPhanThamDu" :key="index">
-                <li>{{tptd.fullName}}</li>
+              <td v-if="cv.rowSpan > 0" :rowspan="`${cv.rowSpan}`" style="vertical-align : middle;text-align:left;">
+                <div v-for="(value, index) in cv.chuTri" :key="index">
+                  {{value.fullName}}
+                </div>
               </td>
-              <td>{{cv.ghiChu}}</td>
+              <td>{{cv.thoiGian}}</td>
+              <td>
+                <div v-if="cv.noiDung" :inner-html.prop="cv.noiDung">
+                </div>
+              </td>
+              <td>
+                <div v-if="cv.diaDiem" :inner-html.prop="cv.diaDiem">
+                </div>
+              </td>
+              <td>
+                <template v-if="cv.thanhPhanThamDu">
+                  <div  v-for="(value, index) in cv.thanhPhanThamDu" :key="index">
+                    {{value.fullName}}
+                  </div>
+                </template>
+
+              </td>
+              <td>
+                <div v-if="cv.ghiChu" :inner-html.prop="cv.ghiChu">
+                </div>
+              </td>
             </tr>
             </tbody>
           </table>

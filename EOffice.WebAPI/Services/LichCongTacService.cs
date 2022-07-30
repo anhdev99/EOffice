@@ -11,6 +11,7 @@ using EOffice.WebAPI.Helpers;
 using EOffice.WebAPI.Interfaces;
 using EOffice.WebAPI.Models;
 using EOffice.WebAPI.Params;
+using EOffice.WebAPI.ViewModels;
 using Microsoft.AspNetCore.Http;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -168,7 +169,39 @@ namespace EOffice.WebAPI.Services
                 p => p,
                 (key, g) => new { NgayXepLich = key.ToString("dddd", vietNam) + " ngày " + key.ToString("dd/MM/yyyy", vietNam) + $"{GetDateOfChineseNewYear(key.ToLocalTime())}", LichCongTac = g.ToList() });
 
-            return results;
+            var lichCongTac = new List<LichCongTacVM>();
+            foreach (var item in results)
+            {
+                var itemLCT = new LichCongTacVM();
+                itemLCT.NgayXepLich = item.NgayXepLich;
+            
+                foreach (var lct in item.LichCongTac)
+                {
+                    if (itemLCT.CongViecs == default)
+                    {
+                        itemLCT.CongViecs = new List<CongViec>();
+                    }
+
+                    int rowspan = 1;
+                    bool first = true;
+                    foreach (CongViec cv in lct.CongViecs)
+                    {
+                        if (first)
+                        {
+                            first = false;
+                            cv.ChuTri = lct.ChuTri;
+                            cv.RowSpan = lct.CongViecs.Count;
+                        }
+
+                      
+                        itemLCT.CongViecs.Add(cv);
+                    }
+ 
+                }
+                lichCongTac.Add(itemLCT);
+                
+            }
+            return lichCongTac;
         }
         #region CongViec
         public string GetDateOfChineseNewYear(DateTime date)

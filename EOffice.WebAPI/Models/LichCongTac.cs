@@ -30,6 +30,10 @@ namespace EOffice.WebAPI.Models
         public FileShort File { get; set; }
         public FileShort FileUpload { get; set; }
         public string LichCongTacId { get; set; }
+        [BsonIgnore]
+        public List<UserShort> ChuTri { get; set; }
+        [BsonIgnore]
+        public int RowSpan { get; set; }
     }
 
 //public class ThanhPhanThamDu
