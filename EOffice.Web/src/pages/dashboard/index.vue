@@ -284,7 +284,7 @@ export default {
       <div class="col-xl-9">
         <section v-if="lichCongTacCaNhan">
           <div v-for="(item, index) in lichCongTacCaNhan" :key="index">
-            <b-card style="padding: 0" class="card-lichcongtac">
+            <b-card style="padding: 10px" class="card-lichcongtac">
               <h5 style="font-weight: bold;" class="title-capso mb-2">Lịch công tác cá nhân</h5>
               <b-card-header v-if="item"
                              class="fw-bold text-white bg-primary"
@@ -382,7 +382,7 @@ export default {
         </section>
         <section v-if="lichCongTacTruong">
           <div v-for="(item, index) in lichCongTacTruong" :key="index">
-            <b-card style="padding: 0" class="card-lichcongtac">
+            <b-card style="padding: 10px" class="card-lichcongtac">
               <h5 style="font-weight: bold;" class="title-capso mb-2">Lịch công tác trường</h5>
               <b-card-header v-if="item"
                              class="fw-bold text-white bg-primary"
