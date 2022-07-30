@@ -84,6 +84,7 @@ export default {
         },
         monthBeforeYear: false,
       },
+      isCollapse: false
     };
   },
   created() {
@@ -138,7 +139,7 @@ export default {
     },
     handleTimKiem(){
      this.myProvider();
-    }
+    },
   }
 }
 </script>
@@ -194,9 +195,15 @@ export default {
 
             <button
                 v-b-toggle="'collapse-'+index"
-                class="btn btn-light"
+                @click="isCollapse =!isCollapse"
+                type="button"
                 size="sm"
-            >Mở rộng</button>
+                class="btn btn-outline btn-sm"
+                data-toggle="tooltip" data-placement="bottom" title="Xem chi tiết lịch">
+
+              <i v-if="isCollapse" class="fas fa-chevron-up text-white me-1"></i>
+              <i v-else class="fas fa-chevron-down text-white me-1"></i>
+            </button>
           </b-card-header>
           <b-collapse :id="'collapse-' +index" accordion="my-accordion" role="tabpanel">
             <!--              Table -->
