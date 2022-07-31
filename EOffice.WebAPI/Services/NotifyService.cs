@@ -96,34 +96,17 @@ namespace EOffice.WebAPI.Services
         }
         public async Task<PagingModel<Notify>> GetPaging(NotifyParam param)
         {
-            // var result = new PagingModel1<User>();
-            // var query = _context.Users.AsQueryable().Where(x => x.IsDeleted != true).OrderByDescending(x => x.ModifiedAt);
-            // var data = PagedList<User>.ToPagedList(query, param.Start, param.Limit);
-            // return new PagingModel1<User>(data);
-            PagingModel<Notify> result = new PagingModel<Notify>();
+            var result = new PagingModel<Notify>();
             var builder = Builders<Notify>.Filter;
             var filter = builder.Empty;
-            try
-            {
-                filter = builder.And(filter, builder.Where(x => x.RecipientId == CurrentUser.Id));
-                if (!String.IsNullOrEmpty(param.Content))
-                {
-                    filter = builder.And(filter,
-                        builder.Where(x => x.Title.Trim().ToLower().Contains(param.Content.Trim().ToLower())));
-                }
-                string sortBy = nameof(Notify.ModifiedAt);
-                result.TotalRows = await _context.Notify.CountDocumentsAsync(filter);
-                result.Data = await _context.Notify.Find(filter)
-                    .SortByDescending(x => x.ModifiedAt)
-                    .Skip((param.Start > 0 ? param.Start - 1 : 0) * param.Limit)
-                    .Limit(param.Limit)
-                    .ToListAsync();
-                return result;
-            } catch (Exception ex)
-            {
-                result.TotalRows = 0;
-                result.Data = null;
-            }
+            filter = builder.And(filter, builder.Where(x => x.IsDeleted == false));
+            
+            result.TotalRows = await _collection.CountDocumentsAsync(filter);
+            result.Data = await _collection.Find(filter)
+                .SortByDescending(x => x.ModifiedAt)
+                .Skip(param.Skip)
+                .Limit(param.Limit)
+                .ToListAsync();
             return result;
         }
         

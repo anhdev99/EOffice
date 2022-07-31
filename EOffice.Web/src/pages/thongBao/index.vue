@@ -30,8 +30,8 @@ export default {
       ],
       data: [],
       currentPage: 1,
-      perPage: 10,
-      pageOptions: [5, 10, 25, 50, 100],
+      perPage: 30,
+      pageOptions: [5, 10, 30, 50, 100],
       showModal: false,
       showDeleteModal: false,
       submitted: false,
@@ -52,36 +52,36 @@ export default {
           key: 'STT',
           label: 'STT',
           thStyle: {width: '50px', minWidth: '50px'},
-          class: "text-center"
+          class: "text-center title-capso"
         },
         {
           key: "title",
           label: "Tiêu đề",
-          thStyle: {width: '10px', minWidth: '160px'},
-          class: "px-1",
+          class: "px-2 title-capso",
           sortable: true,
         },
         {
           key: "sender",
           label: "Người tạo",
           thStyle: {width: '160px', minWidth: '160px'},
-          class: "px-1",
+          class: "text-center px-1 title-capso",
         },
         {
           key: "createdAtShow",
           label: "Ngày tạo",
           thStyle: {width: '100px', minWidth: '100px'},
-          class: "px-1",
+          class: "text-center px-1 title-capso",
         },
         {
           key: "read",
           label: "Trạng thái",
           thStyle: {width: '100px', minWidth: '100px'},
-          class: "px-1",
+          class: "text-center px-1 title-capso",
         },
         {
           key: 'process',
           label: 'Xử lý',
+          class: "text-center title-capso",
           thStyle: {width: '110px', minWidth: '110px'},
         }
       ],
@@ -89,34 +89,39 @@ export default {
   },
   validations: {},
   created() {
-    this.myProvider();
+    this.$refs.tblList?.refresh()
   },
   watch: {
     currentPage: {
       deep: true,
       handler(val) {
         this.currentPage = val;
-        this.myProvider();
       }
     }
   },
   methods: {
     myProvider(ctx) {
       const params = {
-        start: this.currentPage,
-        limit: this.perPage,
+        start: ctx.currentPage,
+        limit: ctx.perPage,
         content: this.filter,
-        sortBy: this.sortBy,
-        sortDesc: this.sortDesc,
+        sortBy: ctx.sortBy,
+        sortDesc: ctx.sortDesc,
       }
       this.loading = true
       try {
-        this.$store.dispatch("notificationStore/getPagingParams", params)
-        .then(resp => {
-          let items = resp.data
-          this.totalRows = resp.totalRows
-          this.numberOfElement = resp.data.length
-          return items || []
+        let promise = this.$store.dispatch("notificationStore/getPagingParams", params)
+        return promise.then(resp => {
+          if (resp.resultCode == CONSTANTS.SUCCESS) {
+            let data = resp.data;
+            this.totalRows = data.totalRows
+            let items = data.data
+            this.numberOfElement = items.length
+            this.loading = false
+            return items || []
+          } else {
+            return [];
+          }
         })
       } finally {
         this.loading = false
@@ -182,7 +187,6 @@ export default {
                     </div>
                   </div>
                   <!-- Table -->
-                  {{this.data}}
                   <div class="table-responsive-sm">
                     <b-table
                         class="datatables"
@@ -204,52 +208,9 @@ export default {
                       <template v-slot:cell(STT)="data">
                         {{ data.index + ((currentPage - 1) * perPage) + 1 }}
                       </template>
-                      <template v-slot:cell(process)="data">
-                        <div class="d-flex justify-content-around">
-                          <button
-                              type="button"
-                              size="sm"
-                              class="btn btn-outline btn-sm p-0"
-                              data-toggle="tooltip" data-placement="bottom" title="Chi tiết"
-                              v-on:click="handleDetail(data.item.id)">
-                            <i class="fas fa-eye  text-warning me-1"></i>
-                          </button>
-                          <button
-                              type="button"
-                              size="sm"
-                              class="btn btn-outline btn-sm p-0"
-                              data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
-                              v-on:click="handleUpdate(data.item.id)">
-                            <i class="fas fa-pencil-alt text-success me-1"></i>
-                          </button>
-                          <button
-                              type="button"
-                              size="sm"
-                              class="btn btn-outline btn-sm p-0"
-                              data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
-                              v-on:click="HandleShowPhanCong(data.item.id)">
-                            <i class="fas fa-user-plus text-info me-1"></i>
-                          </button>
-                          <button
-                              type="button"
-                              size="sm"
-                              class="btn btn-outline btn-sm p-0"
-                              data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
-                              v-on:click="handleShowButPhe(data.item.id)">
-                            <i class="fas fa-feather-alt text-primary me-1"></i>
-                          </button>
-                          <button
-                              type="button"
-                              size="sm"
-                              class="btn btn-outline btn-sm p-0"
-                              data-toggle="tooltip" data-placement="bottom" title="Xóa"
-                              v-on:click="handleShowDeleteModal(data.item.id)">
-                            <i class="fas fa-trash-alt text-danger me-1"></i>
-                          </button>
-                        </div>
-                      </template>
-                      <template v-slot:cell(ten)="data">&nbsp;&nbsp;
-                        {{ data.item.ten }}
+                      <template v-slot:cell(read)="data">
+                        <div v-if="data.item.read">Đã đọc</div>
+                        <div v-else>Chưa đọc</div>
                       </template>
                     </b-table>
                     <template v-if="isBusy">
@@ -376,8 +337,11 @@ export default {
 .hidden-sortable:after, .hidden-sortable:before {
   display: none !important;
 }
-.title-capso{
-  font-weight: bold; color: #00568C;
+
+.title-capso {
+  font-weight: 500;
+  color: #00568C;
+  margin-right: 10px;
 
 }
 </style>

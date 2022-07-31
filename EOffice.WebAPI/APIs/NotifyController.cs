@@ -1,11 +1,13 @@
 using System;
 using System.Threading.Tasks;
+using EOffice.WebAPI.Exceptions;
 using EOffice.WebAPI.Helpers;
 using EOffice.WebAPI.Interfaces;
 using EOffice.WebAPI.Models;
 using EOffice.WebAPI.Params;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using EResultResponse = EOffice.WebAPI.Helpers.EResultResponse;
 
 namespace EOffice.WebAPI.Controllers
 {
@@ -20,24 +22,47 @@ namespace EOffice.WebAPI.Controllers
             this._notifyService = notifyService;
         }
         
+        // [HttpPost]
+        // [Route("get-paging-params")]
+        // public async Task<IActionResult> GetPagingParam([FromBody] NotifyParam param)
+        // {
+        //     ResultResponse<PagingModel<User>> resultResponse = new ResultResponse<PagingModel<User>>();
+        //     try
+        //     {
+        //         var data = await  _notifyService.GetPaging(param);
+        //         return Ok(data);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         resultResponse.ResultCode = EResultResponse.ERROR.ToString();
+        //         resultResponse.ResultString = "Lỗi." + ex.Message;
+        //         return Ok(resultResponse);
+        //     }
+        // }
         [HttpPost]
         [Route("get-paging-params")]
         public async Task<IActionResult> GetPagingParam([FromBody] NotifyParam param)
         {
-            ResultResponse<PagingModel<User>> resultResponse = new ResultResponse<PagingModel<User>>();
             try
             {
-                var data = await  _notifyService.GetPaging(param);
-                return Ok(data);
+                var response = await _notifyService.GetPaging(param);
+
+                return Ok(
+                    new ResultResponse<dynamic>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
+                );
             }
-            catch (Exception ex)
+            catch (ResponseMessageException ex)
             {
-                resultResponse.ResultCode = EResultResponse.ERROR.ToString();
-                resultResponse.ResultString = "Lỗi." + ex.Message;
-                return Ok(resultResponse);
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
             }
         }
-        
+
         [HttpGet]
         [Route("get-by-id/{id}")]
         public async Task<IActionResult> GetById(string id)
