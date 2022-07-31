@@ -6,7 +6,7 @@ namespace EOffice.WebAPI.Params
     public class PagingParam
     {
         public int Start { get; set; } = 1;
-        public int Limit { get; set; } = 10;
+        public int Limit { get; set; } = 30;
         public string SortBy { get; set; }
         public bool SortDesc { get; set; }
         public string Content { get; set; }

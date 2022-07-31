@@ -46,6 +46,7 @@ namespace EOffice.WebAPI.Installers
             services.AddScoped<INotifyService, NotifyService>();
             services.AddScoped<IEnumService, EnumService>();
             services.AddScoped<ILoaiTrangThaiService, LoaiTrangThaiService>();
+            services.AddScoped<IHopThuService, HopThuService>();
             services.AddScoped<HistoryVanBanDiService>();
         }
     }
