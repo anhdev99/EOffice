@@ -799,8 +799,18 @@ export default [{
         component: () => import("../pages/xacNhanKySo/pages"),
     },
     {
-        path: "/hop-thu",
-        name: "Hộp thư",
-        component: () => import("../pages/hopThu"),
+        path: "/thu-den",
+        name: "ThuDen",
+        component: () => import("../pages/hopThu/index"),
+    },
+    {
+        path: "/thu-da-gui",
+        name: "ThuDaGui",
+        component: () => import("../pages/hopThu/thuDaGui"),
+    },
+    {
+        path: "/thu-rac",
+        name: "ThuRac",
+        component: () => import("../pages/hopThu/thuRac"),
     }
 ]

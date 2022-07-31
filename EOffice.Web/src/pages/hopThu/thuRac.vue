@@ -162,7 +162,7 @@ export default {
     },
     async handleDelete() {
       if (this.model.id != 0 && this.model.id != null && this.model.id) {
-        await this.$store.dispatch("hopThuStore/delete", this.model.id).then((res) => {
+        await this.$store.dispatch("hopThuStore/deleteR", this.model.id).then((res) => {
           if (res.resultCode === 'SUCCESS') {
             this.showDeleteModal = false;
             this.$refs.tblList.refresh()
@@ -226,7 +226,7 @@ export default {
       }
       this.loading = true
       try {
-        let promise = this.$store.dispatch("hopThuStore/getPagingParams", params)
+        let promise = this.$store.dispatch("hopThuStore/getPagingParamsRac", params)
         return promise.then(resp => {
           if (resp.resultCode == CONSTANTS.SUCCESS) {
             let data = resp.data;
@@ -336,15 +336,15 @@ export default {
               </div>
               <div class="col-sm-8">
                 <div class="text-sm-end">
-                  <b-button
-                      variant="primary"
-                      type="button"
-                      class="btn w-md btn-primary"
-                      @click="handleCreate"
-                      size="sm"
-                  >
-                    <i class="mdi mdi-plus me-1"></i> Soạn thư
-                  </b-button>
+<!--                  <b-button-->
+<!--                      variant="primary"-->
+<!--                      type="button"-->
+<!--                      class="btn w-md btn-primary"-->
+<!--                      @click="handleCreate"-->
+<!--                      size="sm"-->
+<!--                  >-->
+<!--                    <i class="mdi mdi-plus me-1"></i> Soạn thư-->
+<!--                  </b-button>-->
                   <b-modal
                       v-model="showModal"
                       title="Thêm thư mới"
@@ -862,15 +862,15 @@ export default {
             <!-- Emulate built in modal header close button action -->
             <h5>Thông tin chi tiết</h5>
             <div class="text-end">
-              <b-button variant="info" class="w-md me-1" size="sm" @click="handleChuyenTiep">
-                Chuyển tiếp
-              </b-button>
-              <b-button variant="primary" class="w-md me-1" size="sm" @click="handleTraLoi(true)">
-                Trả lời
-              </b-button>
-              <b-button variant="success" class="w-md me-1" size="sm" @click="handleTraLoi()">
-                Trả lời tất cả
-              </b-button>
+<!--              <b-button variant="info" class="w-md me-1" size="sm" @click="handleChuyenTiep">-->
+<!--                Chuyển tiếp-->
+<!--              </b-button>-->
+<!--              <b-button variant="primary" class="w-md me-1" size="sm" @click="handleTraLoi(true)">-->
+<!--                Trả lời-->
+<!--              </b-button>-->
+<!--              <b-button variant="success" class="w-md me-1" size="sm" @click="handleTraLoi()">-->
+<!--                Trả lời tất cả-->
+<!--              </b-button>-->
               <b-button variant="light" class="w-md me-1" size="sm" @click="showChiTietModal = false">
                 Đóng
               </b-button>

@@ -84,8 +84,8 @@ export default {
       todoTotalRows: 1,
       currentPage: 1,
       numberOfElement: 1,
-      perPage: 10,
-      pageOptions: [5, 10, 25, 50, 100],
+      perPage: 30,
+      pageOptions: [5, 10, 30, 50, 100],
       filter: null,
       todoFilter: null,
       filterOn: [],
@@ -98,13 +98,15 @@ export default {
           key: 'STT',
           label: 'STT',
           thStyle: {width: '30px', minWidth: '30px'},
-          class: "text-center"
+          class: "text-center",
+          thClass: 'hidden-sortable',
         },
         {
           key: "soLuuCV",
           label: "Số lưu CV",
           thStyle: {width: '150px', minWidth: '100px'},
           class: "px-1",
+          thClass: 'hidden-sortable',
           sortable: false ,
         },
         {
@@ -112,6 +114,7 @@ export default {
           label: "Số CV đi",
           thStyle: {width: '150px', minWidth: '100px', maxWidth: '150px'},
           class: "px-1",
+          thClass: 'hidden-sortable',
           sortable: false ,
         },
         {
@@ -119,6 +122,7 @@ export default {
           label: "Trích yếu",
           thStyle: {width: 'auto'},
           class: "px-1",
+          thClass: 'hidden-sortable',
           sortable: false ,
         },
         {
@@ -126,6 +130,7 @@ export default {
           label: "Loại văn bản",
           thStyle: {width: '150px', minWidth: '100px'},
           class: "text-center",
+          thClass: 'hidden-sortable',
           sortable: false ,
 
         },
@@ -134,13 +139,15 @@ export default {
           label: "Trạng thái",
           thStyle: {width: '150px', minWidth: '100px'},
           class: "text-center",
+          thClass: 'hidden-sortable',
           sortable: false ,
         },
         {
           key: "ngayNhap",
           label: "Ngày nhập",
           thStyle: {width: '100px', minWidth: '100px'},
-          class: "text-center"
+          class: "text-center",
+          thClass: 'hidden-sortable',
         },
         {
           key: 'chuyenTrangThai',
@@ -148,6 +155,7 @@ export default {
           thStyle: {width: '110px', minWidth: '110px'},
           class: "text-center",
           sortable: false ,
+          thClass: 'hidden-sortable',
         },
         {
           key: 'process',
@@ -2753,4 +2761,8 @@ export default {
   display: flex;
   padding: 0px;
 }
+.hidden-sortable:after, .hidden-sortable:before {
+  display: none !important;
+}
+
 </style>
