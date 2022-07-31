@@ -37,5 +37,10 @@ namespace EOffice.WebAPI.Models
         {
             get { return "HH:mm:ss"; }
         }
+        [BsonIgnore]
+        public string FormatDateFull
+        {
+            get { return "dd/MM/yyyy HH:mm:ss"; }
+        }
     }
 }

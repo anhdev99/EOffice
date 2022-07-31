@@ -35,7 +35,7 @@ const router = new VueRouter({
 
 // Before each route evaluates...
 router.beforeEach((routeTo, routeFrom, next) => {
-  const publicPages = ['/dang-nhap', '/webviewer'];
+  const publicPages = ['/dang-nhap', '/webviewer','xac-nhan-ky-so'];
   const authpage = !publicPages.includes(routeTo.path);
 
   const loggeduser = localStorage.getItem('user-token');

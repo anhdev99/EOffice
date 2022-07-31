@@ -260,5 +260,29 @@ namespace EOffice.WebAPI.APIs.Identity
                 );
             }
         }
+        
+        [HttpGet]
+        [Route("get-user-tree-for-donvi")]
+        public async Task<IActionResult> UserTreeForDonVi()
+        {
+            try
+            {
+                var data = await _userService.UserTreeForDonVi();
+
+                return Ok(
+                    new ResultResponse<dynamic>()
+                        .WithData(data)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
     }
 }
