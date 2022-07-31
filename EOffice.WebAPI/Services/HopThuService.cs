@@ -9,8 +9,10 @@ using EOffice.WebAPI.Helpers;
 using EOffice.WebAPI.Interfaces;
 using EOffice.WebAPI.Models;
 using EOffice.WebAPI.Params;
+using EOffice.WebAPI.ViewModels;
 using iTextSharp.text;
 using Microsoft.AspNetCore.Http;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using EResultResponse = EOffice.WebAPI.Exceptions.EResultResponse;
 
@@ -59,6 +61,7 @@ namespace EOffice.WebAPI.Services
 
             var entity = new HopThu()
             {
+                Id = BsonObjectId.GenerateNewId().ToString(),
                 TieuDe = model.TieuDe,
                 NoiDung = model.NoiDung,
                 NguoiNhans = model.NguoiNhans,
@@ -69,6 +72,8 @@ namespace EOffice.WebAPI.Services
              {
                  foreach (var file in model.UploadFiles)
                  {
+                     if (entity.Files == default)
+                         entity.Files = new List<FileShort>();
                      var newFile = new FileShort();
                      newFile.FileId = file.FileId;
                      newFile.FileName = file.FileName;
@@ -77,7 +82,7 @@ namespace EOffice.WebAPI.Services
                  }
              }
 
-             var userRep = new List<UserShort>();
+             var userRep = new List<UserTreeChilVM>();
 
              if (model.NguoiNhans != default)
              {
@@ -94,9 +99,17 @@ namespace EOffice.WebAPI.Services
              foreach (var item in userRep)
              {
                  var tempEmail = entity;
+                 tempEmail.Id = BsonObjectId.GenerateNewId().ToString();
                  tempEmail.DaXem = false;
                  tempEmail.NgayNhan = DateTime.Now;
-                 tempEmail.NguoiNhan = item;
+                 tempEmail.NguoiNhan = new UserShort()
+                 {
+                     Id = item.Id,
+                     UserName = item.UserName,
+                     FullName = item.FullName,
+                     DonVi = item.DonVi,
+                     ChucVu = item.ChucVu
+                 };
                  
                  await BaseMongoDb.CreateAsync(tempEmail);
              }
@@ -114,9 +127,30 @@ namespace EOffice.WebAPI.Services
             throw new NotImplementedException();
         }
 
-        public Task Delete(string id)
+        public async Task<HopThu> GetById(string id)
         {
-            throw new NotImplementedException();
+            return await _context.HopThu.Find(x => x.Id == id).FirstOrDefaultAsync();
+        }
+        public async Task Delete(string id)
+        {
+            var entity = _context.HopThu.Find(x => x.Id == id && x.IsDeleted != true).FirstOrDefault();
+            if (entity == default)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage("Không tìm thấy thư!");
+            }
+
+            entity.IsDeleted = true;
+            entity.ModifiedAt = DateTime.Now;
+            entity.ModifiedBy = CurrentUserName;
+            var result = await BaseMongoDb.UpdateAsync(entity);
+            if (!result.Success)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage("Xóa thư không thành công!");
+            }
         }
         
         public async Task<PagingModel<HopThu>> GetPaging(HopThuParam param)

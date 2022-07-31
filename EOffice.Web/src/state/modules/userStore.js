@@ -14,6 +14,9 @@ export const actions = {
     async getAll({commit}) {
         return apiClient.get(controller + "/get-all");
     },
+    async userTreeForDonVi({commit}) {
+        return apiClient.get(controller + "/get-user-tree-for-donvi");
+    },
     async changePassword({commit}, params) {
         return apiClient.post(controller + "/ChangePassword",params);
     },

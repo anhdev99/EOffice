@@ -797,5 +797,10 @@ export default [{
         name: "Xác nhận ký số nội bộ",
         // meta: {},
         component: () => import("../pages/xacNhanKySo/pages"),
+    },
+    {
+        path: "/hop-thu",
+        name: "Hộp thư",
+        component: () => import("../pages/hopThu"),
     }
 ]

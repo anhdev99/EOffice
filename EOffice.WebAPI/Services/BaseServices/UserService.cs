@@ -402,7 +402,40 @@ namespace EOffice.WebAPI.Services
             var query = _context.Users.Find(filter);
             return await query.FirstOrDefaultAsync();
         }
-        
-        
+
+        public async Task<List<DonViTreeMail>> UserTreeForDonVi()
+        {
+            var data = new List<DonViTreeMail>();
+            var users = _context.Users.Find(x => x.DonVi != null && x.IsDeleted != true).ToList();
+            var dvs = _context.DonVis.Find(x => x.IsDeleted != true).ToList();
+         
+            var donVis = users.GroupBy(
+                p => p.DonVi.Id, 
+                p => p,
+                (key, g) => new { DonViId = key, Users = g.ToList() });
+
+            foreach (var donVi in donVis)
+            {
+                var tempDonVi = dvs.Where(x => x.Id == donVi.DonViId).FirstOrDefault();
+                var temp = new DonViTreeMail(tempDonVi);
+                if (temp.Children == default)
+                {
+                    temp.Children = new List<UserTreeChilVM>();
+                }
+
+                if (donVi.Users.Count > 0)
+                {
+                    var userstemp = donVi.Users;
+                    foreach (var us in userstemp)
+                    {
+                        if(us != default)
+                            temp.Children.Add(new UserTreeChilVM(us));
+                    }
+                }
+                data.Add(temp);
+            }
+
+            return data;
+        }
     }
 }
