@@ -322,7 +322,7 @@ export default {
                       {{ items.title }}
                     </h6>
                     <div class="font-size-12 text-muted ntf-content">
-                      <p class="mb-1" :inner-html.prop="items.content | truncate(150)">
+                      <p class="mb-1" :inner-html.prop="items.content | truncate(60)">
                       </p>
                     </div>
                   </div>

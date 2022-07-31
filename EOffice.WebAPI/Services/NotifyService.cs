@@ -99,7 +99,7 @@ namespace EOffice.WebAPI.Services
             var result = new PagingModel<Notify>();
             var builder = Builders<Notify>.Filter;
             var filter = builder.Empty;
-            filter = builder.And(filter, builder.Where(x => x.IsDeleted == false));
+            filter = builder.And(filter, builder.Where(x => x.RecipientId == CurrentUser.Id && x.IsDeleted == false));
             
             result.TotalRows = await _collection.CountDocumentsAsync(filter);
             result.Data = await _collection.Find(filter)
@@ -124,11 +124,9 @@ namespace EOffice.WebAPI.Services
             try
             {
                 var notifyVm = new NotifyVM();      
-		        filter = builder.And(filter, builder.Where(x => x.RecipientId == CurrentUser.Id));
-		        filter = builder.And(filter, builder.Where(x => x.Read == false));
-                string sortBy = nameof(User.ModifiedAt);
+		        filter = builder.And(filter, builder.Where(x => x.RecipientId == CurrentUser.Id && x.Read == false));
                 var TotalRows = await _context.Notify.CountDocumentsAsync(filter);
-                var data = await _context.Notify.Find(filter)
+                var data = await _context.Notify.Find(filter).SortByDescending(x => x.ModifiedAt)
                     .Skip(0)
                     .Limit(5)
                     .ToListAsync();

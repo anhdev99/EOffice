@@ -52,37 +52,43 @@ export default {
           key: 'STT',
           label: 'STT',
           thStyle: {width: '50px', minWidth: '50px'},
-          class: "text-center title-capso"
+          class: "text-center title-capso",
+          thClass: 'hidden-sortable title-capso',
         },
         {
           key: "title",
           label: "Tiêu đề",
           class: "px-2 title-capso",
           sortable: true,
+          thClass: 'hidden-sortable title-capso',
         },
         {
           key: "sender",
           label: "Người tạo",
           thStyle: {width: '160px', minWidth: '160px'},
           class: "text-center px-1 title-capso",
+          thClass: 'hidden-sortable title-capso',
         },
         {
           key: "createdAtShow",
           label: "Ngày tạo",
           thStyle: {width: '100px', minWidth: '100px'},
           class: "text-center px-1 title-capso",
+          thClass: 'hidden-sortable title-capso',
         },
         {
           key: "read",
           label: "Trạng thái",
           thStyle: {width: '100px', minWidth: '100px'},
           class: "text-center px-1 title-capso",
+          thClass: 'hidden-sortable title-capso',
         },
         {
           key: 'process',
           label: 'Xử lý',
           class: "text-center title-capso",
           thStyle: {width: '110px', minWidth: '110px'},
+          thClass: 'hidden-sortable title-capso',
         }
       ],
     };
@@ -100,6 +106,14 @@ export default {
     }
   },
   methods: {
+    async handleChangeStatus(id) {
+      this.model.id = id;
+      await this.$store.dispatch("notifyStore/changeStatus", this.model).then((res) => {
+        if (res.resultCode === 'SUCCESS') {
+          this.$refs.tblList?.refresh()
+        }
+      });
+    },
     myProvider(ctx) {
       const params = {
         start: ctx.currentPage,
@@ -208,6 +222,12 @@ export default {
                       <template v-slot:cell(STT)="data">
                         {{ data.index + ((currentPage - 1) * perPage) + 1 }}
                       </template>
+                      <template v-slot:cell(title)="data">
+                        <div @click="handleDetail(data.item.id), handleChangeStatus(data.item.id)" style="cursor: pointer">
+                          {{ data.item.title }}
+                        </div>
+
+                      </template>
                       <template v-slot:cell(read)="data">
                         <span class="badge bg-success" v-if="data.item.read">Đã đọc</span>
                         <span class="badge bg-warning" v-else>Chưa đọc</span>
@@ -265,7 +285,6 @@ export default {
         </div>
       </template>
       <div class="card-body pb-0">
-        <h4 class="mt-0 font-size-16 pb-3" style="font-weight: bold">{{model.title}}</h4>
         <div class="d-flex mb-4">
           <span>
               <span v-if="modelUser.avatar">
@@ -278,13 +297,13 @@ export default {
               </span>
               <span v-else>
                 <img
-                    class="d-flex me-3 rounded-circle avatar-sm"
+                    class="d-flex me-2 rounded-circle avatar-sm"
                     src="@/assets/images/4.png"
                     alt="Avatar"
                 />
               </span></span>&nbsp;
           <div class="flex-grow-1">
-            <h5 class="font-size-14 mt-1">{{model.sender}}</h5>
+            <h5 class="font-size-14">{{model.sender}}</h5>
             <small class="text-muted">tới {{model.recipient}}</small>
 
           </div>
@@ -292,7 +311,8 @@ export default {
             <small class="text-muted" style="float: right"><i>Ngày gửi: {{ model.createdAtShow }} {{model.createdAtTimeShow}}</i></small>
           </div>
         </div>
-        <p v-if="model.content" :inner-html.prop="model.content">
+        <h4 class="mt-0 font-size-16 pb-3" style="font-weight: bold;color: #00568C">{{model.title}}</h4>
+        <p style="color: #00568C" v-if="model.content" :inner-html.prop="model.content">
         </p>
       </div>
     </b-modal>
