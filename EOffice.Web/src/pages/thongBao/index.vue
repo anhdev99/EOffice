@@ -36,6 +36,7 @@ export default {
       showDeleteModal: false,
       submitted: false,
       sortBy: "age",
+      isBusy: false,
       filter: null,
       sortDesc: false,
       filterOn: [],
@@ -45,7 +46,45 @@ export default {
       totalRows: 1,
       model: thongBaoModel.baseJson(),
       modelUser:userModel.baseJson(),
-      pagination: pagingModel.baseJson()
+      pagination: pagingModel.baseJson(),
+      fields: [
+        {
+          key: 'STT',
+          label: 'STT',
+          thStyle: {width: '50px', minWidth: '50px'},
+          class: "text-center"
+        },
+        {
+          key: "title",
+          label: "Tiêu đề",
+          thStyle: {width: '10px', minWidth: '160px'},
+          class: "px-1",
+          sortable: true,
+        },
+        {
+          key: "sender",
+          label: "Người tạo",
+          thStyle: {width: '160px', minWidth: '160px'},
+          class: "px-1",
+        },
+        {
+          key: "createdAtShow",
+          label: "Ngày tạo",
+          thStyle: {width: '100px', minWidth: '100px'},
+          class: "px-1",
+        },
+        {
+          key: "read",
+          label: "Trạng thái",
+          thStyle: {width: '100px', minWidth: '100px'},
+          class: "px-1",
+        },
+        {
+          key: 'process',
+          label: 'Xử lý',
+          thStyle: {width: '110px', minWidth: '110px'},
+        }
+      ],
     };
   },
   validations: {},
@@ -77,7 +116,7 @@ export default {
           let items = resp.data
           this.totalRows = resp.totalRows
           this.numberOfElement = resp.data.length
-          this.data= items
+          return items || []
         })
       } finally {
         this.loading = false
@@ -108,91 +147,141 @@ export default {
 <!--        <Sidepanel />-->
         <div class=" mb-3">
           <div class="card">
-            <div class="btn-toolbar px-3 pt-3">
-              <div class="" style="display: flex; justify-items: center">
-                <div class="position-relative">
-                  <input
-                      v-model="filter"
-                      type="text"
-                      class="form-control"
-                      placeholder="Tìm kiếm ..."
-                  />
-                  <i class="bx bx-search-alt search-icon"></i>
-                </div>
-                <div class="col-md-4 " style="margin-left: 20px">
-                  <b-button
-                      variant="primary"
-                      type="button"
-                      class="btn w-md btn-primary"
-                      size="sm"
-                      style="height: 100%"
-                  >
-                    <i class="mdi mdi-plus me-1"></i> Tìm kiếm
-                  </b-button>
-                </div>
-              </div>
-            </div>
-            <div class="">
-              <ul class="message-list" style="margin: 0px" >
-                <div v-for="item in data" :key="item.id" class="pe-3">
-                  <div v-if="item.read==false" >
-                    <li style="background-color: #fff">
-                      <div class="col-mail col-mail-1" >
-                        <div class="checkbox-wrapper-mail">
-                          <input :id="`chk-${item.id}`" type="checkbox"/>
-                          <label :for="`chk-${item.id}`"></label>
-                        </div>
-                        <span :class="`star-toggle far fa-star text-${item.id}`"></span>
-                        <a href="#" class="title" style="font-weight: bold; width: 280px" v-on:click="handleDetail(item.id), handleDetailUser(item.senderId)">{{ item.sender }}</a>
-                      </div>
-                      <div class="col-mail col-mail-2" style="display: flex; justify-content: space-between; justify-items: center"
-                      >
-                        <div class="title-capso" v-if="item.content" :inner-html.prop="item.content | truncate(110)" >
-                        </div>
-                        <div  > {{ item.createdAtShow }} {{item.createdAtTimeShow}}</div>
-                      </div>
-                    </li>
-                  </div>
-                  <div v-else>
-                    <li style="background-color: #fff">
-                      <div class="col-mail col-mail-1" >
-                        <div class="checkbox-wrapper-mail">
-                          <input :id="`chk-${item.id}`" type="checkbox"/>
-                          <label :for="`chk-${item.id}`"></label>
-                        </div>
-                        <span :class="`star-toggle far fa-star text-${item.id}`"></span>
-                        <a href="#" class="title" style="width: 280px" v-on:click="handleDetail(item.id),handleDetailUser(item.senderId)">{{ item.sender }}</a>
-                      </div>
-                      <div class="col-mail col-mail-2" style="position: absolute;
-                                top: 0;
-                                left: 240px;
-                                right: 0;
-                                bottom: 0;"
-                      >
-                        <div class="col-mail col-mail-1"><span class="title" style="min-width: 300px">{{ item.content }}</span></div>
-                        <div class="date" style="float: right"> {{ item.createdAtShow }} {{item.createdAtTimeShow}}}</div>
-                      </div>
-                    </li>
+            <div class="card-body">
+              <div class="row mb-2">
+                <div class="col-sm-4">
+                  <div class="search-box me-2 mb-2 d-inline-block">
+                    <div class="position-relative">
+                      <input
+                          v-model="filter"
+                          type="text"
+                          class="form-control"
+                          placeholder="Tìm kiếm ..."
+                      />
+                      <i class="bx bx-search-alt search-icon"></i>
+                    </div>
                   </div>
                 </div>
-              </ul>
-            </div>
-            <div class="row justify-content-md-between align-items-md-center">
-              <div class="col-xl-7">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Hiển thị {{ numberOfElement }} trên tổng số {{ totalRows }} dòng</div>
-              <!-- end col-->
-              <div class="col-xl-5">
-                <div class="text-md-right float-end mt-2 pagination-rounded">
-                  <b-pagination
-                      v-model="currentPage"
-                      :total-rows="totalRows"
-                      :per-page="perPage"
-                  ></b-pagination>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <div class="row mb-2">
+                    <div class="col-sm-12 col-md-6">
+                      <div id="tickets-table_length" class="dataTables_length">
+                        <label class="d-inline-flex align-items-center">
+                          Hiện
+                          <b-form-select
+                              class="form-select form-select-sm"
+                              v-model="perPage"
+                              size="sm"
+                              :options="pageOptions"
+                          ></b-form-select
+                          >&nbsp;dòng
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Table -->
+                  {{this.data}}
+                  <div class="table-responsive-sm">
+                    <b-table
+                        class="datatables"
+                        :items="myProvider"
+                        :fields="fields"
+                        striped
+                        bordered
+                        responsive="sm"
+                        :per-page="perPage"
+                        :current-page="currentPage"
+                        :sort-by.sync="sortBy"
+                        :sort-desc.sync="sortDesc"
+                        :filter="filter"
+                        :filter-included-fields="filterOn"
+                        ref="tblList"
+                        primary-key="id"
+                        :busy.sync="isBusy"
+                    >
+                      <template v-slot:cell(STT)="data">
+                        {{ data.index + ((currentPage - 1) * perPage) + 1 }}
+                      </template>
+                      <template v-slot:cell(process)="data">
+                        <div class="d-flex justify-content-around">
+                          <button
+                              type="button"
+                              size="sm"
+                              class="btn btn-outline btn-sm p-0"
+                              data-toggle="tooltip" data-placement="bottom" title="Chi tiết"
+                              v-on:click="handleDetail(data.item.id)">
+                            <i class="fas fa-eye  text-warning me-1"></i>
+                          </button>
+                          <button
+                              type="button"
+                              size="sm"
+                              class="btn btn-outline btn-sm p-0"
+                              data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
+                              v-on:click="handleUpdate(data.item.id)">
+                            <i class="fas fa-pencil-alt text-success me-1"></i>
+                          </button>
+                          <button
+                              type="button"
+                              size="sm"
+                              class="btn btn-outline btn-sm p-0"
+                              data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
+                              v-on:click="HandleShowPhanCong(data.item.id)">
+                            <i class="fas fa-user-plus text-info me-1"></i>
+                          </button>
+                          <button
+                              type="button"
+                              size="sm"
+                              class="btn btn-outline btn-sm p-0"
+                              data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
+                              v-on:click="handleShowButPhe(data.item.id)">
+                            <i class="fas fa-feather-alt text-primary me-1"></i>
+                          </button>
+                          <button
+                              type="button"
+                              size="sm"
+                              class="btn btn-outline btn-sm p-0"
+                              data-toggle="tooltip" data-placement="bottom" title="Xóa"
+                              v-on:click="handleShowDeleteModal(data.item.id)">
+                            <i class="fas fa-trash-alt text-danger me-1"></i>
+                          </button>
+                        </div>
+                      </template>
+                      <template v-slot:cell(ten)="data">&nbsp;&nbsp;
+                        {{ data.item.ten }}
+                      </template>
+                    </b-table>
+                    <template v-if="isBusy">
+                      <div align="center">Đang tải dữ liệu</div>
+                    </template>
+                    <template v-if="totalRows <= 0 && !isBusy">
+                      <div align="center">Không có dữ liệu</div>
+                    </template>
+                  </div>
+                  <!-- Paginnation -->
+                  <div class="row">
+                    <b-col>
+                      <div>Hiển thị {{ numberOfElement }} trên tổng số {{ totalRows }} dòng</div>
+                    </b-col>
+                    <div class="col">
+                      <div
+                          class="dataTables_paginate paging_simple_numbers float-end">
+                        <ul class="pagination pagination-rounded mb-0">
+                          <!-- pagination -->
+                          <b-pagination
+                              v-model="currentPage"
+                              :total-rows="totalRows"
+                              :per-page="perPage"
+                          ></b-pagination>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <!-- end col-->
             </div>
           </div>
-
         </div>
       </div>
     </div>
