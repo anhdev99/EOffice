@@ -159,7 +159,7 @@ export default {
         </div>
       </div>
       <div class="row d-flex justify-content-center">
-        <div class="col-md-8 col-sm-12 p-0" style="margin-top: -400px;">
+        <div class="col-md-6 col-xs-12 col-sm-12 p-0" style="margin-top: -400px;">
           <b-card style="border-radius: 10px;">
             <b-card-body>
               <div class="home-wrapper mt-1 text-center">
@@ -253,6 +253,8 @@ export default {
   background: url("../../assets/images/bg_blue.png");
   height: 600px;
   background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
 }
 
 @media only screen and (max-width: 320px) {
