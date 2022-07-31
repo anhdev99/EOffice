@@ -89,12 +89,82 @@ namespace EOffice.WebAPI.APIs
             }
         }
         [HttpPost]
+        [Route("deleter/{id}")]
+        public async Task<IActionResult> DeleteR(string id)
+        {
+            try
+            {
+                await _hopThuService.DeleteR(id);
+
+                return Ok(
+                    new ResultMessageResponse()
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage("Đã xóa thư thành công!")
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+        [HttpPost]
         [Route("get-paging-params")]
         public async Task<IActionResult> GetPagingParam([FromBody] HopThuParam param)
         {
             try
             {
                 var response = await _hopThuService.GetPaging(param);
+
+                return Ok(
+                    new ResultResponse<dynamic>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+        
+        [HttpPost]
+        [Route("get-paging-params-dagui")]
+        public async Task<IActionResult> GetPagingParamDaGui([FromBody] HopThuParam param)
+        {
+            try
+            {
+                var response = await _hopThuService.GetPagingDaGui(param);
+
+                return Ok(
+                    new ResultResponse<dynamic>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+        
+        [HttpPost]
+        [Route("get-paging-params-rac")]
+        public async Task<IActionResult> GetPagingParamRac([FromBody] HopThuParam param)
+        {
+            try
+            {
+                var response = await _hopThuService.GetPagingRac(param);
 
                 return Ok(
                     new ResultResponse<dynamic>()

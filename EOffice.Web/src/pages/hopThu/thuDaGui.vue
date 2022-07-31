@@ -226,7 +226,7 @@ export default {
       }
       this.loading = true
       try {
-        let promise = this.$store.dispatch("hopThuStore/getPagingParams", params)
+        let promise = this.$store.dispatch("hopThuStore/getPagingParamsDaGui", params)
         return promise.then(resp => {
           if (resp.resultCode == CONSTANTS.SUCCESS) {
             let data = resp.data;
@@ -865,12 +865,12 @@ export default {
               <b-button variant="info" class="w-md me-1" size="sm" @click="handleChuyenTiep">
                 Chuyển tiếp
               </b-button>
-              <b-button variant="primary" class="w-md me-1" size="sm" @click="handleTraLoi(true)">
-                Trả lời
-              </b-button>
-              <b-button variant="success" class="w-md me-1" size="sm" @click="handleTraLoi()">
-                Trả lời tất cả
-              </b-button>
+<!--              <b-button variant="primary" class="w-md me-1" size="sm" @click="handleTraLoi(true)">-->
+<!--                Trả lời-->
+<!--              </b-button>-->
+<!--              <b-button variant="success" class="w-md me-1" size="sm" @click="handleTraLoi()">-->
+<!--                Trả lời tất cả-->
+<!--              </b-button>-->
               <b-button variant="light" class="w-md me-1" size="sm" @click="showChiTietModal = false">
                 Đóng
               </b-button>

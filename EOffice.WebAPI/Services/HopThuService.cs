@@ -152,7 +152,24 @@ namespace EOffice.WebAPI.Services
                     .WithMessage("Xóa thư không thành công!");
             }
         }
-        
+        public async Task DeleteR(string id)
+        {
+            var entity = _context.HopThu.Find(x => x.Id == id && x.IsDeleted == true).FirstOrDefault();
+            if (entity == default)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage("Không tìm thấy thư!");
+            }
+            
+            var result = await BaseMongoDb.DeletedAsync(entity);
+            if (!result.Success)
+            {
+                throw new ResponseMessageException()
+                    .WithCode(EResultResponse.FAIL.ToString())
+                    .WithMessage("Xóa thư không thành công!");
+            }
+        }
         public async Task<PagingModel<HopThu>> GetPaging(HopThuParam param)
         {
             var result = new PagingModel<HopThu>();
@@ -170,5 +187,38 @@ namespace EOffice.WebAPI.Services
             return result;
         }
 
+        public async Task<PagingModel<HopThu>> GetPagingDaGui(HopThuParam param)
+        {
+            var result = new PagingModel<HopThu>();
+            var builder = Builders<HopThu>.Filter;
+            var filter = builder.Empty;
+            filter = builder.And(filter, builder.Where(x => x.NguoiGui.UserName == CurrentUserName && x.IsDeleted == false));
+            
+            string sortBy = nameof(VanBanDi.ModifiedAt);
+            result.TotalRows = await _collection.CountDocumentsAsync(filter);
+            result.Data = await _collection.Find(filter)
+                .SortByDescending(x => x.ModifiedAt)
+                .Skip(param.Skip)
+                .Limit(param.Limit)
+                .ToListAsync();
+            return result;
+        }
+        
+        public async Task<PagingModel<HopThu>> GetPagingRac(HopThuParam param)
+        {
+            var result = new PagingModel<HopThu>();
+            var builder = Builders<HopThu>.Filter;
+            var filter = builder.Empty;
+            filter = builder.And(filter, builder.Where(x =>( x.NguoiGui.UserName == CurrentUserName || x.NguoiNhan.UserName == CurrentUserName ) && x.IsDeleted == true));
+            
+            string sortBy = nameof(VanBanDi.ModifiedAt);
+            result.TotalRows = await _collection.CountDocumentsAsync(filter);
+            result.Data = await _collection.Find(filter)
+                .SortByDescending(x => x.ModifiedAt)
+                .Skip(param.Skip)
+                .Limit(param.Limit)
+                .ToListAsync();
+            return result;
+        }
     }
 }
