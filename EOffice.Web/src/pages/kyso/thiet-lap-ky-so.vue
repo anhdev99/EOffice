@@ -10,7 +10,7 @@ export default {
   name: "thiet-lap-ky-so",
   data() {
     return {
-      // getKySiIframe: "https://signdigital.dthu.edu.vn/home/ThietLapKySo?",
+       //getKySiIframe: "https://signdigital.dthu.edu.vn/home/ThietLapKySo?",
       // getKySiIframe: "https://localhost:5003/ThietLapKySo?",
         getKySiIframe: "https://localhost:44323/home/ThietLapKySo?",
       files: null,

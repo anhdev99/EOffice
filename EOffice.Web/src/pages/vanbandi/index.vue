@@ -776,9 +776,11 @@ export default {
           if(value){
             this.showModalThietLapKySoPhapLy = true;
             localStorage.setItem("kysophaply", JSON.stringify( this.modelKySo));
-          }else this.showModalKySoPhapLy = true;
-          console.log( this.modelKySo, res.data)
-
+          }else{
+            this.showModalKySoPhapLy = true;
+            this.modelKySo.userName = CURRENT_USER.USER_KY_SO.userNameKySo;
+            this.modelKySo.password = CURRENT_USER.USER_KY_SO.userNameKySo;
+          }
         } else {
           // this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
         }
@@ -2420,7 +2422,7 @@ export default {
             <h5 style="min-width: 200px"> Văn bản đi</h5>
             <div style="width: 100%; display: flex; justify-content: flex-end" class="text-end">
               <div v-if="optionsTrangThai && optionsTrangThai.length">
-                <div  v-for="(value, index) in optionsTrangThai" :key="index">
+                <div  v-for="(value, index) in optionsTrangThai" :key="index" style="display: flex">
 
                   <b-button v-if="value.code == 'TLKSPL'" type="button" :class="'btn-' + value.bgColor" class="ms-1"  style="min-width: 80px;" size="sm"
                             @click="handleKySoPhapLy(model.id, true)"
@@ -2629,7 +2631,7 @@ export default {
         >
           <template #modal-header="{ close }">
             <!-- Emulate built in modal header close button action -->
-            <h5> Ký số pháp ký</h5>
+            <h5> Ký số pháp lý</h5>
             <div class="text-end">
               <b-button v-b-modal.modal-close_visit
                         size="sm"
@@ -2704,7 +2706,7 @@ export default {
         >
           <template #modal-header="{ close }">
             <!-- Emulate built in modal header close button action -->
-            <h5> Ký số pháp ký</h5>
+            <h5> Ký số pháp lý</h5>
             <div class="text-end">
               <b-button v-b-modal.modal-close_visit
                         size="sm"

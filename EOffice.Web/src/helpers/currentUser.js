@@ -2,7 +2,8 @@ var currentUser = localStorage.getItem('auth-user') ? JSON.parse(localStorage.ge
 
 const USERNAME = currentUser.userName;
  const FULLNAME = currentUser.fullName;
+ const USER_KY_SO = {userNameKySo:currentUser.user != null?currentUser.user.userNameKySo: "", passwordKySo: currentUser.user != null?currentUser.user.passwordKySo: ""}
 
 export const CURRENT_USER = {
-    USERNAME, FULLNAME
+    USERNAME, FULLNAME,USER_KY_SO
 }

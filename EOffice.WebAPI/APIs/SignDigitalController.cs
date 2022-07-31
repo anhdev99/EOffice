@@ -34,6 +34,7 @@ namespace EOffice.WebAPI.APIs
             _fileService = fileService;
         }
         [HttpPost] 
+        [Route("KySo")]
         public ResponseMessage Pdf(IFormCollection data, IFormFile fileUpload)
         {
             string user = data["user"];

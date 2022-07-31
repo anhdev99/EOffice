@@ -667,8 +667,8 @@ function PostDigital(file){
     fd.append('vanBanDiId',"@Model.VanBanDiId");
     fd.append('pageNumber',"1");
 	$.ajax({
-       url: 'https://apieoffice.dthu.edu.vn/api/v1/SignDigital',
-       //url: 'https://localhost:5001/api/v1/SignDigital',
+       // url: 'https://apieoffice.dthu.edu.vn/api/v1/SignDigital/KySo',
+       url: 'https://localhost:5001/api/v1/SignDigital/KySo',
        data: fd,           //backend language, it may looks like '/model/send.php'
        dataType: 'text',
        processData: false,

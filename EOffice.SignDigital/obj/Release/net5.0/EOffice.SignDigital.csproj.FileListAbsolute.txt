@@ -711,3 +711,4 @@ D:\anhdev99\EOffice\EOffice.SignDigital\obj\Release\net5.0\EOffice.SignDigital.d
 D:\anhdev99\EOffice\EOffice.SignDigital\obj\Release\net5.0\ref\EOffice.SignDigital.dll
 D:\anhdev99\EOffice\EOffice.SignDigital\obj\Release\net5.0\EOffice.SignDigital.pdb
 D:\anhdev99\EOffice\EOffice.SignDigital\obj\Release\net5.0\EOffice.SignDigital.genruntimeconfig.cache
+D:\anhdev99\EOffice\EOffice.SignDigital\obj\Release\net5.0\Razor\Views\Home\ThietLapKySo.cshtml.g.cs

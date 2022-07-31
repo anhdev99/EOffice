@@ -5,7 +5,6 @@ D:\anhdev99\EOffice\EOffice.SignDigital\bin\Debug\net5.0\EOffice.SignDigital.dep
 D:\anhdev99\EOffice\EOffice.SignDigital\bin\Debug\net5.0\EOffice.SignDigital.runtimeconfig.json
 D:\anhdev99\EOffice\EOffice.SignDigital\bin\Debug\net5.0\EOffice.SignDigital.runtimeconfig.dev.json
 D:\anhdev99\EOffice\EOffice.SignDigital\bin\Debug\net5.0\EOffice.SignDigital.dll
-D:\anhdev99\EOffice\EOffice.SignDigital\bin\Debug\net5.0\ref\EOffice.SignDigital.dll
 D:\anhdev99\EOffice\EOffice.SignDigital\bin\Debug\net5.0\EOffice.SignDigital.pdb
 D:\anhdev99\EOffice\EOffice.SignDigital\bin\Debug\net5.0\EOffice.SignDigital.Views.dll
 D:\anhdev99\EOffice\EOffice.SignDigital\bin\Debug\net5.0\EOffice.SignDigital.Views.pdb
@@ -18,7 +17,6 @@ D:\anhdev99\EOffice\EOffice.SignDigital\obj\Debug\net5.0\EOffice.SignDigital.Mvc
 D:\anhdev99\EOffice\EOffice.SignDigital\obj\Debug\net5.0\EOffice.SignDigital.RazorAssemblyInfo.cache
 D:\anhdev99\EOffice\EOffice.SignDigital\obj\Debug\net5.0\EOffice.SignDigital.RazorAssemblyInfo.cs
 D:\anhdev99\EOffice\EOffice.SignDigital\obj\Debug\net5.0\staticwebassets\EOffice.SignDigital.StaticWebAssets.Manifest.cache
-D:\anhdev99\EOffice\EOffice.SignDigital\obj\Debug\net5.0\staticwebassets\EOffice.SignDigital.StaticWebAssets.xml
 D:\anhdev99\EOffice\EOffice.SignDigital\obj\Debug\net5.0\scopedcss\bundle\EOffice.SignDigital.styles.css
 D:\anhdev99\EOffice\EOffice.SignDigital\obj\Debug\net5.0\EOffice.SignDigital.TagHelpers.input.cache
 D:\anhdev99\EOffice\EOffice.SignDigital\obj\Debug\net5.0\EOffice.SignDigital.TagHelpers.output.cache
@@ -356,3 +354,5 @@ D:\anhdev99\EOffice\EOffice.SignDigital\bin\Debug\net5.0\zh-Hans\Microsoft.CodeA
 D:\anhdev99\EOffice\EOffice.SignDigital\bin\Debug\net5.0\zh-Hant\Microsoft.CodeAnalysis.CSharp.resources.dll
 D:\anhdev99\EOffice\EOffice.SignDigital\obj\Debug\net5.0\EOffice.SignDigital.MvcApplicationPartsAssemblyInfo.cs
 D:\anhdev99\EOffice\EOffice.SignDigital\obj\Debug\net5.0\Razor\Views\Home\ThietLapKySo.cshtml.g.cs
+D:\anhdev99\EOffice\EOffice.SignDigital\bin\Debug\net5.0\ref\EOffice.SignDigital.dll
+D:\anhdev99\EOffice\EOffice.SignDigital\obj\Debug\net5.0\staticwebassets\EOffice.SignDigital.StaticWebAssets.xml
