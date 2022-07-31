@@ -249,7 +249,6 @@ export default {
             this.$refs.tblList.refresh();
           }
           this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
-
         });
       }
     },
@@ -257,6 +256,7 @@ export default {
       await this.$store.dispatch("vanBanDenStore/getById", id).then((res) => {
         if (res.resultCode == "SUCCESS") {
           this.model = res.data;
+          console.log("modelUpdate", this.model);
           this.showModal = true;
         } else {
           // this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
@@ -313,13 +313,12 @@ export default {
       this.modelButPhe.vanBanDenId = id;
       await this.$store.dispatch("vanBanDenStore/getById", id).then(resp => {
         if (resp.resultCode == "SUCCESS") {
-          let items = resp.data;
           this.loading = false
-          this.model = items || [];
+          this.model =  resp.data;
           this.showModalButPhe = true;
           this.modelButPhe = this.model.butPhe;
-
-          return items || [];
+          console.log("data model but phe", this.model);
+          return [];
         }
         return [];
       })
@@ -612,7 +611,7 @@ export default {
                     <form @submit.prevent="handleSubmit"
                           ref="formContainer">
                       <div class="row">
-                        <div class="col-md-7">
+                        <div class="col-lg-7 col-md-12">
                           <div class="row">
                             <!--                              Số lưu -->
                             <div class="col-md-3">
@@ -757,7 +756,7 @@ export default {
                           </div>
 
                         </div>
-                        <div class="col-md-5">
+                        <div class="col-lg-5 col-md-12">
                           <div class="row">
                             <!--                            Ngày Ký-->
                             <div class="col-md-6">
@@ -1352,9 +1351,7 @@ export default {
             </div>
           </form>
         </b-modal>
-
         <!--        Modal phân công -->
-
         <b-modal
             v-model="showModalPhanCong"
             title="Phân công xử lý"
@@ -1476,7 +1473,6 @@ export default {
             </div>
           </form>
         </b-modal>
-
         <!--        Modal delete -->
         <b-modal
             v-model="showDeleteModal"

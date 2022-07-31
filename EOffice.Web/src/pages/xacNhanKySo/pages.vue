@@ -100,15 +100,37 @@ export default {
         await this.$store.dispatch("vanBanDiStore/xacThuc", this.model).then((res) => {
           if (res.resultCode === 'SUCCESS') {
             console.log("");
+            this.$swal({
+              position: 'center',
+              icon: 'success',
+              title: 'Xác thực thành công',
+              showConfirmButton: false,
+              timer: 2000
+            })
+          }else{
+            this.$swal({
+              position: 'center',
+              icon: 'error',
+              title: 'Xác thực không thành công',
+              showConfirmButton: false,
+              timer: 2000
+            })
           }
-          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+
         })
       } else {
         //Create modelhandleSubmit
-        await this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage({
-          resultString: "Dữ liệu không đúng",
-          resultCode: "ERROR"
-        }));
+        // await this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage({
+        //   resultString: "Dữ liệu không đúng",
+        //   resultCode: "ERROR"
+        // }));
+        this.$swal({
+          position: 'center',
+          icon: 'error',
+          title: 'Dữ liệu không đúng',
+          showConfirmButton: false,
+          timer: 2000
+        })
       }
     },
   }
@@ -116,41 +138,40 @@ export default {
 </script>
 <template>
   <div>
-    <div class="home-btn d-none d-sm-block">
-      <router-link to="/" class="text-dark">
-        <i class="fas fa-home h2"></i>
-      </router-link>
-    </div>
+    <section>
+      <div class="row ">
+        <div class="col-12 text-center bg-xac-nhan">
+          <div class="mt-5 mb-3">
+            <img
+                src="@/assets/images/logo-eoffice.png"
+                alt="logo"
+                height="90"
+                class="text-white logo-eoffice"
+            />
+          </div>
+<!--          <div class="maintenance-img">-->
+<!--            <img-->
+<!--                src="@/assets/images/DTHU.png"-->
+<!--                alt="logo"-->
+<!--                height="100"-->
+<!--            />-->
+<!--          </div>-->
+        </div>
+      </div>
+      <div class="row d-flex justify-content-center">
+        <div class="col-md-8 col-sm-12 p-0" style="margin-top: -400px;">
+          <b-card style="border-radius: 10px;">
+            <b-card-body>
+              <div class="home-wrapper mt-1 text-center">
+                <h3 class="mt-4 text-primary">Xác nhận chữ ký số nội bộ.</h3>
 
-    <section class="my-5">
-      <div class="container-alt container">
-        <div class="row justify-content-center">
-          <div class="col-10 text-center">
-            <div class="home-wrapper mt-5">
-              <div class="mb-4">
-                <img
-                    src="@/assets/images/logo-eoffice.svg"
-                    alt="logo"
-                    height="50"
-                />
-              </div>
-
-              <div class="maintenance-img">
-                <img
-                    src="@/assets/images/maintenance.png"
-                    alt
-                    class="img-fluid mx-auto d-block"
-                />
-              </div>
-              <h3 class="mt-4 text-primary">Xác nhận chữ ký số nội bộ.</h3>
-              <p>Please check back in sometime.</p>
-
-              <div class="row">
-                <div class="text-center col-md-12">
-                  <div class="card mt-4 maintenance-box">
-                    <div class="card-body">
-                      <i class="fas fa-user-edit h2"></i>
-                      <h6 class="text-uppercase mt-3">Cán bộ soạn</h6>
+                <div class="row d-flex justify-content-center">
+                  <div class="text-center col-md-12">
+                    <div class="my-3">
+                      <div class="d-flex justify-content-start align-items-baseline">
+                        <i class="fas fa-user-edit me-1"></i>
+                        <h6 class="fw-bold">Cán bộ soạn</h6>
+                      </div>
                       <multiselect
                           v-model="model.user"
                           :options="optionsUser"
@@ -177,12 +198,12 @@ export default {
                       </multiselect>
                     </div>
                   </div>
-                </div>
-                <div class="text-center col-md-12">
-                  <div class="card mt-4 maintenance-box">
-                    <div class="card-body">
-                      <i class="fas fa-cloud-upload-alt h2"></i>
-                      <h6 class="text-uppercase mt-3">File đính kèm</h6>
+                  <div class="text-center col-md-12">
+                    <div class="my-3">
+                      <div class="d-flex justify-content-start align-items-baseline">
+                        <i class="fas fa-cloud-upload-alt me-1"></i>
+                        <h6 class="fw-bold">File đính kèm</h6>
+                      </div>
                       <vue-dropzone
                           id="dropzone"
                           ref="myVueDropzone"
@@ -203,23 +224,41 @@ export default {
                       </vue-dropzone>
                     </div>
                   </div>
-                </div>
-                <div class="text-center col-md-12">
-                  <div class="card mt-4 maintenance-box">
-                    <div class="card-body">
-                      <b-button :disabled="checkData" @click="handleSubmit" variant="primary" class="mb-2 w-100">
+                  <div class="text-center col-md-8">
+                    <div class=" mt-4">
+                      <b-button
+                          :disabled="checkData"
+                          @click="handleSubmit"
+                          variant="primary"
+                          class="mb-2 w-100"
+                          style="border-radius: 99px;"
+                      >
                         <i class="fas fa-marker"></i>
                         Xác thực chữ ký
                       </b-button>
                     </div>
                   </div>
                 </div>
+                <!-- end row -->
               </div>
-              <!-- end row -->
-            </div>
-          </div>
+            </b-card-body>
+          </b-card>
         </div>
       </div>
     </section>
   </div>
 </template>
+<style>
+.bg-xac-nhan{
+  background: url("../../assets/images/bg_blue.png");
+  height: 600px;
+  background-repeat: no-repeat;
+}
+
+@media only screen and (max-width: 320px) {
+  .logo-eoffice{
+    height: 60px;
+    margin-bottom: -80px;
+  }
+}
+</style>
