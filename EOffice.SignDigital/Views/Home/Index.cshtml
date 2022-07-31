@@ -123,7 +123,7 @@
 </head>
 <body>
     <div class="toolbar" style="background-color: #0C5CA8">
-	    <div class="tool">
+        <div class="tool">
             <label for=""></label>
             <select id="font-size" class="form-control">
                 <option value="10">10</option>
@@ -173,7 +173,7 @@
             <button class="btn btn-info btn-sm" onclick="showPdfData()">{}</button>
         </div>
         <div class="tool">
-            <button class="btn btn-light btn-sm btn-save-sign" onclick="savePDF()"><i class="fa fa-save"></i> Hoàn thành ký số</button>
+            <button class="btn btn-light btn-sm btn-save-sign" onclick="savePDF()" data-target="#exampleModal"><i class="fa fa-save"></i> Hoàn thành ký số</button>
         </div>
     </div>
     <div id="pdf-container"></div>
@@ -194,6 +194,24 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ký số pháp lý</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="kyso">
+                    Đang thực hiện ký số ...
+                </div>
+                <div class="modal-footer" style="display:none"></div>
+            </div>
+        </div>
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
@@ -204,150 +222,150 @@
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.js"></script>
     <script>
-	/**
- * From: https://blog.thirdrocktechkno.com/how-to-draw-an-arrow-using-html-5-canvas-and-fabricjs-9500c3f50ecb
- */
+        /**
+     * From: https://blog.thirdrocktechkno.com/how-to-draw-an-arrow-using-html-5-canvas-and-fabricjs-9500c3f50ecb
+     */
 
-// Extended fabric line class
-fabric.LineArrow = fabric.util.createClass(fabric.Line, {
+        // Extended fabric line class
+        fabric.LineArrow = fabric.util.createClass(fabric.Line, {
 
-type: 'lineArrow',
+            type: 'lineArrow',
 
-initialize: function(element, options) {
-  options || (options = {});
-  this.callSuper('initialize', element, options);
-},
+            initialize: function (element, options) {
+                options || (options = {});
+                this.callSuper('initialize', element, options);
+            },
 
-toObject: function() {
-  return fabric.util.object.extend(this.callSuper('toObject'));
-},
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
 
-_render: function(ctx) {
-  this.callSuper('_render', ctx);
+            _render: function (ctx) {
+                this.callSuper('_render', ctx);
 
-  // do not render if width/height are zeros or object is not visible
-  if (this.width === 0 || this.height === 0 || !this.visible) return;
+                // do not render if width/height are zeros or object is not visible
+                if (this.width === 0 || this.height === 0 || !this.visible) return;
 
-  ctx.save();
+                ctx.save();
 
-  var xDiff = this.x2 - this.x1;
-  var yDiff = this.y2 - this.y1;
-  var angle = Math.atan2(yDiff, xDiff);
-  ctx.translate((this.x2 - this.x1) / 2, (this.y2 - this.y1) / 2);
-  ctx.rotate(angle);
-  ctx.beginPath();
-  //move 10px in front of line to start the arrow so it does not have the square line end showing in front (0,0)
-  ctx.moveTo(10, 0);
-  ctx.lineTo(-20, 15);
-  ctx.lineTo(-20, -15);
-  ctx.closePath();
-  ctx.fillStyle = this.stroke;
-  ctx.fill();
+                var xDiff = this.x2 - this.x1;
+                var yDiff = this.y2 - this.y1;
+                var angle = Math.atan2(yDiff, xDiff);
+                ctx.translate((this.x2 - this.x1) / 2, (this.y2 - this.y1) / 2);
+                ctx.rotate(angle);
+                ctx.beginPath();
+                //move 10px in front of line to start the arrow so it does not have the square line end showing in front (0,0)
+                ctx.moveTo(10, 0);
+                ctx.lineTo(-20, 15);
+                ctx.lineTo(-20, -15);
+                ctx.closePath();
+                ctx.fillStyle = this.stroke;
+                ctx.fill();
 
-  ctx.restore();
+                ctx.restore();
 
-}
-});
+            }
+        });
 
-fabric.LineArrow.fromObject = function(object, callback) {
-callback && callback(new fabric.LineArrow([object.x1, object.y1, object.x2, object.y2], object));
-};
+        fabric.LineArrow.fromObject = function (object, callback) {
+            callback && callback(new fabric.LineArrow([object.x1, object.y1, object.x2, object.y2], object));
+        };
 
-fabric.LineArrow.async = true;
+        fabric.LineArrow.async = true;
 
 
-var Arrow = (function() {
-function Arrow(canvas, color, callback) {
-  this.canvas = canvas;
-  this.className = 'Arrow';
-  this.isDrawing = false;
-  this.color = color;
-  this.callback = callback;
-  this.bindEvents();
-}
+        var Arrow = (function () {
+            function Arrow(canvas, color, callback) {
+                this.canvas = canvas;
+                this.className = 'Arrow';
+                this.isDrawing = false;
+                this.color = color;
+                this.callback = callback;
+                this.bindEvents();
+            }
 
-Arrow.prototype.bindEvents = function() {
-  var inst = this;
-  inst.canvas.on('mouse:down', function(o) {
-	inst.onMouseDown(o);
-  });
-  inst.canvas.on('mouse:move', function(o) {
-	inst.onMouseMove(o);
-  });
-  inst.canvas.on('mouse:up', function(o) {
-	inst.onMouseUp(o);
-  });
-  inst.canvas.on('object:moving', function(o) {
-	inst.disable();
-  })
-}
+            Arrow.prototype.bindEvents = function () {
+                var inst = this;
+                inst.canvas.on('mouse:down', function (o) {
+                    inst.onMouseDown(o);
+                });
+                inst.canvas.on('mouse:move', function (o) {
+                    inst.onMouseMove(o);
+                });
+                inst.canvas.on('mouse:up', function (o) {
+                    inst.onMouseUp(o);
+                });
+                inst.canvas.on('object:moving', function (o) {
+                    inst.disable();
+                })
+            }
 
-Arrow.prototype.unBindEventes = function () {
-  var inst = this;
-  inst.canvas.off('mouse:down');
-  inst.canvas.off('mouse:up');
-  inst.canvas.off('mouse:move');
-  inst.canvas.off('object:moving');
-}
+            Arrow.prototype.unBindEventes = function () {
+                var inst = this;
+                inst.canvas.off('mouse:down');
+                inst.canvas.off('mouse:up');
+                inst.canvas.off('mouse:move');
+                inst.canvas.off('object:moving');
+            }
 
-Arrow.prototype.onMouseUp = function(o) {
-  var inst = this;
-  inst.disable();
-  inst.unBindEventes();
-  if (inst.callback) inst.callback();
-};
+            Arrow.prototype.onMouseUp = function (o) {
+                var inst = this;
+                inst.disable();
+                inst.unBindEventes();
+                if (inst.callback) inst.callback();
+            };
 
-Arrow.prototype.onMouseMove = function(o) {
-  var inst = this;
-  if (!inst.isEnable()) {
-	return;
-  }
+            Arrow.prototype.onMouseMove = function (o) {
+                var inst = this;
+                if (!inst.isEnable()) {
+                    return;
+                }
 
-  var pointer = inst.canvas.getPointer(o.e);
-  var activeObj = inst.canvas.getActiveObject();
-  activeObj.set({
-	x2: pointer.x,
-	y2: pointer.y
-  });
-  activeObj.setCoords();
-  inst.canvas.renderAll();
-};
+                var pointer = inst.canvas.getPointer(o.e);
+                var activeObj = inst.canvas.getActiveObject();
+                activeObj.set({
+                    x2: pointer.x,
+                    y2: pointer.y
+                });
+                activeObj.setCoords();
+                inst.canvas.renderAll();
+            };
 
-Arrow.prototype.onMouseDown = function(o) {
-  var inst = this;
-  inst.enable();
-  var pointer = inst.canvas.getPointer(o.e);
+            Arrow.prototype.onMouseDown = function (o) {
+                var inst = this;
+                inst.enable();
+                var pointer = inst.canvas.getPointer(o.e);
 
-  var points = [pointer.x, pointer.y, pointer.x, pointer.y];
-  console.log(pointer)
-  var line = new fabric.LineArrow(points, {
-	strokeWidth: 5,
-	fill: (inst.color) ? inst.color : 'red',
-	stroke: (inst.color) ? inst.color : 'red',
-	originX: 'center',
-	originY: 'center',
-	hasBorders: false,
-	hasControls: true,
-	selectable: true
-  });
+                var points = [pointer.x, pointer.y, pointer.x, pointer.y];
+                console.log(pointer)
+                var line = new fabric.LineArrow(points, {
+                    strokeWidth: 5,
+                    fill: (inst.color) ? inst.color : 'red',
+                    stroke: (inst.color) ? inst.color : 'red',
+                    originX: 'center',
+                    originY: 'center',
+                    hasBorders: false,
+                    hasControls: true,
+                    selectable: true
+                });
 
-  inst.canvas.add(line).setActiveObject(line);
-};
+                inst.canvas.add(line).setActiveObject(line);
+            };
 
-Arrow.prototype.isEnable = function() {
-  return this.isDrawing;
-}
+            Arrow.prototype.isEnable = function () {
+                return this.isDrawing;
+            }
 
-Arrow.prototype.enable = function() {
-  this.isDrawing = true;
-}
+            Arrow.prototype.enable = function () {
+                this.isDrawing = true;
+            }
 
-Arrow.prototype.disable = function() {
-  this.isDrawing = false;
-}
+            Arrow.prototype.disable = function () {
+                this.isDrawing = false;
+            }
 
-return Arrow;
-}());
+            return Arrow;
+        }());
     </script>
     <script>
 	/**
@@ -356,7 +374,7 @@ return Arrow;
  */
 var pages = [];
 var pdfScale = 1.2;
-	
+
 
 var PDFAnnotate = function(container_id, url, options = {}) {
 	this.number_of_pages = 0;
@@ -385,7 +403,7 @@ var PDFAnnotate = function(container_id, url, options = {}) {
 	        pdf.getPage(i).then(function (page) {
 				   var canvas = document.createElement('canvas');
 	            var viewport = page.getViewport({scale: 2});
-	         
+
 	            document.getElementById(inst.container_id).appendChild(canvas);
 	            canvas.className = 'pdf-canvas';
 	            canvas.height = viewport.height;
@@ -640,23 +658,25 @@ PDFAnnotate.prototype.savePdf = function (fileName) {
 }
 
 function PostDigital(file){
-	var fd = new FormData();     // To carry on your data  
+	var fd = new FormData();     // To carry on your data
     fd.append('fileUpload',file);
     fd.append('fileName', "@Model.FileName");
     fd.append('content',"@Model.Content");
     fd.append('user',"@Model.UserName");
-    fd.append('pass',"@Model.Password");	
-    fd.append('vanBanDiId',"@Model.VanBanDiId");	
-    fd.append('pageNumber',"1");	
+    fd.append('pass',"@Model.Password");
+    fd.append('vanBanDiId',"@Model.VanBanDiId");
+    fd.append('pageNumber',"1");
 	$.ajax({
-       url: 'https://apieoffice.dthu.edu.vn/api/v1/SignDigital',   //here is also a problem, depends on your 
+       url: 'https://apieoffice.dthu.edu.vn/api/v1/SignDigital',
+       //url: 'https://localhost:5001/api/v1/SignDigital',
        data: fd,           //backend language, it may looks like '/model/send.php'
        dataType: 'text',
        processData: false,
        contentType: false,
        type: 'POST',
        success: function (response) {
-        console.log(response);
+           console.log(response);
+           $("#kyso").html("Ký số thành công! Trở về trang văn bản đi");
        },
        error: function (jqXHR) {
          alter('Failure to send request');
@@ -782,7 +802,8 @@ function deleteSelectedObject(event) {
   pdf.deleteSelectedObject();
 }
 
-function savePDF() {
+        function savePDF() {
+            $('#myModal').modal('toggle');
     // pdf.savePdf();
  var log=   pdf.savePdf('sample.pdf'); // save with given file name
  console.log(pdf)
@@ -805,7 +826,7 @@ $(function () {
                     pdfScale += 0.5;
                 }
             });
-        
+
             $('#pdf-zoom-out').on('click', function() {
     			console.log("Abc")
                 if (pdfScale > 1) {

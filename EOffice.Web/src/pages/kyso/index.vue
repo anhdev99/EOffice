@@ -26,6 +26,8 @@ export default {
         }
       ],
       getKySiIframe: "https://signdigital.dthu.edu.vn/",
+      // getKySiIframe: "https://localhost:5003/",
+     //  getKySiIframe: "https://localhost:44323/",
       files: null,
       apiUrl: process.env.VUE_APP_API_URL,
       url: `${process.env.VUE_APP_API_URL}files/upload`,
@@ -90,7 +92,7 @@ export default {
   <Layout>
     <PageHeader :title="title" :items="items"/>
     <div class="row">
-      <div class="col-md-7">
+      <div class="col-md-12">
         <div class="card">
           <div class="card-body">
             <div class="row">
@@ -102,80 +104,80 @@ export default {
           </div>
         </div>
       </div>
-      <div class="col-md-5">
-        <div class="card">
-          <div class="card-body">
-            <div class="title mb-4 text-primary">
-              <h4>Thông tin tài liệu ký</h4>
-            </div>
-            <div class="info-doc">
-              <div class="row">
-                <div class="col-md-3">
-                  <p class="fw-bold">Tên file: </p>
-                </div>
-                <div class="col-md-9">
-                  <p v-if="files">{{ files[0].fileName }}</p>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-3">
-                  <p class="fw-bold">Kích thước: </p>
-                </div>
-                <div class="col-md-9">
-                  <p v-if="files">{{ files[0].size }}</p>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-3">
-                  <p class="fw-bold">Định dạng: </p>
-                </div>
-                <div class="col-md-9">
-                  <p v-if="files">{{ files[0].ext }}</p>
-                </div>
-              </div>
+<!--      <div class="col-md-5">-->
+<!--        <div class="card">-->
+<!--          <div class="card-body">-->
+<!--            <div class="title mb-4 text-primary">-->
+<!--              <h4>Thông tin tài liệu ký</h4>-->
+<!--            </div>-->
+<!--            <div class="info-doc">-->
+<!--              <div class="row">-->
+<!--                <div class="col-md-3">-->
+<!--                  <p class="fw-bold">Tên file: </p>-->
+<!--                </div>-->
+<!--                <div class="col-md-9">-->
+<!--                  <p v-if="files">{{ files[0].fileName }}</p>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <div class="row">-->
+<!--                <div class="col-md-3">-->
+<!--                  <p class="fw-bold">Kích thước: </p>-->
+<!--                </div>-->
+<!--                <div class="col-md-9">-->
+<!--                  <p v-if="files">{{ files[0].size }}</p>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <div class="row">-->
+<!--                <div class="col-md-3">-->
+<!--                  <p class="fw-bold">Định dạng: </p>-->
+<!--                </div>-->
+<!--                <div class="col-md-9">-->
+<!--                  <p v-if="files">{{ files[0].ext }}</p>-->
+<!--                </div>-->
+<!--              </div>-->
 
-            </div>
-            <hr>
-            <div class="info-process">
-              <div class="title mb-4 text-primary">
-                <h4>Thông tin chứng thư</h4>
-              </div>
-              <div class="row mb-1 d-flex justify-content-center">
-                <div class="col-md-3">
-                  <p class="fw-bold">Cấp cho: </p>
-                </div>
-                <div class="col-md-9 bg-secondary" style="border-radius: 3px;">
-                  <p class="p-1">noi dung</p>
-                </div>
-              </div>
-              <div class="row mb-1">
-                <div class="col-md-3">
-                  <p class="fw-bold">Được cấp bởi: </p>
-                </div>
-                <div class="col-md-9 bg-secondary" style="border-radius: 3px;">
-                  <p class="p-1">noi dung</p>
-                </div>
-              </div>
-              <div class="row mb-1">
-                <div class="col-md-3">
-                  <p class="fw-bold">Ngày bất đầu: </p>
-                </div>
-                <div class="col-md-9 bg-secondary" style="border-radius: 3px;">
-                  <p class="p-1">noi dung</p>
-                </div>
-              </div>
-              <div class="row mb-1">
-                <div class="col-md-3">
-                  <p class="fw-bold">Ngày kết thúc: </p>
-                </div>
-                <div class="col-md-9 bg-secondary" style="border-radius: 3px;">
-                  <p class="p-1">noi dung</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+<!--            </div>-->
+<!--            <hr>-->
+<!--            <div class="info-process">-->
+<!--              <div class="title mb-4 text-primary">-->
+<!--                <h4>Thông tin chứng thư</h4>-->
+<!--              </div>-->
+<!--              <div class="row mb-1 d-flex justify-content-center">-->
+<!--                <div class="col-md-3">-->
+<!--                  <p class="fw-bold">Cấp cho: </p>-->
+<!--                </div>-->
+<!--                <div class="col-md-9 bg-secondary" style="border-radius: 3px;">-->
+<!--                  <p class="p-1">noi dung</p>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <div class="row mb-1">-->
+<!--                <div class="col-md-3">-->
+<!--                  <p class="fw-bold">Được cấp bởi: </p>-->
+<!--                </div>-->
+<!--                <div class="col-md-9 bg-secondary" style="border-radius: 3px;">-->
+<!--                  <p class="p-1">noi dung</p>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <div class="row mb-1">-->
+<!--                <div class="col-md-3">-->
+<!--                  <p class="fw-bold">Ngày bất đầu: </p>-->
+<!--                </div>-->
+<!--                <div class="col-md-9 bg-secondary" style="border-radius: 3px;">-->
+<!--                  <p class="p-1">noi dung</p>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <div class="row mb-1">-->
+<!--                <div class="col-md-3">-->
+<!--                  <p class="fw-bold">Ngày kết thúc: </p>-->
+<!--                </div>-->
+<!--                <div class="col-md-9 bg-secondary" style="border-radius: 3px;">-->
+<!--                  <p class="p-1">noi dung</p>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
     </div>
   </Layout>
 </template>

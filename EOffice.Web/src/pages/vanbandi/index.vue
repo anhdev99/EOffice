@@ -109,14 +109,14 @@ export default {
         {
           key: "soVBDi",
           label: "Số CV đi",
-          thStyle: {width: '150px', minWidth: '100px'},
+          thStyle: {width: '150px', minWidth: '100px', maxWidth: '150px'},
           class: "px-1",
           sortable: false ,
         },
         {
           key: "trichYeu",
           label: "Trích yếu",
-          thStyle: {width: 'auto', minWidth: 'auto'},
+          thStyle: {width: 'auto'},
           class: "px-1",
           sortable: false ,
         },
@@ -195,7 +195,8 @@ export default {
       valueConsistsOf: 'ALL_WITH_INDETERMINATE',
       showButtonSave: false,
       showButtonKySoCurrent: false,
-      showModelAcceptKySo: false
+      showModelAcceptKySo: false,
+      showModalKySoPhapLy: false
     };
   },
   validations: {
@@ -754,6 +755,46 @@ export default {
         }).finally(() => {
           loader.hide();
         });
+      }
+    },
+    async handleKySoPhapLy(id) {
+      await this.$store.dispatch("vanBanDiStore/getById", id).then((res) => {
+        if (res.resultCode == "SUCCESS") {
+          console.log()
+          this.modelKySo.vanBanDiId = res.data.id;
+          if(res.data.filePDF){
+            this.modelKySo.fileName = res.data.filePDF[0].fileName;
+            this.modelKySo.path =  this.urlView + res.data.filePDF[0].fileId;
+          }else if(res.data.file){
+            this.modelKySo.fileName = res.data.file[0].fileName;
+            this.modelKySo.path =  this.urlView + res.data.file[0].fileId;
+          }
+
+
+          this.showModalKySoPhapLy = true;
+        } else {
+          // this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+        }
+      });
+    },
+    async handleAssignOrRejectPhapLy() {
+      let loader = this.$loading.show({
+        container: this.$refs.modalKySoPhapLy,
+      });
+      console.log(this.modelKySo.vanBanDiId)
+      if (this.modelKySo.vanBanDiId  != null) {
+        localStorage.setItem("kysophaply", JSON.stringify( this.modelKySo));
+        this.$router.push("/ky-so")
+        // this.modelKySo.ngayKyString = moment().format();
+        // await this.$store.dispatch("vanBanDiStore/assignOrRejectPhapLy", this.modelKySo).then((res) => {
+        //   if (res.resultCode === 'SUCCESS') {
+        //     this.showModelAcceptKySo = false;
+        //     loader.hide();
+        //   }
+        //   this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+        // }).finally(() => {
+        //   loader.hide();
+        // });
       }
     },
   }
@@ -1419,7 +1460,18 @@ export default {
 
                     <template v-slot:cell(chuyenTrangThai)="data">
                       <b-button
-                          v-if="(data.item.trangThai.code == 'tldt' || data.item.trangThai.code == 'tkhtxn'
+                          v-if="data.item.trangThai.code == 'kpl' && data.item.ower && data.item.ower.userName == currentUserName"
+                          type="button"
+                          size="sm"
+                          class="btn btn-success"
+                          style="margin-top: 5px"
+                          data-toggle="tooltip" data-placement="bottom" title="Ký số pháp lý"
+                          v-on:click="handleKySoPhapLy(data.item.id)">
+                        <i class="fas fa-pencil-alt  me-1"></i>
+                        Ký số PL
+                      </b-button>
+                      <b-button
+                          v-else-if="(data.item.trangThai.code == 'tldt' || data.item.trangThai.code == 'tkhtxn'
                           || data.item.trangThai.code == 'kpl' || data.item.trangThai.code == 'DVBPL' || data.item.trangThai.code == 'TKHTTC' || data.item.trangThai.code == 'HTK' || data.item.trangThai.code == 'tlddv') && data.item.ower && data.item.ower.userName == currentUserName"
                           type="button"
                           size="sm"
@@ -1431,7 +1483,7 @@ export default {
                       </b-button>
 
                       <b-button
-                          v-else-if="data.item.ower && data.item.ower.userName == currentUserName && (data.item.trangThai.code == 'ktvb' || data.item.trangThai.code == 'VTTTC' || data.item.trangThai.code == 'HTD' || data.item.trangThai.code =='LDDVTC' || data.item.trangThai.code =='LDDVD' || data.item.trangThai.code =='xdksnb' || data.item.trangThai.code =='dksxd')"
+                          v-else-if="data.item.ower && data.item.ower.userName == currentUserName && (data.item.trangThai.code == 'htks' || data.item.trangThai.code == 'ktvb' || data.item.trangThai.code == 'VTTTC' || data.item.trangThai.code == 'HTD' || data.item.trangThai.code =='LDDVTC' || data.item.trangThai.code =='LDDVD' || data.item.trangThai.code =='xdksnb' || data.item.trangThai.code =='dksxd')"
                           type="button"
                           size="sm"
                           class="btn btn-light btn-danger"
@@ -1454,6 +1506,7 @@ export default {
                        Duyệt/Ký số
 
                       </b-button>
+
                     </template>
 
                   </b-table>
@@ -2549,7 +2602,79 @@ export default {
             </div>
           </div>
         </b-modal>
+<!--        Ký số pháp lý-->
+        <b-modal
+            v-model="showModalKySoPhapLy"
+            centered
+            title=" Ký số pháp lý"
+            title-class="font-18"
+            no-close-on-backdrop
+    hide-footer
+        >
+          <template #modal-header="{ close }">
+            <!-- Emulate built in modal header close button action -->
+            <h5> Ký số pháp ký</h5>
+            <div class="text-end">
+              <b-button v-b-modal.modal-close_visit
+                        size="sm"
+                        class="btn btn-outline-info w-md"
+                        v-on:click="showModalKySoPhapLy = false"
+                        style="margin-right: 6px">
+                Đóng
+              </b-button>
+              <b-button v-if="!modelKySo.reject" v-b-modal.modal-close_visit
+                        size="sm"
+                        variant="primary"
+                        type="button"
+                        class="w-md"
+                        v-on:click="handleAssignOrRejectPhapLy"
+         >
+                Đồng ý
+              </b-button>
+              <b-button v-if="modelKySo.reject" v-b-modal.modal-close_visit
+                        size="sm"
+                        variant="danger"
+                        type="button"
+                        class="w-md"
+                        v-on:click="handleAssignOrRejectPhapLy">
+                Từ chối
+              </b-button>
+            </div>
+          </template>
+          <div class="row" ref="modalKySoPhapLy">
 
+            <div class="col-md-12 mt-2">
+              <label class="form-label" for="validationCustom01"> Tài khoản</label> <span
+                class="text-danger">*</span>
+              <input
+                  id="validationCustom01"
+                  v-model="modelKySo.userName"
+                  type="text"
+                  class="form-control"
+              />
+            </div>
+            <div class="col-md-12 mt-2">
+              <label class="form-label" for="validationCustom01"> Mật khẩu</label> <span
+                class="text-danger">*</span>
+              <input
+                  id="validationCustom01"
+                  v-model="modelKySo.password"
+                  type="password"
+                  class="form-control"
+              />
+            </div>
+            <div class="col-md-12 mt-2">
+              <label class="form-label" for="validationCustom01"> Nội dung</label> <span
+                class="text-danger">*</span>
+              <textarea
+                  id="validationCustom01"
+                  v-model="modelKySo.content"
+                  type="text"
+                  class="form-control"
+              />
+            </div>
+          </div>
+        </b-modal>
       </div>
     </div>
   </Layout>

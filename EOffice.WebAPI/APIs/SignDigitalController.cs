@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using EResultResponse = EOffice.WebAPI.Helpers.EResultResponse;
 
 namespace EOffice.WebAPI.APIs
@@ -78,14 +79,25 @@ namespace EOffice.WebAPI.APIs
                 
                  var result1 =  _fileService.SaveFileAsync(filePath, fileName, newFileName,  fileName.Split(".")[1], result.Content.ToString().Length);
 
-                Task.WhenAll(result1);
+               Task.WhenAll(result1);
                  var vanBanDi = _context.VanBanDi.Find(x => x.Id == vanBanDiId).FirstOrDefault();
                  if (vanBanDi != default)
                  {
                      if (vanBanDi.FilePDF == default)
                          vanBanDi.FilePDF = new List<FileShort>();
                      vanBanDi.FilePDF.Add(new FileShort(){Ext = result1.Result.Ext,FileId = result1.Result.Id, FileName = result1.Result.FileName,});
-                     
+                     var newTrangThai = _context.TrangThai.AsQueryable()
+                         .Where(x => x.Code.ToUpper() == DefaultRoleCode.HOAN_THANH_KY_SO.ToUpper()).Select(x =>
+                             new TrangThaiShort()
+                             {
+                                 Id = x.Id,
+                                 Code = x.Code,
+                                 Ten = x.Ten,
+                                 BgColor = x.BgColor,
+                                 Color = x.BgColor
+                             }).FirstOrDefault();
+                     vanBanDi.TrangThai = newTrangThai;
+                     vanBanDi.Ower = vanBanDi.GetOwerWithRole(DefaultRoleCode.VAN_THU_TRUONG);
                      ReplaceOneResult actionResult
                          =  _context.VanBanDi.ReplaceOne(x => x.Id.Equals(vanBanDi.Id)
                              , vanBanDi
