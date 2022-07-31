@@ -391,7 +391,7 @@ export default {
                     <span class="d-none d-sm-inline-block">Thông tin tài khoản</span>
                   </template>
                   <div class="text-end">
-                    <b-button type="submit" variant="success" class=" align-middle me-2" style="width: 80px" size="sm"
+                    <b-button type="submit" variant="primary" class=" align-middle me-2" style="width: 80px" size="sm"
                               @click="handleSubmit"
                     >
                       Cập nhật
@@ -447,10 +447,10 @@ export default {
                           </div>
                         </div>
                       </div>
-                      <div class="col-12">
+                      <div class="col-6">
                         <div class="mb-3">
                           <label class="text-left">Số điện thoại</label>
-                          <input type="hidden" v-model="model.id"/>
+
                           <input
                               id="phoneNumber"
                               v-model="model.phoneNumber"
@@ -461,10 +461,9 @@ export default {
                           />
                         </div>
                       </div>
-                      <div class="col-12">
+                      <div class="col-6">
                         <div class="mb-3">
                           <label class="text-left">Email</label>
-                          <input type="hidden" v-model="model.id"/>
                           <input
                               id="email"
                               v-model="model.email"
@@ -472,6 +471,31 @@ export default {
                               pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
                               class="form-control"
                               placeholder="Nhập email"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="mb-3">
+                          <label class="text-left">Tài khoản ký số</label>
+
+                          <input
+                              id="phoneNumber"
+                              v-model="model.userNameKySo"
+                              type="text"
+                              class="form-control"
+                              placeholder="Nhập tài khoản ký số"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="mb-3">
+                          <label class="text-left">Mật khẩu ký số</label>
+                          <input
+                              id="email"
+                              v-model="model.passwordKySo"
+                              type="password"
+                              class="form-control"
+                              placeholder="Nhập mật khẩu ký số"
                           />
                         </div>
                       </div>

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using EOffice.WebAPI.Data;
 using EOffice.WebAPI.Exceptions;
@@ -86,16 +87,16 @@ namespace EOffice.WebAPI.APIs
                      if (vanBanDi.FilePDF == default)
                          vanBanDi.FilePDF = new List<FileShort>();
                      vanBanDi.FilePDF.Add(new FileShort(){Ext = result1.Result.Ext,FileId = result1.Result.Id, FileName = result1.Result.FileName,});
-                     var newTrangThai = _context.TrangThai.AsQueryable()
-                         .Where(x => x.Code.ToUpper() == DefaultRoleCode.HOAN_THANH_KY_SO.ToUpper()).Select(x =>
-                             new TrangThaiShort()
-                             {
-                                 Id = x.Id,
-                                 Code = x.Code,
-                                 Ten = x.Ten,
-                                 BgColor = x.BgColor,
-                                 Color = x.BgColor
-                             }).FirstOrDefault();
+                     var newTrangThai = IAsyncCursorSourceExtensions.FirstOrDefault(_context.TrangThai.AsQueryable()
+                             .Where(x => x.Code.ToUpper() == DefaultRoleCode.HOAN_THANH_KY_SO.ToUpper()).Select(x =>
+                                 new TrangThaiShort()
+                                 {
+                                     Id = x.Id,
+                                     Code = x.Code,
+                                     Ten = x.Ten,
+                                     BgColor = x.BgColor,
+                                     Color = x.BgColor
+                                 }));
                      vanBanDi.TrangThai = newTrangThai;
                      vanBanDi.Ower = vanBanDi.GetOwerWithRole(DefaultRoleCode.VAN_THU_TRUONG);
                      ReplaceOneResult actionResult
@@ -111,8 +112,152 @@ namespace EOffice.WebAPI.APIs
             }
             return result;
         }
+[HttpPost]
+[Route("ThietLapKySo")]
+        public ResponseMessage ThietLapKySo(IFormCollection data, IFormFile fileUpload)
+        {
+            try
+            {
+                string fileName = data["fileName"];
+                string path = data["path"];
+                string vanBanDiId = data["vanBanDiId"];
+                byte[] fileInput = null;
+                var detectIdFile = path.Split("/");
+                var idFile = detectIdFile[detectIdFile.Length - 1];
+                var file = _context.Files.Find(x => x.Id == idFile).FirstOrDefault();
+                if (file == default)
+                {
+                    return new ResponseMessage()
+                    {
+                        ResponseID = Guid.NewGuid(),
+                        ResponseCode = 0,
+                        ResponseContent = "Thiết lập ký số không thành công"
+                    };
+                }
 
+                var uploadDirecotroy = "files/";
+                var uploadPath = Path.Combine(_hostingEnvironment.ContentRootPath, uploadDirecotroy);
 
+                if (!Directory.Exists(uploadPath))
+                    Directory.CreateDirectory(uploadPath);
+              
+                var dateTime = DateTime.UtcNow.ToString("yyyy_MM_dd_HH_mm_ss");
+                var path1 = Path.Combine(_hostingEnvironment.ContentRootPath, uploadDirecotroy, dateTime);
+                if (!Directory.Exists(path1))
+                {
+                    Directory.CreateDirectory(path1);
+                }
+                var newFileName = Guid.NewGuid().ToString() +"." + fileName.Split(".")[1];
+                var relativePath = Path.Combine("", dateTime, newFileName);
+                var filePath = Path.Combine(uploadDirecotroy, relativePath);
+
+                using (System.IO.FileStream stream = System.IO.File.Create(filePath ))
+                {
+                    fileUpload.CopyTo(stream);
+                }
+
+                file.SaveName = newFileName;
+                file.Path = filePath;
+                file.FileName = $"[da_thiet_lap_chu_ky]{fileName}";
+                ReplaceOneResult actionResult
+                    =  _context.Files.ReplaceOne(x => x.Id.Equals(file.Id)
+                        , file
+                        , new ReplaceOptions { IsUpsert = true });
+                var result2 = actionResult.IsAcknowledged && actionResult.ModifiedCount > 0;
+                if (!result2)
+                {
+                    return new ResponseMessage()
+                    {
+                        ResponseID = Guid.NewGuid(),
+                        ResponseCode = 0,
+                        ResponseContent = "Thiết lập ký số không thành công"
+                    }; 
+                }
+
+                var vanBanDi = _context.VanBanDi.Find(x => x.Id == vanBanDiId).FirstOrDefault();
+                if (vanBanDi != default)
+                {
+                    var indexFile = -1;
+                    if (vanBanDi.FilePDF != null)
+                    {
+                         indexFile = vanBanDi.FilePDF.FindIndex(x => x.FileId == file.Id);
+                        if (indexFile != -1)
+                        {
+                            vanBanDi.FilePDF[indexFile] = new FileShort()
+                            {
+                                FileId = file.Id,
+                                FileName = file.FileName,
+                                Ext = file.Ext
+                            };
+                        }
+                    }
+                    else
+                    {
+                        if (vanBanDi.File != null)
+                        {
+                            indexFile = vanBanDi.File.FindIndex(x => x.FileId == file.Id);
+                            if (indexFile != -1)
+                            {
+                                vanBanDi.File[indexFile] = new FileShort()
+                                {
+                                    FileId = file.Id,
+                                    FileName = file.FileName,
+                                    Ext = file.Ext
+                                };
+                            }
+                        }
+
+                    }
+
+                    if (indexFile != -1)
+                    {
+                        var newTrangThai = IAsyncCursorSourceExtensions.FirstOrDefault(_context.TrangThai.AsQueryable()
+                            .Where(x => x.Code.ToUpper() == DefaultRoleCode.KY_SO_PHAP_LY_THIETLAP.ToUpper()).Select(x =>
+                                new TrangThaiShort()
+                                {
+                                    Id = x.Id,
+                                    Code = x.Code,
+                                    Ten = x.Ten,
+                                    BgColor = x.BgColor,
+                                    Color = x.BgColor
+                                }));
+                        vanBanDi.TrangThai = newTrangThai;
+                        vanBanDi.Ower = vanBanDi.GetOwerWithRole(DefaultRoleCode.HIEU_TRUONG);
+                        ReplaceOneResult actionResult1
+                            =  _context.VanBanDi.ReplaceOne(x => x.Id.Equals(vanBanDi.Id)
+                                , vanBanDi
+                                , new ReplaceOptions { IsUpsert = true });
+                        var result3 = actionResult1.IsAcknowledged && actionResult1.ModifiedCount > 0;
+                        if (!result3)
+                        {
+                            return new ResponseMessage()
+                            {
+                                ResponseID = Guid.NewGuid(),
+                                ResponseCode = 0,
+                                ResponseContent = "Thiết lập ký số không thành công"
+                            };
+                        }
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return new ResponseMessage()
+                {
+                    ResponseID = Guid.NewGuid(),
+                    ResponseCode = 0,
+                    ResponseContent = $"Thiết lập ký số không thành công, {e.Message}"
+                };
+            }
+            return new ResponseMessage()
+            {
+                ResponseID = Guid.NewGuid(),
+                ResponseCode = 0,
+                ResponseContent = $"Thiết lập ký số không thành công"
+            };
+        }
 
 
         [HttpPost]

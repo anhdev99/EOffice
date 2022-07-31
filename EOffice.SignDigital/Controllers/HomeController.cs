@@ -30,6 +30,15 @@ namespace EOffice.SignDigital.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public IActionResult ThietLapKySo(string FileName, string Path, string VanBanDiId)
+        {
+            var model = new Models.SignDigital();
+            model.FileName = FileName;
+            model.Path = Path;
+            model.VanBanDiId = VanBanDiId;
+            return View(model);
+        }
         public IActionResult Privacy()
         {
             return View();

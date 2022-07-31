@@ -437,11 +437,7 @@ namespace EOffice.WebAPI.Services
             string sortBy = nameof(VanBanDi.ModifiedAt);
             result.TotalRows = await _collection.CountDocumentsAsync(filter);
             result.Data = await _collection.Find(filter)
-                .Sort(param.SortDesc
-                    ? Builders<VanBanDi>
-                        .Sort.Descending(sortBy)
-                    : Builders<VanBanDi>
-                        .Sort.Ascending(sortBy))
+                .SortByDescending(x => x.ModifiedAt)
                 .Skip(param.Skip)
                 .Limit(param.Limit)
                 .ToListAsync();

@@ -41,6 +41,8 @@ namespace EOffice.WebAPI.Helpers
         {
             this.Id = model.Id;
             this.UserName = model.UserName;
+            this.UserNameKySo = model.UserNameKySo;
+            this.PasswordKySo = model.PasswordKySo;
             this.FullName = model.FullName;
             this.Phone = model.PhoneNumber;
             this.Email = model.Email;
@@ -53,6 +55,8 @@ namespace EOffice.WebAPI.Helpers
         }
         public string Id { get; set; }
         public string UserName { get; set; }
+        public string UserNameKySo { get; set; }
+        public string PasswordKySo { get; set; }
         public string FullName { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }

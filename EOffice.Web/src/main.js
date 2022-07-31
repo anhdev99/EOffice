@@ -25,6 +25,7 @@ import Sparkline from 'vue-sparklines'
 
 import { initFirebaseBackend } from './authUtils'
 import { configureFakeBackend } from './helpers/fake-backend';
+import ThietLapKySo from "@/pages/kyso/thiet-lap-ky-so";
 
 const firebaseConfig = {
   apiKey: process.env.VUE_APP_apiKey,
@@ -48,7 +49,7 @@ Vue.config.productionTip = false
 const options = {
   // You can set your default options here
 };
-
+Vue.component("ThietLapKySo", ThietLapKySo)
 Vue.use(Toast, options);
 Vue.use(BootstrapVue);
 Vue.use(VJstree)

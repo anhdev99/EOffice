@@ -14,7 +14,9 @@ const toJson = (item) => {
         permissions: item.permissions,
         menu: item.menu,
         kySo: item.kySo,
-        chucVu: item.chucVu
+        chucVu: item.chucVu,
+        userNameKySo: item.userNameKySo,
+        passwordKySo: item.passwordKySo
     }
 }
 
@@ -34,7 +36,9 @@ const fromJson = (item) => {
         permissions: item.permissions,
         menu: item.menu,
         kySo: item.kySo,
-        chucVu: item.chucVu
+        chucVu: item.chucVu,
+        userNameKySo: item.userNameKySo,
+        passwordKySo: item.passwordKySo
     }
 }
 
@@ -52,7 +56,9 @@ const baseJson = () => {
         kySo: null,
         donVi: {id: null, ten: null},
         roles: null,
-        chucVu: null
+        chucVu: null,
+        userNameKySo: null,
+        passwordKySo: null
     }
 }
 

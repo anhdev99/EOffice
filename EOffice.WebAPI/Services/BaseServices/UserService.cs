@@ -304,6 +304,8 @@ namespace EOffice.WebAPI.Services
             entity.Email = model.Email;
             entity.Avatar = model.Avatar;
             entity.KySo = model.KySo;
+            entity.UserNameKySo = model.UserNameKySo;
+            entity.PasswordKySo = model.PasswordKySo;
 
             var result = await BaseMongoDb.UpdateAsync(entity);
             if (!result.Success)

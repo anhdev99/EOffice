@@ -23,6 +23,7 @@ import {trangThaiModel} from "@/models/trangThaiModel";
 import {CURRENT_USER} from "@/helpers/currentUser";
 import Treeselect from "@riophae/vue-treeselect";
 import moment from "moment";
+import ThietLapKySo from "@/pages/kyso/thiet-lap-ky-so";
 
 /**
  * Advanced table component
@@ -196,7 +197,8 @@ export default {
       showButtonSave: false,
       showButtonKySoCurrent: false,
       showModelAcceptKySo: false,
-      showModalKySoPhapLy: false
+      showModalKySoPhapLy: false,
+      showModalThietLapKySoPhapLy: false
     };
   },
   validations: {
@@ -757,7 +759,8 @@ export default {
         });
       }
     },
-    async handleKySoPhapLy(id) {
+    async handleKySoPhapLy(id, value) {
+      console.log("KySoPhapLy")
       await this.$store.dispatch("vanBanDiStore/getById", id).then((res) => {
         if (res.resultCode == "SUCCESS") {
           console.log()
@@ -770,8 +773,12 @@ export default {
             this.modelKySo.path =  this.urlView + res.data.file[0].fileId;
           }
 
+          if(value){
+            this.showModalThietLapKySoPhapLy = true;
+            localStorage.setItem("kysophaply", JSON.stringify( this.modelKySo));
+          }else this.showModalKySoPhapLy = true;
+          console.log( this.modelKySo, res.data)
 
-          this.showModalKySoPhapLy = true;
         } else {
           // this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
         }
@@ -2413,11 +2420,20 @@ export default {
             <h5 style="min-width: 200px"> Văn bản đi</h5>
             <div style="width: 100%; display: flex; justify-content: flex-end" class="text-end">
               <div v-if="optionsTrangThai && optionsTrangThai.length">
-                <b-button v-for="(value, index) in optionsTrangThai" :key="index" type="button" :class="'btn-' + value.bgColor" class="ms-1"  style="min-width: 80px;" size="sm"
-                          @click="handleChuyenTrangThaiVanBan(value)"
-                >
-                  {{ value.ten }}
-                </b-button>
+                <div  v-for="(value, index) in optionsTrangThai" :key="index">
+
+                  <b-button v-if="value.code == 'TLKSPL'" type="button" :class="'btn-' + value.bgColor" class="ms-1"  style="min-width: 80px;" size="sm"
+                            @click="handleKySoPhapLy(model.id, true)"
+                  >
+                    {{ value.ten }}
+                  </b-button>
+                  <b-button v-else type="button" :class="'btn-' + value.bgColor" class="ms-1"  style="min-width: 80px;" size="sm"
+                            @click="handleChuyenTrangThaiVanBan(value)"
+                  >
+                    {{ value.ten }}
+                  </b-button>
+                </div>
+
               </div>
 
               <b-button variant="light"  class="ms-1" size="sm" style="width: 80px" @click="showCheckVanBanModal = false">
@@ -2674,6 +2690,49 @@ export default {
               />
             </div>
           </div>
+        </b-modal>
+
+        <!--       Thiết lập Ký số pháp lý-->
+        <b-modal
+            v-model="showModalThietLapKySoPhapLy"
+            centered
+            title=" Ký số pháp lý"
+            title-class="font-18"
+            no-close-on-backdrop
+            hide-footer
+            size="xl"
+        >
+          <template #modal-header="{ close }">
+            <!-- Emulate built in modal header close button action -->
+            <h5> Ký số pháp ký</h5>
+            <div class="text-end">
+              <b-button v-b-modal.modal-close_visit
+                        size="sm"
+                        class="btn btn-outline-info w-md"
+                        v-on:click="showModalThietLapKySoPhapLy = false"
+                        style="margin-right: 6px">
+                Đóng
+              </b-button>
+<!--              <b-button v-if="!modelKySo.reject" v-b-modal.modal-close_visit-->
+<!--                        size="sm"-->
+<!--                        variant="primary"-->
+<!--                        type="button"-->
+<!--                        class="w-md"-->
+<!--                        v-on:click="handleAssignOrRejectPhapLy"-->
+<!--              >-->
+<!--                Đồng ý-->
+<!--              </b-button>-->
+<!--              <b-button v-if="modelKySo.reject" v-b-modal.modal-close_visit-->
+<!--                        size="sm"-->
+<!--                        variant="danger"-->
+<!--                        type="button"-->
+<!--                        class="w-md"-->
+<!--                        v-on:click="handleAssignOrRejectPhapLy">-->
+<!--                Từ chối-->
+<!--              </b-button>-->
+            </div>
+          </template>
+          <ThietLapKySo ></ThietLapKySo>
         </b-modal>
       </div>
     </div>

@@ -28,6 +28,7 @@ namespace EOffice.WebAPI.Helpers
         public const string DA_THIET_LAP_KY_SO = "DTLKS";
         public const string DA_KY_SO_DUYET = "dksxd";
         public const string HOAN_THANH_KY_SO = "htks";
+        public const string KY_SO_PHAP_LY_THIETLAP = "kpl";
 
         public static List<string> TrangThaiCapTruong = new List<string>() { "KPL",  "DVBPL" };
         public static List<string> TrangThaiGhiNhanThongTin = new List<string>() {THU_KY_HIEU_TRUONG_TU_CHOI_DUYET,VAN_THU_TRUONG_TU_CHOI_DUYET,DUYET_VAN_BAN_PHAP_LY, TRINH_THU_KY_HIEU_TRUONG,  KY_SO_PHAP_LY , TU_CHOI, DA_DUYET, HIEU_TRUONG_DA_DUYET, HIEU_TRUONG_DA_KY, HIEU_TRUONG_TU_CHOI_DUYET, HIEU_TRUONG_TU_CHOI_KY};
