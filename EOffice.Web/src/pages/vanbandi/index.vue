@@ -98,39 +98,39 @@ export default {
           key: 'STT',
           label: 'STT',
           thStyle: {width: '30px', minWidth: '30px'},
-          class: "text-center",
-          thClass: 'hidden-sortable',
+          class: "text-center content-capso",
+          thClass: 'hidden-sortable title-capso',
         },
         {
           key: "soLuuCV",
           label: "Số lưu CV",
           thStyle: {width: '150px', minWidth: '100px'},
-          class: "px-1",
-          thClass: 'hidden-sortable',
+          class: "px-1 content-capso",
+          thClass: 'hidden-sortable title-capso',
           sortable: false ,
         },
         {
           key: "soVBDi",
           label: "Số CV đi",
           thStyle: {width: '150px', minWidth: '100px', maxWidth: '150px'},
-          class: "px-1",
-          thClass: 'hidden-sortable',
+          class: "px-1 content-capso",
+          thClass: 'hidden-sortable title-capso',
           sortable: false ,
         },
         {
           key: "trichYeu",
           label: "Trích yếu",
           thStyle: {width: 'auto'},
-          class: "px-1",
-          thClass: 'hidden-sortable',
+          class: "px-1 content-capso",
+          thClass: 'hidden-sortable title-capso',
           sortable: false ,
         },
         {
           key: "loaiVanBan",
           label: "Loại văn bản",
           thStyle: {width: '150px', minWidth: '100px'},
-          class: "text-center",
-          thClass: 'hidden-sortable',
+          class: "text-center content-capso",
+          thClass: 'hidden-sortable title-capso',
           sortable: false ,
 
         },
@@ -139,7 +139,7 @@ export default {
           label: "Trạng thái",
           thStyle: {width: '150px', minWidth: '100px'},
           class: "text-center",
-          thClass: 'hidden-sortable',
+          thClass: 'hidden-sortable title-capso',
           sortable: false ,
         },
         {
@@ -147,21 +147,22 @@ export default {
           label: "Ngày nhập",
           thStyle: {width: '100px', minWidth: '100px'},
           class: "text-center",
-          thClass: 'hidden-sortable',
+          thClass: 'hidden-sortable title-capso',
         },
         {
           key: 'chuyenTrangThai',
           label: '',
           thStyle: {width: '110px', minWidth: '110px'},
-          class: "text-center",
+          class: "text-center ",
           sortable: false ,
-          thClass: 'hidden-sortable',
+          thClass: 'hidden-sortable title-capso',
         },
         {
           key: 'process',
           label: '',
-          thStyle: {width: '140px', minWidth: '100px'},
-          class: "text-center",
+          thStyle: {width: '80px', minWidth: '100px'},
+          class: "text-center ",
+          thClass: 'hidden-sortable title-capso',
           sortable: false ,
         }
       ],
@@ -2750,7 +2751,7 @@ export default {
 </template>
 <style>
 .title-capso{
-  font-weight: bold; color: #00568C; margin-right: 10px;
+  font-weight: bold; color: #00568C;
 
 }
 .content-capso{
