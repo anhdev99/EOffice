@@ -209,10 +209,11 @@ export default {
                         {{ data.index + ((currentPage - 1) * perPage) + 1 }}
                       </template>
                       <template v-slot:cell(read)="data">
-                        <div v-if="data.item.read">Đã đọc</div>
-                        <div v-else>Chưa đọc</div>
+                        <span class="badge bg-success" v-if="data.item.read">Đã đọc</span>
+                        <span class="badge bg-warning" v-else>Chưa đọc</span>
                       </template>
                     </b-table>
+
                     <template v-if="isBusy">
                       <div align="center">Đang tải dữ liệu</div>
                     </template>
