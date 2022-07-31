@@ -16,13 +16,13 @@ import vue2Dropzone from "vue2-dropzone";
 
 export default {
   page: {
-    title: "Hộp thư",
+    title: "Thư đã gửi",
     meta: [{name: "description", content: appConfig.description}],
   },
   components: {Layout, PageHeader, ckeditor: CKEditor.component, Treeselect, vueDropzone: vue2Dropzone,},
   data() {
     return {
-      title: "Hộp thư",
+      title: "Thư đã gửi",
       items: [
         {
           text: "Hộp thư",
@@ -30,7 +30,7 @@ export default {
           // active: true,
         },
         {
-          text: "Danh sách",
+          text: "Thư đã gửi",
           active: true,
         }
       ],
