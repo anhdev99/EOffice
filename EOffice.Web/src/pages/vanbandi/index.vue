@@ -146,7 +146,7 @@ export default {
           key: "ngayNhap",
           label: "Ngày nhập",
           thStyle: {width: '100px', minWidth: '100px'},
-          class: "text-center",
+          class: "text-center content-capso",
           thClass: 'hidden-sortable title-capso',
         },
         {

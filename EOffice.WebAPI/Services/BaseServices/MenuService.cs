@@ -169,7 +169,7 @@ namespace EOffice.WebAPI.Services
 
         public async Task<List<MenuTreeVM>> GetTree()
         {
-            var listDonVi = await _context.Menu.Find(_ => _.IsDeleted != true).SortBy(donVi => donVi.Level).ToListAsync();
+            var listDonVi = await _context.Menu.Find(_ => _.IsDeleted != true).SortByDescending(donVi => donVi.Level).ToListAsync();
             var parents = listDonVi.Where(x => x.ParentId == null).ToList();
             List<MenuTreeVM> list = new List<MenuTreeVM>();
             foreach (var item in parents)
@@ -182,7 +182,7 @@ namespace EOffice.WebAPI.Services
         }
         public async Task<List<MenuTreeVM>> GetTreeList()
         {
-            var listDonVi = await _context.Menu.Find(_ => _.IsDeleted != true).SortBy(donVi => donVi.Level).ToListAsync();
+            var listDonVi = await _context.Menu.Find(_ => _.IsDeleted != true).SortByDescending(donVi => donVi.Level).ToListAsync();
             var parents = listDonVi.Where(x => x.ParentId == null).ToList();
             List<MenuTreeVM> list = new List<MenuTreeVM>();
             foreach (var item in parents)
@@ -231,7 +231,7 @@ namespace EOffice.WebAPI.Services
             var listTotalMenu = listMenu.Select(x => x.Id).ToList();
             var parentIds = listMenu.Select(x => x.ParentId).ToList();
             listTotalMenu.AddRange(parentIds);
-            var listDonVi = await _context.Menu.Find(_ => listTotalMenu.Contains(_.Id) && _.IsDeleted != true).SortBy(donVi => donVi.Level).ToListAsync();
+            var listDonVi = await _context.Menu.Find(_ => listTotalMenu.Contains(_.Id) && _.IsDeleted != true).SortByDescending(donVi => donVi.Level).ToListAsync();
             var parents = listDonVi.Where(x => x.ParentId == null).ToList();
             List<NavMenuVM> list = new List<NavMenuVM>();
             foreach (var item in parents)
