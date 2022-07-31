@@ -135,12 +135,14 @@ export default {
         }
       ],
       optionsLoaiVanBan: [],
-      optionsDonVi:[],
-      optionsLinhVuc:[],
+      optionsDonVi: [],
+      optionsTreeDonVi: [],
+      optionsKhoiCoQuan: [],
+      optionsLinhVuc: [],
       optionsUser: [],
-      optionsHinhThucNhan:[],
-      optionsMucDo:[],
-      optionsTrangThai:[],
+      optionsHinhThucNhan: [],
+      optionsMucDo: [],
+      optionsTrangThai: [],
       editor: ClassicEditor,
       editorConfig: {
         height: '200px'
@@ -182,7 +184,7 @@ export default {
   },
   watch: {
     showModalPhanCong() {
-      if(this.showModalPhanCong == false){
+      if (this.showModalPhanCong == false) {
         this.phanCong = [];
       }
     }
@@ -195,6 +197,8 @@ export default {
     this.getLinhVuc();
     this.getHinhThuc();
     this.getMucDo();
+    this.getKhoiCoQuan();
+    this.getTreeDonVi();
   },
   // mounted() {
   //   // Set the initial number of items
@@ -265,6 +269,7 @@ export default {
     },
     async handleButPhe(e) {
       e.preventDefault();
+      console.log("Handle but phe", this.modelButPhe);
       await this.$store.dispatch("vanBanDenStore/butPhe", this.modelButPhe).then((res) => {
         if (res.resultCode === 'SUCCESS') {
           this.showModalButPhe = false;
@@ -286,7 +291,7 @@ export default {
       });
     },
     handleShowDeleteModal(id) {
-      this.model.id= id;
+      this.model.id = id;
       this.showDeleteModal = true;
     },
     async handleDelete() {
@@ -295,7 +300,7 @@ export default {
           if (res.resultCode === 'SUCCESS') {
             this.showDeleteModal = false;
             this.model = vanBanDenModel.baseJson();
-           this.$refs.tblList.refresh();
+            this.$refs.tblList.refresh();
           }
           this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
         });
@@ -310,13 +315,16 @@ export default {
       this.showModalPhanCong = true;
     },
     async handleShowButPhe(id) {
-      this.modelButPhe.vanBanDenId = id;
+
       await this.$store.dispatch("vanBanDenStore/getById", id).then(resp => {
         if (resp.resultCode == "SUCCESS") {
           this.loading = false
-          this.model =  resp.data;
+          this.model = resp.data;
           this.showModalButPhe = true;
-          this.modelButPhe = this.model.butPhe;
+          if(this.model.butPhe){
+            this.modelButPhe = this.model.butPhe;
+          }
+          this.modelButPhe.vanBanDenId = id;
           console.log("data model but phe", this.model);
           return [];
         }
@@ -332,7 +340,7 @@ export default {
         }
       });
     },
-    handleCreate(){
+    handleCreate() {
       this.model = vanBanDenModel.baseJson();
       this.showModal = true;
     },
@@ -353,11 +361,42 @@ export default {
     },
     async getDonVi() {
       try {
-        await this.$store.dispatch("donViStore/getDonViCha").then(resp => {
+        await this.$store.dispatch("donViStore/get").then(resp => {
           if (resp.resultCode == "SUCCESS") {
             let items = resp.data
             this.loading = false
             this.optionsDonVi = items;
+          }
+          return [];
+        });
+      } finally {
+        this.loading = false
+      }
+    },
+    async getTreeDonVi() {
+      try {
+        await this.$store.dispatch("donViStore/getDonViCha").then(resp => {
+          if (resp.resultCode == "SUCCESS") {
+            let items = resp.data
+            this.loading = false
+            this.optionsTreeDonVi = items;
+            console.log("optiontreedonvi", this.optionsTreeDonVi);
+          }
+          return [];
+        });
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async getKhoiCoQuan() {
+      try {
+        await this.$store.dispatch("khoiCoQuanStore/get").then(resp => {
+          if (resp.resultCode == "SUCCESS") {
+            let items = resp.data
+            this.loading = false
+            this.optionsKhoiCoQuan = items;
+            console.log("Khoi co quan gui", this.optionsKhoiCoQuan);
           }
           return [];
         });
@@ -493,6 +532,24 @@ export default {
         }
       });
     },
+    formatDonVi(node, instanceId) {
+      console.log("node1", node);
+      let index = this.optionsTreeDonVi?.findIndex(x => x.id == node.id);
+      if (index == -1 || index == undefined) {
+        if (!this.modelButPhe.donViPhoiHop) {
+          this.modelButPhe.donViPhoiHop = [];
+        }
+        this.modelButPhe.donViPhoiHop.push({id: node.id, ten: node.label, code: node.code});
+
+      }
+    },
+    formatRemoveDonVi(node, instanceId) {
+      console.log("node2", node);
+      let value = this.optionsTreeDonVi?.find(x => x.id == node.id);
+      if (value != null) {
+        this.modelButPhe.donViPhoiHop = this.optionsTreeDonVi.children.filter(x => x.id != value.id);
+      }
+    },
     myProvider(ctx) {
       const params = {
         start: ctx.currentPage,
@@ -516,52 +573,7 @@ export default {
         this.loading = false
       }
     },
-    formatRemoveKhoiCoQuans(node, instanceId) {
-      let value = this.model.coQuanGiaiQuyet?.find(x => x.id == node.id);
-      if (value != null) {
-        this.model.coQuanGiaiQuyet = this.model.coQuanGiaiQuyet.filter(x => x.id != value.id);
-      }
-    },
-    formatKhoiCoQuans(node, instanceId) {
-      let index = this.model.coQuanGiaiQuyet?.findIndex(x => x.id == node.id);
-      if (index == -1 || index == undefined) {
-        if (!this.model.coQuanGiaiQuyet) {
-          this.model.coQuanGiaiQuyet = [];
-        }
-        this.model.coQuanGiaiQuyet.push({id: node.id, ten: node.label});
-      }
-    },
-    formatRemoveCoQuans(node, instanceId) {
-      let value = this.model.coQuanGiaiQuyet?.find(x => x.id == node.id);
-      if (value != null) {
-        this.model.coQuanGiaiQuyet = this.model.coQuanGiaiQuyet.filter(x => x.id != value.id);
-      }
-    },
-    formatCoQuans(node, instanceId) {
-      let index = this.model.coQuanGiaiQuyet?.findIndex(x => x.id == node.id);
-      if (index == -1 || index == undefined) {
-        if (!this.model.coQuanGiaiQuyet) {
-          this.model.coQuanGiaiQuyet = [];
-        }
-        this.model.coQuanGiaiQuyet.push({id: node.id, ten: node.label});
-      }
-    },
-    formatRemoveDonViXuLy(node, instanceId) {
-      let value = this.modelButPhe.donViPhoiHop?.find(x => x.id == node.id);
-      if (value != null) {
-        this.modelButPhe.donViPhoiHop = this.modelButPhe.donViPhoiHop.filter(x => x.id != value.id);
-      }
-    },
-    formatDonViXuLy(node, instanceId) {
-      let index = this.modelButPhe.donViPhoiHop?.findIndex(x => x.id == node.id);
-      if (index == -1 || index == undefined) {
-        if (!this.modelButPhe.donViPhoiHop) {
-          this.modelButPhe.donViPhoiHop = [];
-        }
-        this.modelButPhe.donViPhoiHop.push({id: node.id, ten: node.label});
-      }
-    },
-    },
+  },
 };
 </script>
 
@@ -709,8 +721,9 @@ export default {
                                              value-type="format"
                                 >
                                   <div slot="input">
-                                    <input  v-model="model.ngayBanHanh"
-                                            v-mask="'##/##/####'" type="text" class="form-control" placeholder="Nhập ngày ban hành"/>
+                                    <input v-model="model.ngayBanHanh"
+                                           v-mask="'##/##/####'" type="text" class="form-control"
+                                           placeholder="Nhập ngày ban hành"/>
                                   </div>
                                 </date-picker>
                               </div>
@@ -724,10 +737,33 @@ export default {
                                              value-type="format"
                                 >
                                   <div slot="input">
-                                    <input  v-model="model.ngayNhan"
-                                            v-mask="'##/##/####'" type="text" class="form-control" placeholder="Nhập ngày nhận"/>
+                                    <input v-model="model.ngayNhan"
+                                           v-mask="'##/##/####'" type="text" class="form-control"
+                                           placeholder="Nhập ngày nhận"/>
                                   </div>
                                 </date-picker>
+                              </div>
+                            </div>
+                            <div v-if="model.id">
+                              <div v-if="model.file != null  && model.file.length > 0" class="col-md-12">
+                                <label for="">Danh sách đã ký (Nhấn vào để tải xuống)</label>
+                                <div
+                                    class=" p-1"
+                                >
+                                  <template>
+                                    <div v-for="(file, index) in model.file" :key="index">
+                                      <a
+                                          :href="`${apiUrl}files/view/${file.fileId}`"
+                                          class=" fw-medium"
+                                      ><i
+                                          :class="`mdi font-size-16 align-middle me-2`"
+                                      ></i>
+                                        {{ index + 1 }}: {{ file.fileName }}</a
+                                      >
+                                    </div>
+                                  </template>
+                                </div>
+
                               </div>
                             </div>
 
@@ -767,8 +803,9 @@ export default {
                                              value-type="format"
                                 >
                                   <div slot="input">
-                                    <input  v-model="model.ngayKy"
-                                            v-mask="'##/##/####'" type="text" class="form-control" placeholder="Nhập ngày ký"/>
+                                    <input v-model="model.ngayKy"
+                                           v-mask="'##/##/####'" type="text" class="form-control"
+                                           placeholder="Nhập ngày ký"/>
                                   </div>
                                 </date-picker>
                               </div>
@@ -798,8 +835,9 @@ export default {
                                              value-type="format"
                                 >
                                   <div slot="input">
-                                    <input  v-model="model.hanXuLy"
-                                            v-mask="'##/##/####'" type="text" class="form-control" placeholder="Nhập hạn xử lý"/>
+                                    <input v-model="model.hanXuLy"
+                                           v-mask="'##/##/####'" type="text" class="form-control"
+                                           placeholder="Nhập hạn xử lý"/>
                                   </div>
                                 </date-picker>
                               </div>
@@ -824,57 +862,32 @@ export default {
                             <div class="col-md-12">
                               <div class="mb-2">
                                 <label class="form-label" for="validationCustom01">Khối cơ quan gửi</label>
-<!--                                <treeselect-->
-<!--                                    v-model="model.khoiCoQuanGui"-->
-<!--                                    :options="optionsDonVi"-->
-<!--                                    placeholder="Chọn khối cơ quan gửi"-->
-<!--                                    value-format="object"-->
-<!--                                />-->
-<!--                                <treeselect-value :value="model.khoiCoQuanGui"/>-->
-                                <treeselect
-                                    v-on:select="formatKhoiCoQuans"
-                                    v-on:deselect="formatRemoveKhoiCoQuans"
-                                    :options="optionsDonVi"
-                                    :value="model.khoiCoQuanGui"
-                                    :searchable="true"
-                                    :show-count="true"
-                                    :default-expand-level="1"
-                                    :normalizer="normalizer"
-                                    value-format="object"
-                                >
-
-                                  <label slot="option-label"
-                                         slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }"
-                                         :class="labelClassName">
-                                    {{ node.label }}
-                                    <span v-if="shouldShowCount" :class="countClassName">({{ count }})</span>
-                                  </label>
-                                </treeselect>
+                                <multiselect
+                                    v-model="model.khoiCoQuanGui"
+                                    :options="optionsKhoiCoQuan"
+                                    track-by="id"
+                                    label="ten"
+                                    placeholder="Chọn trạng thái"
+                                    deselect-label="Nhấn để xoá"
+                                    selectLabel="Nhấn enter để chọn"
+                                    selectedLabel="Đã chọn"
+                                ></multiselect>
                               </div>
                             </div>
                             <!--                            Cơ quan gửi-->
                             <div class="col-md-12">
                               <div class="mb-2">
                                 <label class="form-label" for="validationCustom01">Cơ quan gửi</label>
-                                <treeselect
-                                    v-on:select="formatCoQuans"
-                                    v-on:deselect="formatRemoveCoQuans"
+                                <multiselect
+                                    v-model="model.coQuanGui"
                                     :options="optionsDonVi"
-                                    :value="model.coQuanGui"
-                                    :searchable="true"
-                                    :show-count="true"
-                                    :default-expand-level="1"
-                                    :normalizer="normalizer"
-                                    value-format="object"
-                                >
-
-                                  <label slot="option-label"
-                                         slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }"
-                                         :class="labelClassName">
-                                    {{ node.label }}
-                                    <span v-if="shouldShowCount" :class="countClassName">({{ count }})</span>
-                                  </label>
-                                </treeselect>
+                                    track-by="id"
+                                    label="ten"
+                                    placeholder="Chọn trạng thái"
+                                    deselect-label="Nhấn để xoá"
+                                    selectLabel="Nhấn enter để chọn"
+                                    selectedLabel="Đã chọn"
+                                ></multiselect>
                               </div>
                             </div>
                             <!--                            Hình thức nhận -->
@@ -1143,12 +1156,12 @@ export default {
                   <!--                              Số lưu -->
                   <div class="me-4 d-flex align-items-baseline">
                     <label class="form-label me-2" for="validationCustom01">Số lưu CV:</label>
-                    <p class="fw-bold text-primary">{{model.soLuuCV}}</p>
+                    <p class="fw-bold text-primary">{{ model.soLuuCV }}</p>
                   </div>
                   <!--                            Số VB đến -->
                   <div class="d-flex align-items-baseline">
                     <label class="form-label me-2" for="validationCustom01">Số văn bản đến:</label>
-                    <p class="fw-bold text-primary">{{model.soVBDen}}</p>
+                    <p class="fw-bold text-primary">{{ model.soVBDen }}</p>
                   </div>
                 </div>
                 <!--                Trích yếu -->
@@ -1190,8 +1203,8 @@ export default {
                                value-type="format"
                   >
                     <div slot="input">
-                      <input  v-model="modelButPhe.ngayButPhe"
-                              v-mask="'##/##/####'" type="text" class="form-control" placeholder="Chọn ngày bút phê"/>
+                      <input v-model="modelButPhe.ngayButPhe"
+                             v-mask="'##/##/####'" type="text" class="form-control" placeholder="Chọn ngày bút phê"/>
                     </div>
                   </date-picker>
                 </div>
@@ -1258,49 +1271,50 @@ export default {
                 </div>
                 <!--                Đơn vị xử lý-->
                 <div class="mb-2">
-<!--                  <label class="form-label" for="validationCustom01">Đơn vị xử Lý</label>-->
-<!--                  <treeselect-->
-<!--                      :multiple="true"-->
-<!--                      v-model="modelButPhe.donViXuLy"-->
-<!--                      :options="optionsDonVi"-->
-<!--                      placeholder="Chọn đơn vị xử lý"-->
-<!--                      value-format="object"-->
-<!--                  />-->
-<!--                  <treeselect-value :value="model.donViXuLy"/>-->
-<!--                  <treeselect-->
-<!--                      v-on:select="formatDonViXuLy"-->
-<!--                      v-on:deselect="formatRemoveDonViXuLy"-->
-<!--                      :options="optionsDonVi"-->
-<!--                      :value="modelButPhe.donViPhoiHop"-->
-<!--                      :searchable="true"-->
-<!--                      :show-count="true"-->
-<!--                      :default-expand-level="1"-->
-<!--                      :normalizer="normalizer"-->
-<!--                      value-format="object"-->
-<!--                  >-->
+                  <!--                  <label class="form-label" for="validationCustom01">Đơn vị xử Lý</label>-->
+                  <!--                  <treeselect-->
+                  <!--                      :multiple="true"-->
+                  <!--                      v-model="modelButPhe.donViXuLy"-->
+                  <!--                      :options="optionsDonVi"-->
+                  <!--                      placeholder="Chọn đơn vị xử lý"-->
+                  <!--                      value-format="object"-->
+                  <!--                  />-->
+                  <!--                  <treeselect-value :value="model.donViXuLy"/>-->
+                  <!--                  <treeselect-->
+                  <!--                      v-on:select="formatDonViXuLy"-->
+                  <!--                      v-on:deselect="formatRemoveDonViXuLy"-->
+                  <!--                      :options="optionsDonVi"-->
+                  <!--                      :value="modelButPhe.donViPhoiHop"-->
+                  <!--                      :searchable="true"-->
+                  <!--                      :show-count="true"-->
+                  <!--                      :default-expand-level="1"-->
+                  <!--                      :normalizer="normalizer"-->
+                  <!--                      value-format="object"-->
+                  <!--                  >-->
 
-<!--                    <label slot="option-label"-->
-<!--                           slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }"-->
-<!--                           :class="labelClassName">-->
-<!--                      {{ node.label }}-->
-<!--                      <span v-if="shouldShowCount" :class="countClassName">({{ count }})</span>-->
-<!--                    </label>-->
-<!--                  </treeselect>-->
+                  <!--                    <label slot="option-label"-->
+                  <!--                           slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }"-->
+                  <!--                           :class="labelClassName">-->
+                  <!--                      {{ node.label }}-->
+                  <!--                      <span v-if="shouldShowCount" :class="countClassName">({{ count }})</span>-->
+                  <!--                    </label>-->
+                  <!--                  </treeselect>-->
                 </div>
                 <!--                Đơn vị phối hợp-->
                 <div class="mb-2">
                   <label class="form-label" for="validationCustom01"> Đơn vị phối hợp</label>
                   <treeselect
+                      v-on:select="formatDonVi"
+                      v-on:deselect="formatRemoveDonVi"
                       :multiple="true"
-                      v-on:select="formatDonViXuLy"
-                      v-on:deselect="formatRemoveDonViXuLy"
-                      :options="optionsDonVi"
+                      :options="optionsTreeDonVi"
                       :value="modelButPhe.donViPhoiHop"
                       :searchable="true"
                       :show-count="true"
                       :default-expand-level="1"
                       :normalizer="normalizer"
                       value-format="object"
+                      placeholder="Chọn đơn vị phối hợp"
                   >
 
                     <label slot="option-label"
@@ -1444,18 +1458,18 @@ export default {
                             ></multiselect>
                           </div>
                         </div>
-<!--                        <div class="col-md-12">-->
-<!--                          <div class="mb-2">-->
-<!--                            <label for="">File đính kèm</label>-->
-<!--                            <vue-dropzone-->
-<!--                                id="dropzone"-->
-<!--                                ref="myVueDropzone"-->
-<!--                                :options="dropzoneOptions"-->
-<!--                                v-on:vdropzone-removed-file="removeThisFile"-->
-<!--                                v-on:vdropzone-success="addThisFile"-->
-<!--                            ></vue-dropzone>-->
-<!--                          </div>-->
-<!--                        </div>-->
+                        <!--                        <div class="col-md-12">-->
+                        <!--                          <div class="mb-2">-->
+                        <!--                            <label for="">File đính kèm</label>-->
+                        <!--                            <vue-dropzone-->
+                        <!--                                id="dropzone"-->
+                        <!--                                ref="myVueDropzone"-->
+                        <!--                                :options="dropzoneOptions"-->
+                        <!--                                v-on:vdropzone-removed-file="removeThisFile"-->
+                        <!--                                v-on:vdropzone-success="addThisFile"-->
+                        <!--                            ></vue-dropzone>-->
+                        <!--                          </div>-->
+                        <!--                        </div>-->
                       </div>
                     </div>
                   </div>

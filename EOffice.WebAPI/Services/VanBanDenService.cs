@@ -247,10 +247,9 @@ namespace EOffice.WebAPI.Services
             newButPhe.NguoiPhoiHopXuLy = model.NguoiPhoiHopXuLy;
             newButPhe.MucDoQuanTrong = model.MucDoQuanTrong;
             newButPhe.NguoiXemDeBiet = model.NguoiXemDeBiet;
-            newButPhe.NguoiButPhe = model.NguoiButPhe;
             if (model.UploadFiles != default)
             {
-                var exps = newButPhe.UploadFiles.Select(x => x.Ext).ToList();
+                var exps = model.UploadFiles.Select(x => x.Ext).ToList();
                 var tempExt = fileOffice.Where(x => exps.Contains(x)).FirstOrDefault();
                 if (tempExt == default)
                 {
@@ -259,7 +258,7 @@ namespace EOffice.WebAPI.Services
                         .WithMessage("Định dạng tệp tin không đúng.");
                 }
 
-                foreach (var item in newButPhe.UploadFiles)
+                foreach (var item in model.UploadFiles)
                 {
                     var newFile = new FileShort();
                     newFile.FileId = item.FileId;
