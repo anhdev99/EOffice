@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Security;
 using System.Security.Cryptography;
 using System.Threading;
+using EOffice.WebAPI.Models;
 using Newtonsoft.Json;
 using SignService.Common.HashSignature.Interface;
 using SignService.Common.HashSignature.Pdf;
+using File = System.IO.File;
 
 namespace EOffice.WebAPI.Services.SignDigital
 {
@@ -20,13 +21,13 @@ namespace EOffice.WebAPI.Services.SignDigital
             ResponseMessage result = _signSmartCA_PDF(user, pass, content, fileName, file, pageNumber, xPosition, yPosition);
             return result;
         }
-        public static ResponseMessage getSignFileTemp(string user, string pass, byte[] image, string fileName, byte[] file, string pageNumber, string xPosition, string yPosition)
+        public static ResponseMessage getSignFileTemp(string user, string pass, byte[] image, string fileName, byte[] file, string pageNumber, string xPosition, string yPosition,  KySoPhapLyModel model)
         {
 
-            ResponseMessage result = _signSmartCA_PDFTemp(user, pass, image, fileName, file, pageNumber, xPosition, yPosition);
+            ResponseMessage result = _signSmartCA_PDFTemp(user, pass, image, fileName, file, pageNumber, xPosition, yPosition, model);
             return result;
         }
-        private static ResponseMessage _signSmartCA_PDFTemp(string user, string pass, byte[] image, string fileName, byte[] file, string pageNumber, string xPosition, string yPosition)
+        private static ResponseMessage _signSmartCA_PDFTemp(string user, string pass, byte[] image, string fileName, byte[] file, string pageNumber, string xPosition, string yPosition, KySoPhapLyModel model)
         {
             var customerEmail = user;
             var customerPass = pass;
@@ -76,7 +77,7 @@ namespace EOffice.WebAPI.Services.SignDigital
             // Vị trí và kích thước chữ ký (@deprecated)
             //((PdfHashSigner)signer).SetSignaturePosition(20, 20, 220, 50);
             // Kiểu hiển thị chữ ký (OPTIONAL/DEFAULT=TEXT_WITH_BACKGROUND)
-            ((PdfHashSigner)signer).SetRenderingMode(PdfHashSigner.RenderMode.TEXT_WITH_LOGO_TOP);
+            ((PdfHashSigner)signer).SetRenderingMode(PdfHashSigner.RenderMode.TEXT_WITH_BACKGROUND);
             // Nội dung text trên chữ ký (OPTIONAL)
             // ((PdfHashSigner)signer).SetLayer2Text("Ký bởi: Subject name\nNgày ký: Datetime.now");
             ((PdfHashSigner)signer).SetLayer2Text("");
@@ -129,22 +130,35 @@ namespace EOffice.WebAPI.Services.SignDigital
 
             if (!string.IsNullOrEmpty(xPosition) && !string.IsNullOrEmpty(yPosition) && !string.IsNullOrEmpty(pageNumber))
             {
-                int x1 = int.Parse(xPosition);
-                int y1 = int.Parse(yPosition);
+                int x1 = (int)Math.Round(float.Parse(xPosition));
+                int y1 = (int)Math.Round(float.Parse(yPosition));
+                int w = (int)Math.Round(float.Parse(model.Width));
+                int h = (int)Math.Round(float.Parse(model.Height));
+
+                int llx = x1;
+                int lly = (842 - (y1 + h));
+                int urx = (595 - (x1 + w));
+                int ury = y1;
+                ((PdfHashSigner)signer).SetSigningPage(int.Parse(pageNumber));
+                
+                ((PdfHashSigner)signer).SetSignaturePosition(llx, lly, urx, ury);
+                //
                 ((PdfHashSigner)signer).AddSignatureView(new PdfSignatureView
                 {
-                    // Với kích thước chữ ký 200x50
-                    Rectangle = $"{x1},{y1},{x1},{y1}",
+                    // Với kích thước chữ ký 200x50o
+                    Rectangle = "220,100,220,450",
+                    // Rectangle = $"{x1 - (int)(w / 2)},{y1 - (int)(h / 2)},{x1 + (int)(w / 2)},{y1 + (int)(h / 2)}",
+                    // Rectangle = $"{x1  + (w / 2)},{h},{w},{y1 + (h/2)}",
                     Page = int.Parse(pageNumber)
                 });
-
+           
             }
             else
             {
 
                 ((PdfHashSigner)signer).AddSignatureView(new PdfSignatureView
                 {
-                    Rectangle = "20,100,220,150",
+                    Rectangle = "220,100,220,450",
                     Page = 1
                 });
             }
@@ -180,7 +194,7 @@ namespace EOffice.WebAPI.Services.SignDigital
             //SignHash End
 
             //Sign Begin
-            var tranId = _sign(access_token, "https://rmgateway.vnptit.vn/csc/signature/sign", Convert.ToBase64String(unsignData), credential, null, fileName);
+            var tranId = _sign(access_token, "https://rmgateway.vnptit.vn/csc/signature/sign", Convert.ToBase64String(unsignData), credential, "Kiet dep trai", fileName);
             //Sign End
 
             if (tranId == "")

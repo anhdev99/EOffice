@@ -6,10 +6,10 @@
         public FileShort File { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
-        public int Px { get; set; }
-        public int Py { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
+        public string Px { get; set; }
+        public string Py { get; set; }
+        public string Width { get; set; }
+        public string Height { get; set; }
         public int Page { get; set; }
         public string Image { get; set; }
     }

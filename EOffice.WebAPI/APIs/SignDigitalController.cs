@@ -313,7 +313,7 @@ namespace EOffice.WebAPI.APIs
             fileInput = System.IO.File.ReadAllBytes(file.Path);
             
             ResponseMessage result = SmartCA.getSignFileTemp(user, pass, image, fileName, fileInput, pageNumber,
-                xPosition, yPosition);
+                xPosition, yPosition, model);
 
             return result;
         }

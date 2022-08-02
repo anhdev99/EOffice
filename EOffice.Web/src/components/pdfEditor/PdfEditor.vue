@@ -126,6 +126,7 @@ export default {
       this.kySoModel.page = index;
       if(this.allObjects){
         let object = this.allObjects[0];
+        console.log(object)
         if(this.allObjects[0]){
           this.kySoModel.px = object.x;
           this.kySoModel.py = object.y;
