@@ -742,13 +742,6 @@ export default [{
         name: "Ký số",
         // meta: {},
         component: () => import("../pages/kyso"),
-    }
-    ,
-    {
-        path: "/ky-so-test",
-        name: "Ký số",
-        // meta: {},
-        component: () => import("../pages/kyso/test"),
     },
     {
         path: "/loai-trang-thai",
@@ -812,5 +805,10 @@ export default [{
         path: "/thu-rac",
         name: "ThuRac",
         component: () => import("../pages/hopThu/thuRac"),
+    },
+    {
+        path: "/thiet-lap-ky-so-phap-ly",
+        name: "ThietLapKySoPhapLy",
+        component: () => import("../pages/kySoPhapLy/thietLapKySo"),
     }
 ]

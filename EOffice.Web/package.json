@@ -65,8 +65,8 @@
     "@vue/cli-plugin-eslint": "^4.1.0",
     "@vue/cli-service": "^4.1.0",
     "babel-eslint": "^10.0.3",
-    "eslint": "^5.16.0",
-    "eslint-plugin-vue": "^5.0.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-vue": "^8.0.3",
     "sass": "^1.24.2",
     "sass-loader": "^8.0.0",
     "vue-template-compiler": "^2.6.14",
@@ -75,11 +75,16 @@
   "eslintConfig": {
     "root": true,
     "env": {
-      "node": true
+      "node": true,
+      "vue/setup-compiler-macros": true
     },
     "extends": [
-      "plugin:vue/essential",
-      "eslint:recommended"
+      "eslint:recommended",
+      "plugin:vue/essential"
+    ],
+
+    "ignorePatterns": [
+      "src/components/pdfEditor/utils/makeTextPDF.js"
     ],
     "rules": {
       "no-unused-vars": "off",
