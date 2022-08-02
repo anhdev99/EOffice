@@ -23,7 +23,6 @@ import {trangThaiModel} from "@/models/trangThaiModel";
 import {CURRENT_USER} from "@/helpers/currentUser";
 import Treeselect from "@riophae/vue-treeselect";
 import moment from "moment";
-import ThietLapKySo from "@/pages/kyso/thiet-lap-ky-so";
 
 /**
  * Advanced table component

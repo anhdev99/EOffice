@@ -26,14 +26,17 @@ namespace EOffice.WebAPI.APIs
         private IFileService _fileService;
         private readonly IWebHostEnvironment _hostingEnvironment;
         private DataContext _context;
-        public SignDigitalController(IFileService fileService, IVanBanDiService vanBanDiService, IWebHostEnvironment hostingEnvironment, DataContext context)
+
+        public SignDigitalController(IFileService fileService, IVanBanDiService vanBanDiService,
+            IWebHostEnvironment hostingEnvironment, DataContext context)
         {
             _vanBanDiService = vanBanDiService;
             _context = context;
             _hostingEnvironment = hostingEnvironment;
             _fileService = fileService;
         }
-        [HttpPost] 
+
+        [HttpPost]
         [Route("KySo")]
         public ResponseMessage Pdf(IFormCollection data, IFormFile fileUpload)
         {
@@ -53,7 +56,9 @@ namespace EOffice.WebAPI.APIs
                 string s = Convert.ToBase64String(fileInput);
                 // act on the Base64 data
             }
-            ResponseMessage result = SmartCA.getSignFile(user, pass, content, fileName, fileInput, pageNumber, xPosition, yPosition);
+
+            ResponseMessage result = SmartCA.getSignFile(user, pass, content, fileName, fileInput, pageNumber,
+                xPosition, yPosition);
 
             if (result.Content != null)
             {
@@ -62,59 +67,63 @@ namespace EOffice.WebAPI.APIs
 
                 if (!Directory.Exists(uploadPath))
                     Directory.CreateDirectory(uploadPath);
-              
+
                 var dateTime = DateTime.UtcNow.ToString("yyyy_MM_dd_HH_mm_ss");
                 var path = Path.Combine(_hostingEnvironment.ContentRootPath, uploadDirecotroy, dateTime);
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
                 }
-                var newFileName = Guid.NewGuid().ToString() +"." + fileName.Split(".")[1];
+
+                var newFileName = Guid.NewGuid().ToString() + "." + fileName.Split(".")[1];
                 var relativePath = Path.Combine("", dateTime, newFileName);
                 var filePath = Path.Combine(uploadDirecotroy, relativePath);
 
-                using (System.IO.FileStream stream = System.IO.File.Create(filePath ))
+                using (System.IO.FileStream stream = System.IO.File.Create(filePath))
                 {
                     System.Byte[] byteArray = result.Content as byte[];
-                     stream.Write(byteArray, 0, byteArray.Length);
+                    stream.Write(byteArray, 0, byteArray.Length);
                 }
-                
-                 var result1 =  _fileService.SaveFileAsync(filePath, fileName, newFileName,  fileName.Split(".")[1], result.Content.ToString().Length);
 
-               Task.WhenAll(result1);
-                 var vanBanDi = _context.VanBanDi.Find(x => x.Id == vanBanDiId).FirstOrDefault();
-                 if (vanBanDi != default)
-                 {
-                     if (vanBanDi.FilePDF == default)
-                         vanBanDi.FilePDF = new List<FileShort>();
-                     vanBanDi.FilePDF.Add(new FileShort(){Ext = result1.Result.Ext,FileId = result1.Result.Id, FileName = result1.Result.FileName,});
-                     var newTrangThai = IAsyncCursorSourceExtensions.FirstOrDefault(_context.TrangThai.AsQueryable()
-                             .Where(x => x.Code.ToUpper() == DefaultRoleCode.HOAN_THANH_KY_SO.ToUpper()).Select(x =>
-                                 new TrangThaiShort()
-                                 {
-                                     Id = x.Id,
-                                     Code = x.Code,
-                                     Ten = x.Ten,
-                                     BgColor = x.BgColor,
-                                     Color = x.BgColor
-                                 }));
-                     vanBanDi.TrangThai = newTrangThai;
-                     vanBanDi.Ower = vanBanDi.GetOwerWithRole(DefaultRoleCode.VAN_THU_TRUONG);
-                     ReplaceOneResult actionResult
-                         =  _context.VanBanDi.ReplaceOne(x => x.Id.Equals(vanBanDi.Id)
-                             , vanBanDi
-                             , new ReplaceOptions { IsUpsert = true });
-                     var result2 = actionResult.IsAcknowledged && actionResult.ModifiedCount > 0;
-                     if (!result2)
-                     {
-                         
-                     }
-                 }
+                var result1 = _fileService.SaveFileAsync(filePath, fileName, newFileName, fileName.Split(".")[1],
+                    result.Content.ToString().Length);
+
+                Task.WhenAll(result1);
+                var vanBanDi = _context.VanBanDi.Find(x => x.Id == vanBanDiId).FirstOrDefault();
+                if (vanBanDi != default)
+                {
+                    if (vanBanDi.FilePDF == default)
+                        vanBanDi.FilePDF = new List<FileShort>();
+                    vanBanDi.FilePDF.Add(new FileShort()
+                        { Ext = result1.Result.Ext, FileId = result1.Result.Id, FileName = result1.Result.FileName, });
+                    var newTrangThai = IAsyncCursorSourceExtensions.FirstOrDefault(_context.TrangThai.AsQueryable()
+                        .Where(x => x.Code.ToUpper() == DefaultRoleCode.HOAN_THANH_KY_SO.ToUpper()).Select(x =>
+                            new TrangThaiShort()
+                            {
+                                Id = x.Id,
+                                Code = x.Code,
+                                Ten = x.Ten,
+                                BgColor = x.BgColor,
+                                Color = x.BgColor
+                            }));
+                    vanBanDi.TrangThai = newTrangThai;
+                    vanBanDi.Ower = vanBanDi.GetOwerWithRole(DefaultRoleCode.VAN_THU_TRUONG);
+                    ReplaceOneResult actionResult
+                        = _context.VanBanDi.ReplaceOne(x => x.Id.Equals(vanBanDi.Id)
+                            , vanBanDi
+                            , new ReplaceOptions { IsUpsert = true });
+                    var result2 = actionResult.IsAcknowledged && actionResult.ModifiedCount > 0;
+                    if (!result2)
+                    {
+                    }
+                }
             }
+
             return result;
         }
-[HttpPost]
-[Route("ThietLapKySo")]
+
+        [HttpPost]
+        [Route("ThietLapKySo")]
         public ResponseMessage ThietLapKySo(IFormCollection data, IFormFile fileUpload)
         {
             try
@@ -141,18 +150,19 @@ namespace EOffice.WebAPI.APIs
 
                 if (!Directory.Exists(uploadPath))
                     Directory.CreateDirectory(uploadPath);
-              
+
                 var dateTime = DateTime.UtcNow.ToString("yyyy_MM_dd_HH_mm_ss");
                 var path1 = Path.Combine(_hostingEnvironment.ContentRootPath, uploadDirecotroy, dateTime);
                 if (!Directory.Exists(path1))
                 {
                     Directory.CreateDirectory(path1);
                 }
-                var newFileName = Guid.NewGuid().ToString() +"." + fileName.Split(".")[1];
+
+                var newFileName = Guid.NewGuid().ToString() + "." + fileName.Split(".")[1];
                 var relativePath = Path.Combine("", dateTime, newFileName);
                 var filePath = Path.Combine(uploadDirecotroy, relativePath);
 
-                using (System.IO.FileStream stream = System.IO.File.Create(filePath ))
+                using (System.IO.FileStream stream = System.IO.File.Create(filePath))
                 {
                     fileUpload.CopyTo(stream);
                 }
@@ -161,7 +171,7 @@ namespace EOffice.WebAPI.APIs
                 file.Path = filePath;
                 file.FileName = $"[da_thiet_lap_chu_ky]{fileName}";
                 ReplaceOneResult actionResult
-                    =  _context.Files.ReplaceOne(x => x.Id.Equals(file.Id)
+                    = _context.Files.ReplaceOne(x => x.Id.Equals(file.Id)
                         , file
                         , new ReplaceOptions { IsUpsert = true });
                 var result2 = actionResult.IsAcknowledged && actionResult.ModifiedCount > 0;
@@ -172,7 +182,7 @@ namespace EOffice.WebAPI.APIs
                         ResponseID = Guid.NewGuid(),
                         ResponseCode = 0,
                         ResponseContent = "Thiết lập ký số không thành công"
-                    }; 
+                    };
                 }
 
                 var vanBanDi = _context.VanBanDi.Find(x => x.Id == vanBanDiId).FirstOrDefault();
@@ -181,7 +191,7 @@ namespace EOffice.WebAPI.APIs
                     var indexFile = -1;
                     if (vanBanDi.FilePDF != null)
                     {
-                         indexFile = vanBanDi.FilePDF.FindIndex(x => x.FileId == file.Id);
+                        indexFile = vanBanDi.FilePDF.FindIndex(x => x.FileId == file.Id);
                         if (indexFile != -1)
                         {
                             vanBanDi.FilePDF[indexFile] = new FileShort()
@@ -207,25 +217,25 @@ namespace EOffice.WebAPI.APIs
                                 };
                             }
                         }
-
                     }
 
                     if (indexFile != -1)
                     {
                         var newTrangThai = IAsyncCursorSourceExtensions.FirstOrDefault(_context.TrangThai.AsQueryable()
-                            .Where(x => x.Code.ToUpper() == DefaultRoleCode.KY_SO_PHAP_LY_THIETLAP.ToUpper()).Select(x =>
-                                new TrangThaiShort()
-                                {
-                                    Id = x.Id,
-                                    Code = x.Code,
-                                    Ten = x.Ten,
-                                    BgColor = x.BgColor,
-                                    Color = x.BgColor
-                                }));
+                            .Where(x => x.Code.ToUpper() == DefaultRoleCode.KY_SO_PHAP_LY_THIETLAP.ToUpper()).Select(
+                                x =>
+                                    new TrangThaiShort()
+                                    {
+                                        Id = x.Id,
+                                        Code = x.Code,
+                                        Ten = x.Ten,
+                                        BgColor = x.BgColor,
+                                        Color = x.BgColor
+                                    }));
                         vanBanDi.TrangThai = newTrangThai;
                         vanBanDi.Ower = vanBanDi.GetOwerWithRole(DefaultRoleCode.HIEU_TRUONG);
                         ReplaceOneResult actionResult1
-                            =  _context.VanBanDi.ReplaceOne(x => x.Id.Equals(vanBanDi.Id)
+                            = _context.VanBanDi.ReplaceOne(x => x.Id.Equals(vanBanDi.Id)
                                 , vanBanDi
                                 , new ReplaceOptions { IsUpsert = true });
                         var result3 = actionResult1.IsAcknowledged && actionResult1.ModifiedCount > 0;
@@ -240,7 +250,6 @@ namespace EOffice.WebAPI.APIs
                         }
                     }
                 }
-
             }
             catch (Exception e)
             {
@@ -252,6 +261,7 @@ namespace EOffice.WebAPI.APIs
                     ResponseContent = $"Thiết lập ký số không thành công, {e.Message}"
                 };
             }
+
             return new ResponseMessage()
             {
                 ResponseID = Guid.NewGuid(),
@@ -281,6 +291,31 @@ namespace EOffice.WebAPI.APIs
                         .WithMessage(ex.ResultString)
                 );
             }
+        }
+        
+        
+        [HttpPost]
+        [Route("KySoPhapLy")]
+        public ResponseMessage KySoPhapLy([FromBody] KySoPhapLyModel model)
+        {
+            string user = model.UserName;
+            string pass = model.Password;
+            // string content = data["content"];
+            string fileName = model.File.FileName;
+            string xPosition = model.Px.ToString();
+            string yPosition = model.Py.ToString();
+            string pageNumber = model.Page.ToString();
+            var imageClip = model.Image.Split(",");
+            byte[] image = Convert.FromBase64String(imageClip[1]);
+            byte[] fileInput = null;
+            var file = _context.Files.Find(x => x.Id == model.File.FileId).FirstOrDefault();
+           
+            fileInput = System.IO.File.ReadAllBytes(file.Path);
+            
+            ResponseMessage result = SmartCA.getSignFileTemp(user, pass, image, fileName, fileInput, pageNumber,
+                xPosition, yPosition);
+
+            return result;
         }
     }
 }

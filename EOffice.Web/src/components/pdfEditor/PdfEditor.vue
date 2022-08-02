@@ -5,6 +5,9 @@ import {save} from './utils/PDF'
 import {generateId} from './utils/helper'
 import PdfPage from "@/components/pdfEditor/PdfPage";
  import ObjectContainer from "@/components/pdfEditor/ObjectContainer";
+import {CURRENT_USER} from "@/helpers/currentUser";
+import {vanBanDenModel} from "@/models/vanBanDenModel";
+import {notifyModel} from "@/models/notifyModel";
 
 export default {
   components: { ObjectContainer, PdfPage},
@@ -13,6 +16,7 @@ export default {
       required: true,
       type: String,
     },
+    file:{required: true}
   },
   data() {
     return {
@@ -25,6 +29,19 @@ export default {
       },
       opacity: 1,
       pdfFile: null,
+      kySoModel:{
+        userName: null,
+        password: null,
+        file: this.file,
+        px: 0,
+        py: 0,
+        width: 0,
+        height: 0,
+        page: 0,
+        image: null
+      },
+      currentUser: CURRENT_USER.USER_KY_SO,
+      downloadFile: null
     }
   },
   computed:{
@@ -45,6 +62,22 @@ export default {
     this.mountPdf()
   },
   methods: {
+    async handleSubmit(e) {
+      let loader = this.$loading.show({
+        container: this.$refs.formContainer,
+      });
+      this.kySoModel.userName = this.currentUser.userNameKySo;
+      this.kySoModel.password = this.currentUser.passwordKySo;
+      await this.$store.dispatch("signDigitalStore/kySoPhapLy", this.kySoModel).then((res) => {
+        this.downloadFile =  res.content;
+        // if (res.resultCode === 'SUCCESS') {
+        //   console.log(res)
+        //   loader.hide()
+        // }
+        // this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+      }) ;
+      loader.hide()
+    },
     async mountPdf() {
       try {
         const res = await fetch(this.pdf)
@@ -90,8 +123,18 @@ export default {
 
     selectPage(index) {
       this.selectedPageIndex = index;
-      console.log(this.pages)
-      console.log(this.allObjects)
+      this.kySoModel.page = index;
+      if(this.allObjects){
+        let object = this.allObjects[0];
+        if(this.allObjects[0]){
+          this.kySoModel.px = object.x;
+          this.kySoModel.py = object.y;
+          this.kySoModel.width = object.width;
+          this.kySoModel.height = object.height;
+          this.kySoModel.page = this.selectedPageIndex + 1;
+          this.kySoModel.image = object.payload.currentSrc;
+        }
+      }
       if(this.allObjects && this.allObjects.length > 0){
         this.allObjects[0].page = index;
       }
@@ -134,7 +177,15 @@ export default {
           file: file,
           page: this.selectedPageIndex,
         }
-        this.allObjects = [...this.allObjects,object];
+
+        this.kySoModel.px = object.x;
+        this.kySoModel.py = object.y;
+        this.kySoModel.width = width;
+        this.kySoModel.height = height;
+        this.kySoModel.page = this.selectedPageIndex + 1;
+        this.kySoModel.image = img.currentSrc;
+        console.log(' this.kySoModel',  this.kySoModel)
+        this.allObjects = [object];
       } catch (e) {
         console.log('Failed to add image.', e)
       }
@@ -178,18 +229,31 @@ export default {
       }
       this.allObjects = [signatureObject]
       this.$refs.signatureCanvas.isShow = false
-    }
-
+    },
+     downloadPDF() {
+  const linkSource = `data:application/pdf;base64,${this.downloadFile}`;
+  const downloadLink = document.createElement("a");
+  const fileName = "abc.pdf";
+  downloadLink.href = linkSource;
+  downloadLink.download = fileName;
+  downloadLink.click();}
   }
 }
 
 
 </script>
 <template>
-  <div class="mb-4 flex flex-col relative">
+  <div class="mb-4 flex flex-col relative" ref="formContainer">
     <div class="">
-      <div style="display: flex; justify-content: space-between ">
+      <div style="display: flex; justify-content: end ">
         <div>
+          <button
+              v-if="downloadFile"
+              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              @click="downloadPDF"
+          >
+            Tải file
+          </button>
           <input type="file" id="image" name="image" class="hidden" @change="uploadImage"/>
           <label for="image"
                  class="text-black border border-black cursor-pointer font-medium text-sm px-5 py-2.5 text-center mr-2 mb-2">
@@ -199,9 +263,9 @@ export default {
 
         <button
             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-            @click="download"
+            @click="handleSubmit"
         >
-        Thiết lập ký số
+        Ký số
         </button>
       </div>
 
