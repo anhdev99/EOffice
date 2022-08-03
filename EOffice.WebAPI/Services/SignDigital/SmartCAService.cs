@@ -77,7 +77,7 @@ namespace EOffice.WebAPI.Services.SignDigital
             // Vị trí và kích thước chữ ký (@deprecated)
             //((PdfHashSigner)signer).SetSignaturePosition(20, 20, 220, 50);
             // Kiểu hiển thị chữ ký (OPTIONAL/DEFAULT=TEXT_WITH_BACKGROUND)
-            ((PdfHashSigner)signer).SetRenderingMode(PdfHashSigner.RenderMode.TEXT_WITH_BACKGROUND);
+            ((PdfHashSigner)signer).SetRenderingMode(PdfHashSigner.RenderMode.LOGO_ONLY);
             // Nội dung text trên chữ ký (OPTIONAL)
             // ((PdfHashSigner)signer).SetLayer2Text("Ký bởi: Subject name\nNgày ký: Datetime.now");
             ((PdfHashSigner)signer).SetLayer2Text("");
@@ -130,25 +130,22 @@ namespace EOffice.WebAPI.Services.SignDigital
 
             if (!string.IsNullOrEmpty(xPosition) && !string.IsNullOrEmpty(yPosition) && !string.IsNullOrEmpty(pageNumber))
             {
+                const int W = 595;
+                const int H = 842;
                 int x1 = (int)Math.Round(float.Parse(xPosition));
                 int y1 = (int)Math.Round(float.Parse(yPosition));
                 int w = (int)Math.Round(float.Parse(model.Width));
                 int h = (int)Math.Round(float.Parse(model.Height));
 
-                int llx = x1;
-                int lly = (842 - (y1 + h));
-                int urx = (595 - (x1 + w));
-                int ury = y1;
-                ((PdfHashSigner)signer).SetSigningPage(int.Parse(pageNumber));
-                
-                ((PdfHashSigner)signer).SetSignaturePosition(llx, lly, urx, ury);
-                //
+                int d1 = x1;
+                int d2 = H - (y1 + h);
+                int b1 = x1 + w;
+                int b2 = H - y1;
+
                 ((PdfHashSigner)signer).AddSignatureView(new PdfSignatureView
                 {
-                    // Với kích thước chữ ký 200x50o
-                    Rectangle = "220,100,220,450",
-                    // Rectangle = $"{x1 - (int)(w / 2)},{y1 - (int)(h / 2)},{x1 + (int)(w / 2)},{y1 + (int)(h / 2)}",
-                    // Rectangle = $"{x1  + (w / 2)},{h},{w},{y1 + (h/2)}",
+                    // Với kích thước chữ ký 200x50
+                    Rectangle = $"{d1},{d2},{b1},{b2}",
                     Page = int.Parse(pageNumber)
                 });
            

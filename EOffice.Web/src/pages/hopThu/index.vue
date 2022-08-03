@@ -339,7 +339,7 @@ export default {
                   <b-button
                       variant="primary"
                       type="button"
-                      class="btn w-md btn-primary"
+                      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-1 rounded"
                       @click="handleCreate"
                       size="sm"
                   >
@@ -355,7 +355,7 @@ export default {
                       no-close-on-backdrop
                       size="xl"
                   >
-                    <template #modal-header="{ close }">
+                    <template #modal-header="{  }">
                       <!-- Emulate built in modal header close button action -->
                       <h5> Thêm mới thư</h5>
                       <div class="text-end">
@@ -515,7 +515,7 @@ export default {
                       no-close-on-backdrop
                       size="xl"
                   >
-                    <template #modal-header="{ close }">
+                    <template #modal-header="{  }">
                       <h5> Chuyển tiếp thư</h5>
                       <div class="text-end">
                         <b-button variant="light" class="w-md" size="sm" @click="showChuyenTiepModal = false">
@@ -858,7 +858,7 @@ export default {
             </template>
 
           </div>
-          <template #modal-header="{ close }">
+          <template #modal-header="{  }">
             <!-- Emulate built in modal header close button action -->
             <h5>Thông tin chi tiết</h5>
             <div class="text-end">
