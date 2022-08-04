@@ -46,3 +46,29 @@ export default {
     <RightBar />
   </div>
 </template>
+<style>
+@media only screen and (max-width: 768px){
+  .navbar-brand-box {
+    width: auto;
+  }
+  .navbar-brand-box .logo-light,
+  .navbar-brand-box .logo-dark{
+    display: block;
+    width: 0px !important;
+    height:  0px !important;
+  }
+  .navbar-brand-box img {
+    max-width: 50px !important;
+    height: auto;
+    position: absolute;
+    top: 10px;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .navbar-brand-box {
+    width: 80px;
+    margin: auto !important;
+  }
+}
+</style>

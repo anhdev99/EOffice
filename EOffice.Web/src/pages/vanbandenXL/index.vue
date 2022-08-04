@@ -88,50 +88,51 @@ export default {
         {
           key: 'STT',
           label: 'STT',
-          thStyle: {width: '50px', minWidth: '50px'},
-          class: "text-center"
+          thStyle: {width: '50px', minWidth: '40px'},
+          class: "text-center text-primary"
         },
         {
           key: "soLuuCV",
           label: "Số lưu CV",
-          thStyle: {width: '10px', minWidth: '160px'},
-          class: "px-1",
+          thStyle: {width: '100px', minWidth: '100px'},
+          class: "px-1 text-primary",
           sortable: true,
         },
         {
           key: "soVBDen",
           label: "Số CV đến",
-          thStyle: {width: '160px', minWidth: '160px'},
-          class: "px-1",
+          thStyle: {width: '100px', minWidth: '100px'},
+          class: "px-1 text-primary",
         },
         {
           key: "trichYeu",
           label: "Trích yếu",
-          thStyle: {width: '100px', minWidth: '100px'},
-          class: "px-1",
+          thStyle: {width: '100px', minWidth: '250px'},
+          class: "px-1 text-primary",
         },
         {
           key: "loaiVanBan",
           label: "Loại văn bản",
-          thStyle: {width: '100px', minWidth: '100px'},
-          class: "px-1",
+          thStyle: {width: '100px', minWidth: '130px'},
+          class: "px-1 text-primary text-center",
         },
         {
           key: "trangThai",
           label: "Trạng thái",
-          thStyle: {width: '100px', minWidth: '100px'},
-          class: "px-1",
+          thStyle: {width: '100px', minWidth: '80px'},
+          class: "px-1 text-primary text-center",
         },
         {
           key: "ngayNhap",
           label: "Ngày nhập",
           thStyle: {width: '100px', minWidth: '100px'},
-          class: "px-1",
+          class: "px-1 text-primary text-center",
         },
         {
           key: 'process',
           label: 'Xử lý',
           thStyle: {width: '110px', minWidth: '110px'},
+          class: "text-primary"
         }
       ],
       optionsLoaiVanBan: [],
@@ -1048,6 +1049,10 @@ export default {
                   >
                     <template v-slot:cell(STT)="data">
                       {{ data.index + ((currentPage - 1) * perPage) + 1 }}
+                    </template>
+                    <template v-slot:cell(soLuuCV)="data">
+                      <div :inner-html.prop="data.item.soLuuCV | truncate(170)">
+                      </div>
                     </template>
                     <template v-slot:cell(loaiVanBan)="data">
                       <span v-if="data.item.loaiVanBan"> {{ data.item.loaiVanBan.ten }}</span>
