@@ -1,11 +1,11 @@
 <script>
-import {layoutComputed} from "@/state/helpers";
+import { layoutComputed } from "@/state/helpers";
 
 import Vertical from "@/router/layouts/vertical";
 import Horizontal from "@/router/layouts/horizontal";
 
 export default {
-  components: {Vertical, Horizontal},
+  components: { Vertical, Horizontal },
   computed: {
     ...layoutComputed
   }
@@ -15,12 +15,11 @@ export default {
 <template>
   <div>
     <Vertical v-if="layoutType === 'vertical'" :layout="layoutType">
-      <slot/>
+      <slot />
     </Vertical>
 
     <Horizontal v-if="layoutType === 'horizontal'" :layout="layoutType">
-      <slot/>
+      <slot />
     </Horizontal>
   </div>
 </template>
-

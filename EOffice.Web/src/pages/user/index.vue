@@ -299,7 +299,7 @@ export default {
                           ref="formContainer"
                     >
                       <div class="row">
-                        <div class="col-md-6 col-sm-12">
+                        <div class="col-6">
                           <div class="mb-3">
                             <label class="text-left">Tên tài khoản</label>
                             <span style="color: red">&nbsp;*</span>
@@ -323,7 +323,7 @@ export default {
                             </div>
                           </div>
                         </div>
-                        <div class="col-md-6 col-sm-12">
+                        <div class="col-6">
                           <div class="mb-3">
                             <label class="text-left" >Mật khẩu</label>
                             <input type="hidden" v-model="model.id"/>
@@ -336,7 +336,7 @@ export default {
                             />
                           </div>
                         </div>
-                        <div class="col-md-6 col-sm-12">
+                        <div class="col-6">
                           <div class="mb-3">
                             <label class="text-left">Họ</label>
                             <span style="color: red">&nbsp;*</span>
@@ -360,7 +360,7 @@ export default {
                             </div>
                           </div>
                         </div>
-                        <div class="col-md-6 col-sm-12">
+                        <div class="col-6">
                           <div class="mb-3">
                             <label class="text-left">Tên</label>
                             <span style="color: red">&nbsp;*</span>

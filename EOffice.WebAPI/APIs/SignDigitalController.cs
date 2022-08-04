@@ -317,5 +317,22 @@ namespace EOffice.WebAPI.APIs
 
             return result;
         }
+        
+                
+        [HttpPost]
+        [Route("KySoPhapLyTest")]
+        public ResponseMessage KySoPhapLy([FromBody] List<SignDigital> model, IFormFile fileUpload)
+        {
+            string user = "342003590";
+            string pass = "DThU@123";
+
+            byte[] fileInput = null;
+            var file = _context.Files.Find(x => x.Id =="62ebed44c6148edddb11e70a").FirstOrDefault();
+           
+            fileInput = System.IO.File.ReadAllBytes(file.Path);
+            ResponseMessage result = SmartCA.getSignFileTemp1(user, pass,"testmulti.pdf",fileInput,model);
+
+            return result;
+        }
     }
 }

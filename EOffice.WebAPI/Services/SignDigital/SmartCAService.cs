@@ -1,9 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Text;
+using System.IO;
+using System.Linq;
 using System.Net;
 using System.Security;
 using System.Security.Cryptography;
 using System.Threading;
+using EOffice.WebAPI.Extensions;
 using EOffice.WebAPI.Models;
 using Newtonsoft.Json;
 using SignService.Common.HashSignature.Interface;
@@ -12,29 +18,41 @@ using File = System.IO.File;
 
 namespace EOffice.WebAPI.Services.SignDigital
 {
-
     public class SmartCA
     {
-        public static ResponseMessage getSignFile(string user, string pass, string content, string fileName, byte[] file, string pageNumber, string xPosition, string yPosition)
+        public static ResponseMessage getSignFile(string user, string pass, string content, string fileName,
+            byte[] file, string pageNumber, string xPosition, string yPosition)
         {
-
-            ResponseMessage result = _signSmartCA_PDF(user, pass, content, fileName, file, pageNumber, xPosition, yPosition);
+            ResponseMessage result =
+                _signSmartCA_PDF(user, pass, content, fileName, file, pageNumber, xPosition, yPosition);
             return result;
         }
-        public static ResponseMessage getSignFileTemp(string user, string pass, byte[] image, string fileName, byte[] file, string pageNumber, string xPosition, string yPosition,  KySoPhapLyModel model)
-        {
 
-            ResponseMessage result = _signSmartCA_PDFTemp(user, pass, image, fileName, file, pageNumber, xPosition, yPosition, model);
+        public static ResponseMessage getSignFileTemp(string user, string pass, byte[] image, string fileName,
+            byte[] file, string pageNumber, string xPosition, string yPosition, KySoPhapLyModel model)
+        {
+            ResponseMessage result = _signSmartCA_PDFTemp(user, pass, image, fileName, file, pageNumber, xPosition,
+                yPosition, model);
             return result;
         }
-        private static ResponseMessage _signSmartCA_PDFTemp(string user, string pass, byte[] image, string fileName, byte[] file, string pageNumber, string xPosition, string yPosition, KySoPhapLyModel model)
+
+        public static ResponseMessage getSignFileTemp1(string user, string pass, string fileName,
+            byte[] file, List<Models.SignDigital> model)
+        {
+            ResponseMessage result = _signSmartCA_PDFTemp1(user, pass, fileName, file, model);
+            return result;
+        }
+
+        private static ResponseMessage _signSmartCA_PDFTemp(string user, string pass, byte[] image, string fileName,
+            byte[] file, string pageNumber, string xPosition, string yPosition, KySoPhapLyModel model)
         {
             var customerEmail = user;
             var customerPass = pass;
             ResponseMessage responseMessage = new ResponseMessage();
             //var access_token = CoreServiceClient.GetAccessToken(customerEmail, customerPass, out string refresh_token);
 
-            var access_token = _getAccessToken("https://rmgateway.vnptit.vn/auth/token", customerEmail, customerPass, "4185-637127995547330633.apps.signserviceapi.com", "NGNhMzdmOGE-OGM2Mi00MTg0");
+            var access_token = _getAccessToken("https://rmgateway.vnptit.vn/auth/token", customerEmail, customerPass,
+                "4185-637127995547330633.apps.signserviceapi.com", "NGNhMzdmOGE-OGM2Mi00MTg0");
             if (String.IsNullOrEmpty(access_token))
             {
                 Console.WriteLine("Can get access token");
@@ -42,7 +60,8 @@ namespace EOffice.WebAPI.Services.SignDigital
             }
 
             String credential = _getCredentialSmartCA(access_token, "https://rmgateway.vnptit.vn/csc/credentials/list");
-            String certBase64 = _getAccoutSmartCACert(access_token, "https://rmgateway.vnptit.vn/csc/credentials/info", credential);
+            String certBase64 = _getAccoutSmartCACert(access_token, "https://rmgateway.vnptit.vn/csc/credentials/info",
+                credential);
             UserInfo userInfo = _getUserInfo(access_token);
             //string _pdfInput = @"C:\Users\User29421\Documents\ca\test_smartca_thien.pdf";
             //string _pdfSignedPath = @"C:\Users\User29421\Documents\ca\test_smartca_thien_signed2.pdf";
@@ -59,19 +78,20 @@ namespace EOffice.WebAPI.Services.SignDigital
                  return;
              }*/
             CryptoConfig.AddAlgorithm(typeof(RSAPKCS1SHA256SignatureDescription),
-               "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
+                "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
             );
             IHashSigner signer = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.PDF);
             signer.SetHashAlgorithm(SignService.Common.HashSignature.Common.MessageDigestAlgorithm.SHA256);
 
 
             #region Optional -----------------------------------
+
             // Property: Lý do ký số
             ((PdfHashSigner)signer).SetReason("Xác nhận tài liệu");
             // Hình ảnh hiển thị trên chữ ký (mặc định là logo VNPT)
-             //var imgBytes = File.ReadAllBytes("logo_vnpt.png");
-             // var x = Convert.ToBase64String(imgBytes);
-             ((PdfHashSigner)signer).SetCustomImage(image);
+            //var imgBytes = File.ReadAllBytes("logo_vnpt.png");
+            // var x = Convert.ToBase64String(imgBytes);
+            ((PdfHashSigner)signer).SetCustomImage(image);
             // Signing page (@deprecated)
             //((PdfHashSigner)signer).SetSigningPage(1);
             // Vị trí và kích thước chữ ký (@deprecated)
@@ -121,14 +141,14 @@ namespace EOffice.WebAPI.Services.SignDigital
             //    }
 
 
-
             //    reader.Close();
             //    //var searchResult = res.Where(p => p.Text.Contains(searchText)).OrderBy(p => p.Y).Reverse().ToList();
             //}            
 
             // Hiển thị ảnh chữ ký tại nhiều vị trí trên tài liệu
 
-            if (!string.IsNullOrEmpty(xPosition) && !string.IsNullOrEmpty(yPosition) && !string.IsNullOrEmpty(pageNumber))
+            if (!string.IsNullOrEmpty(xPosition) && !string.IsNullOrEmpty(yPosition) &&
+                !string.IsNullOrEmpty(pageNumber))
             {
                 const int W = 595;
                 const int H = 842;
@@ -148,11 +168,9 @@ namespace EOffice.WebAPI.Services.SignDigital
                     Rectangle = $"{d1},{d2},{b1},{b2}",
                     Page = int.Parse(pageNumber)
                 });
-           
             }
             else
             {
-
                 ((PdfHashSigner)signer).AddSignatureView(new PdfSignatureView
                 {
                     Rectangle = "220,100,220,450",
@@ -183,7 +201,9 @@ namespace EOffice.WebAPI.Services.SignDigital
 
             // Signature widget border type (OPTIONAL)
             ((PdfHashSigner)signer).SetSignatureBorderType(PdfHashSigner.VisibleSigBorder.NONE);
+
             #endregion -----------------------------------------
+
             //var hashValue = "ULUOyLMAvzuNOOVJJG/GMdIonsfkD2mtagK5R8RV3cY=";
             var hashValue = signer.GetSecondHashAsBase64();
 
@@ -191,7 +211,8 @@ namespace EOffice.WebAPI.Services.SignDigital
             //SignHash End
 
             //Sign Begin
-            var tranId = _sign(access_token, "https://rmgateway.vnptit.vn/csc/signature/sign", Convert.ToBase64String(unsignData), credential, "Kiet dep trai", fileName);
+            var tranId = _sign(access_token, "https://rmgateway.vnptit.vn/csc/signature/sign",
+                Convert.ToBase64String(unsignData), credential, "Kiet dep trai", fileName);
             //Sign End
 
             if (tranId == "")
@@ -206,7 +227,8 @@ namespace EOffice.WebAPI.Services.SignDigital
             {
                 Console.WriteLine("Get TranInfo PDF lan " + count + " : ");
                 //_log.Info("Get TranInfo PDF lan " + count + " : ");
-                var tranInfo = _getTranInfo(access_token, "https://rmgateway.vnptit.vn/csc/credentials/gettraninfo", tranId);
+                var tranInfo = _getTranInfo(access_token, "https://rmgateway.vnptit.vn/csc/credentials/gettraninfo",
+                    tranId);
                 if (tranInfo != null)
                 {
                     if (tranInfo.tranStatus != 1)
@@ -228,6 +250,7 @@ namespace EOffice.WebAPI.Services.SignDigital
                     //return;
                 }
             }
+
             if (!isConfirm)
             {
                 responseMessage.ResponseCode = 408;
@@ -260,17 +283,18 @@ namespace EOffice.WebAPI.Services.SignDigital
             //File.WriteAllBytes(_pdfSignedPath, Convert.FromBase64String(datasigned));
             // Console.WriteLine("SignHash PDF: Successfull. signed file at '" + _pdfSignedPath + "'");
             //_log.Info("SignHash PDF: Successfull. signed file at '" + _pdfSignedPath + "'");
-
         }
 
-        private static ResponseMessage _signSmartCA_PDF(string user, string pass, string content, string fileName, byte[] file, string pageNumber, string xPosition, string yPosition)
+        private static ResponseMessage _signSmartCA_PDF(string user, string pass, string content, string fileName,
+            byte[] file, string pageNumber, string xPosition, string yPosition)
         {
             var customerEmail = user;
             var customerPass = pass;
             ResponseMessage responseMessage = new ResponseMessage();
             //var access_token = CoreServiceClient.GetAccessToken(customerEmail, customerPass, out string refresh_token);
 
-            var access_token = _getAccessToken("https://rmgateway.vnptit.vn/auth/token", customerEmail, customerPass, "4185-637127995547330633.apps.signserviceapi.com", "NGNhMzdmOGE-OGM2Mi00MTg0");
+            var access_token = _getAccessToken("https://rmgateway.vnptit.vn/auth/token", customerEmail, customerPass,
+                "4185-637127995547330633.apps.signserviceapi.com", "NGNhMzdmOGE-OGM2Mi00MTg0");
             if (String.IsNullOrEmpty(access_token))
             {
                 Console.WriteLine("Can get access token");
@@ -278,7 +302,8 @@ namespace EOffice.WebAPI.Services.SignDigital
             }
 
             String credential = _getCredentialSmartCA(access_token, "https://rmgateway.vnptit.vn/csc/credentials/list");
-            String certBase64 = _getAccoutSmartCACert(access_token, "https://rmgateway.vnptit.vn/csc/credentials/info", credential);
+            String certBase64 = _getAccoutSmartCACert(access_token, "https://rmgateway.vnptit.vn/csc/credentials/info",
+                credential);
             UserInfo userInfo = _getUserInfo(access_token);
             //string _pdfInput = @"C:\Users\User29421\Documents\ca\test_smartca_thien.pdf";
             //string _pdfSignedPath = @"C:\Users\User29421\Documents\ca\test_smartca_thien_signed2.pdf";
@@ -295,18 +320,19 @@ namespace EOffice.WebAPI.Services.SignDigital
                  return;
              }*/
             CryptoConfig.AddAlgorithm(typeof(RSAPKCS1SHA256SignatureDescription),
-               "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
+                "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
             );
             IHashSigner signer = HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.PDF);
             signer.SetHashAlgorithm(SignService.Common.HashSignature.Common.MessageDigestAlgorithm.SHA256);
 
 
             #region Optional -----------------------------------
+
             // Property: Lý do ký số
             ((PdfHashSigner)signer).SetReason("Xác nhận tài liệu");
             // Hình ảnh hiển thị trên chữ ký (mặc định là logo VNPT)
-             var imgBytes = File.ReadAllBytes("logo_vnpt.png");
-             // var x = Convert.ToBase64String(imgBytes);
+            var imgBytes = File.ReadAllBytes("logo_vnpt.png");
+            // var x = Convert.ToBase64String(imgBytes);
             // ((PdfHashSigner)signer).SetCustomImage(imgBytes);
             // Signing page (@deprecated)
             //((PdfHashSigner)signer).SetSigningPage(1);
@@ -357,14 +383,14 @@ namespace EOffice.WebAPI.Services.SignDigital
             //    }
 
 
-
             //    reader.Close();
             //    //var searchResult = res.Where(p => p.Text.Contains(searchText)).OrderBy(p => p.Y).Reverse().ToList();
             //}            
 
             // Hiển thị ảnh chữ ký tại nhiều vị trí trên tài liệu
 
-            if (!string.IsNullOrEmpty(xPosition) && !string.IsNullOrEmpty(yPosition) && !string.IsNullOrEmpty(pageNumber))
+            if (!string.IsNullOrEmpty(xPosition) && !string.IsNullOrEmpty(yPosition) &&
+                !string.IsNullOrEmpty(pageNumber))
             {
                 int x1 = int.Parse(xPosition);
                 int y1 = int.Parse(yPosition);
@@ -374,11 +400,9 @@ namespace EOffice.WebAPI.Services.SignDigital
                     Rectangle = $"{x1 - 100},{y1 - 25},{x1 + 100},{y1 + 25}",
                     Page = int.Parse(pageNumber)
                 });
-
             }
             else
             {
-
                 ((PdfHashSigner)signer).AddSignatureView(new PdfSignatureView
                 {
                     Rectangle = "20,100,220,150",
@@ -409,7 +433,9 @@ namespace EOffice.WebAPI.Services.SignDigital
 
             // Signature widget border type (OPTIONAL)
             ((PdfHashSigner)signer).SetSignatureBorderType(PdfHashSigner.VisibleSigBorder.DASHED);
+
             #endregion -----------------------------------------
+
             //var hashValue = "ULUOyLMAvzuNOOVJJG/GMdIonsfkD2mtagK5R8RV3cY=";
             var hashValue = signer.GetSecondHashAsBase64();
 
@@ -417,7 +443,8 @@ namespace EOffice.WebAPI.Services.SignDigital
             //SignHash End
 
             //Sign Begin
-            var tranId = _sign(access_token, "https://rmgateway.vnptit.vn/csc/signature/sign", Convert.ToBase64String(unsignData), credential, content, fileName);
+            var tranId = _sign(access_token, "https://rmgateway.vnptit.vn/csc/signature/sign",
+                Convert.ToBase64String(unsignData), credential, content, fileName);
             //Sign End
 
             if (tranId == "")
@@ -432,7 +459,8 @@ namespace EOffice.WebAPI.Services.SignDigital
             {
                 Console.WriteLine("Get TranInfo PDF lan " + count + " : ");
                 //_log.Info("Get TranInfo PDF lan " + count + " : ");
-                var tranInfo = _getTranInfo(access_token, "https://rmgateway.vnptit.vn/csc/credentials/gettraninfo", tranId);
+                var tranInfo = _getTranInfo(access_token, "https://rmgateway.vnptit.vn/csc/credentials/gettraninfo",
+                    tranId);
                 if (tranInfo != null)
                 {
                     if (tranInfo.tranStatus != 1)
@@ -454,6 +482,7 @@ namespace EOffice.WebAPI.Services.SignDigital
                     //return;
                 }
             }
+
             if (!isConfirm)
             {
                 responseMessage.ResponseCode = 408;
@@ -486,7 +515,6 @@ namespace EOffice.WebAPI.Services.SignDigital
             //File.WriteAllBytes(_pdfSignedPath, Convert.FromBase64String(datasigned));
             // Console.WriteLine("SignHash PDF: Successfull. signed file at '" + _pdfSignedPath + "'");
             //_log.Info("SignHash PDF: Successfull. signed file at '" + _pdfSignedPath + "'");
-
         }
 
         private static string _getCredentialSmartCA(String accessToken, String serviceUri)
@@ -499,7 +527,8 @@ namespace EOffice.WebAPI.Services.SignDigital
                     wc.Headers[HttpRequestHeader.Authorization] = "Bearer " + accessToken;
                     string HtmlResult = wc.UploadString(serviceUri, "POST", "{}");
 
-                    CredentialSmartCAResponse credentials = JsonConvert.DeserializeObject<CredentialSmartCAResponse>(HtmlResult);
+                    CredentialSmartCAResponse credentials =
+                        JsonConvert.DeserializeObject<CredentialSmartCAResponse>(HtmlResult);
                     if (credentials != null)
                     {
                         return credentials.content[0];
@@ -509,10 +538,11 @@ namespace EOffice.WebAPI.Services.SignDigital
                 {
                     throw ex;
                 }
-
             }
+
             return null;
         }
+
         private static String _getAccoutSmartCACert(String accessToken, String serviceUri, string credentialId)
         {
             var req = new ReqCertificateSmartCA
@@ -532,23 +562,22 @@ namespace EOffice.WebAPI.Services.SignDigital
                     wc.Headers[HttpRequestHeader.Authorization] = "Bearer " + accessToken;
                     string HtmlResult = wc.UploadString(serviceUri, "POST", body);
 
-                    CertificateSmartCAResponse res = JsonConvert.DeserializeObject<CertificateSmartCAResponse>(HtmlResult);
+                    CertificateSmartCAResponse res =
+                        JsonConvert.DeserializeObject<CertificateSmartCAResponse>(HtmlResult);
                     String certBase64 = res.cert.certificates[0];
                     return certBase64.Replace("\r\n", "");
-
                 }
                 catch (Exception ex)
                 {
                     throw ex;
                 }
-
             }
+
             return null;
         }
 
         private static TranInfoSmartCARespContent _getTranInfo(string accessToken, String serviceUri, String tranId)
         {
-
             var req = new ContenSignHash
             {
                 tranId = tranId
@@ -568,20 +597,18 @@ namespace EOffice.WebAPI.Services.SignDigital
                     {
                         return resp.content;
                     }
-
                 }
                 catch (Exception ex)
                 {
                     throw ex;
                 }
-
             }
+
             return null;
         }
 
         private static string _signHash(string accessToken, String serviceUri, string data, string credentialId)
         {
-
             var req = new SignHashSmartCAReq
             {
                 credentialId = credentialId,
@@ -611,19 +638,19 @@ namespace EOffice.WebAPI.Services.SignDigital
                     {
                         return resp.content.tranId;
                     }
-
                 }
                 catch (Exception ex)
                 {
                     throw ex;
                 }
-
             }
+
             return null;
         }
-        private static string _sign(string accessToken, String serviceUri, string data, string credentialId, string content, string fileName)
-        {
 
+        private static string _sign(string accessToken, String serviceUri, string data, string credentialId,
+            string content, string fileName)
+        {
             var req = new SignSmartCAReq
             {
                 credentialId = credentialId,
@@ -653,21 +680,22 @@ namespace EOffice.WebAPI.Services.SignDigital
                     {
                         return resp.content.tranId;
                     }
-
                 }
                 catch (Exception ex)
                 {
                     throw ex;
                 }
-
             }
+
             return null;
         }
 
-        private static string _getAccessToken(String uri, String user, String pass, string client_id, string client_secret)
+        private static string _getAccessToken(String uri, String user, String pass, string client_id,
+            string client_secret)
         {
             string URI = uri;
-            String body = $"username={user}&password={pass}&client_id={client_id}&client_secret={client_secret}&grant_type=password";
+            String body =
+                $"username={user}&password={pass}&client_id={client_id}&client_secret={client_secret}&grant_type=password";
             using (WebClient wc = new WebClient())
             {
                 try
@@ -680,10 +708,9 @@ namespace EOffice.WebAPI.Services.SignDigital
                 catch (Exception ex)
                 {
                     throw ex;
-
                 }
-
             }
+
             return null;
         }
 
@@ -702,14 +729,13 @@ namespace EOffice.WebAPI.Services.SignDigital
                     {
                         return resp.content;
                     }
-
                 }
                 catch (Exception ex)
                 {
                     throw ex;
                 }
-
             }
+
             return null;
         }
 
@@ -717,11 +743,276 @@ namespace EOffice.WebAPI.Services.SignDigital
         {
             // access_token value
             public string access_token { get; set; }
+
             // refresh_token to get new access_token (see RefreshToken method)
             public string refresh_token { get; set; }
+
             public string token_type { get; set; }
+
             // access_token valid time. when expired, using refresh_token to get new or require user re-authorize
             public int expires_in { get; set; }
+        }
+
+
+        private static ResponseMessage _signSmartCA_PDFTemp1(string user, string pass, string fileName, byte[] file,
+            List<Models.SignDigital> model)
+        {
+            var customerEmail = user;
+            var customerPass = pass;
+            ResponseMessage responseMessage = new ResponseMessage();
+            //var access_token = CoreServiceClient.GetAccessToken(customerEmail, customerPass, out string refresh_token);
+
+            var access_token = _getAccessToken("https://rmgateway.vnptit.vn/auth/token", customerEmail, customerPass,
+                "4185-637127995547330633.apps.signserviceapi.com", "NGNhMzdmOGE-OGM2Mi00MTg0");
+            if (String.IsNullOrEmpty(access_token))
+            {
+                Console.WriteLine("Can get access token");
+                //return;
+            }
+
+            String credential = _getCredentialSmartCA(access_token, "https://rmgateway.vnptit.vn/csc/credentials/list");
+            String certBase64 = _getAccoutSmartCACert(access_token, "https://rmgateway.vnptit.vn/csc/credentials/info",
+                credential);
+            UserInfo userInfo = _getUserInfo(access_token);
+            //string _pdfInput = @"C:\Users\User29421\Documents\ca\test_smartca_thien.pdf";
+            //string _pdfSignedPath = @"C:\Users\User29421\Documents\ca\test_smartca_thien_signed2.pdf";
+
+            // byte[] unsignData = null;
+            byte[] unsignData = file;
+            /* try
+             {
+                 unsignData = File.ReadAllBytes(_pdfInput);
+             }
+             catch (Exception ex)
+             {
+                 Console.WriteLine(ex);
+                 return;
+             }*/
+            CryptoConfig.AddAlgorithm(typeof(RSAPKCS1SHA256SignatureDescription),
+                "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
+            );
+            List<IHashSigner> signers = new List<IHashSigner>();
+            foreach (var item in model)
+            {
+                IHashSigner signer =
+                    HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.PDF);
+                signer.SetHashAlgorithm(SignService.Common.HashSignature.Common.MessageDigestAlgorithm.SHA256);
+                ((PdfHashSigner)signer).SetReason("Xác nhận tài liệu");
+                ((PdfHashSigner)signer).SetRenderingMode(PdfHashSigner.RenderMode.LOGO_ONLY);
+
+                if (item.Type == "image")
+                {
+                    var image = ImageExtensions.ConvertStringToBase64(item.Image);
+                    ((PdfHashSigner)signer).SetCustomImage(image);
+                    if (!string.IsNullOrEmpty(item.X) && !string.IsNullOrEmpty(item.Y) &&
+                        !string.IsNullOrEmpty(item.Page.ToString()))
+                    {
+                        const int W = 595;
+                        const int H = 842;
+                        int x1 = (int)Math.Round(float.Parse(item.X));
+                        int y1 = (int)Math.Round(float.Parse(item.Y));
+                        int w = (int)Math.Round(float.Parse(item.Width));
+                        int h = (int)Math.Round(float.Parse(item.Height));
+
+                        int d1 = x1;
+                        int d2 = H - (y1 + h);
+                        int b1 = x1 + w;
+                        int b2 = H - y1;
+
+                        ((PdfHashSigner)signer).AddSignatureView(new PdfSignatureView
+                        {
+                            // Với kích thước chữ ký 200x50
+                            Rectangle = $"{d1},{d2},{b1},{b2}",
+                            Page = int.Parse(item.Page.ToString())
+                        });
+                    }
+                    else
+                    {
+                        ((PdfHashSigner)signer).AddSignatureView(new PdfSignatureView
+                        {
+                            Rectangle = "220,100,220,450",
+                            Page = 1
+                        });
+                    }
+                }
+                else if (item.Type == "text")
+                {
+                    var img = CreateImageFromText(item.Lines.LastOrDefault(), int.Parse(item.Width),int.Parse( item.Height));
+                    byte[] buffer = ImageToByte2(img);
+                    ((PdfHashSigner)signer).SetCustomImage(buffer);
+                    if (!string.IsNullOrEmpty(item.X) && !string.IsNullOrEmpty(item.Y) &&
+                        !string.IsNullOrEmpty(item.Page.ToString()))
+                    {
+                        const int W = 595;
+                        const int H = 842;
+                        int x1 = (int)Math.Round(float.Parse(item.X));
+                        int y1 = (int)Math.Round(float.Parse(item.Y));
+                        int w = (int)Math.Round(float.Parse(item.Width));
+                        int h = (int)Math.Round(float.Parse(item.Height));
+
+                        int d1 = x1;
+                        int d2 = H - (y1 + h);
+                        int b1 = x1 + w;
+                        int b2 = H - y1;
+
+                        ((PdfHashSigner)signer).AddSignatureView(new PdfSignatureView
+                        {
+                            // Với kích thước chữ ký 200x50
+                            Rectangle = $"{d1},{d2},{b1},{b2}",
+                            Page = int.Parse(item.Page.ToString())
+                        });
+                    }
+                    else
+                    {
+                        ((PdfHashSigner)signer).AddSignatureView(new PdfSignatureView
+                        {
+                            Rectangle = "220,100,220,450",
+                            Page = 1
+                        });
+                    }
+                }
+
+                //var hashValue = "ULUOyLMAvzuNOOVJJG/GMdIonsfkD2mtagK5R8RV3cY=";
+                var hashValue = signer.GetSecondHashAsBase64();
+                signers.Add(signer);
+            }
+
+
+            //var tranId = _signHash(access_token, "https://rmgateway.vnptit.vn/csc/signature/signhash", hashValue, credential);
+            //SignHash End
+
+            //Sign Begin
+            var tranId = _sign(access_token, "https://rmgateway.vnptit.vn/csc/signature/sign",
+                Convert.ToBase64String(unsignData), credential, "Kiet dep trai", fileName);
+            //Sign End
+
+            if (tranId == "")
+            {
+                Console.WriteLine("Ky so that bai");
+            }
+
+            var count = 0;
+            var isConfirm = false;
+            var datasigned = "";
+            var tempDocumentResp = new List< DocumentResp>();
+            while (count < 4 && !isConfirm)
+            {
+                Console.WriteLine("Get TranInfo PDF lan " + count + " : ");
+                //_log.Info("Get TranInfo PDF lan " + count + " : ");
+                var tranInfo = _getTranInfo(access_token, "https://rmgateway.vnptit.vn/csc/credentials/gettraninfo",
+                    tranId);
+                if (tranInfo != null)
+                {
+                    if (tranInfo.tranStatus != 1)
+                    {
+                        count = count + 1;
+                        Thread.Sleep(10000);
+                    }
+                    else
+                    {
+                        isConfirm = true;
+                        datasigned = tranInfo.documents[0].sig;
+                        tempDocumentResp = tranInfo.documents;
+                        responseMessage.ResponseCode = 200;
+                        responseMessage.ResponseContent = "Ky so thanh cong.";
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Error from content");
+                    //return;
+                }
+            }
+
+            if (!isConfirm)
+            {
+                responseMessage.ResponseCode = 408;
+                responseMessage.ResponseContent = "Het han.";
+                Console.WriteLine("Signer not confirm from App");
+                //return;
+            }
+
+            if (string.IsNullOrEmpty(datasigned))
+            {
+                responseMessage.ResponseCode = 400;
+                responseMessage.ResponseContent = "Loi ky so.";
+                //return;
+            }
+
+            string path = "files";
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            var dateTime = DateTime.UtcNow.ToString("yyyy_MM_dd_HH_mm_ss");
+            var newFileName = Guid.NewGuid().ToString() + ".pdf";
+            var relativePath = Path.Combine("", dateTime, newFileName);
+            var filePath = Path.Combine(path, "kiet_abc.pdf");
+
+            File.WriteAllBytes(filePath , file);
+             
+            // foreach (var item in signers)
+            // {
+            //     // if (!item.CheckHashSignature(datasigned))
+            //     // {
+            //     //     Console.WriteLine("Signature not match");
+            //     //     //return;
+            //     // }
+            //     var signed = item.Sign(datasigned);
+            //
+            // }
+
+            var sig1 = signers[0].Sign(datasigned);
+            var sig2 = signers[1].Sign(datasigned);
+            var t = Combine(sig1, sig2);
+            File.WriteAllBytes(filePath,t );
+            // ------------------------------------------------------------------------------------------
+
+            // 3. Package external signature to signed file
+
+
+            responseMessage.Content = File.ReadAllBytes(filePath);
+            ;
+
+            return responseMessage;
+            //File.WriteAllBytes(_pdfSignedPath, Convert.FromBase64String(datasigned));
+            // Console.WriteLine("SignHash PDF: Successfull. signed file at '" + _pdfSignedPath + "'");
+            //_log.Info("SignHash PDF: Successfull. signed file at '" + _pdfSignedPath + "'");
+        }
+        
+        private static Bitmap CreateImageFromText(string Text, int width, int height)
+        {
+            // Create the Font object for the image text drawing.
+            Font textFont = new Font("Arial", 25, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
+
+            Bitmap ImageObject = new Bitmap(width, height);
+            // Add the anti aliasing or color settings.
+            Graphics GraphicsObject = Graphics.FromImage(ImageObject);
+
+            // Set Background color
+            GraphicsObject.Clear(Color.White);
+            // to specify no aliasing
+            GraphicsObject.SmoothingMode = SmoothingMode.Default;
+            GraphicsObject.TextRenderingHint = TextRenderingHint.SystemDefault;
+            GraphicsObject.DrawString(Text, textFont, new SolidBrush(Color.Brown), 0, 0);
+            GraphicsObject.Flush();
+
+            return (ImageObject);
+        }
+        public static byte[] ImageToByte2(Image img)
+        {
+            using (var stream = new MemoryStream())
+            {
+                img.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                return stream.ToArray();
+            }
+        }
+        public static byte[] Combine(byte[] first, byte[] second)
+        {
+            byte[] ret = new byte[first.Length + second.Length];
+            Buffer.BlockCopy(first, 0, ret, 0, first.Length);
+            Buffer.BlockCopy(second, 0, ret, first.Length, second.Length);
+            return ret;
         }
     }
 }

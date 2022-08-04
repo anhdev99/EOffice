@@ -99,38 +99,21 @@ export default {
         //Update model
         await this.$store.dispatch("vanBanDiStore/xacThuc", this.model).then((res) => {
           if (res.resultCode === 'SUCCESS') {
-            console.log("res======", res.data);
+            console.log("");
             this.$swal({
               position: 'center',
               icon: 'success',
-              title: '<div class="box-warning">' +
-                  '<span class="wr-title"> ' +
-                  'Xác thực thành công. <br>'+
-                  '</span>' +
-                  '<p class="wr-content">' +
-                  'Đây đúng là công văn do ' +
-                  '<span class="fw-bold text-primary">'+ this.model.user.fullName + '</span>' +
-                  'ký' +
-                  '</p>' +
-                  '</div>',
+              title: 'Xác thực thành công',
               showConfirmButton: false,
-              timer: 10000
+              timer: 2000
             })
           }else{
             this.$swal({
               position: 'center',
               icon: 'error',
-              title: '<div class="box-warning">' +
-                        '<span class="wr-title"> ' +
-                          'Xác thực thất bại. <br>'+
-                        '</span>' +
-                        '<p class="wr-content">' +
-                          'Không phải chữ ký của ' +
-                            '<span class="fw-bold text-primary">'+ this.model.user.fullName + '</span>' +
-                        '</p>' +
-                      '</div>',
+              title: 'Xác thực không thành công',
               showConfirmButton: false,
-              timer: 100000
+              timer: 2000
             })
           }
 
@@ -280,20 +263,4 @@ export default {
     margin-bottom: -80px;
   }
 }
-</style>
-
-<style lang="scss">
-  .box-warning{
-    font-family: inherit, sans-serif;
-    & .wr-title{
-      color: #2a2a2a;
-      font-size: 20px;
-      font-weight: bold;
-    }
-    & .wr-content {
-      color: #2a2a2a;
-      font-size: 18px;
-    }
-  }
-
 </style>

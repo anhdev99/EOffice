@@ -72,18 +72,18 @@ export default {
         {
           key: "nguoiGui",
           label: "Người gửi",
-          class: 'td-xuly px-1 title-capso text-start',
+          class: 'td-xuly px-1 title-capso',
           thStyle: {width: '200px', minWidth: '100px'},
           sortable: true,
-          thClass: 'hidden-sortable text-start',
+          thClass: 'hidden-sortable',
         },
         {
           key: "ngayNhan",
           label: "Ngày nhận",
-          class: 'td-xuly title-capso text-start',
+          class: 'td-xuly title-capso',
           sortable: true,
           thStyle: {width: '150px', minWidth: '100px'},
-          thClass: 'hidden-sortable text-start',
+          thClass: 'hidden-sortable',
         },
         {
           key: 'process',
@@ -725,10 +725,7 @@ export default {
                       {{ data.item.ngayNhanFull }}
                     </template>
                     <template v-slot:cell(nguoiGui)="data">
-                      <div
-                          v-if="data.item.nguoiGui"
-                          class="badge bg-info"
-                      >
+                      <div v-if="data.item.nguoiGui">
                         {{ data.item.nguoiGui.fullName }}
                       </div>
 
