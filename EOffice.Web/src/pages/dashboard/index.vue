@@ -119,9 +119,8 @@ export default {
             <template v-slot:button-content>
               <i class="mdi mdi-cog me-2"></i> Truy cập nhanh
             </template>
-            <b-dropdown-item> Văn bản đến</b-dropdown-item>
-            <b-dropdown-item>Văn bản đi </b-dropdown-item>
-            <b-dropdown-item> Thông báo</b-dropdown-item>
+            <b-dropdown-item href="http://dthu.edu.vn" target="_blank"> Trang chủ DThU</b-dropdown-item>
+            <b-dropdown-item> Thông tin bản quyền </b-dropdown-item>
           </b-dropdown>
         </div>
       </div>

@@ -5,7 +5,7 @@
         <div class="col-12">
           © {{new Date().getFullYear()}}
           <span class="d-none d-sm-inline-block">
-            Trường Đại học Đồng Tháp
+           Thiết kế và phát triển bởi nhóm IT trường Đại học Đồng Tháp
           </span>
         </div>
       </div>
