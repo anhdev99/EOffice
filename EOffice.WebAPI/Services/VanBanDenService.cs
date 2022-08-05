@@ -152,7 +152,7 @@ namespace EOffice.WebAPI.Services
             };
             if (model.HoSoDonVi != default)
             {
-                entity.HoSoDonVi = model.HoSoDonVi;
+                entity.HoSoDonVi = model.HoSoDonVi; 
             }
 
             if (model.HinhThucNhan != default)

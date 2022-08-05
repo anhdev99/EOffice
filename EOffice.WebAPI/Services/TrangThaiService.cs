@@ -234,7 +234,7 @@ namespace EOffice.WebAPI.Services
                         Ten = x.Ten,
                         Code = x.Code,
                         Color = x.Code,
-                        BgColor = x.BgColor
+                        BgColor = x.BgColor 
                     }).ToList();
                 }
       

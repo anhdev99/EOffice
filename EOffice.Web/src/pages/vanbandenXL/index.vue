@@ -1691,7 +1691,7 @@ export default {
                   <label class="form-label" for="validationCustom01">Người phối hợp xử lý</label>
                   <multiselect
                       :multiple="true"
-                      v-model="modelButPhe.nguoiPhoihopXuLy"
+                      v-model="modelButPhe.nguoiPhoiHopXuLy"
                       :options="optionsUser"
                       track-by="id"
                       label="fullName"
