@@ -1518,7 +1518,7 @@ export default {
                           type="button"
                           size="sm"
                           class="btn btn-light btn-danger"
-                          data-toggle="tooltip" data-placement="bottom" title="Xóa"
+                          data-toggle="tooltip" data-placement="bottom" title="Xử lý văn bản"
                           v-on:click="handleChuyenTrangThai(data.item.trangThai,data.item.id)">
                         <i class="fas fa-exchange-alt  me-1"></i>
                         Xử lý VB
@@ -1531,7 +1531,7 @@ export default {
                           size="sm"
                           class="btn btn-success"
                           style="margin-top: 5px"
-                          data-toggle="tooltip" data-placement="bottom" title="Xóa"
+                          data-toggle="tooltip" data-placement="bottom" title="Duyệt/Ký số "
                           v-on:click="getPhanCongKySoByVanBanId(data.item.id)">
                         <i class="fas fa-exchange-alt  me-1"></i>
                         Duyệt/Ký số
