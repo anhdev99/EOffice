@@ -5,6 +5,8 @@ namespace EOffice.WebAPI.Models
     public class SignDigitalVM
     {
         public string VanBanDiId { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
         public List<SignDigital> SignDigitals { get; set; }
     }
     public class SignDigital

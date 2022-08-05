@@ -2665,36 +2665,6 @@ export default {
             hide-footer
             size="xl"
         >
-          <template #modal-header="{  }">
-            <!-- Emulate built in modal header close button action -->
-            <h5> Ký số pháp lý</h5>
-            <div class="text-end">
-              <b-button v-b-modal.modal-close_visit
-                        size="sm"
-                        class="btn btn-outline-info w-md"
-                        v-on:click="showModalKySoPhapLy = false"
-                        style="margin-right: 6px">
-                Đóng
-              </b-button>
-              <b-button v-if="!modelKySo.reject" v-b-modal.modal-close_visit
-                        size="sm"
-                        variant="primary"
-                        type="button"
-                        class="w-md"
-                        v-on:click="handleAssignOrRejectPhapLy"
-              >
-                Đồng ý
-              </b-button>
-              <b-button v-if="modelKySo.reject" v-b-modal.modal-close_visit
-                        size="sm"
-                        variant="danger"
-                        type="button"
-                        class="w-md"
-                        v-on:click="handleAssignOrRejectPhapLy">
-                Từ chối
-              </b-button>
-            </div>
-          </template>
           <div class="row" ref="modalKySoPhapLy">
             <PdfEditor @closeModel="handleCloseThietLapKySoPhapLy" :fileInfo="modelKySo"></PdfEditor>
 <!--            <div class="col-md-12 mt-2">-->

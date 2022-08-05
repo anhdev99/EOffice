@@ -6,5 +6,8 @@ export const actions = {
     },
     async thietLapKySoPhapLy({commit}, values) {
         return apiClient.post(controller + "/thiet-lap-ky-so-phap-ly", values);
+    }   ,
+    async thucHienKySoPhapLy({commit}, values) {
+        return apiClient.post(controller + "/ThucHienKySoPhapLy", values);
     }
 };

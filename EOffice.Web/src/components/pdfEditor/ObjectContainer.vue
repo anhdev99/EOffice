@@ -38,6 +38,14 @@ export default {
   computed: {
     moveOperation() {
       return this.operation === 'move'
+    },
+    textEditor(){
+      if(this.object){
+        if(this.object.lines){
+          return this.object.lines[0]
+        }
+      }
+      return "Hãy nhập dữ liệu ..."
     }
   },
   mounted() {
@@ -46,19 +54,42 @@ export default {
   methods: {
     setCanvas() {
       if (this.type == 'image') {
-
+        let cvn = this.$refs.canvasImage;
         // use canvas to prevent img tag's auto resize
         this.$refs.canvasImage.width = this.width
         this.$refs.canvasImage.height = this.height
-        if(!this.imageBase64){
-          this.$refs.canvasImage.getContext('2d').drawImage(this.payload, 0, 0)
-        }else{
-          var image = new Image();
-          image.src = this.imageBase64;
-          image.onload = function() {
-            this.$refs.canvasImage.getContext('2d').drawImage(image, 0, 0);
-          };
-        }
+
+        // this.$refs.canvasImage.getContext('2d').drawImage(this.payload, 0, 0)
+        // // if(this.payload){
+        // //   this.$refs.canvasImage.getContext('2d').drawImage(this.payload, 0, 0)
+        // // }else{
+        // //   var image = new Image();
+        // //   image.src = this.imageBase64;
+        // //   image.onload = function() {
+        // //     this.$refs.canvasImage.getContext('2d').drawImage(image, 0, 0)
+        // //   };
+        // // }
+        let ctx = cvn.getContext("2d");
+        let bg = new Image();
+        bg.width = this.width;
+        bg.height = this.height;
+        bg.src = this.imageBase64;
+        bg.onload = function() {
+          ctx.drawImage(bg, 0 ,0, this.width, this.height);
+        };
+        //
+        //   var image = new Image();
+        //
+        //   image.onload = function() {
+        //   };
+        // image.src = this.imageBase64;
+        // image.width = this.width;
+        // image.height = this.height;
+        //
+        // this.$refs.canvasImage.getContext('2d').drawImage(image, 0, 0)
+        // const canvas = document.getElementById('canvasImage');
+        // const context = canvas.getContext('2d');
+        // context.drawImage(image, image.width, image.height);
 
         let scale = 1
         const limit = 500
@@ -186,7 +217,7 @@ export default {
       :style="{ width: `${width + dw}px`, height: `${height + dh}px`, transform: `translate(${x + dx}px, ${y + dy}px)` }"
   >
     <object-image v-if="type== 'image'" :operation="operation" @panstart="handlePanStart" @panmove="handlePanMove" @panend="handlePanEnd"/>
-    <TextEditor v-else-if="type == 'text'" text="Hãy nhập dữ liệu..." :operation="operation" @panstart="handlePanStart" @panmove="handlePanMove" @panend="handlePanEnd" @textEnd="handleEndText"/>
+    <TextEditor v-else-if="type == 'text'" :text="textEditor" :operation="operation" @panstart="handlePanStart" @panmove="handlePanMove" @panend="handlePanEnd" @textEnd="handleEndText"/>
     <!-- <object-signature v-else-if="type == 'signature'"
         :operation="operation"
         @panstart="handlePanStart"
@@ -204,6 +235,6 @@ export default {
         />
       </svg>
     </div>
-    <canvas v-if="type == 'image'" class="w-full h-full" ref="canvasImage"/>
+    <canvas v-if="type == 'image'" class="w-full h-full" ref="canvasImage" id="canvasImage"/>
   </div>
 </template>

@@ -813,7 +813,7 @@ namespace EOffice.WebAPI.Services.SignDigital
                     int b2 = H - y1;
                 if (item.Type == "image")
                 {
-                    var image = ImageExtensions.ConvertStringToBase64(item.Image);
+                    var image = ImageExtensions.ConvertStringToBase64(item.ImageBase64);
                     ((PdfHashSigner)signer).SetCustomImage(image);
                     if (!string.IsNullOrEmpty(item.X) && !string.IsNullOrEmpty(item.Y) &&
                         !string.IsNullOrEmpty(item.Page.ToString()))
@@ -921,16 +921,7 @@ namespace EOffice.WebAPI.Services.SignDigital
                 responseMessage.ResponseContent = "Loi ky so.";
                 //return;
             }
-
-            string path = "files";
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
-            var dateTime = DateTime.UtcNow.ToString("yyyy_MM_dd_HH_mm_ss");
-            var newFileName = Guid.NewGuid().ToString() + ".pdf";
-            var relativePath = Path.Combine("", dateTime, newFileName);
-            var filePath = Path.Combine(path, "kiet_abc.pdf");
+            
 
             if (!signer.CheckHashSignature(datasigned))
             {

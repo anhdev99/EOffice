@@ -36,5 +36,6 @@ namespace EOffice.WebAPI.Interfaces
         Task XacThuc(XacMinhVM model);
         Task ChuyenTrangThaiVanBan(TrangThaiParam model);
         Task ThietLapKySoPhapLy(SignDigitalVM model);
+        Task KySoPhapLy(SignDigitalVM model);
     }
 }
