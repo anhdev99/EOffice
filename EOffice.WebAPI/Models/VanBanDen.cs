@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace EOffice.WebAPI.Models
@@ -11,9 +12,9 @@ namespace EOffice.WebAPI.Models
         public string Id { get; set; }
         public int Version { get; set; }
         public int Number { get; set; }
-        public LoaiVanBan LoaiVanBan { get; set; }
         public int Identity { get; set; }
-        public TrangThai TrangThai { get; set; }
+        public LoaiVanBan LoaiVanBan { get; set; }
+        public TrangThaiShort TrangThai { get; set; }
         public string TrangThaiTen { get; set; }
         public string SoLuuCV { get; set; }
         public string SoVBDen{ get; set; }
@@ -63,7 +64,25 @@ namespace EOffice.WebAPI.Models
         public List<DonViXuLy> DonViXuLy { get; set; }
 
         public List<PhanCong> PhanCong { get; set; } = new List<PhanCong>();
-
+        
+        public UserShort Ower { get; set; }
+        
+        public List<string> ListOwerId { get; set; } = new List<string>();
+        public List<NhomNguoiTiepNhanVBTrinhLD> NhomNguoiTiepNhanVBTrinhLD { get; set; }
+        
+        public NhomNguoiTiepNhanVBTrinhLD LanhDaoDonVi { get; set; }
+        public UserShort GetOwerWithRole(string role)
+        {
+            var owerTemp = this.NhomNguoiTiepNhanVBTrinhLD
+                .Where(x => x.RoleCode == role).FirstOrDefault();
+            if (owerTemp != default)
+                return owerTemp.NguoiXuLy;
+            return null;
+        }
+        
+        public List<string> NguoiDuocBanHanh { get; set; }
+        public bool TrinhLanhDaoTruong { get; set; }
+        public string NoiDungTuChoi { get; set; }
     }
 
     public class ButPhe

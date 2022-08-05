@@ -128,12 +128,15 @@ const baseJson = (items) => {
         ngayKy: null,
         file: null,
         uploadFiles: null,
+
         nguoiPhanCong: null,
         butPhe: null,
         phanCong: null,
         donViXuLy: null,
         identity: 0,
         filePDF: null,
+        trinhLanhDaoTruong: false,
+        ower: null,
     }
 }
 

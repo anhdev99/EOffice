@@ -59,6 +59,18 @@ const currentBaseJson = () =>{
     }
 }
 
+const currentVBDBaseJson = () =>{
+    return {
+        currentTrangThai: null,
+        newTrangThai: null,
+        vanBanDenId: null,
+        noiDung: null,
+        userName: null,
+        lanhDaoDonVi: null,
+        donVi: null,
+    }
+}
+
 const toListModel = (items) =>{
     if(items.length > 0){
         let data = [];
@@ -71,5 +83,5 @@ const toListModel = (items) =>{
 }
 
 export const trangThaiModel = {
-    toJson, fromJson, baseJson, toListModel, currentBaseJson
+    toJson, fromJson, baseJson, toListModel, currentBaseJson, currentVBDBaseJson,
 }

@@ -44,6 +44,71 @@ namespace EOffice.WebAPI.Services
                 .WithUserName(CurrentUserName);
             _history = history;
         }
+        
+        public List<NhomNguoiTiepNhanVBTrinhLD> GenerateNhomNguoiTiepNhanVBTrinhLD()
+        {
+            var list = new List<NhomNguoiTiepNhanVBTrinhLD>();
+
+            var vanThuTruong = _context.Users.AsQueryable()
+                .Where(x => x.Roles.Any(p => p.Code.ToUpper() == DefaultRoleCode.VAN_THU_TRUONG.ToUpper()) &&
+                            x.IsDeleted != true).Select(x => new UserShort()
+                {
+                    Id = x.Id,
+                    UserName = x.UserName,
+                    FullName = x.FullName,
+                    DonVi = x.DonVi,
+                    ChucVu = x.ChucVu,
+                }).FirstOrDefault();
+            var thuKyHieuTruong = _context.Users.AsQueryable().Where(x =>
+                x.Roles.Any(p => p.Code.ToUpper() == DefaultRoleCode.THU_KY_HIEU_TRUONG.ToUpper()) &&
+                x.IsDeleted != true).Select(x => new UserShort()
+            {
+                Id = x.Id,
+                UserName = x.UserName,
+                FullName = x.FullName,
+                DonVi = x.DonVi,
+                ChucVu = x.ChucVu,
+            }).FirstOrDefault();
+            var hieuTruong = _context.Users.AsQueryable()
+                .Where(x => x.Roles.Any(p => p.Code.ToUpper() == DefaultRoleCode.HIEU_TRUONG.ToUpper()) &&
+                            x.IsDeleted != true).Select(x => new UserShort()
+                {
+                    Id = x.Id,
+                    UserName = x.UserName,
+                    FullName = x.FullName,
+                    DonVi = x.DonVi,
+                    ChucVu = x.ChucVu,
+                }).FirstOrDefault();
+
+            for (int i = 0; i < 3; i++)
+            {
+                var temp = new NhomNguoiTiepNhanVBTrinhLD();
+                if (i == 0)
+                {
+                    temp.NguoiXuLy = vanThuTruong;
+                    temp.ThuTu = i;
+                    temp.RoleCode = DefaultRoleCode.VAN_THU_TRUONG;
+                }
+
+                if (i == 1)
+                {
+                    temp.NguoiXuLy = thuKyHieuTruong;
+                    temp.ThuTu = i;
+                    temp.RoleCode = DefaultRoleCode.THU_KY_HIEU_TRUONG;
+                }
+
+                if (i == 2)
+                {
+                    temp.NguoiXuLy = hieuTruong;
+                    temp.ThuTu = i;
+                    temp.RoleCode = DefaultRoleCode.HIEU_TRUONG;
+                }
+
+                list.Add(temp);
+            }
+
+            return list;
+        }
 
         public async Task<VanBanDen> Create(VanBanDen model)
         {
@@ -59,7 +124,6 @@ namespace EOffice.WebAPI.Services
                 Id = BsonObjectId.GenerateNewId().ToString(),
                 Version = 1,
                 Number = 0,
-                LoaiVanBan = model.LoaiVanBan,
                 TrangThai = model.TrangThai,
                 SoLuuCV = model.SoLuuCV,
                 SoVBDen = model.SoVBDen,
@@ -67,11 +131,9 @@ namespace EOffice.WebAPI.Services
                 NgayNhan = model.NgayNhan,
                 NgayBanHanh = model.NgayBanHanh,
                 TrichYeu = model.TrichYeu,
-                HinhThucNhan = model.HinhThucNhan,
                 LinhVuc = model.LinhVuc,
                 MucDoBaoMat = model.MucDoBaoMat,
                 MucDoTinhChat = model.MucDoTinhChat,
-                HoSoDonVi = model.HoSoDonVi,
                 NoiLuuTru = model.NoiLuuTru,
                 CoQuanGui = model.CoQuanGui,
                 KhoiCoQuanGui = model.KhoiCoQuanGui,
@@ -84,8 +146,46 @@ namespace EOffice.WebAPI.Services
                 CreatedBy = CurrentUserName,
                 ModifiedBy = CurrentUserName,
                 CreatedAt = DateTime.Now,
-                ModifiedAt = DateTime.Now
+                ModifiedAt = DateTime.Now,
+                TrinhLanhDaoTruong = model.TrinhLanhDaoTruong,
+                Ower = CurrentUserShort,
             };
+            if (model.HoSoDonVi != default)
+            {
+                entity.HoSoDonVi = model.HoSoDonVi;
+            }
+
+            if (model.HinhThucNhan != default)
+            {
+                entity.HinhThucNhan = model.HinhThucNhan;
+            }
+
+            if (model.LoaiVanBan != default)
+            {
+                entity.LoaiVanBan = model.LoaiVanBan;
+            }
+            
+            if (model.TrangThai != default)
+            {
+                entity.TrangThai = model.TrangThai;
+                if (entity.TrangThai != default &&
+                    entity.TrangThai.Code.ToUpper() == DefaultRoleCode.TRINH_LANH_DAO_TRUONG.ToUpper())
+                {
+                    entity.NhomNguoiTiepNhanVBTrinhLD = GenerateNhomNguoiTiepNhanVBTrinhLD();
+
+                    var owerTemp = entity.NhomNguoiTiepNhanVBTrinhLD
+                        .Where(x => x.RoleCode == DefaultRoleCode.VAN_THU_TRUONG).FirstOrDefault();
+                    if (owerTemp != default)
+                        entity.Ower = owerTemp.NguoiXuLy;
+
+                    if (entity.NhomNguoiTiepNhanVBTrinhLD != default)
+                    {
+                        var listOwerUserNameTemp =
+                            entity.NhomNguoiTiepNhanVBTrinhLD.Select(x => x.NguoiXuLy.UserName).ToList();
+                        entity.ListOwerId.AddRange(listOwerUserNameTemp);
+                    }
+                }
+            }
 
 
             if (model.UploadFiles != default)
