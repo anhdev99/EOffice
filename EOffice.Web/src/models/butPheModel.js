@@ -44,7 +44,7 @@ const baseJson = () => {
         mucDoQuanTrong: null,
         nguoiPhuTrach: null,
         nguoiChuTri: null,
-        nguoiPhoihopXuLy: null,
+        nguoiPhoiHopXuLy: null,
         donViPhoiHop: null,
         nguoiXemDeBiet: null,
         uploadFiles: null,
