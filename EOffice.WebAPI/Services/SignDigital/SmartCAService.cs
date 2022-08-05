@@ -791,15 +791,26 @@ namespace EOffice.WebAPI.Services.SignDigital
             CryptoConfig.AddAlgorithm(typeof(RSAPKCS1SHA256SignatureDescription),
                 "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
             );
-            List<IHashSigner> signers = new List<IHashSigner>();
-            foreach (var item in model)
-            {
+    
                 IHashSigner signer =
                     HashSignerFactory.GenerateSigner(unsignData, certBase64, null, HashSignerFactory.PDF);
                 signer.SetHashAlgorithm(SignService.Common.HashSignature.Common.MessageDigestAlgorithm.SHA256);
                 ((PdfHashSigner)signer).SetReason("Xác nhận tài liệu");
                 ((PdfHashSigner)signer).SetRenderingMode(PdfHashSigner.RenderMode.LOGO_ONLY);
+                List<IHashSigner> signers = new List<IHashSigner>();
+                foreach (var item in model)
+                {
+                    const int W = 595;
+                    const int H = 842;
+                    int x1 = (int)Math.Round(float.Parse(item.X));
+                    int y1 = (int)Math.Round(float.Parse(item.Y));
+                    int w = (int)Math.Round(float.Parse(item.Width));
+                    int h = (int)Math.Round(float.Parse(item.Height));
 
+                    int d1 = x1;
+                    int d2 = H - (y1 + h);
+                    int b1 = x1 + w;
+                    int b2 = H - y1;
                 if (item.Type == "image")
                 {
                     var image = ImageExtensions.ConvertStringToBase64(item.Image);
@@ -807,17 +818,6 @@ namespace EOffice.WebAPI.Services.SignDigital
                     if (!string.IsNullOrEmpty(item.X) && !string.IsNullOrEmpty(item.Y) &&
                         !string.IsNullOrEmpty(item.Page.ToString()))
                     {
-                        const int W = 595;
-                        const int H = 842;
-                        int x1 = (int)Math.Round(float.Parse(item.X));
-                        int y1 = (int)Math.Round(float.Parse(item.Y));
-                        int w = (int)Math.Round(float.Parse(item.Width));
-                        int h = (int)Math.Round(float.Parse(item.Height));
-
-                        int d1 = x1;
-                        int d2 = H - (y1 + h);
-                        int b1 = x1 + w;
-                        int b2 = H - y1;
 
                         ((PdfHashSigner)signer).AddSignatureView(new PdfSignatureView
                         {
@@ -837,29 +837,15 @@ namespace EOffice.WebAPI.Services.SignDigital
                 }
                 else if (item.Type == "text")
                 {
-                    var img = CreateImageFromText(item.Lines.LastOrDefault(), int.Parse(item.Width),int.Parse( item.Height));
-                    byte[] buffer = ImageToByte2(img);
-                    ((PdfHashSigner)signer).SetCustomImage(buffer);
                     if (!string.IsNullOrEmpty(item.X) && !string.IsNullOrEmpty(item.Y) &&
                         !string.IsNullOrEmpty(item.Page.ToString()))
                     {
-                        const int W = 595;
-                        const int H = 842;
-                        int x1 = (int)Math.Round(float.Parse(item.X));
-                        int y1 = (int)Math.Round(float.Parse(item.Y));
-                        int w = (int)Math.Round(float.Parse(item.Width));
-                        int h = (int)Math.Round(float.Parse(item.Height));
-
-                        int d1 = x1;
-                        int d2 = H - (y1 + h);
-                        int b1 = x1 + w;
-                        int b2 = H - y1;
-
-                        ((PdfHashSigner)signer).AddSignatureView(new PdfSignatureView
+                        ((PdfHashSigner)signer).AddSignatureComment(new PdfSignatureComment
                         {
-                            // Với kích thước chữ ký 200x50
+                            Type = (int)PdfSignatureComment.Types.SIGNATURE,
+                            Text = item.Lines.FirstOrDefault(),
+                            Page = int.Parse(item.Page.ToString()),
                             Rectangle = $"{d1},{d2},{b1},{b2}",
-                            Page = int.Parse(item.Page.ToString())
                         });
                     }
                     else
@@ -871,14 +857,13 @@ namespace EOffice.WebAPI.Services.SignDigital
                         });
                     }
                 }
-
+                }
                 //var hashValue = "ULUOyLMAvzuNOOVJJG/GMdIonsfkD2mtagK5R8RV3cY=";
                 var hashValue = signer.GetSecondHashAsBase64();
-                signers.Add(signer);
-            }
 
 
-            //var tranId = _signHash(access_token, "https://rmgateway.vnptit.vn/csc/signature/signhash", hashValue, credential);
+
+                //var tranId = _signHash(access_token, "https://rmgateway.vnptit.vn/csc/signature/signhash", hashValue, credential);
             //SignHash End
 
             //Sign Begin
@@ -894,7 +879,6 @@ namespace EOffice.WebAPI.Services.SignDigital
             var count = 0;
             var isConfirm = false;
             var datasigned = "";
-            var tempDocumentResp = new List< DocumentResp>();
             while (count < 4 && !isConfirm)
             {
                 Console.WriteLine("Get TranInfo PDF lan " + count + " : ");
@@ -912,7 +896,6 @@ namespace EOffice.WebAPI.Services.SignDigital
                     {
                         isConfirm = true;
                         datasigned = tranInfo.documents[0].sig;
-                        tempDocumentResp = tranInfo.documents;
                         responseMessage.ResponseCode = 200;
                         responseMessage.ResponseContent = "Ky so thanh cong.";
                     }
@@ -949,29 +932,17 @@ namespace EOffice.WebAPI.Services.SignDigital
             var relativePath = Path.Combine("", dateTime, newFileName);
             var filePath = Path.Combine(path, "kiet_abc.pdf");
 
-            File.WriteAllBytes(filePath , file);
-             
-            // foreach (var item in signers)
-            // {
-            //     // if (!item.CheckHashSignature(datasigned))
-            //     // {
-            //     //     Console.WriteLine("Signature not match");
-            //     //     //return;
-            //     // }
-            //     var signed = item.Sign(datasigned);
-            //
-            // }
-
-            var sig1 = signers[0].Sign(datasigned);
-            var sig2 = signers[1].Sign(datasigned);
-            var t = Combine(sig1, sig2);
-            File.WriteAllBytes(filePath,t );
+            if (!signer.CheckHashSignature(datasigned))
+            {
+                Console.WriteLine("Signature not match");
+                //return;
+            }
             // ------------------------------------------------------------------------------------------
 
             // 3. Package external signature to signed file
 
 
-            responseMessage.Content = File.ReadAllBytes(filePath);
+            responseMessage.Content =signer.Sign(datasigned);
             ;
 
             return responseMessage;
@@ -980,7 +951,7 @@ namespace EOffice.WebAPI.Services.SignDigital
             //_log.Info("SignHash PDF: Successfull. signed file at '" + _pdfSignedPath + "'");
         }
         
-        private static Bitmap CreateImageFromText(string Text, int width, int height)
+        private Bitmap CreateImageFromText(string Text, int width, int height)
         {
             // Create the Font object for the image text drawing.
             Font textFont = new Font("Arial", 25, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Pixel);
@@ -998,21 +969,6 @@ namespace EOffice.WebAPI.Services.SignDigital
             GraphicsObject.Flush();
 
             return (ImageObject);
-        }
-        public static byte[] ImageToByte2(Image img)
-        {
-            using (var stream = new MemoryStream())
-            {
-                img.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-                return stream.ToArray();
-            }
-        }
-        public static byte[] Combine(byte[] first, byte[] second)
-        {
-            byte[] ret = new byte[first.Length + second.Length];
-            Buffer.BlockCopy(first, 0, ret, 0, first.Length);
-            Buffer.BlockCopy(second, 0, ret, first.Length, second.Length);
-            return ret;
         }
     }
 }
