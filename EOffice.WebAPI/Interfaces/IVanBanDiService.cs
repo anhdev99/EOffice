@@ -38,5 +38,6 @@ namespace EOffice.WebAPI.Interfaces
         Task ThietLapKySoPhapLy(SignDigitalVM model);
         void KySoPhapLy(SignDigitalVM model);
         void DongMocThemSo(SignDigitalVM model);
+        Task<PagingModel<VanBanDi>> GetPagingXyLy1(VanBanDiParam param);
     }
 }

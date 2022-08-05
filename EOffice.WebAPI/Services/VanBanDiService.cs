@@ -400,7 +400,59 @@ namespace EOffice.WebAPI.Services
             var result = new PagingModel<VanBanDi>();
             var builder = Builders<VanBanDi>.Filter;
             var filter = builder.Empty;
-            filter = builder.And(filter, builder.Where(x => x.IsDeleted == false));
+            filter = builder.And(filter, builder.Where(x => ( (x.CreatedBy == CurrentUserName) ||(x.TrangThai != default && x.TrangThai.Code.ToUpper() == "BH" ) ) && x.IsDeleted == false));
+            var checkQuyenThuKy =
+                CurrentUser.Roles.Find(x =>
+                    x.Code.ToUpper() == RoleConstants.VAN_THU_TRUONG.ToUpper() ||
+                    x.Code.ToUpper() == RoleConstants.THU_KY_HIEU_TRUONG.ToUpper() ||
+                    x.Code.ToUpper() == RoleConstants.HIEU_TRUONG);
+            if (checkQuyenThuKy != default)
+            {
+                filter = builder.And(filter,
+                    builder.Where(x =>
+                        (x.TrangThai != default &&
+                         x.TrangThai.Code.ToUpper() == DefaultRoleCode.TRINH_LANH_DAO_TRUONG) ||
+                        x.CreatedBy == CurrentUserName || x.ListOwerId.Contains(CurrentUserName)));
+            }
+            else
+            {
+                filter = builder.And(filter,
+                    builder.Where(x =>x.ListOwerId.Contains(CurrentUserName) || x.CreatedBy == CurrentUserName));
+            }
+
+            // filter = filter & builder.In(x => x.IdOwner, CurrentUser.DonViIds);
+            if (!String.IsNullOrEmpty(param.Content))
+            {
+                filter = builder.And(filter,
+                    builder.Where(x => x.SoLuuCV.Trim().ToLower().Contains(param.Content.Trim().ToLower())));
+            }
+
+            if (!String.IsNullOrEmpty(param.TrangThai))
+            {
+                filter = builder.And(filter, builder.Eq(x => x.TrangThai.Code, param.TrangThai));
+            }
+
+            if (!String.IsNullOrEmpty(param.LinhVuc))
+            {
+                filter = builder.And(filter, builder.Eq(x => x.LinhVuc.Id, param.LinhVuc));
+            }
+
+            string sortBy = nameof(VanBanDi.ModifiedAt);
+            result.TotalRows = await _collection.CountDocumentsAsync(filter);
+            result.Data = await _collection.Find(filter)
+                .SortByDescending(x => x.ModifiedAt)
+                .Skip(param.Skip)
+                .Limit(param.Limit)
+                .ToListAsync();
+            return result;
+        }
+
+               public async Task<PagingModel<VanBanDi>> GetPagingXyLy1(VanBanDiParam param)
+        {
+            var result = new PagingModel<VanBanDi>();
+            var builder = Builders<VanBanDi>.Filter;
+            var filter = builder.Empty;
+            filter = builder.And(filter, builder.Where(x =>  x.IsDeleted == false));
             var checkQuyenThuKy =
                 CurrentUser.Roles.Find(x =>
                     x.Code.ToUpper() == RoleConstants.VAN_THU_TRUONG.ToUpper() ||
