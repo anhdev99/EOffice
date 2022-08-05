@@ -807,12 +807,13 @@ namespace EOffice.WebAPI.Services.SignDigital
                     int w = (int)Math.Round(float.Parse(item.Width));
                     int h = (int)Math.Round(float.Parse(item.Height));
 
+             
+                if (item.Type == "image")
+                {
                     int d1 = x1;
                     int d2 = H - (y1 + h);
                     int b1 = x1 + w;
                     int b2 = H - y1;
-                if (item.Type == "image")
-                {
                     var image = ImageExtensions.ConvertStringToBase64(item.ImageBase64);
                     ((PdfHashSigner)signer).SetCustomImage(image);
                     if (!string.IsNullOrEmpty(item.X) && !string.IsNullOrEmpty(item.Y) &&
@@ -823,7 +824,7 @@ namespace EOffice.WebAPI.Services.SignDigital
                         {
                             // Với kích thước chữ ký 200x50
                             Rectangle = $"{d1},{d2},{b1},{b2}",
-                            Page = int.Parse(item.Page.ToString())
+                            Page = int.Parse(item.Page.ToString()) + 1
                         });
                     }
                     else
@@ -837,6 +838,10 @@ namespace EOffice.WebAPI.Services.SignDigital
                 }
                 else if (item.Type == "text")
                 {
+                    int d1 = x1 + 10;
+                    int d2 = H - (y1 + h + 10);
+                    int b1 = x1 + w + 10;
+                    int b2 = H - (y1 + 10);
                     if (!string.IsNullOrEmpty(item.X) && !string.IsNullOrEmpty(item.Y) &&
                         !string.IsNullOrEmpty(item.Page.ToString()))
                     {
@@ -844,8 +849,9 @@ namespace EOffice.WebAPI.Services.SignDigital
                         {
                             Type = (int)PdfSignatureComment.Types.SIGNATURE,
                             Text = item.Lines.FirstOrDefault(),
-                            Page = int.Parse(item.Page.ToString()),
+                            Page = int.Parse(item.Page.ToString()) + 1,
                             Rectangle = $"{d1},{d2},{b1},{b2}",
+                            FontSize = 13,
                         });
                     }
                     else
@@ -934,10 +940,9 @@ namespace EOffice.WebAPI.Services.SignDigital
 
 
             responseMessage.Content =signer.Sign(datasigned);
-            ;
 
             return responseMessage;
-            //File.WriteAllBytes(_pdfSignedPath, Convert.FromBase64String(datasigned));
+           // File.WriteAllBytes("fiesl", Convert.FromBase64String(datasigned));
             // Console.WriteLine("SignHash PDF: Successfull. signed file at '" + _pdfSignedPath + "'");
             //_log.Info("SignHash PDF: Successfull. signed file at '" + _pdfSignedPath + "'");
         }

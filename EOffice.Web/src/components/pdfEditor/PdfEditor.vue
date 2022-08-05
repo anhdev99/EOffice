@@ -78,6 +78,7 @@ export default {
     }
   },
  async mounted() {
+    console.log("this.modelKySo.path", this.fileInfo)
     this.signatureDigital.vanBanDiId = this.fileInfo.vanBanDiId;
    await  this.mountPdf()
    await this.handleGetVBD( this.fileInfo.vanBanDiId)
@@ -119,12 +120,31 @@ export default {
       let loader = this.$loading.show({
         container: this.$refs.formContainer,
       });
+      console.log(this.currentUserKySo, "this.currentUserKySo")
       this.signatureDigital.userName = this.currentUserKySo.userNameKySo;
       this.signatureDigital.password = this.currentUserKySo.passwordKySo;
 
       await this.$store.dispatch("signDigitalStore/thucHienKySoPhapLy", this.signatureDigital).then((res) => {
         if(res.resultCode == 'SUCCESS'){
           // this.$emit('closeModel');
+          this.$emit('closeModel');
+        }
+         this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+      });
+      loader.hide()
+    },
+    async handleSubmitDongMocThemSo(e) {
+      let loader = this.$loading.show({
+        container: this.$refs.formContainer,
+      });
+      console.log(this.currentUserKySo, "this.currentUserKySo")
+      this.signatureDigital.userName = this.currentUserKySo.userNameKySo;
+      this.signatureDigital.password = this.currentUserKySo.passwordKySo;
+
+      await this.$store.dispatch("signDigitalStore/thucHienDongMocThemSo", this.signatureDigital).then((res) => {
+        if(res.resultCode == 'SUCCESS'){
+          // this.$emit('closeModel');
+          this.$emit('closeModel');
         }
          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
       });
@@ -132,6 +152,7 @@ export default {
     },
     async mountPdf() {
       try {
+        console.log("pdf", this.fileInfo.path)
         const res = await fetch(this.fileInfo.path)
         const pdfBlob = await res.blob()
         await this.addPDF(pdfBlob)
@@ -149,6 +170,7 @@ export default {
 
     async addPDF(file) {
       try {
+        console.log("pdf22222222222222", this.fileInfo.path)
         const pdf = await readAsPDF(file)
         this.pdfFile = file
         const numPages = pdf.numPages
@@ -364,12 +386,20 @@ export default {
           </label>
         </div>
 
-        <div v-if="model">
+        <div v-if="model.trangThai">
           <button v-if="model.trangThai.code == 'kpl' && model.ower && model.ower.userName == currentUserName"
                   class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 px-3 py-1.5 font-medium text-sm text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                   @click="handleSubmitKySoPhapLy"
           >
             Ký số pháp lý
+          </button>
+        </div>
+        <div v-if="model.trangThai">
+          <button v-if="model.trangThai.code == 'htks' && model.ower && model.ower.userName == currentUserName"
+                  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 px-3 py-1.5 font-medium text-sm text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  @click="handleSubmitDongMocThemSo"
+          >
+            Thêm số / đóng mọc
           </button>
         </div>
         <button
@@ -397,6 +427,7 @@ export default {
               class="absolute top-0 left-0 transform origin-top-left"
               :style="{ transform: `scale(${pagesScale[pageIndex]})`, touchAction: 'none' }"
           >
+
             <div v-for="(object, objectIndex) in allObjects"
                  :key="objectIndex">
               <object-container

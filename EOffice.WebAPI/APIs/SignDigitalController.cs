@@ -360,12 +360,11 @@ namespace EOffice.WebAPI.APIs
 
         [HttpPost]
         [Route("ThucHienKySoPhapLy")]
-        public async Task<IActionResult> ThucHienKySoPhapLy([FromBody] SignDigitalVM model)
+        public IActionResult ThucHienKySoPhapLy([FromBody] SignDigitalVM model)
         {
             try
             {
-                await _vanBanDiService.KySoPhapLy(model);
-
+                _vanBanDiService.KySoPhapLy(model);
                 return Ok(
                     new ResultMessageResponse()
                         .WithCode(EResultResponse.SUCCESS.ToString())
@@ -381,5 +380,26 @@ namespace EOffice.WebAPI.APIs
             }
         }
 
+        [HttpPost]
+        [Route("ThucHienDongMocThemSo")]
+        public IActionResult ThucHienDongMocThemSo([FromBody] SignDigitalVM model)
+        {
+            try
+            {
+                _vanBanDiService.DongMocThemSo(model);
+                return Ok(
+                    new ResultMessageResponse()
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage("Ký số pháp lý thành công!")
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
     }
 }
