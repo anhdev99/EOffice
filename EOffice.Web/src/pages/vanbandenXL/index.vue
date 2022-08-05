@@ -91,57 +91,56 @@ export default {
           key: 'STT',
           label: 'STT',
           thStyle: {width: '50px', minWidth: '50px'},
-          class: "text-center"
+          class: "text-center content-capso",
         },
         {
           key: "soLuuCV",
           label: "Số lưu CV",
           thStyle: {width: '10px', minWidth: '160px'},
-          class: "px-1",
+          class: "px-1 text-center content-capso",
           sortable: true,
         },
         {
           key: "soVBDen",
           label: "Số CV đến",
           thStyle: {width: '160px', minWidth: '160px'},
-          class: "px-1",
+          class: "px-1 text-center content-capso",
         },
         {
           key: "trichYeu",
           label: "Trích yếu",
-          thStyle: {width: '100px', minWidth: '100px'},
-          class: "px-1",
+          class: "px-1 content-capso",
         },
         {
           key: "loaiVanBan",
           label: "Loại văn bản",
-          thStyle: {width: '100px', minWidth: '100px'},
-          class: "px-1",
+          thStyle: {width: '150px', minWidth: '120px'},
+          class: "px-1 text-center content-capso",
         },
         {
           key: "trangThai",
           label: "Trạng thái",
           thStyle: {width: '100px', minWidth: '100px'},
-          class: "px-1",
+          class: "px-1 text-center content-capso",
         },
         {
           key: "ngayNhap",
           label: "Ngày nhập",
           thStyle: {width: '100px', minWidth: '100px'},
-          class: "px-1",
+          class: "px-1 text-center content-capso",
         },
         {
           key: 'chuyenTrangThai',
           label: '',
           thStyle: {width: '110px', minWidth: '110px'},
-          class: "text-center ",
+          class: "px-1 text-center content-capso",
           sortable: false,
           thClass: 'hidden-sortable title-capso',
         },
         {
           key: 'process',
           label: 'Xử lý',
-          thStyle: {width: '110px', minWidth: '110px'},
+          thStyle: {width: '80px', minWidth: '110px'},
         }
       ],
       optionsLoaiVanBan: [],
@@ -1120,14 +1119,14 @@ export default {
                     </template>
                     <template v-slot:cell(process)="data">
                       <div class="d-flex justify-content-around">
-                        <button
-                            type="button"
-                            size="sm"
-                            class="btn btn-outline btn-sm p-0"
-                            data-toggle="tooltip" data-placement="bottom" title="Chi tiết"
-                            v-on:click="handleDetail(data.item.id)">
-                          <i class="fas fa-eye  text-warning me-1"></i>
-                        </button>
+<!--                        <button-->
+<!--                            type="button"-->
+<!--                            size="sm"-->
+<!--                            class="btn btn-outline btn-sm p-0"-->
+<!--                            data-toggle="tooltip" data-placement="bottom" title="Chi tiết"-->
+<!--                            v-on:click="handleDetail(data.item.id)">-->
+<!--                          <i class="fas fa-eye  text-warning me-1"></i>-->
+<!--                        </button>-->
                         <button
                             type="button"
                             size="sm"
@@ -1136,14 +1135,14 @@ export default {
                             v-on:click="handleUpdate(data.item.id)">
                           <i class="fas fa-pencil-alt text-success me-1"></i>
                         </button>
-                        <button
-                            type="button"
-                            size="sm"
-                            class="btn btn-outline btn-sm p-0"
-                            data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
-                            v-on:click="HandleShowPhanCong(data.item.id)">
-                          <i class="fas fa-user-plus text-info me-1"></i>
-                        </button>
+<!--                        <button-->
+<!--                            type="button"-->
+<!--                            size="sm"-->
+<!--                            class="btn btn-outline btn-sm p-0"-->
+<!--                            data-toggle="tooltip" data-placement="bottom" title="Cập nhật"-->
+<!--                            v-on:click="HandleShowPhanCong(data.item.id)">-->
+<!--                          <i class="fas fa-user-plus text-info me-1"></i>-->
+<!--                        </button>-->
                         <button
                             type="button"
                             size="sm"
@@ -1994,5 +1993,25 @@ export default {
 
 .custom-ribon > div {
   border-radius: 3px;
+}
+
+.title-capso {
+  font-weight: bold;
+  color: #00568C;
+
+}
+
+.content-capso {
+  color: #00568C;
+}
+
+.capso-container {
+  margin-top: 10px;
+  display: flex;
+  padding: 0px;
+}
+
+.hidden-sortable:after, .hidden-sortable:before {
+  display: none !important;
 }
 </style>

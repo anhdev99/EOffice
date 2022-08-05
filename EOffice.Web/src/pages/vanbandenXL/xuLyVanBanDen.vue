@@ -11,6 +11,7 @@ import Switches from "vue-switches";
 // import the component
 import Treeselect from '@riophae/vue-treeselect'
 // import the styles
+// import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
 /**
  * Form editor
@@ -21,6 +22,10 @@ import vue2Dropzone from "vue2-dropzone";
 import {butPheModel} from "@/models/butPheModel";
 import {phanCongModel} from "@/models/phanCongModel";
 import {notifyModel} from "@/models/notifyModel";
+import Swal from "sweetalert2";
+import login from "@/router/views/account/login";
+import {trangThaiModel} from "@/models/trangThaiModel";
+import {CURRENT_USER} from "@/helpers/currentUser";
 
 /**
  * Advanced table component
@@ -50,10 +55,10 @@ export default {
         },
         {
           text: "Văn bản đến",
-          href: "/xu-ly-van-ban-den"
+          href: "/van-ban-den"
         },
         {
-          text: " Xử lý",
+          text: "Danh sách",
           active: true
         }
       ],
@@ -86,58 +91,67 @@ export default {
           key: 'STT',
           label: 'STT',
           thStyle: {width: '50px', minWidth: '50px'},
-          class: "text-center"
+          class: "px-1 content-capso",
         },
         {
           key: "soLuuCV",
           label: "Số lưu CV",
-          thStyle: {width: '100px', minWidth: '100px'},
-          class: "px-1",
+          thStyle: {width: '10px', minWidth: '160px'},
+          class: "px-1 content-capso",
           sortable: true,
         },
         {
           key: "soVBDen",
           label: "Số CV đến",
-          thStyle: {width: '100px', minWidth: '100px'},
-          class: "px-1",
+          thStyle: {width: '160px', minWidth: '160px'},
+          class: "px-1 text-center content-capso",
         },
         {
           key: "trichYeu",
           label: "Trích yếu",
-          thStyle: {width: '200px', minWidth: '200px'},
-          class: "px-1",
+          class: "px-1 content-capso",
         },
         {
           key: "loaiVanBan",
           label: "Loại văn bản",
-          thStyle: {width: '100px', minWidth: '100px'},
-          class: "px-1",
+          thStyle: {width: '150px', minWidth: '120px'},
+          class: "px-1 text-center content-capso",
         },
         {
           key: "trangThai",
           label: "Trạng thái",
           thStyle: {width: '100px', minWidth: '100px'},
-          class: "px-1",
+          class: "px-1 text-center content-capso",
         },
         {
           key: "ngayNhap",
           label: "Ngày nhập",
           thStyle: {width: '100px', minWidth: '100px'},
-          class: "px-1",
+          class: "px-1 text-center content-capso",
+        },
+        {
+          key: 'chuyenTrangThai',
+          label: '',
+          thStyle: {width: '110px', minWidth: '110px'},
+          class: "px-1 text-center content-capso",
+          sortable: false,
+          thClass: 'hidden-sortable title-capso',
         },
         {
           key: 'process',
           label: 'Xử lý',
-          thStyle: {width: '110px', minWidth: '110px'},
+          thStyle: {width: '80px', minWidth: '110px'},
         }
       ],
-      optionsLoaiVanBan: null,
-      optionsDonVi: null,
-      optionsLinhVuc: null,
-      optionsUser: null,
-      optionsHinhThucNhan: null,
-      optionsMucDo: null,
-      optionsTrangThai: null,
+      optionsLoaiVanBan: [],
+      optionsDonVi: [],
+      optionsTreeDonVi: [],
+      optionsKhoiCoQuan: [],
+      optionsLinhVuc: [],
+      optionsUser: [],
+      optionsHinhThucNhan: [],
+      optionsMucDo: [],
+      optionsTrangThai: [],
       editor: ClassicEditor,
       editorConfig: {
         height: '200px'
@@ -156,7 +170,12 @@ export default {
       },
       showModalButPhe: false,
       showModalPhanCong: false,
-      phanCong: [{id: 1}],
+      phanCong: [],
+      modelTrangThai: trangThaiModel.currentVBDBaseJson(),
+      currentUserName: CURRENT_USER.USERNAME,
+      showCheckVanBanModal: false,
+      showTrangThaiModal: false,
+      currentStatus: null,
     };
   },
   validations: {
@@ -167,6 +186,11 @@ export default {
       trichYeu: {required},
       ngayBanHanh: {required},
       ngayNhan: {required},
+    },
+    modelTrangThai: {
+      currentTrangThai: {required},
+      newTrangThai: {required},
+      userName: {required},
     }
   },
   computed: {
@@ -177,7 +201,14 @@ export default {
     //   return this.data.length;
     // },
   },
-  created() {
+  watch: {
+    showModalPhanCong() {
+      if (this.showModalPhanCong == false) {
+        this.phanCong = [];
+      }
+    }
+  },
+  async created() {
     this.getLoaiVanBan();
     this.getTrangThai();
     this.getDonVi();
@@ -185,12 +216,14 @@ export default {
     this.getLinhVuc();
     this.getHinhThuc();
     this.getMucDo();
-    this.fnGetList();
+    this.getKhoiCoQuan();
+    this.getTreeDonVi();
   },
-  mounted() {
-    // Set the initial number of items
-    this.totalRows = this.items.length;
-  },
+  // mounted() {
+  //   // Set the initial number of items
+  //   this.totalRows = this.items.length;
+  // },
+
   methods: {
     /**
      * Search the table data with search input
@@ -199,12 +232,11 @@ export default {
       await this.onPageChange();
     },
     async onPageChange(page = 1) {
-      console.log("LOG ON PAGE CHAGNE : ")
-      // this.pagination.currentPage = page;
-      // const params = {
-      //   pageNumber: this.pagination.currentPage,
-      //   pageSize: this.pagination.pageSize,
-      // }
+      this.pagination.currentPage = page;
+      const params = {
+        pageNumber: this.pagination.currentPage,
+        pageSize: this.pagination.pageSize,
+      }
       this.$refs.tblList?.refresh()
     },
     onFiltered(filteredItems) {
@@ -212,10 +244,8 @@ export default {
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
-
     async handleSubmit(e) {
       e.preventDefault();
-      console.log("handle submit", this.model);
       if (
           this.model.id != 0 &&
           this.model.id != null &&
@@ -225,19 +255,21 @@ export default {
         await this.$store.dispatch("vanBanDenStore/update", this.model).then((res) => {
           if (res.resultCode === 'SUCCESS') {
             this.showModal = false;
-            this.model = vanBanDenModel.baseJson()
-            this.$refs.tblList?.refresh()
+            this.model = vanBanDenModel.baseJson();
+            this.$refs.tblList.refresh()
           }
+          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+
         })
       } else {
-        console.log("this.model-create", this.model);
         //Create modelhandleSubmit
         this.model.version = 1;
         await this.$store.dispatch("vanBanDenStore/create", this.model).then((res) => {
           if (res.resultCode === 'SUCCESS') {
             this.showModal = false;
             this.model = vanBanDenModel.baseJson()
-            this.$refs.tblList?.refresh()
+            // this.$refs.myVueDropzone.removeAllFiles();
+            this.$refs.tblList.refresh();
           }
           this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
         });
@@ -246,7 +278,6 @@ export default {
     async handleUpdate(id) {
       await this.$store.dispatch("vanBanDenStore/getById", id).then((res) => {
         if (res.resultCode == "SUCCESS") {
-          console.log("res", res.data)
           this.model = res.data;
           this.showModal = true;
         } else {
@@ -256,26 +287,25 @@ export default {
     },
     async handleButPhe(e) {
       e.preventDefault();
-      // this.model.butPhe = this.modelButPhe;
-      console.log("ModelButPhe", this.model);
-      await this.$store.dispatch("vanBanDenStore/update", this.model).then((res) => {
+      await this.$store.dispatch("vanBanDenStore/butPhe", this.modelButPhe).then((res) => {
         if (res.resultCode === 'SUCCESS') {
-          this.showModal = false;
-          this.model = vanBanDenModel.baseJson()
-          this.$refs.tblList?.refresh()
+          this.showModalButPhe = false;
+          this.$refs.tblList.refresh()
         }
+        this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
       });
     },
     async handlePhanCong(e) {
       e.preventDefault();
-      this.model.phanCong = this.modelPhanCong;
-      // await this.$store.dispatch("vanBanDenStore/update", this.model).then((res) => {
-      //   if (res.resultCode === 'SUCCESS') {
-      //     this.showModal = false;
-      //     this.model = vanBanDenModel.baseJson()
-      //     this.myProvider()
-      //   }
-      // });
+      this.modelPhanCong = this.phanCong;
+      await this.$store.dispatch("vanBanDenStore/phanCong", this.modelPhanCong).then((res) => {
+        if (res.resultCode === 'SUCCESS') {
+          this.showModal = false;
+          this.phanCong = [];
+        }
+        this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+        this.$refs.tblList.refresh()
+      });
     },
     handleShowDeleteModal(id) {
       this.model.id = id;
@@ -286,8 +316,10 @@ export default {
         await this.$store.dispatch("vanBanDenStore/delete", this.model.id).then((res) => {
           if (res.resultCode === 'SUCCESS') {
             this.showDeleteModal = false;
-            this.$refs.tblList?.refresh()
+            this.model = vanBanDenModel.baseJson();
+            this.$refs.tblList.refresh();
           }
+          this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
         });
       }
     },
@@ -295,18 +327,21 @@ export default {
 
     },
     HandleShowPhanCong(id) {
-      this.model.id = id;
+      this.modelPhanCong.vanBanDenId = id;
+      this.phanCong.push({yKienChiDao: "", nguoiButPhe: "", NguoiNhanXuLy: "", vanBanDenId: id,});
       this.showModalPhanCong = true;
     },
     async handleShowButPhe(id) {
-      this.model.id = id;
-      this.showModalButPhe = true;
       await this.$store.dispatch("vanBanDenStore/getById", id).then(resp => {
         if (resp.resultCode == "SUCCESS") {
-          let items = resp.data;
           this.loading = false
-          this.model = items || [];
-          return items || [];
+          this.model = resp.data;
+          this.showModalButPhe = true;
+          if (this.model.butPhe) {
+            this.modelButPhe = this.model.butPhe;
+          }
+          this.modelButPhe.vanBanDenId = id;
+          return [];
         }
         return [];
       })
@@ -320,28 +355,45 @@ export default {
         }
       });
     },
-    async getTrangThai() {
+    handleCreate() {
+      this.model = vanBanDenModel.baseJson();
+      this.showModal = true;
+    },
+    async getDonVi() {
       try {
-        await this.$store.dispatch("trangThaiStore/getTrangThai").then(resp => {
+        await this.$store.dispatch("donViStore/get").then(resp => {
           if (resp.resultCode == "SUCCESS") {
-            let items = resp.data;
+            let items = resp.data
             this.loading = false
-            this.optionsTrangThai = items;
-            return items || []
+            this.optionsDonVi = items;
           }
           return [];
-        })
+        });
       } finally {
         this.loading = false
       }
     },
-    async getDonVi() {
+    async getTreeDonVi() {
       try {
         await this.$store.dispatch("donViStore/getDonViCha").then(resp => {
           if (resp.resultCode == "SUCCESS") {
             let items = resp.data
             this.loading = false
-            this.optionsDonVi = items;
+            this.optionsTreeDonVi = items;
+          }
+          return [];
+        });
+      } finally {
+        this.loading = false
+      }
+    },
+    async getKhoiCoQuan() {
+      try {
+        await this.$store.dispatch("khoiCoQuanStore/get").then(resp => {
+          if (resp.resultCode == "SUCCESS") {
+            let items = resp.data
+            this.loading = false
+            this.optionsKhoiCoQuan = items;
           }
           return [];
         });
@@ -423,17 +475,6 @@ export default {
           ext: fileSuccess.ext
         })
       }
-      if (this.showModalPhanCong == true) {
-        if (this.modelPhanCong == null || this.modelPhanCong.uploadFiles <= 0) {
-          this.modelPhanCong.uploadFiles = [];
-        }
-        let fileSuccess = response.data;
-        this.modelPhanCong.uploadFiles.push({
-          fileId: fileSuccess.id,
-          fileName: fileSuccess.fileName,
-          ext: fileSuccess.ext
-        })
-      }
       if (this.model) {
         if (this.model.uploadFiles == null || this.model.uploadFiles.length <= 0) {
           this.model.uploadFiles = [];
@@ -464,12 +505,45 @@ export default {
         delete node.children;
       }
     },
-    AddformData() {
-      this.phanCong.push({yKienChiDao: null, nguoiButPhe: null, nguoiNhanXuLy: null, file: null});
+    AddformData(id) {
+      this.phanCong.push({yKienChiDao: "", nguoiButPhe: "", NguoiNhanXuLy: "", vanBanDenId: id,});
     },
     deleteRow(index) {
-      if (confirm("Bạn có chắc muốn xoá không?"))
-        this.phanCong.splice(index, 1);
+      Swal.fire({
+        title: "Bạn có chắc muốn xoá không?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#34c38f",
+        cancelButtonColor: "#f46a6a",
+        confirmButtonText: "Đồng ý"
+      }).then(result => {
+        if (result.value) {
+          this.phanCong.splice(index, 1);
+          Swal.fire({
+            position: 'top-center',
+            icon: 'success',
+            title: 'Thành công',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
+      });
+    },
+    formatDonVi(node, instanceId) {
+      let index = this.optionsTreeDonVi?.findIndex(x => x.id == node.id);
+      if (index == -1 || index == undefined) {
+        if (!this.modelButPhe.donViPhoiHop) {
+          this.modelButPhe.donViPhoiHop = [];
+        }
+        this.modelButPhe.donViPhoiHop.push({id: node.id, ten: node.label, code: node.code});
+
+      }
+    },
+    formatRemoveDonVi(node, instanceId) {
+      let value = this.optionsTreeDonVi?.find(x => x.id == node.id);
+      if (value != null) {
+        this.modelButPhe.donViPhoiHop = this.optionsTreeDonVi.children.filter(x => x.id != value.id);
+      }
     },
     myProvider(ctx) {
       const params = {
@@ -486,15 +560,62 @@ export default {
         return promise.then(resp => {
           let items = resp.data.data
           this.totalRows = resp.data.totalRows
-          this.numberOfElement =items.length
+          this.numberOfElement = resp.data.data.length
           this.loading = false
           return items || []
         })
       } finally {
         this.loading = false
       }
-    }
-  }
+    },
+
+    // Trang thai van ban
+    async getTrangThai(currentTrangThai) {
+      try {
+        await this.$store.dispatch("trangThaiStore/getNextTrangThai", {
+          loaiTrangThai: "VBDen",
+          currentTrangThai: currentTrangThai,
+        }).then(resp => {
+          if (resp.resultCode == "SUCCESS") {
+            let items = resp.data;
+            this.loading = false
+            this.optionsTrangThai = items;
+            return items || []
+          }
+          return [];
+        })
+      } finally {
+        this.loading = false
+      }
+    },
+    handleChuyenTrangThai: function (currentStatus, vanBanDenId) {
+      console.log("currentStatus", currentStatus);
+      this.getTrangThai(currentStatus)
+      this.modelTrangThai.currentTrangThai = currentStatus;
+      this.modelTrangThai.newTrangThai = null;
+      this.modelTrangThai.vanBanDenId = vanBanDenId;
+      this.modelTrangThai.userName = this.currentUserName;
+      this.showTrangThaiModal = true;
+    },
+    async handleCheckVanBanModal(id) {
+      await this.$store.dispatch("vanBanDenStore/getById", id).then((res) => {
+        if (res.resultCode == "SUCCESS") {
+          this.model = res.data;
+          console.log("res.data111", res.data);
+          console.log("this.model11111", res.data);
+          console.log("this.model.trangThai", this.model.trangThai);
+          this.getTrangThai(this.model.trangThai)
+          this.modelTrangThai.currentTrangThai = this.model.trangThai;
+          this.modelTrangThai.newTrangThai = null;
+          this.modelTrangThai.vanBanDiId = this.model.id;
+          this.modelTrangThai.userName = this.currentUserName;
+          this.showCheckVanBanModal = true;
+        } else {
+          // this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+        }
+      });
+    },
+  },
 };
 </script>
 
@@ -521,15 +642,15 @@ export default {
               </div>
               <div class="col-sm-8">
                 <div class="text-sm-end">
-<!--                  <b-button-->
-<!--                      variant="primary"-->
-<!--                      type="button"-->
-<!--                      class="btn w-md btn-primary"-->
-<!--                      @click="showModal = true"-->
-<!--                      size="sm"-->
-<!--                  >-->
-<!--                    <i class="mdi mdi-plus me-1"></i> Thêm mới-->
-<!--                  </b-button>-->
+                  <b-button
+                      variant="primary"
+                      type="button"
+                      class="btn w-md btn-primary"
+                      @click="handleCreate"
+                      size="sm"
+                  >
+                    <i class="mdi mdi-plus me-1"></i> Thêm mới
+                  </b-button>
                   <!-- Model create -->
                   <b-modal
                       v-model="showModal"
@@ -544,7 +665,7 @@ export default {
                     <form @submit.prevent="handleSubmit"
                           ref="formContainer">
                       <div class="row">
-                        <div class="col-md-7">
+                        <div class="col-lg-7 col-md-12">
                           <div class="row">
                             <!--                              Số lưu -->
                             <div class="col-md-3">
@@ -607,13 +728,15 @@ export default {
                                     track-by="id"
                                     label="ten"
                                     placeholder="Chọn trạng thái"
-
+                                    deselect-label="Nhấn để xoá"
+                                    selectLabel="Nhấn enter để chọn"
+                                    selectedLabel="Đã chọn"
                                 ></multiselect>
                                 <div
-                                    v-if="submitted && $v.model.soVBDen.$error"
+                                    v-if="submitted && $v.model.loaiVanBan.$error"
                                     class="invalid-feedback"
                                 >
-                                <span v-if="!$v.model.soVBDen.required"
+                                <span v-if="!$v.model.loaiVanBan.required"
                                 >Vui lòng thêm số văn bản đến.</span
                                 >
                                 </div>
@@ -635,26 +758,54 @@ export default {
                             <div class="col-md-6">
                               <div class="mb-2">
                                 <label class="form-label" for="validationCustom01">Ngày ban hành</label>
-                                <date-picker
-                                    v-model="model.ngayBanHanh"
-                                    format="DD/MM/YYYY"
-                                    :first-day-of-week="1"
-                                    lang="en"
-                                    placeholder="Chọn ngày ban hành"
-                                ></date-picker>
+                                <date-picker v-model="model.ngayBanHanh"
+                                             format="DD/MM/YYYY"
+                                             value-type="format"
+                                >
+                                  <div slot="input">
+                                    <input v-model="model.ngayBanHanh"
+                                           v-mask="'##/##/####'" type="text" class="form-control"
+                                           placeholder="Nhập ngày ban hành"/>
+                                  </div>
+                                </date-picker>
                               </div>
                             </div>
                             <!--                            Ngày nhận -->
                             <div class="col-md-6">
                               <div class="mb-2">
                                 <label class="form-label" for="validationCustom01">Ngày nhận</label>
-                                <date-picker
-                                    v-model="model.ngayNhan"
-                                    format="DD/MM/YYYY"
-                                    :first-day-of-week="1"
-                                    lang="en"
-                                    placeholder="Chọn ngày nhận"
-                                ></date-picker>
+                                <date-picker v-model="model.ngayNhan"
+                                             format="DD/MM/YYYY"
+                                             value-type="format"
+                                >
+                                  <div slot="input">
+                                    <input v-model="model.ngayNhan"
+                                           v-mask="'##/##/####'" type="text" class="form-control"
+                                           placeholder="Nhập ngày nhận"/>
+                                  </div>
+                                </date-picker>
+                              </div>
+                            </div>
+                            <div v-if="model.id">
+                              <div v-if="model.file != null  && model.file.length > 0" class="col-md-12">
+                                <label for="">Danh sách đã ký (Nhấn vào để tải xuống)</label>
+                                <div
+                                    class=" p-1"
+                                >
+                                  <template>
+                                    <div v-for="(file, index) in model.file" :key="index">
+                                      <a
+                                          :href="`${apiUrl}files/view/${file.fileId}`"
+                                          class=" fw-medium"
+                                      ><i
+                                          :class="`mdi font-size-16 align-middle me-2`"
+                                      ></i>
+                                        {{ index + 1 }}: {{ file.fileName }}</a
+                                      >
+                                    </div>
+                                  </template>
+                                </div>
+
                               </div>
                             </div>
 
@@ -683,19 +834,22 @@ export default {
                           </div>
 
                         </div>
-                        <div class="col-md-5">
+                        <div class="col-lg-5 col-md-12">
                           <div class="row">
                             <!--                            Ngày Ký-->
                             <div class="col-md-6">
                               <div class="mb-2">
                                 <label class="form-label" for="validationCustom01">Ngày ký</label>
-                                <date-picker
-                                    v-model="model.ngayKy"
-                                    format="DD/MM/YYYY"
-                                    :first-day-of-week="1"
-                                    lang="en"
-                                    placeholder="Chọn ngày ban hành"
-                                ></date-picker>
+                                <date-picker v-model="model.ngayKy"
+                                             format="DD/MM/YYYY"
+                                             value-type="format"
+                                >
+                                  <div slot="input">
+                                    <input v-model="model.ngayKy"
+                                           v-mask="'##/##/####'" type="text" class="form-control"
+                                           placeholder="Nhập ngày ký"/>
+                                  </div>
+                                </date-picker>
                               </div>
                             </div>
                             <!--                            Người ký-->
@@ -718,13 +872,16 @@ export default {
                             <div class="col-md-6">
                               <div class="mb-2">
                                 <label class="form-label" for="validationCustom01">Thời hạn xử lý</label>
-                                <date-picker
-                                    v-model="model.hanXuLy"
-                                    format="DD/MM/YYYY"
-                                    :first-day-of-week="1"
-                                    lang="en"
-                                    placeholder="Chọn ngày ban hành"
-                                ></date-picker>
+                                <date-picker v-model="model.hanXuLy"
+                                             format="DD/MM/YYYY"
+                                             value-type="format"
+                                >
+                                  <div slot="input">
+                                    <input v-model="model.hanXuLy"
+                                           v-mask="'##/##/####'" type="text" class="form-control"
+                                           placeholder="Nhập hạn xử lý"/>
+                                  </div>
+                                </date-picker>
                               </div>
                             </div>
                             <!--                            Trạng thái-->
@@ -747,26 +904,32 @@ export default {
                             <div class="col-md-12">
                               <div class="mb-2">
                                 <label class="form-label" for="validationCustom01">Khối cơ quan gửi</label>
-                                <treeselect
+                                <multiselect
                                     v-model="model.khoiCoQuanGui"
-                                    :options="optionsDonVi"
-                                    placeholder="Chọn khối cơ quan gửi"
-                                    value-format="object"
-                                />
-                                <treeselect-value :value="model.khoiCoQuanGui"/>
+                                    :options="optionsKhoiCoQuan"
+                                    track-by="id"
+                                    label="ten"
+                                    placeholder="Chọn trạng thái"
+                                    deselect-label="Nhấn để xoá"
+                                    selectLabel="Nhấn enter để chọn"
+                                    selectedLabel="Đã chọn"
+                                ></multiselect>
                               </div>
                             </div>
                             <!--                            Cơ quan gửi-->
                             <div class="col-md-12">
                               <div class="mb-2">
                                 <label class="form-label" for="validationCustom01">Cơ quan gửi</label>
-                                <treeselect
+                                <multiselect
                                     v-model="model.coQuanGui"
                                     :options="optionsDonVi"
-                                    placeholder="Chọn cơ quan gửi"
-                                    value-format="object"
-                                />
-                                <treeselect-value :value="model.coQuanGui"/>
+                                    track-by="id"
+                                    label="ten"
+                                    placeholder="Chọn trạng thái"
+                                    deselect-label="Nhấn để xoá"
+                                    selectLabel="Nhấn enter để chọn"
+                                    selectedLabel="Đã chọn"
+                                ></multiselect>
                               </div>
                             </div>
                             <!--                            Hình thức nhận -->
@@ -935,19 +1098,35 @@ export default {
                       <span v-if="data.item.trangThai" class="badge bg-success"> {{ data.item.trangThai.ten }}</span>
                     </template>
                     <template v-slot:cell(trichYeu)="data">
-                      <div :inner-html.prop="data.item.trichYeu | truncate(150)" >
+                      <div v-if="data.item.trichYeu" :inner-html.prop="data.item.trichYeu | truncate(150)">
                       </div>
+                    </template>
+                    <template v-slot:cell(chuyenTrangThai)="data">
+
+                      <b-button
+                          v-if="data.item.ower && data.item.ower.userName == currentUserName
+                          && (data.item.trangThai.code == 'ktvb'
+                          || data.item.trangThai.code == 'HTD')"
+                          type="button"
+                          size="sm"
+                          class="btn btn-light btn-danger"
+                          data-toggle="tooltip" data-placement="bottom" title="Xử lý văn bản"
+                          v-on:click="handleChuyenTrangThai(data.item.trangThai,data.item.id)">
+                        <i class="fas fa-exchange-alt  me-1"></i>
+                        Xử lý VB
+
+                      </b-button>
                     </template>
                     <template v-slot:cell(process)="data">
                       <div class="d-flex justify-content-around">
-                        <button
-                            type="button"
-                            size="sm"
-                            class="btn btn-outline btn-sm p-0"
-                            data-toggle="tooltip" data-placement="bottom" title="Chi tiết"
-                            v-on:click="handleDetail(data.item.id)">
-                          <i class="fas fa-eye  text-warning me-1"></i>
-                        </button>
+                        <!--                        <button-->
+                        <!--                            type="button"-->
+                        <!--                            size="sm"-->
+                        <!--                            class="btn btn-outline btn-sm p-0"-->
+                        <!--                            data-toggle="tooltip" data-placement="bottom" title="Chi tiết"-->
+                        <!--                            v-on:click="handleDetail(data.item.id)">-->
+                        <!--                          <i class="fas fa-eye  text-warning me-1"></i>-->
+                        <!--                        </button>-->
                         <button
                             type="button"
                             size="sm"
@@ -956,14 +1135,14 @@ export default {
                             v-on:click="handleUpdate(data.item.id)">
                           <i class="fas fa-pencil-alt text-success me-1"></i>
                         </button>
-                        <button
-                            type="button"
-                            size="sm"
-                            class="btn btn-outline btn-sm p-0"
-                            data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
-                            v-on:click="HandleShowPhanCong(data.item.id)">
-                          <i class="fas fa-user-plus text-info me-1"></i>
-                        </button>
+                        <!--                        <button-->
+                        <!--                            type="button"-->
+                        <!--                            size="sm"-->
+                        <!--                            class="btn btn-outline btn-sm p-0"-->
+                        <!--                            data-toggle="tooltip" data-placement="bottom" title="Cập nhật"-->
+                        <!--                            v-on:click="HandleShowPhanCong(data.item.id)">-->
+                        <!--                          <i class="fas fa-user-plus text-info me-1"></i>-->
+                        <!--                        </button>-->
                         <button
                             type="button"
                             size="sm"
@@ -1016,6 +1195,379 @@ export default {
             </div>
           </div>
         </div>
+        <!--        Trạng thái -->
+        <b-modal
+            v-model="showTrangThaiModal"
+            centered
+            title="Xử lý văn bản"
+            title-class="font-18"
+            no-close-on-backdrop
+            size="lg"
+            ref="formContainerTrangThai"
+        >
+          <div class="row">
+            <div class="col-md-6">
+
+              <div v-if="modelTrangThai.currentTrangThai" class="mb-2">
+                <label class="form-label" for="validationCustom01">TT Hiện tại</label> <span
+                  class="text-danger">*</span>
+                <input
+                    id="validationCustom01"
+                    :value="modelTrangThai.currentTrangThai.ten"
+                    type="text"
+                    class="form-control"
+                    placeholder=""
+                    disabled
+                />
+              </div>
+
+            </div>
+            <div class="col-md-6">
+
+              <div class="mb-2">
+                <label class="form-label" for="validationCustom01">TT Tiếp theo</label> <span
+                  class="text-danger">*</span>
+                <multiselect
+                    v-model="modelTrangThai.newTrangThai"
+                    :options="optionsTrangThai"
+                    track-by="code"
+                    label="ten"
+                    placeholder="Chọn trạng thái"
+                    :class="{
+                                'is-invalid':
+                                  submitted && $v.modelTrangThai.newTrangThai.$error,
+                                }"
+                ></multiselect>
+                <div
+                    v-if="submitted && !$v.modelTrangThai.newTrangThai.required"
+                    class="invalid-feedback"
+                >
+                  Trạng thái không được để trống.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row" v-if="modelTrangThai.newTrangThai && modelTrangThai.newTrangThai.code == 'tlddv'">
+            <div class="col-md-12">
+              <div class="mb-2">
+                <label class="form-label" for="validationCustom01"> Lãnh đạo đơn vị</label>
+                <multiselect
+                    v-model="modelTrangThai.lanhDaoDonVi"
+                    :options="optionsUser"
+                    track-by="id"
+                    label="fullName"
+                    placeholder="Chọn  lãnh đạo đơn vị"
+                    deselect-label="Nhấn để xoá"
+                    selectLabel="Nhấn enter để chọn"
+                    selectedLabel="Đã chọn"
+                >
+                  <template slot="singleLabel" slot-scope="{ option }">
+                    <strong>{{ option.fullName }}</strong>
+
+                    <span v-if="option.donVi" style="color:red">&nbsp;{{ option.donVi.ten }}</span>
+                  </template>
+                  <template slot="option" slot-scope="{ option }">
+                    <div class="option__desc">
+          <span class="option__title">
+            <strong>{{ option.fullName }}&nbsp;</strong>
+          </span>
+                      <span v-if="option.donVi" class="option__small"
+                            style="color:green">{{ option.donVi.ten }}</span>
+                    </div>
+                  </template>
+                </multiselect>
+              </div>
+            </div>
+          </div>
+          <div class="row" v-if="modelTrangThai.newTrangThai && modelTrangThai.newTrangThai.code == 'BH'">
+            <div class="col-md-12">
+              <div class="mb-2">
+                <label class="form-label" for="validationCustom01"> Đơn vị ban hành</label>
+                <treeselect
+                    v-on:select="formatDonVi"
+                    v-on:deselect="formatRemoveDonVi"
+                    :multiple="true"
+                    :options="optionsDonViTree"
+                    :value="modelTrangThai.donVi"
+                    :searchable="true"
+                    :value-consists-of="valueConsistsOf"
+                    :normalizer="normalizer"
+                    value-format="object"
+                >
+
+                  <label slot="option-label"
+                         slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }"
+                         :class="labelClassName">
+                    {{ node.label }}
+                    <span v-if="shouldShowCount" :class="countClassName">({{ count }})</span>
+                  </label>
+                </treeselect>
+              </div>
+            </div>
+          </div>
+          <div class="row" v-if="modelTrangThai.newTrangThai && modelTrangThai.newTrangThai.code == 'TC'">
+            <div class="col-md-12">
+              <div class="mb-2">
+                <label class="form-label" for="validationCustom01"> Nội dung</label>
+                <textarea
+                    v-model="modelTrangThai.noiDung"
+                    class="form-control"
+                >
+                </textarea>
+              </div>
+            </div>
+          </div>
+          <div class="row" v-if="modelTrangThai.newTrangThai && modelTrangThai.newTrangThai.code == 'DTLKS'">
+            <div class="row" style="display: flex; justify-content: center; align-items: center;">
+              <div class="col-md-5">
+                <!--                Lãnh đạo bút phê -->
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01"> Thành viên</label>
+                  <multiselect
+                      v-model="modelKySo.nguoiKy"
+                      :options="optionsUser"
+                      track-by="id"
+                      label="fullName"
+                      placeholder="Chọn người ký số"
+                      deselect-label="Nhấn để xoá"
+                      selectLabel="Nhấn enter để chọn"
+                      selectedLabel="Đã chọn"
+                  ></multiselect>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class=" d-flex align-items-center">
+                  <switches v-model="modelKySo.choPhepKy" color="primary" class="ml-1 mx-2"></switches>
+                  <label v-if="modelKySo.choPhepKy" for=""> Ký số </label>
+                  <label v-else for=""> Xem duyệt </label>
+                </div>
+
+              </div>
+              <div class="col-md-2">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01"> Thứ tự</label>
+                  <input
+                      v-model="modelKySo.thuTu"
+                      type="text"
+                      class="form-control"
+                      placeholder="Nhập thứ tự"
+                  />
+                </div>
+              </div>
+              <div class="col-md-2">
+                <b-button @click="handleAssignSignTemp" variant="primary"> Thêm thành viên</b-button>
+              </div>
+              <div class="col-md-12">
+                <div class="table-responsive-sm">
+                  <table class="datatables table b-table table-striped table-bordered" style="width:100%">
+                    <thead>
+                    <tr>
+                      <th class="text-center">#</th>
+                      <th style="max-width: 100px">Tài khoản</th>
+                      <th>Họ và tên</th>
+                      <th class="text-center">Trạng thái</th>
+                      <th class="text-center"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <template
+                        v-if="modelTrangThai == null|| (modelTrangThai.listPhanCongKySo != null && modelTrangThai.listPhanCongKySo.length <= 0) ">
+                      <tr>
+                        <td colspan="5">Không có dữ liệu</td>
+                      </tr>
+                    </template>
+                    <template v-else>
+                      <tr v-for="(item, index) in modelTrangThai.listPhanCongKySo" :key="index">
+                        <td class="text-center">{{ ++index }}</td>
+                        <td style="max-width: 100px" class="px-3">{{ item.userName }}</td>
+                        <td class="px-3">{{ item.fullName }}</td>
+                        <td class="px-3 text-center">
+                          <span v-if="item.choPhepKy">Ký số</span>
+                          <span v-else>Xem duyệt</span>
+                        </td>
+                        <td class="text-center">
+                          <b-button size="sm" @click="handleRemoveSignTemp(item.userName)" variant="danger">Xóa
+                          </b-button>
+                        </td>
+                      </tr>
+                    </template>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <template #modal-footer>
+            <b-button v-b-modal.modal-close_visit
+                      size="sm"
+                      class="btn btn-outline-info w-md"
+                      v-on:click="showTrangThaiModal = false">
+              Đóng
+            </b-button>
+            <b-button v-if="modelTrangThai.newTrangThai && modelTrangThai.newTrangThai.code == 'tlddv'"
+                      v-b-modal.modal-close_visit
+                      size="sm"
+                      variant="primary"
+                      type="button"
+                      class="w-md"
+                      :disabled="modelTrangThai.lanhDaoDonVi == null"
+                      v-on:click="handleChuyenTrangThaiVanBan(null)">
+              Trình lãnh đạo đơn vị
+            </b-button>
+
+            <b-button v-else-if="modelTrangThai.newTrangThai && modelTrangThai.newTrangThai.code == 'DTLKS'"
+                      v-b-modal.modal-close_visit
+                      size="sm"
+                      variant="primary"
+                      type="button"
+                      class="w-md"
+                      :disabled="modelTrangThai.listPhanCongKySo == null || (modelTrangThai.listPhanCongKySo != null && modelTrangThai.listPhanCongKySo.length <= 0)"
+                      v-on:click="handleChuyenTrangThaiVanBan(null)">
+              Thiết lập ký số
+            </b-button>
+            <b-button v-else-if="modelTrangThai.newTrangThai && modelTrangThai.newTrangThai.code == 'BH'"
+                      v-b-modal.modal-close_visit
+                      size="sm"
+                      variant="primary"
+                      type="button"
+                      class="w-md"
+                      :disabled="modelTrangThai.donVi == null"
+                      v-on:click="handleChuyenTrangThaiVanBan(null)">
+              Ban hành văn bản
+            </b-button>
+            <b-button v-else v-b-modal.modal-close_visit
+                      size="sm"
+                      variant="primary"
+                      type="button"
+                      class="w-md"
+                      v-on:click="handleChuyenTrangThaiVanBan(null)">
+              Chuyển trạng thái
+            </b-button>
+          </template>
+        </b-modal>
+        <!--        modal tran thai van ban -->
+        <b-modal
+            v-model="showCheckVanBanModal"
+            centered
+            title="Chi tiết VB"
+            title-class="font-18"
+            no-close-on-backdrop
+            size="lg"
+            ref="refshowCheckVanBanModal"
+            hide-footer
+        >
+          <!--          <div class="row" style="width: 100%; margin: 0">-->
+          <!--            <div class="col-md-6">-->
+          <!--              <div class="row">-->
+          <!--                <div class="col-md-12 capso-container">-->
+          <!--                  <div class="title-capso">Số lưu CV</div>-->
+          <!--                  <div class="content-capso">{{ model.soLuuCV }}</div>-->
+          <!--                </div>-->
+          <!--                <div class="col-md-12 capso-container">-->
+          <!--                  <div class="title-capso"> Ngày nhập công văn</div>-->
+          <!--                  <div class="content-capso">{{ model.ngayNhap }}</div>-->
+          <!--                </div>-->
+
+          <!--                <div class="col-md-12 capso-container">-->
+          <!--                  <div class="title-capso"> Ngày ký</div>-->
+          <!--                  <div class="content-capso">{{ model.ngayKy }}</div>-->
+          <!--                </div>-->
+          <!--                <div class="col-md-12 capso-container">-->
+          <!--                  <div class="title-capso"> Trích yếu</div>-->
+          <!--                  <div class="content-capso">-->
+          <!--                    <div v-if="model.trichYeu" :inner-html.prop="model.trichYeu | truncate(150)">-->
+          <!--                    </div>-->
+          <!--                  </div>-->
+          <!--                  &lt;!&ndash;                <div class="col-md-12 capso-container">&ndash;&gt;-->
+          <!--                  &lt;!&ndash;                  <div class="title-capso"> Ngày ký</div>&ndash;&gt;-->
+          <!--                  &lt;!&ndash;                  <div class="content-capso">{{model.ngayKy}}</div>&ndash;&gt;-->
+          <!--                  &lt;!&ndash;                </div>&ndash;&gt;-->
+          <!--                </div>-->
+          <!--              </div>-->
+          <!--            </div>-->
+          <!--            <div class="col-md-6">-->
+          <!--              <div class="row">-->
+          <!--                <div class="col-md-12 capso-container">-->
+          <!--                  <div class="title-capso"> Loại văn bản</div>-->
+          <!--                  <template v-if="model.loaiVanBan">-->
+          <!--                    <div class="content-capso">{{ model.loaiVanBan.ten }}</div>-->
+          <!--                  </template>-->
+          <!--                </div>-->
+          <!--                <div class="col-md-12 capso-container">-->
+          <!--                  <div class="title-capso"> Trạng thái</div>-->
+          <!--                  <template v-if="model.trangThai">-->
+          <!--                    <div class="content-capso">{{ model.trangThai.ten }}</div>-->
+          <!--                  </template>-->
+          <!--                </div>-->
+
+          <!--              </div>-->
+
+          <!--            </div>-->
+          <!--            <div class="col-md-12" style="padding: 0px">-->
+          <!--              <h5 style="font-weight: bold">Duyệt thể thức văn bản</h5>-->
+          <!--              <div class="col-md-12 capso-container" style="display: flex; flex-direction: column">-->
+          <!--                <div class="title-capso">Tện tin dính kèm của người soạn</div>-->
+          <!--                <ul v-if="model.file && model.file.length > 0" style="padding-left: 30px">-->
+          <!--                  <li class="title-capso" style="font-weight: normal" v-for="(value, index) in model.file" :key="index">-->
+
+          <!--                    <a-->
+          <!--                        :href="`${apiUrl}files/view/${value.fileId}`"-->
+          <!--                        class=" fw-medium"-->
+          <!--                    ><i-->
+          <!--                        :class="`mdi font-size-16 align-middle me-2`"-->
+          <!--                    ></i>-->
+          <!--                      [Tải về]</a-->
+          <!--                    >-->
+          <!--                    <span style="padding-left: 20px">{{ value.fileName }}</span>-->
+          <!--                  </li>-->
+          <!--                </ul>-->
+
+          <!--              </div>-->
+          <!--              <div class="mb-3">-->
+          <!--                <label class="form-label title-capso">Ghi chú</label>-->
+          <!--                <div>-->
+          <!--                  <textarea-->
+          <!--                      v-model="modelTrangThai.noiDung"-->
+          <!--                      class="form-control"-->
+          <!--                      name="textarea"-->
+
+          <!--                  ></textarea>-->
+          <!--                </div>-->
+          <!--              </div>-->
+
+          <!--            </div>-->
+
+          <!--          </div>-->
+          <!--          <template #modal-header="{  }">-->
+          <!--            &lt;!&ndash; Emulate built in modal header close button action &ndash;&gt;-->
+          <!--            <h5 style="min-width: 200px"> Văn bản đi</h5>-->
+          <!--            <div style="width: 100%; display: flex; justify-content: flex-end" class="text-end">-->
+          <!--              <div v-if="optionsTrangThai && optionsTrangThai.length" style="display: flex">-->
+          <!--                <div v-for="(value, index) in optionsTrangThai" :key="index" >-->
+
+          <!--                  <b-button v-if="value.code == 'TLKSPL'" type="button" :class="'btn-' + value.bgColor" class="ms-1"-->
+          <!--                            style="min-width: 80px;" size="sm"-->
+          <!--                            @click="handleKySoPhapLy(model.id, true)"-->
+          <!--                  >-->
+          <!--                    {{ value.ten }}-->
+          <!--                  </b-button>-->
+          <!--                  <b-button v-else type="button" :class="'btn-' + value.bgColor" class="ms-1" style="min-width: 80px;"-->
+          <!--                            size="sm"-->
+          <!--                            @click="handleChuyenTrangThaiVanBan(value)"-->
+          <!--                  >-->
+          <!--                    {{ value.ten }}-->
+          <!--                  </b-button>-->
+          <!--                </div>-->
+
+          <!--              </div>-->
+
+          <!--              <b-button variant="light" class="ms-1" size="sm" style="width: 80px"-->
+          <!--                        @click="showCheckVanBanModal = false">-->
+          <!--                Đóng-->
+          <!--              </b-button>-->
+          <!--            </div>-->
+          <!--          </template>-->
+        </b-modal>
         <!--        Modal bút phê-->
         <b-modal
             v-model="showModalButPhe"
@@ -1035,12 +1587,12 @@ export default {
                   <!--                              Số lưu -->
                   <div class="me-4 d-flex align-items-baseline">
                     <label class="form-label me-2" for="validationCustom01">Số lưu CV:</label>
-                    <p class="fw-bold text-primary">{{model.soLuuCV}}</p>
+                    <p class="fw-bold text-primary">{{ model.soLuuCV }}</p>
                   </div>
                   <!--                            Số VB đến -->
                   <div class="d-flex align-items-baseline">
                     <label class="form-label me-2" for="validationCustom01">Số văn bản đến:</label>
-                    <p class="fw-bold text-primary">{{model.soVBDen}}</p>
+                    <p class="fw-bold text-primary">{{ model.soVBDen }}</p>
                   </div>
                 </div>
                 <!--                Trích yếu -->
@@ -1077,13 +1629,15 @@ export default {
                 <!--                Ngày bút phê -->
                 <div class="mb-2">
                   <label class="form-label" for="validationCustom01">Ngày bút phê</label>
-                  <date-picker
-                      v-model="modelButPhe.ngayButPhe"
-                      format="DD/MM/YYYY"
-                      :first-day-of-week="1"
-                      lang="en"
-                      placeholder="Chọn ngày bút phê"
-                  ></date-picker>
+                  <date-picker v-model="modelButPhe.ngayButPhe"
+                               format="DD/MM/YYYY"
+                               value-type="format"
+                  >
+                    <div slot="input">
+                      <input v-model="modelButPhe.ngayButPhe"
+                             v-mask="'##/##/####'" type="text" class="form-control" placeholder="Chọn ngày bút phê"/>
+                    </div>
+                  </date-picker>
                 </div>
               </div>
               <div class="col-md-6">
@@ -1147,28 +1701,60 @@ export default {
                   ></multiselect>
                 </div>
                 <!--                Đơn vị xử lý-->
-                <!--                <div class="mb-2">-->
-                <!--                  <label class="form-label" for="validationCustom01">Đơn vị xử Lý</label>-->
-                <!--                  <treeselect-->
-                <!--                      :multiple="true"-->
-                <!--                      v-model="modelButPhe.donViXuLy"-->
-                <!--                      :options="optionsDonVi"-->
-                <!--                      placeholder="Chọn đơn vị xử lý"-->
-                <!--                      value-format="object"-->
-                <!--                  />-->
-                <!--                  <treeselect-value :value="model.donViXuLy"/>-->
-                <!--                </div>-->
+                <div class="mb-2">
+                  <!--                  <label class="form-label" for="validationCustom01">Đơn vị xử Lý</label>-->
+                  <!--                  <treeselect-->
+                  <!--                      :multiple="true"-->
+                  <!--                      v-model="modelButPhe.donViXuLy"-->
+                  <!--                      :options="optionsDonVi"-->
+                  <!--                      placeholder="Chọn đơn vị xử lý"-->
+                  <!--                      value-format="object"-->
+                  <!--                  />-->
+                  <!--                  <treeselect-value :value="model.donViXuLy"/>-->
+                  <!--                  <treeselect-->
+                  <!--                      v-on:select="formatDonViXuLy"-->
+                  <!--                      v-on:deselect="formatRemoveDonViXuLy"-->
+                  <!--                      :options="optionsDonVi"-->
+                  <!--                      :value="modelButPhe.donViPhoiHop"-->
+                  <!--                      :searchable="true"-->
+                  <!--                      :show-count="true"-->
+                  <!--                      :default-expand-level="1"-->
+                  <!--                      :normalizer="normalizer"-->
+                  <!--                      value-format="object"-->
+                  <!--                  >-->
+
+                  <!--                    <label slot="option-label"-->
+                  <!--                           slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }"-->
+                  <!--                           :class="labelClassName">-->
+                  <!--                      {{ node.label }}-->
+                  <!--                      <span v-if="shouldShowCount" :class="countClassName">({{ count }})</span>-->
+                  <!--                    </label>-->
+                  <!--                  </treeselect>-->
+                </div>
                 <!--                Đơn vị phối hợp-->
                 <div class="mb-2">
                   <label class="form-label" for="validationCustom01"> Đơn vị phối hợp</label>
                   <treeselect
+                      v-on:select="formatDonVi"
+                      v-on:deselect="formatRemoveDonVi"
                       :multiple="true"
-                      v-model="modelButPhe.donViPhoiHop"
-                      :options="optionsDonVi"
-                      placeholder="Chọn đơn vị phối hợp"
+                      :options="optionsTreeDonVi"
+                      :value="modelButPhe.donViPhoiHop"
+                      :searchable="true"
+                      :show-count="true"
+                      :default-expand-level="1"
+                      :normalizer="normalizer"
                       value-format="object"
-                  />
-                  <treeselect-value :value="model.donViXuLy"/>
+                      placeholder="Chọn đơn vị phối hợp"
+                  >
+
+                    <label slot="option-label"
+                           slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }"
+                           :class="labelClassName">
+                      {{ node.label }}
+                      <span v-if="shouldShowCount" :class="countClassName">({{ count }})</span>
+                    </label>
+                  </treeselect>
                 </div>
                 <!--                Ngừoi xem để biết-->
                 <div class="mb-2">
@@ -1210,9 +1796,7 @@ export default {
             </div>
           </form>
         </b-modal>
-
         <!--        Modal phân công -->
-
         <b-modal
             v-model="showModalPhanCong"
             title="Phân công xử lý"
@@ -1230,7 +1814,7 @@ export default {
                   <b-button
                       pill
                       variant="success"
-                      @click="AddformData"
+                      @click="AddformData(modelPhanCong.vanBanDenId)"
                   >
                     <i class="fas fa-plus text-light fs-3"></i>
                   </b-button>
@@ -1305,18 +1889,18 @@ export default {
                             ></multiselect>
                           </div>
                         </div>
-                        <div class="col-md-12">
-                          <div class="mb-2">
-                            <label for="">File đính kèm</label>
-                            <vue-dropzone
-                                id="dropzone"
-                                ref="myVueDropzone"
-                                :options="dropzoneOptions"
-                                v-on:vdropzone-removed-file="removeThisFile"
-                                v-on:vdropzone-success="addThisFile"
-                            ></vue-dropzone>
-                          </div>
-                        </div>
+                        <!--                        <div class="col-md-12">-->
+                        <!--                          <div class="mb-2">-->
+                        <!--                            <label for="">File đính kèm</label>-->
+                        <!--                            <vue-dropzone-->
+                        <!--                                id="dropzone"-->
+                        <!--                                ref="myVueDropzone"-->
+                        <!--                                :options="dropzoneOptions"-->
+                        <!--                                v-on:vdropzone-removed-file="removeThisFile"-->
+                        <!--                                v-on:vdropzone-success="addThisFile"-->
+                        <!--                            ></vue-dropzone>-->
+                        <!--                          </div>-->
+                        <!--                        </div>-->
                       </div>
                     </div>
                   </div>
@@ -1334,7 +1918,6 @@ export default {
             </div>
           </form>
         </b-modal>
-
         <!--        Modal delete -->
         <b-modal
             v-model="showDeleteModal"
@@ -1410,5 +1993,25 @@ export default {
 
 .custom-ribon > div {
   border-radius: 3px;
+}
+
+.title-capso {
+  font-weight: bold;
+  color: #00568C;
+
+}
+
+.content-capso {
+  color: #00568C;
+}
+
+.capso-container {
+  margin-top: 10px;
+  display: flex;
+  padding: 0px;
+}
+
+.hidden-sortable:after, .hidden-sortable:before {
+  display: none !important;
 }
 </style>
