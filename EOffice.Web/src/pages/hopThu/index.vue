@@ -345,6 +345,7 @@ export default {
                   >
                     <i class="mdi mdi-plus me-1"></i> Soạn thư
                   </b-button>
+                  <!--                  Modal create -->
                   <b-modal
                       v-model="showModal"
                       title="Thêm thư mới"
@@ -505,6 +506,7 @@ export default {
 
                     </form>
                   </b-modal>
+                  <!--                  Modal chuyển tiếp -->
                   <b-modal
                       v-model="showChuyenTiepModal"
                       title="Thêm thư mới"
@@ -666,6 +668,7 @@ export default {
                 </div>
               </div>
             </div>
+            <!--            Pagination -->
             <div class="row">
               <div class="col-12">
                 <div class="row mb-3">
@@ -762,6 +765,7 @@ export default {
             </div>
           </div>
         </div>
+        <!--        Modal delete -->
         <b-modal
             v-model="showDeleteModal"
             centered
@@ -799,43 +803,57 @@ export default {
             size="lg"
             hide-footer
         >
-          <div class="title-hopthu-main">
+          <div class="title-hopthu-main" style="text-align: justify">
             {{ model.tieuDe }}
           </div>
-          <div style="display: flex;margin-top: 4px; margin-bottom: 5px">
-            <div v-if="model.ngayNhanFull" style="margin-right: 10px; font-size: 14px"><span class="title-hopthu"> Ngày gửi: </span>
-              {{ model.ngayNhanFull }}
+          <hr>
+          <div class="row">
+            <div class="col-md-6 col-m-12">
+              <div style="margin-bottom: 5px">
+                <div v-if="model.ngayNhanFull" style="margin-right: 10px; font-size: 14px" class="d-flex flex-column text-success">
+                  <label class="text-black-50"> NGÀY GỬI: </label>
+                  <span>{{ model.ngayNhanFull }}</span>
+
+                </div>
+                <div v-if="model.nguoiGui" style="margin-right: 10px; font-size: 14px" class="d-flex flex-column text-success">
+                  <label class="text-black-50"> NGƯỜI TẠO: </label>
+                  {{ model.nguoiGui.fullName }}
+                  <template v-if="model.nguoiGui.donVi">
+                    -{{ model.nguoiGui.donVi.ten }}
+                  </template>
+                </div>
+              </div>
             </div>
-            <div v-if="model.nguoiGui" style="margin-right: 10px; font-size: 14px">
-              <span class="title-hopthu"> Người tạo: </span> {{ model.nguoiGui.fullName }}
-              <template v-if="model.nguoiGui.donVi">
-                -{{ model.nguoiGui.donVi.ten }}
+            <div class="col-md-6 col-sm-12 d-flex" style="margin-bottom: 5px">
+              <template v-if="model.nguoiNhans == null || (model.nguoiNhans != null &&model.nguoiNhans.length <= 0)">
+              </template>
+              <template v-else>
+                <div class="d-flex flex-column">
+                  <label for="" class="text-black-50">NGƯỜI NHẬN: </label>
+                  <span v-for="(value, index) in model.nguoiNhans" :key="index" class="mb-1">
+                    <span class="p-1 text-info font-size-12" style="background-color: rgba(56,164,248,0.2)">
+                      {{ value.fullName }}({{ value.userName }})
+                    </span>
+                  </span>
+                </div>
+
               </template>
             </div>
           </div>
-          <div class="col-md-12" style="margin-bottom: 5px">
-            <template v-if="model.nguoiNhans == null || (model.nguoiNhans != null &&model.nguoiNhans.length <= 0)">
-            </template>
-            <template v-else>
-              <label for="" class="title-hopthu">Người nhận: </label>
-              <span v-for="(value, index) in model.nguoiNhans" :key="index">
-                <span>{{ value.fullName }}({{ value.userName }}), </span>
-              </span>
-            </template>
-          </div>
-          <div class="col-md-12" style="margin-bottom: 5px">
-            <template v-if="model.cc == null || (model.cc != null &&model.cc.length <= 0)">
-            </template>
-            <template v-else>
-              <label for="" class="title-hopthu">Cc: </label>
-              <span v-for="(value, index) in model.cc" :key="index">
-                <span>{{ value.fullName }}({{ value.userName }}), </span>
-              </span>
-            </template>
-          </div>
-          <div v-if="model.noiDung">
-            <div class="title-hopthu">Nội dung</div>
-            <div :inner-html.prop="model.noiDung">
+
+<!--          <div class="col-md-12" style="margin-bottom: 5px">-->
+<!--            <template v-if="model.cc == null || (model.cc != null &&model.cc.length <= 0)">-->
+<!--            </template>-->
+<!--            <template v-else>-->
+<!--              <label for="" class="title-hopthu">Cc: </label>-->
+<!--              <span v-for="(value, index) in model.cc" :key="index">-->
+<!--                <span>{{ value.fullName }}({{ value.userName }}), </span>-->
+<!--              </span>-->
+<!--            </template>-->
+<!--          </div>-->
+          <div v-if="model.noiDung" class="mt-2">
+            <div class="text-black-50">NỘI DUNG</div>
+            <div :inner-html.prop="model.noiDung" style="text-align: justify">
             </div>
           </div>
 
