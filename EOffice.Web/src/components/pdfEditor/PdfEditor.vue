@@ -41,12 +41,15 @@ export default {
         image: null
       },
       currentUser: CURRENT_USER.USER_KY_SO,
+      currentUserKySo: CURRENT_USER.USER_KY_SO,
       downloadFile: null,
       currentFont: "Times-Roman",
       signatureDigital: {
         vanBanDiId: null,
         signDigitals: []
-      }
+      },
+      model: vanBanDenModel.baseJson(),
+      currentUserName: CURRENT_USER.USERNAME,
     }
   },
   computed: {
@@ -55,21 +58,17 @@ export default {
         return this.$refs.signatureCanvas.isShow;
       }
       return false;
-
-    }
+    },
   },
   watch: {
     selectedPageIndex(value) {
       console.log(value)
     },
     allObjects(value){
+      this.signatureDigital.signDigitals = [];
       if(value){
         if(this.signatureDigital){
-          this.signatureDigital.signDigitals = [];
           value.map(object =>{
-            if(object.type == "image" && object.payload){
-              object.imageBase64 = object.payload.currentSrc
-            }
             this.signatureDigital.signDigitals.push(object);
           })
         }
@@ -79,6 +78,7 @@ export default {
     }
   },
  async mounted() {
+    console.log("this.modelKySo.path", this.fileInfo)
     this.signatureDigital.vanBanDiId = this.fileInfo.vanBanDiId;
    await  this.mountPdf()
    await this.handleGetVBD( this.fileInfo.vanBanDiId)
@@ -92,12 +92,13 @@ export default {
         if (res.resultCode == "SUCCESS") {
           if(res.data){
             if(res.data.signDigitals){
+              this.model = res.data;
               this.allObjects = res.data.signDigitals;
+              console.log("alll", this.allObjects)
               this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage({resultString: "Tải chữ ký thành công", resultCode: "SUCCESS"}));
             }
           }
         }
-
         loader.hide();
       });
     },
@@ -115,8 +116,43 @@ export default {
       });
       loader.hide()
     },
+    async handleSubmitKySoPhapLy(e) {
+      let loader = this.$loading.show({
+        container: this.$refs.formContainer,
+      });
+      console.log(this.currentUserKySo, "this.currentUserKySo")
+      this.signatureDigital.userName = this.currentUserKySo.userNameKySo;
+      this.signatureDigital.password = this.currentUserKySo.passwordKySo;
+
+      await this.$store.dispatch("signDigitalStore/thucHienKySoPhapLy", this.signatureDigital).then((res) => {
+        if(res.resultCode == 'SUCCESS'){
+          // this.$emit('closeModel');
+          this.$emit('closeModel');
+        }
+         this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+      });
+      loader.hide()
+    },
+    async handleSubmitDongMocThemSo(e) {
+      let loader = this.$loading.show({
+        container: this.$refs.formContainer,
+      });
+      console.log(this.currentUserKySo, "this.currentUserKySo")
+      this.signatureDigital.userName = this.currentUserKySo.userNameKySo;
+      this.signatureDigital.password = this.currentUserKySo.passwordKySo;
+
+      await this.$store.dispatch("signDigitalStore/thucHienDongMocThemSo", this.signatureDigital).then((res) => {
+        if(res.resultCode == 'SUCCESS'){
+          // this.$emit('closeModel');
+          this.$emit('closeModel');
+        }
+         this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+      });
+      loader.hide()
+    },
     async mountPdf() {
       try {
+        console.log("pdf", this.fileInfo.path)
         const res = await fetch(this.fileInfo.path)
         const pdfBlob = await res.blob()
         await this.addPDF(pdfBlob)
@@ -134,6 +170,7 @@ export default {
 
     async addPDF(file) {
       try {
+        console.log("pdf22222222222222", this.fileInfo.path)
         const pdf = await readAsPDF(file)
         this.pdfFile = file
         const numPages = pdf.numPages
@@ -213,6 +250,7 @@ export default {
           x: 0,
           y: 0,
           payload: img,
+          imageBase64: img.currentSrc,
           file: file,
           page: this.selectedPageIndex,
         }
@@ -223,12 +261,24 @@ export default {
         this.kySoModel.height = height;
         this.kySoModel.page = this.selectedPageIndex + 1;
         this.kySoModel.image = img.currentSrc;
-        console.log(' this.kySoModel', this.kySoModel)
+        // this.allObjects = [...this.allObjects, object];
+        // console.log(' this.kySoModel', this.kySoModel)
         let indexImage = this.allObjects.findIndex(x => x.type == 'image');
         if(indexImage == -1){
           this.allObjects = [...this.allObjects, object];
         }else{
-          this.allObjects[indexImage] = [object]
+          this.allObjects=   this.allObjects.map(value =>{
+            if(value.type == 'image'){
+              value.payload= object.payload;
+              value.imageBase64=object.imageBase64;
+            }
+            return value;
+          })
+          // this.allObjects = this.allObjects.filter((value, index) =>{
+          //   console.log(index, "index"); return index != indexImage});
+          // console.log(" this.allObjects1", this.allObjects)
+          this.allObjects = [...this.allObjects, object];
+          // console.log(" this.allObjects2", this.allObjects)
         }
 
       } catch (e) {
@@ -336,13 +386,24 @@ export default {
           </label>
         </div>
 
-        <!--        <button-->
-        <!--            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 px-3 py-1.5 font-medium text-sm text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"-->
-        <!--            @click="handleSubmit"-->
-        <!--        >-->
-        <!--        Ký số-->
-        <!--        </button>-->
+        <div v-if="model.trangThai">
+          <button v-if="model.trangThai.code == 'kpl' && model.ower && model.ower.userName == currentUserName"
+                  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 px-3 py-1.5 font-medium text-sm text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  @click="handleSubmitKySoPhapLy"
+          >
+            Ký số pháp lý
+          </button>
+        </div>
+        <div v-if="model.trangThai">
+          <button v-if="model.trangThai.code == 'htks' && model.ower && model.ower.userName == currentUserName"
+                  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 px-3 py-1.5 font-medium text-sm text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  @click="handleSubmitDongMocThemSo"
+          >
+            Thêm số / đóng mọc
+          </button>
+        </div>
         <button
+            v-else
             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 px-3 py-1.5 font-medium text-sm text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             @click="handleSubmit"
         >
@@ -366,6 +427,7 @@ export default {
               class="absolute top-0 left-0 transform origin-top-left"
               :style="{ transform: `scale(${pagesScale[pageIndex]})`, touchAction: 'none' }"
           >
+
             <div v-for="(object, objectIndex) in allObjects"
                  :key="objectIndex">
               <object-container

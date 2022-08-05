@@ -8,6 +8,7 @@ using EOffice.WebAPI.Exceptions;
 using EOffice.WebAPI.Helpers;
 using EOffice.WebAPI.Interfaces;
 using EOffice.WebAPI.Models;
+using EOffice.WebAPI.Services;
 using EOffice.WebAPI.Services.SignDigital;
 using EOffice.WebAPI.ViewModels;
 using Microsoft.AspNetCore.Hosting;
@@ -26,8 +27,7 @@ namespace EOffice.WebAPI.APIs
         private IFileService _fileService;
         private readonly IWebHostEnvironment _hostingEnvironment;
         private DataContext _context;
-
-        public SignDigitalController(IFileService fileService, IVanBanDiService vanBanDiService,
+        public SignDigitalController(IFileService fileService, IVanBanDiService vanBanDiService,HistoryVanBanDiService history,
             IWebHostEnvironment hostingEnvironment, DataContext context)
         {
             _vanBanDiService = vanBanDiService;
@@ -358,5 +358,48 @@ namespace EOffice.WebAPI.APIs
             }
         }
 
+        [HttpPost]
+        [Route("ThucHienKySoPhapLy")]
+        public IActionResult ThucHienKySoPhapLy([FromBody] SignDigitalVM model)
+        {
+            try
+            {
+                _vanBanDiService.KySoPhapLy(model);
+                return Ok(
+                    new ResultMessageResponse()
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage("Ký số pháp lý thành công!")
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+
+        [HttpPost]
+        [Route("ThucHienDongMocThemSo")]
+        public IActionResult ThucHienDongMocThemSo([FromBody] SignDigitalVM model)
+        {
+            try
+            {
+                _vanBanDiService.DongMocThemSo(model);
+                return Ok(
+                    new ResultMessageResponse()
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage("Ký số pháp lý thành công!")
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
     }
 }

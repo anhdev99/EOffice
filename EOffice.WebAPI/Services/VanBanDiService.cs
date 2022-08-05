@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -14,8 +15,10 @@ using EOffice.WebAPI.Helpers;
 using EOffice.WebAPI.Interfaces;
 using EOffice.WebAPI.Models;
 using EOffice.WebAPI.Params;
+using EOffice.WebAPI.Services.SignDigital;
 using EOffice.WebAPI.ViewModels;
 using EResultResponse = EOffice.WebAPI.Exceptions.EResultResponse;
+using File = EOffice.WebAPI.Models.File;
 
 namespace EOffice.WebAPI.Services
 {
@@ -397,7 +400,59 @@ namespace EOffice.WebAPI.Services
             var result = new PagingModel<VanBanDi>();
             var builder = Builders<VanBanDi>.Filter;
             var filter = builder.Empty;
-            filter = builder.And(filter, builder.Where(x => x.IsDeleted == false));
+            filter = builder.And(filter, builder.Where(x => ( (x.CreatedBy == CurrentUserName) ||(x.TrangThai != default && x.TrangThai.Code.ToUpper() == "BH" ) ) && x.IsDeleted == false));
+            var checkQuyenThuKy =
+                CurrentUser.Roles.Find(x =>
+                    x.Code.ToUpper() == RoleConstants.VAN_THU_TRUONG.ToUpper() ||
+                    x.Code.ToUpper() == RoleConstants.THU_KY_HIEU_TRUONG.ToUpper() ||
+                    x.Code.ToUpper() == RoleConstants.HIEU_TRUONG);
+            if (checkQuyenThuKy != default)
+            {
+                filter = builder.And(filter,
+                    builder.Where(x =>
+                        (x.TrangThai != default &&
+                         x.TrangThai.Code.ToUpper() == DefaultRoleCode.TRINH_LANH_DAO_TRUONG) ||
+                        x.CreatedBy == CurrentUserName || x.ListOwerId.Contains(CurrentUserName)));
+            }
+            else
+            {
+                filter = builder.And(filter,
+                    builder.Where(x =>x.ListOwerId.Contains(CurrentUserName) || x.CreatedBy == CurrentUserName));
+            }
+
+            // filter = filter & builder.In(x => x.IdOwner, CurrentUser.DonViIds);
+            if (!String.IsNullOrEmpty(param.Content))
+            {
+                filter = builder.And(filter,
+                    builder.Where(x => x.SoLuuCV.Trim().ToLower().Contains(param.Content.Trim().ToLower())));
+            }
+
+            if (!String.IsNullOrEmpty(param.TrangThai))
+            {
+                filter = builder.And(filter, builder.Eq(x => x.TrangThai.Code, param.TrangThai));
+            }
+
+            if (!String.IsNullOrEmpty(param.LinhVuc))
+            {
+                filter = builder.And(filter, builder.Eq(x => x.LinhVuc.Id, param.LinhVuc));
+            }
+
+            string sortBy = nameof(VanBanDi.ModifiedAt);
+            result.TotalRows = await _collection.CountDocumentsAsync(filter);
+            result.Data = await _collection.Find(filter)
+                .SortByDescending(x => x.ModifiedAt)
+                .Skip(param.Skip)
+                .Limit(param.Limit)
+                .ToListAsync();
+            return result;
+        }
+
+               public async Task<PagingModel<VanBanDi>> GetPagingXyLy1(VanBanDiParam param)
+        {
+            var result = new PagingModel<VanBanDi>();
+            var builder = Builders<VanBanDi>.Filter;
+            var filter = builder.Empty;
+            filter = builder.And(filter, builder.Where(x =>  x.IsDeleted == false));
             var checkQuyenThuKy =
                 CurrentUser.Roles.Find(x =>
                     x.Code.ToUpper() == RoleConstants.VAN_THU_TRUONG.ToUpper() ||
@@ -1522,6 +1577,230 @@ namespace EOffice.WebAPI.Services
                     .WithTitle(VanBanAction.THIET_LAP_KY_SO_PHAP_LY)
                     .SaveChangeHistory();
             }
+        }
+
+        public  void KySoPhapLy(SignDigitalVM model)
+        {
+            if (string.IsNullOrEmpty(model.UserName) || string.IsNullOrEmpty(model.Password))
+          {
+              throw new ResponseMessageException()
+                  .WithCode(EResultResponse.FAIL.ToString())
+                  .WithMessage("Tài khoản hoặc mật khẩu ký số pháp lý không đúng.");
+          }
+            string user =model.UserName;
+            string pass = model.Password;
+
+            var entity = _context.VanBanDi.Find(x => x.Id == model.VanBanDiId).FirstOrDefault();
+            if (entity == default)
+            {
+                new ResultMessageResponse().WithCode(EResultResponse.ERROR.ToString())
+                    .WithMessage("Không tìm thấy văn bản đi.");
+            }
+            byte[] fileInput = null;
+            string filePathTemp = "";
+            var file = new FileShort();
+           if(entity.FilePDF != default && entity.FilePDF.Any(x => x.Ext.Contains(".pdf")))
+            {
+                file = entity.FilePDF.Where(x => x.Ext.Contains(".pdf")).FirstOrDefault();
+                filePathTemp = _context.Files.AsQueryable().Where(x => x.Id == file.FileId).FirstOrDefault()?.Path;
+            }
+            else if (entity.File != default && entity.File.Any(x => x.Ext.Contains(".pdf")))
+            {
+                 file = entity.File.Where(x => x.Ext.Contains(".pdf")).FirstOrDefault();
+                 filePathTemp = _context.Files.AsQueryable().Where(x => x.Id == file.FileId).FirstOrDefault()?.Path;
+            }
+
+            fileInput=   System.IO.File.ReadAllBytes(filePathTemp);
+
+            ResponseMessage result = SmartCA.getSignFileTemp1(user, pass, file.FileName, fileInput, model.SignDigitals.Where(x => x.Absolute == false).ToList());
+
+            if (result.Content != null)
+            {
+                var uploadDirecotroy = "files/";
+                
+
+                var dateTime = DateTime.UtcNow.ToString("yyyy_MM_dd_HH_mm_ss");
+                var path = Path.Combine(uploadDirecotroy, dateTime);
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                var newFileName = Guid.NewGuid().ToString() + "." + file.FileName.Split(".")[1];
+                var relativePath = Path.Combine("", dateTime, newFileName);
+                var filePath = Path.Combine(uploadDirecotroy, relativePath);
+
+                using (System.IO.FileStream stream = System.IO.File.Create(filePath))
+                {
+                    System.Byte[] byteArray = result.Content as byte[];
+                    stream.Write(byteArray, 0, byteArray.Length);
+                }
+
+                var result1 = _fileService.SaveFileAsync(filePath,  file.FileName, newFileName,  ".pdf",
+                    result.Content.ToString().Length);
+
+                Task.WhenAll(result1);
+                var vanBanDi = _context.VanBanDi.Find(x => x.Id == model.VanBanDiId).FirstOrDefault();
+                if (vanBanDi != default)
+                {
+                    if (vanBanDi.FilePDF == default)
+                        vanBanDi.FilePDF = new List<FileShort>();
+                    vanBanDi.FilePDF.Add(new FileShort()
+                        { Ext = result1.Result.Ext, FileId = result1.Result.Id, FileName = result1.Result.FileName, });
+                    var newTrangThai = _context.TrangThai.AsQueryable()
+                        .Where(x => x.Code.ToUpper() == DefaultRoleCode.HOAN_THANH_KY_SO.ToUpper()).Select(x =>
+                            new TrangThaiShort()
+                            {
+                                Id = x.Id,
+                                Code = x.Code,
+                                Ten = x.Ten,
+                                BgColor = x.BgColor,
+                                Color = x.BgColor
+                            }).FirstOrDefault();
+                    vanBanDi.TrangThai = newTrangThai;
+                    vanBanDi.Ower = vanBanDi.GetOwerWithRole(DefaultRoleCode.VAN_THU_TRUONG);
+                    if (vanBanDi.SignDigitals != default)
+                    {
+                        int lenSignDigitals = model.SignDigitals.Count;
+                        for (int i = 0; i < lenSignDigitals; i++)
+                        {
+                            model.SignDigitals[i].Absolute = true;
+                        }
+                    }
+                    vanBanDi.SignDigitals = model.SignDigitals;
+                    ReplaceOneResult actionResult
+                        = _context.VanBanDi.ReplaceOne(x => x.Id.Equals(vanBanDi.Id)
+                            , vanBanDi
+                            , new ReplaceOptions { IsUpsert = true });
+                    var result2 = actionResult.IsAcknowledged && actionResult.ModifiedCount > 0;
+                    if (!result2)
+                    {
+                        throw new ResponseMessageException()
+                            .WithCode(EResultResponse.FAIL.ToString())
+                            .WithMessage("Ký số pháp lý không thành công!");
+                    }
+
+                    _history.WithVanBanId(entity.Id)
+                        .WithAction(nameof(VanBanAction.KY_SO_PHAP_LY))
+                        .WithStatus(entity.TrangThai)
+                        .WithType(null)
+                        .WithTitle(VanBanAction.KY_SO_PHAP_LY)
+                        .SaveChangeHistory();
+                }
+            }
+            
+        }       
+        public  void DongMocThemSo(SignDigitalVM model)
+        {
+            if (string.IsNullOrEmpty(model.UserName) || string.IsNullOrEmpty(model.Password))
+          {
+              throw new ResponseMessageException()
+                  .WithCode(EResultResponse.FAIL.ToString())
+                  .WithMessage("Tài khoản hoặc mật khẩu ký số pháp lý không đúng.");
+          }
+            string user =model.UserName;
+            string pass = model.Password;
+
+            var entity = _context.VanBanDi.Find(x => x.Id == model.VanBanDiId).FirstOrDefault();
+            if (entity == default)
+            {
+                new ResultMessageResponse().WithCode(EResultResponse.ERROR.ToString())
+                    .WithMessage("Không tìm thấy văn bản đi.");
+            }
+            byte[] fileInput = null;
+            string filePathTemp = "";
+            var file = new FileShort();
+           if(entity.FilePDF != default && entity.FilePDF.Any(x => x.Ext.Contains(".pdf") ))
+            {
+                file = entity.FilePDF.Where(x => x.Ext.Contains(".pdf")).FirstOrDefault();
+                filePathTemp = _context.Files.AsQueryable().Where(x => x.Id == file.FileId).FirstOrDefault()?.Path;
+            }
+            else if (entity.File != default && entity.File.Any(x => x.Ext.Contains(".pdf")))
+            {
+                 file = entity.File.Where(x =>x.Ext.Contains(".pdf")).FirstOrDefault();
+                 filePathTemp = _context.Files.AsQueryable().Where(x => x.Id == file.FileId).FirstOrDefault()?.Path;
+            }
+
+            fileInput=   System.IO.File.ReadAllBytes(filePathTemp);
+
+            ResponseMessage result = SmartCA.getSignFileTemp1(user, pass, file.FileName, fileInput, model.SignDigitals.Where(x => x.Absolute == false).ToList());
+
+            if (result.Content != null)
+            {
+                var uploadDirecotroy = "files/";
+                
+
+                var dateTime = DateTime.UtcNow.ToString("yyyy_MM_dd_HH_mm_ss");
+                var path = Path.Combine(uploadDirecotroy, dateTime);
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                var newFileName = Guid.NewGuid().ToString() + "." + file.FileName.Split(".")[1];
+                var relativePath = Path.Combine("", dateTime, newFileName);
+                var filePath = Path.Combine(uploadDirecotroy, relativePath);
+
+                using (System.IO.FileStream stream = System.IO.File.Create(filePath))
+                {
+                    System.Byte[] byteArray = result.Content as byte[];
+                    stream.Write(byteArray, 0, byteArray.Length);
+                }
+
+                var result1 = _fileService.SaveFileAsync(filePath,  file.FileName, newFileName,  ".pdf",
+                    result.Content.ToString().Length);
+
+                Task.WhenAll(result1);
+                var vanBanDi = _context.VanBanDi.Find(x => x.Id == model.VanBanDiId).FirstOrDefault();
+                if (vanBanDi != default)
+                {
+                    if (vanBanDi.FilePDF == default)
+                        vanBanDi.FilePDF = new List<FileShort>();
+                    vanBanDi.FilePDF.Add(new FileShort()
+                        { Ext = result1.Result.Ext, FileId = result1.Result.Id, FileName = result1.Result.FileName, });
+                    var newTrangThai = _context.TrangThai.AsQueryable()
+                        .Where(x => x.Code.ToUpper() =="DDM".ToUpper()).Select(x =>
+                            new TrangThaiShort()
+                            {
+                                Id = x.Id,
+                                Code = x.Code,
+                                Ten = x.Ten,
+                                BgColor = x.BgColor,
+                                Color = x.BgColor
+                            }).FirstOrDefault();
+                    vanBanDi.TrangThai = newTrangThai;
+                    vanBanDi.Ower = vanBanDi.GetOwerWithRole(DefaultRoleCode.VAN_THU_TRUONG);
+                    if (vanBanDi.SignDigitals != default)
+                    {
+                        int lenSignDigitals = model.SignDigitals.Count;
+                        for (int i = 0; i < lenSignDigitals; i++)
+                        {
+                            if(!model.SignDigitals[i].Absolute)
+                                model.SignDigitals[i].Absolute = true;
+                        }
+                    }
+                    vanBanDi.SignDigitals = model.SignDigitals;
+                    ReplaceOneResult actionResult
+                        = _context.VanBanDi.ReplaceOne(x => x.Id.Equals(vanBanDi.Id)
+                            , vanBanDi
+                            , new ReplaceOptions { IsUpsert = true });
+                    var result2 = actionResult.IsAcknowledged && actionResult.ModifiedCount > 0;
+                    if (!result2)
+                    {
+                        throw new ResponseMessageException()
+                            .WithCode(EResultResponse.FAIL.ToString())
+                            .WithMessage("Ký số pháp lý không thành công!");
+                    }
+
+                    _history.WithVanBanId(entity.Id)
+                        .WithAction(nameof(VanBanAction.KY_SO_PHAP_LY))
+                        .WithStatus(entity.TrangThai)
+                        .WithType(null)
+                        .WithTitle(VanBanAction.KY_SO_PHAP_LY)
+                        .SaveChangeHistory();
+                }
+            }
+            
         }
     }
 }

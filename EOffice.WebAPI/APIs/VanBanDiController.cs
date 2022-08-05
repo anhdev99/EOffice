@@ -381,7 +381,7 @@ namespace EOffice.WebAPI.APIs
         {
             try
             {
-                var response = await _vanBanDiService.GetPagingXuLy(param);
+                var response = await _vanBanDiService.GetPagingXyLy1(param);
 
                 return Ok(
                     new ResultResponse<PagingModel<VanBanDi>>()

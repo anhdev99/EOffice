@@ -233,6 +233,17 @@ export default {
     this.getMucDo();
     this.getDonViTree();
   },
+  watch:{
+    modelTrangThai: {
+      deep: true,
+      async handler(val) {
+        if(val.newTrangThai && val.newTrangThai.code == "VSDM"){
+          console.log(val);
+         await this.handleKySoPhapLyDM(val.vanBanDiId)
+        }
+      }
+    },
+  },
   mounted() {
     // Set the initial number of items
     this.totalRows = this.items.length;
@@ -773,6 +784,26 @@ export default {
         });
       }
     },
+    async handleKySoPhapLyDM(id) {
+
+      await this.$store.dispatch("vanBanDiStore/getById", id).then((res) => {
+        if (res.resultCode == "SUCCESS") {
+          this.modelKySo.vanBanDiId = res.data.id;
+          if (res.data.filePDF) {
+            console.log("res.data.filePDF", res.data.filePDF)
+            this.modelKySo.fileName = res.data.filePDF[0].fileName;
+            this.modelKySo.path = this.urlView + res.data.filePDF[0].fileId;
+            console.log("this.modelKySo.path", this.modelKySo.path)
+          } else if (res.data.file) {
+            this.modelKySo.fileName = res.data.file[0].fileName;
+            this.modelKySo.path = this.urlView + res.data.file[0].fileId;
+          }
+
+          this.modelKySo.userName = CURRENT_USER.USER_KY_SO.userNameKySo;
+          this.modelKySo.password = CURRENT_USER.USER_KY_SO.userNameKySo;
+        }
+      });
+    },
     async handleKySoPhapLy(id, value) {
       console.log("KySoPhapLy")
       await this.$store.dispatch("vanBanDiStore/getById", id).then((res) => {
@@ -822,7 +853,9 @@ export default {
     },
     handleCloseThietLapKySoPhapLy(){
       this.showCheckVanBanModal = false;
+      this.showModalKySoPhapLy = false;
       this.showModalThietLapKySoPhapLy = false;
+      this.showTrangThaiModal = false;
       this.$refs.tblList?.refresh()
     }
   }
@@ -1514,7 +1547,7 @@ export default {
                       </b-button>
 
                       <b-button
-                          v-else-if="data.item.ower && data.item.ower.userName == currentUserName && (data.item.trangThai.code == 'htks' || data.item.trangThai.code == 'ktvb' || data.item.trangThai.code == 'VTTTC' || data.item.trangThai.code == 'HTD' || data.item.trangThai.code =='LDDVTC' || data.item.trangThai.code =='LDDVD' || data.item.trangThai.code =='xdksnb' || data.item.trangThai.code =='dksxd')"
+                          v-else-if="data.item.ower && data.item.ower.userName == currentUserName && (data.item.trangThai.code == 'DDM' || data.item.trangThai.code == 'htks' || data.item.trangThai.code == 'ktvb' || data.item.trangThai.code == 'VTTTC' || data.item.trangThai.code == 'HTD' || data.item.trangThai.code =='LDDVTC' || data.item.trangThai.code =='LDDVD' || data.item.trangThai.code =='xdksnb' || data.item.trangThai.code =='dksxd')"
                           type="button"
                           size="sm"
                           class="btn btn-light btn-danger"
@@ -2036,7 +2069,7 @@ export default {
             title="Xử lý văn bản"
             title-class="font-18"
             no-close-on-backdrop
-            size="lg"
+            size="xl"
             ref="formContainerTrangThai"
         >
           <div class="row">
@@ -2231,6 +2264,12 @@ export default {
               </div>
             </div>
           </div>
+          <div class="row" v-if="modelTrangThai.newTrangThai && modelTrangThai.newTrangThai.code == 'VSDM'">
+            <div class="row" style="display: flex; justify-content: center; align-items: center;">
+              <PdfEditor @closeModel="handleCloseThietLapKySoPhapLy" :fileInfo="modelKySo"></PdfEditor>
+            </div>
+          </div>
+
           <template #modal-footer>
             <b-button v-b-modal.modal-close_visit
                       size="sm"
@@ -2665,36 +2704,6 @@ export default {
             hide-footer
             size="xl"
         >
-          <template #modal-header="{  }">
-            <!-- Emulate built in modal header close button action -->
-            <h5> Ký số pháp lý</h5>
-            <div class="text-end">
-              <b-button v-b-modal.modal-close_visit
-                        size="sm"
-                        class="btn btn-outline-info w-md"
-                        v-on:click="showModalKySoPhapLy = false"
-                        style="margin-right: 6px">
-                Đóng
-              </b-button>
-              <b-button v-if="!modelKySo.reject" v-b-modal.modal-close_visit
-                        size="sm"
-                        variant="primary"
-                        type="button"
-                        class="w-md"
-                        v-on:click="handleAssignOrRejectPhapLy"
-              >
-                Đồng ý
-              </b-button>
-              <b-button v-if="modelKySo.reject" v-b-modal.modal-close_visit
-                        size="sm"
-                        variant="danger"
-                        type="button"
-                        class="w-md"
-                        v-on:click="handleAssignOrRejectPhapLy">
-                Từ chối
-              </b-button>
-            </div>
-          </template>
           <div class="row" ref="modalKySoPhapLy">
             <PdfEditor @closeModel="handleCloseThietLapKySoPhapLy" :fileInfo="modelKySo"></PdfEditor>
 <!--            <div class="col-md-12 mt-2">-->
