@@ -2,6 +2,11 @@
 
 namespace EOffice.WebAPI.Models
 {
+    public class SignDigitalVM
+    {
+        public string VanBanDiId { get; set; }
+        public List<SignDigital> SignDigitals { get; set; }
+    }
     public class SignDigital
     {
         public string Id { get; set; }
@@ -13,6 +18,7 @@ namespace EOffice.WebAPI.Models
         public string Height { get; set; }
         public int Page { get; set; }
         public string Image { get; set; }
+        public string ImageBase64 { get; set; }
         public dynamic Payload { get; set; }
         public dynamic File { get; set; }
         
@@ -21,5 +27,7 @@ namespace EOffice.WebAPI.Models
         public List<string> Lines { get; set; }
         public int Size { get; set; }
         public string Text { get; set; }
+        public bool Absolute { get; set; } = false;
+        public UserShort CurrentUser { get; set; }
     }
 }

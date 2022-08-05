@@ -4,32 +4,32 @@ import prepareAssets, {fetchFont} from './utils/prepareAssets'
 import {save} from './utils/PDF'
 import {generateId} from './utils/helper'
 import PdfPage from "@/components/pdfEditor/PdfPage";
- import ObjectContainer from "@/components/pdfEditor/ObjectContainer";
+import ObjectContainer from "@/components/pdfEditor/ObjectContainer";
 import {CURRENT_USER} from "@/helpers/currentUser";
 import {vanBanDenModel} from "@/models/vanBanDenModel";
 import {notifyModel} from "@/models/notifyModel";
-
 export default {
-  components: { ObjectContainer, PdfPage},
+  components: {ObjectContainer, PdfPage},
   props: {
     pdf: {
-      required: true,
+      required: false,
       type: String,
     },
-    file:{required: true}
+    file: {required: false},
+    fileInfo: {required: true}
   },
   data() {
     return {
       pages: [],
       allObjects: [],
       pagesScale: [],
-      selectedPageIndex:0,
-      signatureCanvas:{
+      selectedPageIndex: 0,
+      signatureCanvas: {
         isShow: false
       },
       opacity: 1,
       pdfFile: null,
-      kySoModel:{
+      kySoModel: {
         userName: null,
         password: null,
         file: this.file,
@@ -41,46 +41,83 @@ export default {
         image: null
       },
       currentUser: CURRENT_USER.USER_KY_SO,
-      downloadFile: null
+      downloadFile: null,
+      currentFont: "Times-Roman",
+      signatureDigital: {
+        vanBanDiId: null,
+        signDigitals: []
+      }
     }
   },
-  computed:{
+  computed: {
     isShow() {
-      if(this.$refs.signatureCanvas){
+      if (this.$refs.signatureCanvas) {
         return this.$refs.signatureCanvas.isShow;
       }
       return false;
 
     }
   },
-  watch:{
-    selectedPageIndex(value){
+  watch: {
+    selectedPageIndex(value) {
       console.log(value)
+    },
+    allObjects(value){
+      if(value){
+        if(this.signatureDigital){
+          this.signatureDigital.signDigitals = [];
+          value.map(object =>{
+            if(object.type == "image" && object.payload){
+              object.imageBase64 = object.payload.currentSrc
+            }
+            this.signatureDigital.signDigitals.push(object);
+          })
+        }
+
+      }
+      console.log(this.signatureDigital, value, "test")
     }
   },
-  mounted() {
-    this.mountPdf()
+ async mounted() {
+    this.signatureDigital.vanBanDiId = this.fileInfo.vanBanDiId;
+   await  this.mountPdf()
+   await this.handleGetVBD( this.fileInfo.vanBanDiId)
   },
   methods: {
+    async handleGetVBD(id) {
+      let loader = this.$loading.show({
+        container: this.$refs.formContainer,
+      });
+      await this.$store.dispatch("vanBanDiStore/getById", id).then((res) => {
+        if (res.resultCode == "SUCCESS") {
+          if(res.data){
+            if(res.data.signDigitals){
+              this.allObjects = res.data.signDigitals;
+              this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage({resultString: "Tải chữ ký thành công", resultCode: "SUCCESS"}));
+            }
+          }
+        }
+
+        loader.hide();
+      });
+    },
     async handleSubmit(e) {
       let loader = this.$loading.show({
         container: this.$refs.formContainer,
       });
       this.kySoModel.userName = this.currentUser.userNameKySo;
       this.kySoModel.password = this.currentUser.passwordKySo;
-      await this.$store.dispatch("signDigitalStore/kySoPhapLy", this.kySoModel).then((res) => {
-        this.downloadFile =  res.content;
-        // if (res.resultCode === 'SUCCESS') {
-        //   console.log(res)
-        //   loader.hide()
-        // }
-        // this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
-      }) ;
+      await this.$store.dispatch("signDigitalStore/thietLapKySoPhapLy", this.signatureDigital).then((res) => {
+        if(res.resultCode == 'SUCCESS'){
+          this.$emit('closeModel');
+        }
+         this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+      });
       loader.hide()
     },
     async mountPdf() {
       try {
-        const res = await fetch(this.pdf)
+        const res = await fetch(this.fileInfo.path)
         const pdfBlob = await res.blob()
         await this.addPDF(pdfBlob)
 
@@ -103,12 +140,12 @@ export default {
 
         // this.pages = pdf;
         //  this.pages.splice(0, numPages)
-        if(this.pages){
+        if (this.pages) {
           this.pages.splice(0, this.pages.length)
         }
         this.pages = Array(numPages).fill().map((_, i) => pdf.getPage(i + 1))
 
-        if(this.allObjects){
+        if (this.allObjects) {
           this.allObjects.splice(0, this.allObjects.length)
         }
         this.pagesScale = Array(numPages).fill(1)
@@ -124,19 +161,20 @@ export default {
     selectPage(index) {
       this.selectedPageIndex = index;
       this.kySoModel.page = index;
-      if(this.allObjects){
+      console.log(this.allObjects)
+      if (this.allObjects) {
         let object = this.allObjects[0];
         console.log(object)
-        if(this.allObjects[0]){
-          this.kySoModel.px = object.x;
-          this.kySoModel.py = object.y;
-          this.kySoModel.width = object.width;
-          this.kySoModel.height = object.height;
-          this.kySoModel.page = this.selectedPageIndex + 1;
-          this.kySoModel.image = object.payload.currentSrc;
-        }
+        // if (this.allObjects[0]) {
+        //   this.kySoModel.px = object.x;
+        //   this.kySoModel.py = object.y;
+        //   this.kySoModel.width = object.width;
+        //   this.kySoModel.height = object.height;
+        //   this.kySoModel.page = this.selectedPageIndex + 1;
+        //   this.kySoModel.image = object.payload.currentSrc;
+        // }
       }
-      if(this.allObjects && this.allObjects.length > 0){
+      if (this.allObjects && this.allObjects.length > 0) {
         this.allObjects[0].page = index;
       }
       // if(
@@ -185,8 +223,14 @@ export default {
         this.kySoModel.height = height;
         this.kySoModel.page = this.selectedPageIndex + 1;
         this.kySoModel.image = img.currentSrc;
-        console.log(' this.kySoModel',  this.kySoModel)
-        this.allObjects = [object];
+        console.log(' this.kySoModel', this.kySoModel)
+        let indexImage = this.allObjects.findIndex(x => x.type == 'image');
+        if(indexImage == -1){
+          this.allObjects = [...this.allObjects, object];
+        }else{
+          this.allObjects[indexImage] = [object]
+        }
+
       } catch (e) {
         console.log('Failed to add image.', e)
       }
@@ -231,13 +275,37 @@ export default {
       this.allObjects = [signatureObject]
       this.$refs.signatureCanvas.isShow = false
     },
-     downloadPDF() {
-  const linkSource = `data:application/pdf;base64,${this.downloadFile}`;
-  const downloadLink = document.createElement("a");
-  const fileName = "abc.pdf";
-  downloadLink.href = linkSource;
-  downloadLink.download = fileName;
-  downloadLink.click();}
+    downloadPDF() {
+      const linkSource = `data:application/pdf;base64,${this.downloadFile}`;
+      const downloadLink = document.createElement("a");
+      const fileName = "abc.pdf";
+      downloadLink.href = linkSource;
+      downloadLink.download = fileName;
+      downloadLink.click();
+    },
+    onAddTextField() {
+      console.log("select")
+      if (this.selectedPageIndex >= 0) {
+        this.addTextField();
+      }
+    },
+    addTextField(text = "Hãy nhập dữ liệu ...") {
+      const id = generateId();
+      fetchFont(this.currentFont);
+      const object = {
+        id,
+        text,
+        type: "text",
+        size: 16,
+        width: 0, // recalculate after editing
+        lineHeight: 1.4,
+        fontFamily: this.currentFont,
+        x: 0,
+        y: 0,
+        page: this.selectedPageIndex,
+      };
+      this.allObjects = [...this.allObjects, object];
+    }
   }
 }
 
@@ -249,24 +317,36 @@ export default {
       <div style="display: flex; justify-content: end ">
         <div>
           <button
+              class="text-white bg-green-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 px-3 py-1.5 font-medium text-sm text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              @click="onAddTextField"
+          >
+            Thêm ghi chú
+          </button>
+          <button
               v-if="downloadFile"
-              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              class="text-white bg-red-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium text-sm  text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               @click="downloadPDF"
           >
             Tải file
           </button>
           <input type="file" id="image" name="image" class="hidden" @change="uploadImage"/>
           <label for="image"
-                 class="text-black border border-black cursor-pointer font-medium text-sm px-5 py-2.5 text-center mr-2 mb-2">
+                 class="text-black border border-black cursor-pointer font-medium text-sm px-3 py-1.5 text-center mr-2 mb-2">
             Chữ ký
           </label>
         </div>
 
+        <!--        <button-->
+        <!--            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 px-3 py-1.5 font-medium text-sm text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"-->
+        <!--            @click="handleSubmit"-->
+        <!--        >-->
+        <!--        Ký số-->
+        <!--        </button>-->
         <button
-            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 px-3 py-1.5 font-medium text-sm text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             @click="handleSubmit"
         >
-        Ký số
+          Thiết lập ký số
         </button>
       </div>
 
@@ -279,7 +359,7 @@ export default {
           @mousedown="() => selectPage(pageIndex)"
           @touchstart="() => selectPage(pageIndex)"
       >
-        <div  :class="['relative shadow-lg mb-4', { 'selected-pdf': pageIndex == selectedPageIndex }]">
+        <div :class="['relative shadow-lg mb-4', { 'selected-pdf': pageIndex == selectedPageIndex }]">
           <pdf-page :page="pages[pageIndex]" @measure="(payload) => onMeasure(payload, pageIndex)"/>
           <div
               v-if="pageIndex == selectedPageIndex"
@@ -289,9 +369,26 @@ export default {
             <div v-for="(object, objectIndex) in allObjects"
                  :key="objectIndex">
               <object-container
+                  v-if="object && object.type == 'image'"
                   @update="(payload) => updateObject(object.id, payload)"
                   @delete="() => deleteObject(object.id)"
                   :file="object.file"
+                  :payload="object.payload"
+                  :imageBase64="object.imageBase64"
+                  :x="object.x"
+                  :y="object.y"
+                  :width="object.width"
+                  :height="object.height"
+                  :opacity="opacity"
+                  :pageScale="pagesScale[pageIndex]"
+                  :type="object.type"
+                  :path="object.type"
+                  :object="object"
+              />
+              <object-container
+                  v-else-if="object && object.type == 'text'"
+                  @update="(payload) => updateObject(object.id, payload)"
+                  @delete="(payload) => deleteObject(object.id, payload)"
                   :payload="object.payload"
                   :x="object.x"
                   :y="object.y"
@@ -311,7 +408,7 @@ export default {
     </div>
   </div>
 </template>
-<style >
+<style>
 .selected-pdf {
   box-shadow: 0 0 0 1px rgba(52, 117, 224, 0.5);
   border: 1px #14b0ef solid;

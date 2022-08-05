@@ -1,14 +1,14 @@
 <script>
 // import ObjectSignature from './objects/ObjectSignature.vue'
 import ObjectImage from "@/components/pdfEditor/objects/ObjectImage";
-
+import TextEditor from "@/components/pdfEditor/Text"
 export default {
-  components: {ObjectImage},
+  components: {ObjectImage, TextEditor},
   props: {
     payload: {required: true},
     x: {required: true},
     y: {required: true},
-    file: {required: true},
+    file: {required: false},
     width: {required: true},
     height: {required: true},
     pageScale: {required: true},
@@ -19,6 +19,7 @@ export default {
       required: true,
       type: Object,
     },
+    imageBase64: {required: false}
   },
   data() {
     return {
@@ -49,7 +50,15 @@ export default {
         // use canvas to prevent img tag's auto resize
         this.$refs.canvasImage.width = this.width
         this.$refs.canvasImage.height = this.height
-        this.$refs.canvasImage.getContext('2d').drawImage(this.payload, 0, 0)
+        if(!this.imageBase64){
+          this.$refs.canvasImage.getContext('2d').drawImage(this.payload, 0, 0)
+        }else{
+          var image = new Image();
+          image.src = this.imageBase64;
+          image.onload = function() {
+            this.$refs.canvasImage.getContext('2d').drawImage(image, 0, 0);
+          };
+        }
 
         let scale = 1
         const limit = 500
@@ -71,7 +80,25 @@ export default {
             })
           })
         }
-      } else if (this.type == 'signature') {
+      }else if (this.type == 'text') {
+        // use canvas to prevent img tag's auto resize
+        // this.$refs.canvasText.width = this.width
+        // this.$refs.canvasText.height = this.height
+
+        let scale = 1
+        const limit = 500
+        if (this.width > limit) {
+          scale = limit / this.width
+        }
+        if (this.height > limit) {
+          scale = Math.min(scale, limit / this.height)
+        }
+        this.$emit('update', {
+          width: this.width * scale,
+          height: this.height * scale,
+        })
+      }
+      else if (this.type == 'signature') {
         // this.value.setAttribute("viewBox", `0 0 200 200`);
       }
     },
@@ -135,7 +162,19 @@ export default {
       }
       this.operation = 'scale'
       this.directions = event.target.dataset.direction.split('-')
-    }
+    },
+    handleEndText(event){
+      let value = {...this.object,...{
+          lines: event.lines,
+          lineHeight: event.lineHeight,
+          size: event.size,
+          fontFamily: event.fontFamily,
+          height: event.height,
+          width: event.width,
+        }}
+
+      this.$emit('update', value)
+    },
   }
 
 }
@@ -146,8 +185,8 @@ export default {
       class="absolute left-0 top-0 select-none"
       :style="{ width: `${width + dw}px`, height: `${height + dh}px`, transform: `translate(${x + dx}px, ${y + dy}px)` }"
   >
-    <object-image :operation="operation" @panstart="handlePanStart" @panmove="handlePanMove" @panend="handlePanEnd"/>
-
+    <object-image v-if="type== 'image'" :operation="operation" @panstart="handlePanStart" @panmove="handlePanMove" @panend="handlePanEnd"/>
+    <TextEditor v-else-if="type == 'text'" text="Hãy nhập dữ liệu..." :operation="operation" @panstart="handlePanStart" @panmove="handlePanMove" @panend="handlePanEnd" @textEnd="handleEndText"/>
     <!-- <object-signature v-else-if="type == 'signature'"
         :operation="operation"
         @panstart="handlePanStart"
@@ -166,9 +205,5 @@ export default {
       </svg>
     </div>
     <canvas v-if="type == 'image'" class="w-full h-full" ref="canvasImage"/>
-    <svg v-else-if="type == 'signature'" ref="signature" :viewBox="`0 0 ${width} ${height}`" width="100%" height="100%">
-      <path stroke-width="5" stroke-linejoin="round" stroke-linecap="round" stroke="black" fill="none"
-            :d="object.path"/>
-    </svg>
   </div>
 </template>

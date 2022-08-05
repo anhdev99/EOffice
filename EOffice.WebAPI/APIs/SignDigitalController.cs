@@ -334,5 +334,29 @@ namespace EOffice.WebAPI.APIs
 
             return result;
         }
+        
+        [HttpPost]
+        [Route("thiet-lap-ky-so-phap-ly")]
+        public async Task<IActionResult> Update([FromBody] SignDigitalVM model)
+        {
+            try
+            {
+                await _vanBanDiService.ThietLapKySoPhapLy(model);
+
+                return Ok(
+                    new ResultMessageResponse()
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage("Thiết lập ký số pháp lý thành công!")
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+
     }
 }

@@ -1479,5 +1479,49 @@ namespace EOffice.WebAPI.Services
 
             return list;
         }
+
+        public async Task ThietLapKySoPhapLy(SignDigitalVM model)
+        {
+            var entity = _context.VanBanDi.Find(x => x.Id == model.VanBanDiId).FirstOrDefault();
+            if (entity != default)
+            {
+                foreach (var item in model.SignDigitals)
+                {
+                    if (item.CurrentUser == null)
+                    {
+                        item.CurrentUser = CurrentUserShort;
+                    }
+                }
+                entity.SignDigitals = model.SignDigitals;
+                
+                var newTrangThai = _context.TrangThai.AsQueryable().Where(x => x.Code.ToUpper() == DefaultRoleCode.KY_SO_PHAP_LY_THIETLAP.ToUpper())
+                    .Select(
+                        x =>
+                            new TrangThaiShort()
+                            {
+                                Id = x.Id,
+                                Code = x.Code,
+                                Ten = x.Ten,
+                                BgColor = x.BgColor,
+                                Color = x.BgColor
+                            }).FirstOrDefault();
+                entity.TrangThai = newTrangThai;
+                entity.Ower = entity.GetOwerWithRole(DefaultRoleCode.HIEU_TRUONG);
+                var result = await BaseMongoDb.UpdateAsync(entity);
+                if (result.Entity.Id == default || !result.Success)
+                {
+                    throw new ResponseMessageException()
+                        .WithCode(EResultResponse.FAIL.ToString())
+                        .WithMessage("Thiết lập ký số không thành công!");
+                }
+                
+                await _history.WithVanBanId(entity.Id)
+                    .WithAction(nameof(VanBanAction.THIET_LAP_KY_SO_PHAP_LY))
+                    .WithStatus(entity.TrangThai)
+                    .WithType(null)
+                    .WithTitle(VanBanAction.THIET_LAP_KY_SO_PHAP_LY)
+                    .SaveChangeHistory();
+            }
+        }
     }
 }

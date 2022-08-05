@@ -135,5 +135,6 @@ namespace EOffice.WebAPI.Data
         public IMongoCollection<KhoiCoQuan> KhoiCoQuan { get => _khoiCoQuan; }
         public IMongoCollection<LoaiTrangThai> LoaiTrangThai { get => _loaiTrangThai; }
         public IMongoCollection<HopThu> HopThu { get => _hopThu; }
+        
     }
 }

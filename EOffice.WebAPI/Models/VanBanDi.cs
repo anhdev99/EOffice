@@ -68,6 +68,7 @@ namespace EOffice.WebAPI.Models
         public NhomNguoiTiepNhanVBTrinhLD LanhDaoDonVi { get; set; }
         public List<string> NguoiDuocBanHanh { get; set; }
 
+        public List<SignDigital> SignDigitals { get; set; }
         public UserShort GetOwerWithRole(string role)
         {
             var owerTemp = this.NhomNguoiTiepNhanVBTrinhLD
