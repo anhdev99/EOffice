@@ -1,6 +1,10 @@
 namespace EOffice.WebAPI.Helpers
 {
 
+    public class Constants
+    {
+        public const string DEFAULT_LOGO = "files/logo.png";
+    }
     public class RoleConstants
     {
         public const string VAN_THU_TRUONG = "9997";

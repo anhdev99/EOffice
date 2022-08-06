@@ -357,15 +357,27 @@ namespace EOffice.WebAPI.Services
                 CharacterFormat formatHSignp21 = new CharacterFormat(doc);
                 formatHSignp2.Bold = true;
                 formatHSignp2.FontSize = 12;
-                formatHSignp21.FontSize = 12;
+                formatHSignp21.FontSize = 10;
+                formatHSignp21.Italic = true;
                 // p2.AppendText("CHỮ KÝ HỢP LỆ").ApplyCharacterFormat(formatHSignp2);
                 p2.AppendText(listuser[i].ChucVu?.Ten).ApplyCharacterFormat(formatHSignp2);
                 p2.AppendBreak(BreakType.LineBreak);
                 p2.AppendBreak(BreakType.LineBreak);
                 if (listuser[i].FilePath != default)
                 {
-                    Image image = Image.FromFile(listuser[i].FilePath);
-                    DocPicture pic2 = p2.AppendPicture(image);
+                    Image image = null;
+                    DocPicture pic2 = null;
+                    try
+                    {
+                        image = Image.FromFile(listuser[i].FilePath);
+                        pic2 = p2.AppendPicture(image);
+                    }
+                    catch (Exception e)
+                    {
+                        image = Image.FromFile(Constants.DEFAULT_LOGO);
+                        pic2 = p2.AppendPicture(image);
+                    }
+
                     pic2.Height = 80f;
                     pic2.Width = 150f;
                 }
@@ -376,7 +388,7 @@ namespace EOffice.WebAPI.Services
                 p2.AppendBreak(BreakType.LineBreak);
                 p2.AppendText("Ký số tại DThU").ApplyCharacterFormat(formatHSignp21);
                 p2.AppendBreak(BreakType.LineBreak);
-                p2.AppendText("Kiểm tra tại:...").ApplyCharacterFormat(formatHSignp21);
+                p2.AppendText(listuser[i].NgayKy).ApplyCharacterFormat(formatHSignp21);
                 p2.AppendBreak(BreakType.LineBreak);
                 // CharacterFormat formatHSignp21 = new CharacterFormat(doc);
                 // formatHSignp21.FontSize = 10;
@@ -405,14 +417,26 @@ namespace EOffice.WebAPI.Services
                     CharacterFormat formatHSignp31 = new CharacterFormat(doc);
                     formatHSignp3.Bold = true;
                     formatHSignp3.FontSize = 12;
-                    formatHSignp31.FontSize = 12;
+                    formatHSignp31.FontSize = 10;
+                    formatHSignp31.Italic = true;
                     p3.AppendText(listuser[i].ChucVu?.Ten).ApplyCharacterFormat(formatHSignp3);
                     p3.AppendBreak(BreakType.LineBreak);
                     p3.AppendBreak(BreakType.LineBreak);
                     if (listuser[i].FilePath != default)
                     {
-                        Image image = Image.FromFile(listuser[i].FilePath);
-                        DocPicture pic3 = p3.AppendPicture(image);
+                        Image image = null;
+                        DocPicture pic3 = null;
+                        try
+                        {
+                             image = Image.FromFile(listuser[i].FilePath);
+                             pic3 = p3.AppendPicture(image);
+                        }
+                        catch (Exception e)
+                        {
+                             image = Image.FromFile(Constants.DEFAULT_LOGO);
+                             pic3 = p3.AppendPicture(image);
+                        }
+                      
 
                         pic3.Height = 80f;
                         pic3.Width = 150f;
@@ -423,8 +447,8 @@ namespace EOffice.WebAPI.Services
                     p3.AppendBreak(BreakType.LineBreak);
                     p3.AppendText("Ký số tại DThU").ApplyCharacterFormat(formatHSignp31);
                     p3.AppendBreak(BreakType.LineBreak);
-                    p3.AppendText("Kiểm tra tại:...").ApplyCharacterFormat(formatHSignp31);
-                    p3.AppendBreak(BreakType.LineBreak);
+                    p2.AppendText(listuser[i].NgayKy).ApplyCharacterFormat(formatHSignp31);
+                    p2.AppendBreak(BreakType.LineBreak);
                     // CharacterFormat formatHSignp31 = new CharacterFormat(doc);
                     // formatHSignp31.FontSize = 10;
                     // p3.AppendText(listuser[i].DonVi?.Ten).ApplyCharacterFormat(formatHSignp31);
