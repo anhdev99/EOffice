@@ -216,7 +216,7 @@ namespace EOffice.WebAPI.Services
                 .FirstOrDefaultAsync();
             
             if (loaiTrangThai == default)
-            {   
+            {
                 throw new ResponseMessageException()
                     .WithCode(EResultResponse.FAIL.ToString())
                     .WithMessage("Không tìm thấy loại trạng thái");

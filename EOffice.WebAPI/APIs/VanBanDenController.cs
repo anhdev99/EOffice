@@ -214,5 +214,28 @@ namespace EOffice.WebAPI.APIs
             }
         }
         
+        [HttpPost]
+        [Route("chuyen-trang-thai-van-ban")]
+        public async Task<IActionResult> ChuyenTrangThaiVanBan([FromBody] TrangThaiParam model)
+        {
+            try
+            {
+                await _vanBanDenService.ChuyenTrangThaiVanBan(model);
+
+                return Ok(
+                    new ResultMessageResponse()
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage("Chuyển trạng thái thành công")
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+        
     }
 }

@@ -27,5 +27,9 @@ export const actions = {
     },
     async getById({commit}, id) {
         return apiClient.get(controller + "/get-by-id/" + id);
+    },
+    async chuyenTrangThaiVanBan({commit}, values) {
+        console.log(" value cttvb", values);
+        return apiClient.post(controller + "/chuyen-trang-thai-van-ban", values);
     }
 };
