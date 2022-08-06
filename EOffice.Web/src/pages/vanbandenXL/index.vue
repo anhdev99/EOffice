@@ -187,6 +187,8 @@ export default {
       showTrangThaiModal: false,
       currentStatus: null,
       valueConsistsOf: 'ALL_WITH_INDETERMINATE',
+      listHistoryQuestion: [],
+      showHistoryModal: false
     };
   },
   validations: {
@@ -701,7 +703,20 @@ export default {
       this.submitted = false;
 
 
-    }
+    },
+    async handleHistory(id) {
+      let loader = this.$loading.show({
+        container: this.$refs.formContainer,
+      });
+      await this.$store.dispatch("historyVanBanStore/getHistoryVanBanDi", id).then((res) => {
+        if (res.resultCode == "SUCCESS") {
+          this.listHistoryQuestion = res.data;
+          this.showHistoryModal = true;
+
+          loader.hide();
+        }
+      });
+    },
   },
 };
 </script>
@@ -1231,6 +1246,14 @@ export default {
                             data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
                             v-on:click="handleUpdate(data.item.id)">
                           <i class="fas fa-pencil-alt text-success me-1"></i>
+                        </button>
+                        <button
+                            type="button"
+                            size="sm"
+                            class="btn btn-outline btn-sm"
+                            data-toggle="tooltip" data-placement="bottom" title="Lịch sử"
+                            v-on:click="handleHistory(data.item.id)">
+                          <i class="fas fa-history text-info me-1"></i>
                         </button>
 <!--                        <button-->
 <!--                            type="button"-->
@@ -1919,6 +1942,82 @@ export default {
                       class="w-md"
                       v-on:click="handleDelete">
               Xóa
+            </b-button>
+          </template>
+        </b-modal>
+
+        <!--        history-->
+        <b-modal
+            v-model="showHistoryModal"
+            centered
+            title="Lịch sử hoạt động"
+            title-class="font-18"
+            no-close-on-backdrop
+            size="lg"
+        >
+          <div class="row">
+            <div class="col-lg-12">
+              <div id="cd-timeline" style="margin: 0">
+                <ul v-if="listHistoryQuestion && listHistoryQuestion.length > 0" class="timeline list-unstyled"
+                    style="padding: 0">
+                  <li v-for="(item, index) in listHistoryQuestion" class="timeline-list" :key="index"
+                      style="padding: 10px 0 10px 90px;">
+                    <div class="cd-timeline-content p-2" style="width: 100%;">
+                      <h5 class="mt-0 mb-3">
+                            <span style="font-weight: bold" class="text-success">
+                                                                #{{ listHistoryQuestion.length - index }}  {{ item.title }}
+                                                     </span></h5>
+                      <div style="font-weight: bold">Trạng thái: <span
+                          class="badge font-size-small min-width-30 p-2 btn-xs  font-weight-semibold"
+                          :class="'bg-' + item.trangThai.bgColor" v-if="item.trangThai">{{ item.trangThai.ten }}</span>
+                      </div>
+
+
+                      <div
+                          v-if="item.userName"
+                          class="mt-1"
+                      >
+                                  <span style="font-weight: bold">
+                                    Người thao tác:
+                                  </span>
+                        <span>
+                                    {{ item.userName }} - {{ item.fullName }}
+                                  </span>
+                      </div>
+                      <div v-else>
+                                  <span style="font-weight: bold">
+                                       Người thao tác:
+                                  </span>
+                        <span>
+                                    Không có dữ liệu
+                                  </span>
+                      </div>
+                      <div v-if="item.content" style=" margin-top: 8px; display: flex">
+                   <span style="font-weight: bold;">
+                      Nội dung:
+                   </span>
+                        <p
+                            class="mb-2 " style="margin-left: 8px"
+                        >{{ item.content }}</p>
+                      </div>
+                      <div class="date bg-primary" style="top: 10px;">
+                        <h6 class="mt-0 text-center">{{ item.createdAtShow }}</h6>
+                        <h6 class="mt-0 text-center">{{ item.createdAtTimeShow }}</h6>
+                        <!--                       -->
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+                <div v-else>Không có dữ liệu</div>
+              </div>
+            </div>
+          </div>
+          <template #modal-footer>
+            <b-button v-b-modal.modal-close_visit
+                      size="sm"
+                      class="btn btn-outline-info w-md"
+                      v-on:click="showHistoryModal = false">
+              Đóng
             </b-button>
           </template>
         </b-modal>
