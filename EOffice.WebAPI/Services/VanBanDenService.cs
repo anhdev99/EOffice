@@ -29,9 +29,11 @@ namespace EOffice.WebAPI.Services
         private List<String> filePicture = new List<string>() {".jpeg", ".jpg", ".gif", ".png"};
         private List<String> fileOffice = new List<string>() {".docx", ".doc", ".csv", ".xlsx", ".pptx", ".pdf"};
         private IVanBanDenService _vanBanDenServiceImplementation;
+        private INotifyService _notifyService;
 
         public VanBanDenService(HistoryVanBanDiService history, ILoggingService logger, IDbSettings settings,
             DataContext context,
+            INotifyService notifyService,
             IHttpContextAccessor contextAccessor)
             : base(context, contextAccessor)
         {
@@ -42,6 +44,7 @@ namespace EOffice.WebAPI.Services
             _logger = logger.WithCollectionName(_settings.VanBanDenCollectionName)
                 .WithDatabaseName(_settings.DatabaseName)
                 .WithUserName(CurrentUserName);
+            _notifyService = notifyService;
             _history = history;
         }
         
@@ -169,12 +172,12 @@ namespace EOffice.WebAPI.Services
             {
                 entity.TrangThai = model.TrangThai;
                 if (entity.TrangThai != default &&
-                    entity.TrangThai.Code.ToUpper() == DefaultRoleCode.TRINH_LANH_DAO_TRUONG.ToUpper())
+                    entity.TrangThai.Code.ToUpper() == DefaultRoleCode.TRINH_THU_THU_KY_HIEU_TRUONG_VAN_BAN_DEN.ToUpper())
                 {
                     entity.NhomNguoiTiepNhanVBTrinhLD = GenerateNhomNguoiTiepNhanVBTrinhLD();
 
                     var owerTemp = entity.NhomNguoiTiepNhanVBTrinhLD
-                        .Where(x => x.RoleCode == DefaultRoleCode.VAN_THU_TRUONG).FirstOrDefault();
+                        .Where(x => x.RoleCode == DefaultRoleCode.THU_KY_HIEU_TRUONG).FirstOrDefault();
                     if (owerTemp != default)
                         entity.Ower = owerTemp.NguoiXuLy;
 
@@ -551,6 +554,59 @@ namespace EOffice.WebAPI.Services
             return result;
         }
         
+        public async Task<PagingModel<VanBanDen>> GetPagingXuLy(VanBanDenParam param)
+        {
+            var result = new PagingModel<VanBanDen>();
+            var builder = Builders<VanBanDen>.Filter;
+            var filter = builder.Empty;
+            filter = builder.And(filter, builder.Where(x => x.IsDeleted == false));
+            // filter = filter & builder.In(x => x.IdOwner, CurrentUser.DonViIds);
+            var checkQuyenThuKy =
+                CurrentUser.Roles.Find(x =>
+                    x.Code.ToUpper() == RoleConstants.VAN_THU_TRUONG.ToUpper() ||
+                    x.Code.ToUpper() == RoleConstants.THU_KY_HIEU_TRUONG.ToUpper() ||
+                    x.Code.ToUpper() == RoleConstants.HIEU_TRUONG);
+            if (checkQuyenThuKy != default)
+            {
+                filter = builder.And(filter,
+                    builder.Where(x =>
+                        (x.TrangThai != default &&
+                         x.TrangThai.Code.ToUpper() == DefaultRoleCode.TRINH_LANH_DAO_VAN_BAN_DEN) ||
+                        x.CreatedBy == CurrentUserName || x.ListOwerId.Contains(CurrentUserName)));
+            }
+            else
+            {
+                filter = builder.And(filter,
+                    builder.Where(x =>x.ButPhe != null && x.ButPhe.NguoiChuTri != default && x.ButPhe.NguoiChuTri.UserName == CurrentUserName));
+            }
+            
+            if (!String.IsNullOrEmpty(param.Content))
+            {
+                filter = builder.And(filter,
+                    builder.Where(x => x.SoLuuCV.Trim().ToLower().Contains(param.Content.Trim().ToLower())));
+            }
+
+            if (!String.IsNullOrEmpty(param.TrangThai))
+            {
+                filter = builder.And(filter, builder.Eq(x => x.TrangThai.Id, param.TrangThai));
+            }
+
+            if (!String.IsNullOrEmpty(param.LinhVuc))
+            {
+                filter = builder.And(filter, builder.Eq(x => x.LinhVuc.Id, param.LinhVuc));
+            }
+
+            string sortBy = nameof(VanBanDen.ModifiedAt);
+            result.TotalRows = await _collection.CountDocumentsAsync(filter);
+            result.Data = await _collection.Find(filter)
+                .SortByDescending(x => x.ModifiedAt)
+                .Skip(param.Skip)
+                .Limit(param.Limit)
+                .ToListAsync();
+            return result;
+        }
+        
+                
         public async Task<VanBanDen> PhanCong(VanBanDen model)
         {
             if (model == default)
@@ -650,12 +706,14 @@ namespace EOffice.WebAPI.Services
 
         public async Task ChuyenTrangThaiVanBan(TrangThaiParam model)
         {
+            
             if (model == default)
             {
                 throw new ResponseMessageException()
                     .WithCode(EResultResponse.FAIL.ToString())
                     .WithMessage(DefaultMessage.DATA_NOT_EMPTY);
             }
+
             var vanBanDen = _context.VanBanDen.Find(x => x.Id == model.VanBanDenId).FirstOrDefault();
             if (vanBanDen == default)
             {
@@ -666,16 +724,162 @@ namespace EOffice.WebAPI.Services
 
             vanBanDen.TrangThai = model.NewTrangThai;
             vanBanDen.NoiDungTuChoi = null;
+            #region Ban hành
+
+            if (vanBanDen.TrangThai != default &&
+                vanBanDen.TrangThai.Code.ToUpper() == DefaultRoleCode.BAN_HANH_VAN_BAN_DEN)
+            {
+                var donViIds = model.DonVi?.Select(x => x.Id).ToList();
+                var userIds = _context.Users.AsQueryable().Where(x => donViIds.Contains(x.DonVi.Id) && x.IsDeleted != true).Select(x => x.Id).ToList();
+                vanBanDen.NguoiDuocBanHanh = userIds;
+                try
+                {
+                    var notify = new Notify()
+                    {
+                        Title =
+                            $"Văn bản số {vanBanDen.SoLuuCV} được ban hành!",
+                        Content =
+                            $"Văn bản số {vanBanDen.SoLuuCV} được ban hành. <br /> Trích yếu: {vanBanDen.TrichYeu} <br /> Ngày ký: {vanBanDen.NgayKy} <a href='/van-ban-di'> Xem chi tiết</a>"
+                    };
+                    await  _notifyService.WithNotify(notify).WithRecipients(userIds).PushNotify();
+
+                }
+                catch (Exception e)
+                {
+                }
+            }
+
+            #endregion
+
+            if (vanBanDen.TrangThai != default && DefaultRoleCode.TrangThaiGhiNhanThongTin.Contains(  vanBanDen.TrangThai.Code.ToUpper()) &&
+                vanBanDen.NhomNguoiTiepNhanVBTrinhLD != default && vanBanDen.NhomNguoiTiepNhanVBTrinhLD.Count > 0)
+            {
+                var nguoiTiepNhanIndex = vanBanDen.NhomNguoiTiepNhanVBTrinhLD
+                    .FindIndex(x => x.NguoiXuLy != default
+                                    && x.NguoiXuLy.UserName == model.UserName);
+                if (nguoiTiepNhanIndex >= 0)
+                {
+                    vanBanDen.NhomNguoiTiepNhanVBTrinhLD[nguoiTiepNhanIndex].NoiDung = model.NoiDung;
+                    vanBanDen.NhomNguoiTiepNhanVBTrinhLD[nguoiTiepNhanIndex].TrangThaiXuLy = model.NewTrangThai;
+                }
+                else
+                {
+                    throw new ResponseMessageException()
+                        .WithCode(EResultResponse.FAIL.ToString())
+                        .WithMessage("Tài khoản không có quyền xét duyệt!");
+                }
+            }
+
+            #region Hiệu trưởng
             
+
+
+            if (vanBanDen.TrangThai != default &&
+                vanBanDen.TrangThai.Code.ToUpper() == DefaultRoleCode.KY_SO_PHAP_LY.ToUpper() &&
+                CurrentUser.Roles.Any(x => x.Code == DefaultRoleCode.HIEU_TRUONG))
+            {
+                var trangThai = _context.TrangThai.AsQueryable()
+                    .Where(x => x.Code.ToUpper() == DefaultRoleCode.HIEU_TRUONG_DA_KY.ToUpper()).Select(x =>
+                        new TrangThaiShort()
+                        {
+                            Id = x.Id,
+                            Code = x.Code,
+                            Ten = x.Ten,
+                            BgColor = x.BgColor,
+                            Color = x.BgColor
+                        }).FirstOrDefault();
+                vanBanDen.TrangThai = trangThai;
+                vanBanDen.Ower = vanBanDen.GetOwerWithRole(DefaultRoleCode.VAN_THU_TRUONG);
+            }
+
+            if (vanBanDen.TrangThai != default &&
+                vanBanDen.TrangThai.Code.ToUpper() == DefaultRoleCode.TU_CHOI.ToUpper() &&
+                model.CurrentTrangThai.Code.ToUpper() == DefaultRoleCode.DUYET_VAN_BAN_PHAP_LY.ToUpper() &&
+                CurrentUser.Roles.Any(x => x.Code == DefaultRoleCode.HIEU_TRUONG))
+            {
+                var trangThai = _context.TrangThai.AsQueryable()
+                    .Where(x => x.Code == DefaultRoleCode.HIEU_TRUONG_TU_CHOI_DUYET).Select(x => new TrangThaiShort()
+                    {
+                        Id = x.Id,
+                        Code = x.Code,
+                        Ten = x.Ten,
+                        BgColor = x.BgColor,
+                        Color = x.BgColor
+                    }).FirstOrDefault();
+                vanBanDen.TrangThai = trangThai;
+                vanBanDen.Ower = vanBanDen.GetOwerWithRole(DefaultRoleCode.THU_KY_HIEU_TRUONG);
+                vanBanDen.NoiDungTuChoi = model.NoiDung;
+            }
+
+            if (vanBanDen.TrangThai != default &&
+                vanBanDen.TrangThai.Code.ToUpper() == DefaultRoleCode.TU_CHOI.ToUpper() &&
+                model.CurrentTrangThai.Code.ToUpper() == DefaultRoleCode.KY_SO_PHAP_LY.ToUpper() &&
+                CurrentUser.Roles.Any(x => x.Code == DefaultRoleCode.HIEU_TRUONG))
+            {
+                var trangThai = _context.TrangThai.AsQueryable()
+                    .Where(x => x.Code == DefaultRoleCode.HIEU_TRUONG_TU_CHOI_DUYET).Select(x => new TrangThaiShort()
+                    {
+                        Id = x.Id,
+                        Code = x.Code,
+                        Ten = x.Ten,
+                        BgColor = x.BgColor,
+                        Color = x.BgColor
+                    }).FirstOrDefault();
+                vanBanDen.TrangThai = trangThai;
+                vanBanDen.Ower = vanBanDen.GetOwerWithRole(DefaultRoleCode.THU_KY_HIEU_TRUONG);
+                vanBanDen.NoiDungTuChoi = model.NoiDung;
+            }
+
+            #endregion
+
+            #region Văn thư trường
+
+            if (vanBanDen.TrangThai != default &&
+                vanBanDen.TrangThai.Code.ToUpper() == DefaultRoleCode.TU_CHOI.ToUpper() &&
+                ( model.CurrentTrangThai.Code.ToUpper() == DefaultRoleCode.TRINH_LANH_DAO_TRUONG.ToUpper() ||
+                  model.CurrentTrangThai.Code.ToUpper() == DefaultRoleCode.THU_KY_HIEU_TRUONG_TU_CHOI_DUYET.ToUpper()
+                ) &&
+                CurrentUser.Roles.Any(x => x.Code == DefaultRoleCode.VAN_THU_TRUONG))
+            {
+                var trangThai = _context.TrangThai.AsQueryable()
+                    .Where(x => x.Code == DefaultRoleCode.VAN_THU_TRUONG_TU_CHOI_DUYET).Select(x => new TrangThaiShort()
+                    {
+                        Id = x.Id,
+                        Code = x.Code,
+                        Ten = x.Ten,
+                        BgColor = x.BgColor,
+                        Color = x.BgColor
+                    }).FirstOrDefault();
+                vanBanDen.TrangThai = trangThai;
+                var userOwer = _context.Users.AsQueryable().Where(x => x.UserName == vanBanDen.CreatedBy)
+                    .Select(x => new UserShort()
+                    {
+                        Id = x.Id,
+                        UserName = x.UserName,
+                        FullName = x.FullName,
+                        DonVi = x.DonVi,
+                        ChucVu = x.ChucVu,
+                        Avatar = x.Avatar,
+                        Note = x.Note,
+                        PhoneNumber = x.PhoneNumber,
+                        Email = x.Email,
+                    })
+                    .FirstOrDefault();
+                vanBanDen.Ower = userOwer;
+                vanBanDen.NoiDungTuChoi = model.NoiDung;
+            }
+
+            #endregion
+
             #region Thư ký hiệu trưởng
 
             if (vanBanDen.TrangThai != default &&
-                vanBanDen.TrangThai.Code.ToUpper() == DefaultRoleCode.TU_CHOI_VAN_BAN_DEN.ToUpper() &&
-                model.CurrentTrangThai.Code.ToUpper() == DefaultRoleCode.TRINH_THU_THU_KY_HIEU_TRUONG_VAN_BAN_DEN.ToUpper() &&
+                vanBanDen.TrangThai.Code.ToUpper() == DefaultRoleCode.TU_CHOI.ToUpper() &&
+                model.CurrentTrangThai.Code.ToUpper() == DefaultRoleCode.TRINH_THU_KY_HIEU_TRUONG.ToUpper() &&
                 CurrentUser.Roles.Any(x => x.Code == DefaultRoleCode.THU_KY_HIEU_TRUONG))
             {
                 var trangThai = _context.TrangThai.AsQueryable()
-                    .Where(x => x.Code == DefaultRoleCode.TU_CHOI_VAN_BAN_DEN).Select(x =>
+                    .Where(x => x.Code == DefaultRoleCode.THU_KY_HIEU_TRUONG_TU_CHOI_DUYET).Select(x =>
                         new TrangThaiShort()
                         {
                             Id = x.Id,
@@ -705,6 +909,96 @@ namespace EOffice.WebAPI.Services
 
             #endregion
             
+
+            if (vanBanDen.TrangThai != default &&
+                vanBanDen.TrangThai.Code.ToUpper() == DefaultRoleCode.TRINH_THU_THU_KY_HIEU_TRUONG_VAN_BAN_DEN.ToUpper())
+            {
+                vanBanDen.Ower = vanBanDen.GetOwerWithRole(DefaultRoleCode.THU_KY_HIEU_TRUONG);
+                if (vanBanDen.ListOwerId != default && vanBanDen.Ower != default)
+                {
+                    vanBanDen.ListOwerId.Add(vanBanDen.Ower.UserName);
+                }
+            }
+
+            if (vanBanDen.TrangThai != default &&
+                DefaultRoleCode.TrangThaiCapTruong.Contains(vanBanDen.TrangThai.Code.ToUpper()))
+            {
+                vanBanDen.Ower = vanBanDen.GetOwerWithRole(DefaultRoleCode.HIEU_TRUONG);
+                if (vanBanDen.ListOwerId != default && vanBanDen.Ower != default)
+                {
+                    vanBanDen.ListOwerId.Add(vanBanDen.Ower.UserName);
+                }
+            }
+            if (vanBanDen.TrangThai != default &&
+                vanBanDen.TrangThai.Code.ToUpper() == DefaultRoleCode.DA_DUYET_VAN_BAN_DEN.ToUpper())
+            {
+                var trangThai = _context.TrangThai.AsQueryable()
+                    .Where(x => x.Code.ToUpper() == DefaultRoleCode.DA_DUYET_VAN_BAN_DEN.ToUpper()).Select(x =>
+                        new TrangThaiShort()
+                        {
+                            Id = x.Id,
+                            Code = x.Code,
+                            Ten = x.Ten,
+                            BgColor = x.BgColor,
+                            Color = x.BgColor
+                        }).FirstOrDefault();
+                vanBanDen.TrangThai = trangThai;
+                vanBanDen.NoiDungTuChoi = model.NoiDung;
+                vanBanDen.Ower = vanBanDen.GetOwerWithRole(DefaultRoleCode.VAN_THU_TRUONG);
+            }
+            if (vanBanDen.TrangThai != default &&
+                vanBanDen.TrangThai.Code.ToUpper() == DefaultRoleCode.TU_CHOI_VAN_BAN_DEN.ToUpper())
+            {
+                var trangThai = _context.TrangThai.AsQueryable()
+                    .Where(x => x.Code.ToUpper() == DefaultRoleCode.TU_CHOI_VAN_BAN_DEN.ToUpper()).Select(x =>
+                        new TrangThaiShort()
+                        {
+                            Id = x.Id,
+                            Code = x.Code,
+                            Ten = x.Ten,
+                            BgColor = x.BgColor,
+                            Color = x.BgColor
+                        }).FirstOrDefault();
+                vanBanDen.TrangThai = trangThai;
+                vanBanDen.NoiDungTuChoi = model.NoiDung;
+                vanBanDen.Ower = vanBanDen.GetOwerWithRole(DefaultRoleCode.VAN_THU_TRUONG);
+            }
+            
+            if (vanBanDen.TrangThai != default &&
+                vanBanDen.TrangThai.Code.ToUpper() == DefaultRoleCode.HTXL_VAN_BAN_DEN.ToUpper())
+            {
+                var trangThai = _context.TrangThai.AsQueryable()
+                    .Where(x => x.Code.ToUpper() == DefaultRoleCode.HTXL_VAN_BAN_DEN.ToUpper()).Select(x =>
+                        new TrangThaiShort()
+                        {
+                            Id = x.Id,
+                            Code = x.Code,
+                            Ten = x.Ten,
+                            BgColor = x.BgColor,
+                            Color = x.BgColor
+                        }).FirstOrDefault();
+                vanBanDen.TrangThai = trangThai;
+                vanBanDen.NoiDungTuChoi = model.NoiDung;
+                vanBanDen.Ower = vanBanDen.GetOwerWithRole(DefaultRoleCode.VAN_THU_TRUONG);
+            }
+            
+            if (vanBanDen.TrangThai != default &&
+                vanBanDen.TrangThai.Code.ToUpper() == DefaultRoleCode.KHT_VAN_BAN_DEN.ToUpper())
+            {
+                var trangThai = _context.TrangThai.AsQueryable()
+                    .Where(x => x.Code.ToUpper() == DefaultRoleCode.KHT_VAN_BAN_DEN.ToUpper()).Select(x =>
+                        new TrangThaiShort()
+                        {
+                            Id = x.Id,
+                            Code = x.Code,
+                            Ten = x.Ten,
+                            BgColor = x.BgColor,
+                            Color = x.BgColor
+                        }).FirstOrDefault();
+                vanBanDen.TrangThai = trangThai;
+                vanBanDen.NoiDungTuChoi = model.NoiDung;
+                vanBanDen.Ower = vanBanDen.GetOwerWithRole(DefaultRoleCode.VAN_THU_TRUONG);
+            }
             vanBanDen.ModifiedBy = CurrentUserName;
             var result = await BaseMongoDb.UpdateAsync(vanBanDen);
             if (!result.Success)
@@ -713,19 +1007,20 @@ namespace EOffice.WebAPI.Services
                     .WithCode(EResultResponse.FAIL.ToString())
                     .WithMessage(DefaultMessage.UPDATE_FAILURE);
             }
-            
-            _history.WithVanBanId(vanBanDen.Id)
-                .WithAction(nameof(VanBanAction.CHUYEN_TRANG_THAI))
-                .WithStatus(vanBanDen.TrangThai)
-                .WithType(vanBanDen)
-                .WithTitle(VanBanAction.CHUYEN_TRANG_THAI);
 
-            if (!string.IsNullOrEmpty(model.NoiDung))
-                _history.WithContent(model.NoiDung);
-            else
-                _history.WithContent(
-                    $"Chuyển trạng thái từ: {model.CurrentTrangThai.Ten} sang {model.NewTrangThai.Ten}");
-            await _history.SaveChangeHistory();
+
+            // _history.WithVanBanId(vanBanDen.Id)
+            //     .WithAction(nameof(VanBanAction.CHUYEN_TRANG_THAI))
+            //     .WithStatus(vanBanDen.TrangThai)
+            //     .WithType(vanBanDen)
+            //     .WithTitle(VanBanAction.CHUYEN_TRANG_THAI);
+            //
+            // if (!string.IsNullOrEmpty(model.NoiDung))
+            //     _history.WithContent(model.NoiDung);
+            // else
+            //     _history.WithContent(
+            //         $"Chuyển trạng thái từ: {model.CurrentTrangThai.Ten} sang {model.NewTrangThai.Ten}");
+            // await _history.SaveChangeHistory();
         }
     }
 }

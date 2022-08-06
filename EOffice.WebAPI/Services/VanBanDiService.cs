@@ -400,7 +400,7 @@ namespace EOffice.WebAPI.Services
             var result = new PagingModel<VanBanDi>();
             var builder = Builders<VanBanDi>.Filter;
             var filter = builder.Empty;
-            filter = builder.And(filter, builder.Where(x => ( (x.CreatedBy == CurrentUserName) ||(x.TrangThai != default && x.TrangThai.Code.ToUpper() == "BH" ) ) && x.IsDeleted == false));
+            filter = builder.And(filter, builder.Where(x => x.IsDeleted == false));
             var checkQuyenThuKy =
                 CurrentUser.Roles.Find(x =>
                     x.Code.ToUpper() == RoleConstants.VAN_THU_TRUONG.ToUpper() ||

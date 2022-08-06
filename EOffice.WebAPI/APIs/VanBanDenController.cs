@@ -213,7 +213,30 @@ namespace EOffice.WebAPI.APIs
                 );
             }
         }
-        
+        [HttpPost]
+        [Route("get-paging-params-xuly")]
+        public async Task<IActionResult> GetPagingParamXuLy([FromBody] VanBanDenParam param)
+        {
+            try
+            {
+                var response = await _vanBanDenService.GetPagingXuLy(param);
+
+                return Ok(
+                    new ResultResponse<PagingModel<VanBanDen>>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+
         [HttpPost]
         [Route("chuyen-trang-thai-van-ban")]
         public async Task<IActionResult> ChuyenTrangThaiVanBan([FromBody] TrangThaiParam model)

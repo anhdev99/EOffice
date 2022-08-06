@@ -16,6 +16,7 @@ namespace EOffice.WebAPI.Interfaces
         Task<List<VanBanDen>> Get();
         Task<VanBanDen> GetById(string id);
         Task<PagingModel<VanBanDen>> GetPaging(VanBanDenParam param);
+        Task<PagingModel<VanBanDen>> GetPagingXuLy(VanBanDenParam param);
         Task ChuyenTrangThaiVanBan(TrangThaiParam model);
     }
 }

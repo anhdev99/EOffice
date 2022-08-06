@@ -90,17 +90,17 @@ namespace EOffice.WebAPI.Models
         public string Id { get; set; }
         public string VanBanDenId { get; set; }
         public string NoiDungButPhe { get; set; }
-        public User NguoiButPhe { get; set; }
+        public UserShort NguoiButPhe { get; set; }
         public DateTime? NgayButPhe { get; set; }
         public List<FileShort> File { get; set; }
         [BsonIgnore]
         public List<FileShort> UploadFiles{ get; set; }
         public EnumModel MucDoQuanTrong { get; set; }
-        public List<User> NguoiPhuTrach { get; set; }
-        public List<User> NguoiChuTri { get; set; }
-        public List<User> NguoiPhoiHopXuLy { get; set; }
+        public List<UserShort> NguoiPhuTrach { get; set; }
+        public UserShort NguoiChuTri { get; set; }
+        public List<UserShort> NguoiPhoiHopXuLy { get; set; }
         public List<DonViShort> DonViPhoiHop { get; set; }
-        public List<User> NguoiXemDeBiet { get; set; }
+        public List<UserShort> NguoiXemDeBiet { get; set; }
     }
 
     public class DonViXuLy

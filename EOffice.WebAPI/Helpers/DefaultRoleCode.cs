@@ -41,8 +41,11 @@ namespace EOffice.WebAPI.Helpers
         public const string DUYET_VAN_BAN_DEN = "DVBD";
         public const string TRINH_THU_THU_KY_HIEU_TRUONG_VAN_BAN_DEN = "TTKHTVBD";
         public const string HIEU_TRUONG_DUYET_VAN_BAN_DEN = "HTDVD";
-        
-        
+        public const string DA_DUYET_VAN_BAN_DEN = "DVBD";
+        public const string HTXL_VAN_BAN_DEN = "HTXLVBD";
+        public const string KHT_VAN_BAN_DEN = "KHTXLVBD";
+
+
         public static List<string> TrangThaiCapTruong = new List<string>() { "KPL",  "DVBPL" };
         public static List<string> TrangThaiGhiNhanThongTin = new List<string>()
         {

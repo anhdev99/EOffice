@@ -7,6 +7,9 @@ export const actions = {
     async getPagingParams({commit}, params) {
         return apiClient.post(controller + "/get-paging-params", params);
     },
+    async getPagingParamsXuLy({commit}, params) {
+        return apiClient.post(controller + "/get-paging-params-xuly", params);
+    },
     async create({commit}, values) {
         console.log("values van ban den", values);
         return apiClient.post(controller + "/create", values);
