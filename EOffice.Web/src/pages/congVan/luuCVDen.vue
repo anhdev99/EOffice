@@ -244,6 +244,7 @@ export default {
     this.getKhoiCoQuan();
     this.getTreeDonVi();
     this.getDonViTree();
+    this.$refs.tblList?.refresh;
   },
   // mounted() {
   //   // Set the initial number of items
@@ -599,7 +600,7 @@ export default {
       this.loading = true
 
       try {
-        let promise = this.$store.dispatch("luuCVDenStore/getPagingParamsLuuCVDen", params)
+        let promise = this.$store.dispatch("congVanStore/getPagingParamsLuuCVDen", params)
         return promise.then(resp => {
           let items = resp.data.data
           this.totalRows = resp.data.totalRows
