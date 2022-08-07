@@ -10,6 +10,9 @@ export const actions = {
     async getPagingParamsLuuCVDen({commit}, params) {
         return apiClient.post(controller + "/get-paging-params-luucvden", params);
     },
+    async getPagingParamsLuuCVDi({commit}, params) {
+        return apiClient.post(controller + "/get-paging-params-luucvdi", params);
+    },
     async create({commit}, values) {
         console.log("values van ban den", values);
         return apiClient.post(controller + "/create", values);
