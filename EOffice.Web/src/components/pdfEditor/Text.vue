@@ -280,10 +280,10 @@ export default {
         spellcheck="false"
         @mousedown.passive="handleMousedown"
         @touchstart.passive="handleTouchStart"
-        class="cursor-grab border border-dotted outline-none whitespace-nowrap"
-        style="padding: 10px; -webkit-user-select: text; display: inline-block"
-        :class="['cursor-grab ',
-            { 'cursor-grabbing': moveOperation }]"
+        class="tw-cursor-grab tw-border tw-border-dotted tw-outline-none tw-whitespace-nowrap"
+        style="padding: 10px; -webkit-user-select: text; display: inline-block; white-space: nowrap; cursor: pointer"
+        :class="['tw-cursor-grab ',
+            { 'tw-cursor-grabbing': moveOperation }]"
     />
   </div>
 </template>

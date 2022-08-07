@@ -8,6 +8,7 @@ import ObjectContainer from "@/components/pdfEditor/ObjectContainer";
 import {CURRENT_USER} from "@/helpers/currentUser";
 import {vanBanDenModel} from "@/models/vanBanDenModel";
 import {notifyModel} from "@/models/notifyModel";
+
 export default {
   components: {ObjectContainer, PdfPage},
   props: {
@@ -80,8 +81,9 @@ export default {
  async mounted() {
     console.log("this.modelKySo.path", this.fileInfo)
     this.signatureDigital.vanBanDiId = this.fileInfo.vanBanDiId;
-   await  this.mountPdf()
    await this.handleGetVBD( this.fileInfo.vanBanDiId)
+   await  this.mountPdf()
+
   },
   methods: {
     async handleGetVBD(id) {
@@ -362,33 +364,33 @@ export default {
 
 </script>
 <template>
-  <div class="mb-4 flex flex-col relative" ref="formContainer">
+  <div class="tw-mb-4 tw-flex tw-flex-col tw-relative" ref="formContainer">
     <div class="">
       <div style="display: flex; justify-content: end ">
         <div>
           <button
-              class="text-white bg-green-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 px-3 py-1.5 font-medium text-sm text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              class="tw-text-white tw-bg-green-700 hover:tw-bg-blue-800 focus:tw-ring-4 focus:tw-ring-blue-300 tw-px-3 tw-py-1.5 tw-font-medium tw-text-sm tw-text-center tw-mr-2 tw-mb-2 dark:tw-bg-blue-600 dark:hover:tw-bg-blue-700 dark:focus:tw-ring-blue-800"
               @click="onAddTextField"
           >
             Thêm ghi chú
           </button>
           <button
               v-if="downloadFile"
-              class="text-white bg-red-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium text-sm  text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              class="tw-text-white tw-bg-red-700 hover:tw-bg-blue-800 focus:tw-ring-4 focus:tw-ring-blue-300 tw-font-medium tw-text-sm  tw-text-center tw-mr-2 tw-mb-2 dark:tw-bg-blue-600 dark:hover:tw-bg-blue-700 dark:focus:tw-ring-blue-800"
               @click="downloadPDF"
           >
             Tải file
           </button>
-          <input type="file" id="image" name="image" class="hidden" @change="uploadImage"/>
+          <input type="file" id="image" name="image" class="tw-hidden" @change="uploadImage"/>
           <label for="image"
-                 class="text-black border border-black cursor-pointer font-medium text-sm px-3 py-1.5 text-center mr-2 mb-2">
+                 class="tw-text-black tw-border tw-border-black tw-cursor-pointer tw-font-medium tw-text-sm tw-px-3 tw-py-1.5 tw-text-center tw-mr-2 tw-mb-2">
             Chữ ký
           </label>
         </div>
 
         <div v-if="model.trangThai">
           <button v-if="model.trangThai.code == 'kpl' && model.ower && model.ower.userName == currentUserName"
-                  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 px-3 py-1.5 font-medium text-sm text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  class="tw-text-white tw-bg-blue-700 hover:tw-bg-blue-800 focus:tw-ring-4 focus:tw-ring-blue-300 tw-px-3 tw-py-1.5 tw-font-medium tw-text-sm tw-text-center tw-mr-2 tw-mb-2 dark:tw-bg-blue-600 dark:hover:tw-bg-blue-700 dark:focus:tw-ring-blue-800"
                   @click="handleSubmitKySoPhapLy"
           >
             Ký số pháp lý
@@ -396,7 +398,7 @@ export default {
         </div>
         <div v-if="model.trangThai">
           <button v-if="model.trangThai.code == 'htks' && model.ower && model.ower.userName == currentUserName"
-                  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 px-3 py-1.5 font-medium text-sm text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  class="tw-text-white tw-bg-blue-700 hover:tw-bg-blue-800 focus:tw-ring-4 focus:tw-ring-blue-300 tw-px-3 tw-py-1.5 tw-font-medium tw-text-sm tw-text-center tw-mr-2 tw-mb-2 dark:tw-bg-blue-600 dark:hover:tw-bg-blue-700 dark:focus:tw-ring-blue-800"
                   @click="handleSubmitDongMocThemSo"
           >
             Thêm số / đóng mọc
@@ -404,7 +406,7 @@ export default {
         </div>
         <button
             v-else
-            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 px-3 py-1.5 font-medium text-sm text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            class="tw-text-white tw-bg-blue-700 hover:tw-bg-blue-800 focus:tw-ring-4 focus:tw-ring-blue-300 tw-px-3 tw-py-1.5 tw-font-medium tw-text-sm tw-text-center tw-mr-2 tw-mb-2 tw-dark:tw-bg-blue-600 tw-dark:hover:tw-bg-blue-700 tw-dark:focus:tw-ring-blue-800"
             @click="handleSubmit"
         >
           Thiết lập ký số
@@ -412,19 +414,19 @@ export default {
       </div>
 
     </div>
-    <div class="w-full overflow-auto">
+    <div class="tw-w-full tw-overflow-auto">
       <div
           v-for="(page, pageIndex) in pages"
           :key="pageIndex"
-          class="p-1 w-full flex flex-col items-center overflow-hidden"
+          class="tw-p-1 tw-w-full tw-flex tw-flex-col tw-items-center tw-overflow-hidden"
           @mousedown="() => selectPage(pageIndex)"
           @touchstart="() => selectPage(pageIndex)"
       >
-        <div :class="['relative shadow-lg mb-4', { 'selected-pdf': pageIndex == selectedPageIndex }]">
+        <div :class="['tw-relative tw-shadow-lg tw-mb-4', { 'selected-pdf': pageIndex == selectedPageIndex }]">
           <pdf-page :page="pages[pageIndex]" @measure="(payload) => onMeasure(payload, pageIndex)"/>
           <div
               v-if="pageIndex == selectedPageIndex"
-              class="absolute top-0 left-0 transform origin-top-left"
+              class="tw-absolute tw-top-0 tw-left-0 tw-transform tw-origin-top-left"
               :style="{ transform: `scale(${pagesScale[pageIndex]})`, touchAction: 'none' }"
           >
 
@@ -482,3 +484,7 @@ export default {
   --slider-handle-ring-color: #3475e0;
 }
 </style>
+
+
+<style src="../../assets/tailwind.css" />
+

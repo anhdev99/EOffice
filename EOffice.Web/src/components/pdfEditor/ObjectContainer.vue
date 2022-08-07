@@ -213,9 +213,10 @@ export default {
 </script>
 <template>
   <div
-      class="absolute left-0 top-0 select-none"
+      class="absolute tw-left-0 tw-top-0 tw-select-none"
       :style="{ width: `${width + dw}px`, height: `${height + dh}px`, transform: `translate(${x + dx}px, ${y + dy}px)` }"
   >
+    {{object}}
     <object-image v-if="type== 'image'" :operation="operation" @panstart="handlePanStart" @panmove="handlePanMove" @panend="handlePanEnd"/>
     <TextEditor v-else-if="type == 'text'" :text="textEditor" :operation="operation" @panstart="handlePanStart" @panmove="handlePanMove" @panend="handlePanEnd" @textEnd="handleEndText"/>
     <!-- <object-signature v-else-if="type == 'signature'"
@@ -225,7 +226,7 @@ export default {
         @panend="handlePanEnd" /> -->
     <div
         @click="$emit('delete')"
-        class="absolute left-0 top-0 right-0 w-6 h-6 m-auto rounded-full bg-red-100 cursor-pointer transform -translate-y-1/2 md:scale-25 text-center border border-black"
+        class="absolute tw-left-0 tw-top-0 tw-right-0 tw-w-6 tw-h-6 tw-m-auto tw-rounded-full tw-bg-red-100 tw-cursor-pointer tw-transform tw-translate-y-1/2 md:tw-scale-25 tw-text-center tw-border tw-border-black"
     >
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle"
            viewBox="0 0 16 16">
@@ -235,6 +236,6 @@ export default {
         />
       </svg>
     </div>
-    <canvas v-if="type == 'image'" class="w-full h-full" ref="canvasImage" id="canvasImage"/>
+    <canvas v-if="type == 'image'" class="tw-w-full tw-h-full" ref="canvasImage" id="canvasImage"/>
   </div>
 </template>
