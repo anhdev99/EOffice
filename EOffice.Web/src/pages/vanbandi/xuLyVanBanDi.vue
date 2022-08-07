@@ -46,7 +46,7 @@ export default {
   },
   data() {
     return {
-      title: "Văn bản đi",
+      title: "Xử lý văn bản đi",
       items: [
         {
           text: "E-Office",
@@ -603,7 +603,7 @@ export default {
       const params = {
         start: ctx.currentPage,
         limit: ctx.perPage,
-        content: this.filter,
+        // content: this.filter,
         sortBy: ctx.sortBy,
         sortDesc: ctx.sortDesc,
       }
@@ -885,15 +885,15 @@ export default {
               </div>
               <div class="col-sm-8">
                 <div class="text-sm-end">
-                  <b-button
-                      variant="primary"
-                      type="button"
-                      class="btn w-md btn-primary"
-                      @click="handleCreate"
-                      size="sm"
-                  >
-                    <i class="mdi mdi-plus me-1"></i> Thêm mới
-                  </b-button>
+<!--                  <b-button-->
+<!--                      variant="primary"-->
+<!--                      type="button"-->
+<!--                      class="btn w-md btn-primary"-->
+<!--                      @click="handleCreate"-->
+<!--                      size="sm"-->
+<!--                  >-->
+<!--                    <i class="mdi mdi-plus me-1"></i> Thêm mới-->
+<!--                  </b-button>-->
                   <!-- Model create -->
                   <b-modal
                       v-model="showModal"
@@ -2473,7 +2473,7 @@ export default {
 
               </div>
               <div class="mb-3">
-                <label class="form-label title-capso">Ghi chú</label>
+                <label class="form-label title-capso">Lý do (Từ chối)</label>
                 <div>
                   <textarea
                       v-model="modelTrangThai.noiDung"
@@ -2755,7 +2755,7 @@ export default {
     </div>
   </Layout>
 </template>
-<style>
+<style scoped>
 .title-capso {
   font-weight: bold;
   color: #00568C;

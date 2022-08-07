@@ -508,24 +508,27 @@ namespace EOffice.WebAPI.Services
             var filter = builder.Empty;
             filter = builder.And(filter, builder.Where(x => x.IsDeleted == false));
             // filter = filter & builder.In(x => x.IdOwner, CurrentUser.DonViIds);
-            var checkQuyenThuKy =
-                CurrentUser.Roles.Find(x =>
-                    x.Code.ToUpper() == RoleConstants.VAN_THU_TRUONG.ToUpper() ||
-                    x.Code.ToUpper() == RoleConstants.THU_KY_HIEU_TRUONG.ToUpper() ||
-                    x.Code.ToUpper() == RoleConstants.HIEU_TRUONG);
-            if (checkQuyenThuKy != default)
-            {
-                filter = builder.And(filter,
-                    builder.Where(x =>
-                        (x.TrangThai != default &&
-                         x.TrangThai.Code.ToUpper() == DefaultRoleCode.TRINH_LANH_DAO_VAN_BAN_DEN) ||
-                        x.CreatedBy == CurrentUserName || x.ListOwerId.Contains(CurrentUserName)));
-            }
-            else
-            {
-                filter = builder.And(filter,
-                    builder.Where(x =>x.ListOwerId.Contains(CurrentUserName) || x.CreatedBy == CurrentUserName));
-            }
+            filter = builder.And(filter,
+                    builder.Where(x =>x.CreatedBy == CurrentUserName || (x.TrangThai != default && x.TrangThai.Code  == DefaultRoleCode.BAN_HANH_VAN_BAN_DEN)));
+            
+            // var checkQuyenThuKy =
+            //     CurrentUser.Roles.Find(x =>
+            //         x.Code.ToUpper() == RoleConstants.VAN_THU_TRUONG.ToUpper() ||
+            //         x.Code.ToUpper() == RoleConstants.THU_KY_HIEU_TRUONG.ToUpper() ||
+            //         x.Code.ToUpper() == RoleConstants.HIEU_TRUONG);
+            // if (checkQuyenThuKy != default)
+            // {
+            //     filter = builder.And(filter,
+            //         builder.Where(x =>
+            //             (x.TrangThai != default &&
+            //              x.TrangThai.Code.ToUpper() == DefaultRoleCode.TRINH_LANH_DAO_VAN_BAN_DEN) ||
+            //             x.CreatedBy == CurrentUserName || x.ListOwerId.Contains(CurrentUserName)));
+            // }
+            // else
+            // {
+            //     filter = builder.And(filter,
+            //         builder.Where(x =>x.ListOwerId.Contains(CurrentUserName) || x.CreatedBy == CurrentUserName));
+            // }
             
             if (!String.IsNullOrEmpty(param.Content))
             {
@@ -568,17 +571,20 @@ namespace EOffice.WebAPI.Services
             if (checkQuyenThuKy != default)
             {
                 filter = builder.And(filter,
-                    builder.Where(x =>
-                        (x.TrangThai != default &&
-                         x.TrangThai.Code.ToUpper() == DefaultRoleCode.TRINH_LANH_DAO_VAN_BAN_DEN) ||
-                        x.CreatedBy == CurrentUserName || x.ListOwerId.Contains(CurrentUserName)));
+                    builder.Where(
+                        x =>
+                            (x.TrangThai != default &&
+                             x.TrangThai.Code.ToUpper() == DefaultRoleCode.TRINH_LANH_DAO_VAN_BAN_DEN) ||
+                            x.CreatedBy == CurrentUserName || x.ListOwerId.Contains(CurrentUserName)
+                            || (x.ButPhe != null && x.ButPhe.NguoiChuTri != default &&
+                                x.ButPhe.NguoiChuTri.UserName == CurrentUserName)));
             }
             else
             {
                 filter = builder.And(filter,
                     builder.Where(x =>x.ButPhe != null && x.ButPhe.NguoiChuTri != default && x.ButPhe.NguoiChuTri.UserName == CurrentUserName));
             }
-            
+
             if (!String.IsNullOrEmpty(param.Content))
             {
                 filter = builder.And(filter,

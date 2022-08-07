@@ -12,6 +12,10 @@ const scripts = [
         name: "download",
         src: "https://unpkg.com/downloadjs@1.4.7",
     },
+    {
+        name: "tailwindcss",
+        src: "https://cdn.tailwindcss.com",
+    }
 ]
 
 const assets = {}

@@ -32,7 +32,7 @@ import {CURRENT_USER} from "@/helpers/currentUser";
  */
 export default {
   page: {
-    title: "Văn bản đến",
+    title: "Xử lý văn bản đến",
     meta: [{name: "description", content: appConfig.description}]
   },
   components: {
@@ -40,7 +40,6 @@ export default {
     PageHeader,
     Multiselect,
     ckeditor: CKEditor.component,
-    Switches,
     DatePicker,
     vueDropzone: vue2Dropzone,
     Treeselect,
@@ -193,12 +192,8 @@ export default {
   },
   validations: {
     model: {
-      soLuuCV: {required},
-      soVBDen: {required},
       loaiVanBan: {required},
-      trichYeu: {required},
-      ngayBanHanh: {required},
-      ngayNhan: {required},
+      trangThai: {required},
     },
     modelTrangThai: {
       currentTrangThai: {required},
@@ -599,7 +594,7 @@ export default {
       this.loading = true
 
       try {
-        let promise = this.$store.dispatch("vanBanDenStore/getPagingParams", params)
+        let promise = this.$store.dispatch("vanBanDenStore/getPagingParamsXuLy", params)
         return promise.then(resp => {
           let items = resp.data.data
           this.totalRows = resp.data.totalRows
@@ -744,15 +739,15 @@ export default {
               </div>
               <div class="col-sm-8">
                 <div class="text-sm-end">
-                  <b-button
-                      variant="primary"
-                      type="button"
-                      class="btn w-md btn-primary"
-                      @click="handleCreate"
-                      size="sm"
-                  >
-                    <i class="mdi mdi-plus me-1"></i> Thêm mới
-                  </b-button>
+<!--                  <b-button-->
+<!--                      variant="primary"-->
+<!--                      type="button"-->
+<!--                      class="btn w-md btn-primary"-->
+<!--                      @click="handleCreate"-->
+<!--                      size="sm"-->
+<!--                  >-->
+<!--                    <i class="mdi mdi-plus me-1"></i> Thêm mới-->
+<!--                  </b-button>-->
                   <!-- Model create -->
                   <b-modal
                       v-model="showModal"
@@ -769,58 +764,9 @@ export default {
                       <div class="row">
                         <div class="col-lg-7 col-md-12">
                           <div class="row">
-                            <!--                              Số lưu -->
-                            <div class="col-md-3">
-                              <div class="mb-2">
-                                <label class="form-label" for="validationCustom01">Số lưu CV</label> <span
-                                  class="text-danger">*</span>
-                                <input
-                                    id="validationCustom01"
-                                    v-model="model.soLuuCV"
-                                    type="text"
-                                    class="form-control"
-                                    placeholder="eg: 123-dthu"
-                                    :class="{
-                                      'is-invalid': submitted && $v.model.soLuuCV.$error,
-                                    }"
-                                />
-                                <div
-                                    v-if="submitted && $v.model.soLuuCV.$error"
-                                    class="invalid-feedback"
-                                >
-                                <span v-if="!$v.model.soLuuCV.required"
-                                >Vui lòng thêm số lưu CV.</span
-                                >
-                                </div>
-                              </div>
-                            </div>
-                            <!--                            Số VB đến -->
-                            <div class="col-md-5">
-                              <div class="mb-2">
-                                <label class="form-label" for="validationCustom01">Số văn bản đến</label> <span
-                                  class="text-danger">*</span>
-                                <input
-                                    id="validationSoVBDen"
-                                    v-model="model.soVBDen"
-                                    type="text"
-                                    class="form-control"
-                                    placeholder="eg: 123-dthu"
-                                    :class="{
-                                      'is-invalid': submitted && $v.model.soVBDen.$error,
-                                    }"
-                                />
-                                <div
-                                    v-if="submitted && $v.model.soVBDen.$error"
-                                    class="invalid-feedback"
-                                >
-                                <span v-if="!$v.model.soVBDen.required"
-                                >Vui lòng thêm số văn bản đến.</span
-                                >
-                                </div>
-                              </div>
-                            </div>
+
                             <!--                            Loại văn bản-->
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                               <div class="mb-2">
                                 <label class="form-label" for="validationCustom01">Loại văn bản</label> <span
                                   class="text-danger">*</span>
@@ -844,11 +790,74 @@ export default {
                                 </div>
                               </div>
                             </div>
+                            <!--                            Trạng thái-->
+                            <div class="col-md-6">
+
+                              <div v-if="model.trangThai && model.id" class="mb-2">
+                                <label class="form-label" for="validationCustom01">Trạng thái</label> <span
+                                  class="text-danger">*</span>
+                                <input
+                                    id="validationCustom01"
+                                    :value="model.trangThai.ten"
+                                    type="text"
+                                    class="form-control"
+                                    placeholder=""
+                                    disabled
+                                />
+                              </div>
+
+                              <div v-else class="mb-2">
+                                <label class="form-label" for="validationCustom01">Trạng thái</label> <span
+                                  class="text-danger">*</span>
+                                <multiselect
+                                    v-model="model.trangThai"
+                                    :options="optionsTrangThai"
+                                    track-by="id"
+                                    label="ten"
+                                    placeholder="Chọn trạng thái"
+                                    :class="{
+                                'is-invalid':
+                                  submitted && $v.model.trangThai.$error,
+                                }"
+                                ></multiselect>
+                                <div
+                                    v-if="submitted && !$v.model.trangThai.required"
+                                    class="invalid-feedback"
+                                >
+                                  Trạng thái không được để trống.
+                                </div>
+                              </div>
+                            </div>
+                            <!--                              Số lưu -->
+                            <div class="col-md-6">
+                              <div class="mb-2">
+                                <label class="form-label" for="validationCustom01">Số lưu CV</label>
+                                <input
+                                    id="validationCustom01"
+                                    v-model="model.soLuuCV"
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="eg: 123-dthu"
+                                />
+                              </div>
+                            </div>
+                            <!--                            Số VB đến -->
+                            <div class="col-md-6">
+                              <div class="mb-2">
+                                <label class="form-label" for="validationCustom01">Số văn bản đến</label>
+                                <input
+                                    id="validationSoVBDen"
+                                    v-model="model.soVBDen"
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="eg: 123-dthu"
+                                />
+                              </div>
+                            </div>
                             <!--                            Trích yếu -->
                             <div class="col-md-12">
                               <div class="mb-2">
-                                <label class="form-label" for="validationCustom01">Trích yếu</label> <span
-                                  class="text-danger">*</span>
+                                <label class="form-label" for="validationCustom01">Trích yếu</label>
                                 <ckeditor
                                     v-model="model.trichYeu"
                                     :editor="editor"
@@ -954,22 +963,6 @@ export default {
                                 </date-picker>
                               </div>
                             </div>
-                            <!--                            Người ký-->
-                            <div class="col-md-6">
-                              <div class="mb-2">
-                                <label class="form-label" for="validationCustom01">Người ký</label>
-                                <multiselect
-                                    v-model="model.nguoiKy"
-                                    :options="optionsUser"
-                                    track-by="id"
-                                    label="fullName"
-                                    placeholder="Chọn người ký"
-                                    deselect-label="Nhấn để xoá"
-                                    selectLabel="Nhấn enter để chọn"
-                                    selectedLabel="Đã chọn"
-                                ></multiselect>
-                              </div>
-                            </div>
                             <!--                            Thời hạn xử lý-->
                             <div class="col-md-6">
                               <div class="mb-2">
@@ -986,22 +979,39 @@ export default {
                                 </date-picker>
                               </div>
                             </div>
-                            <!--                            Trạng thái-->
-                            <div class="col-md-6">
+                            <!--                            Người ký-->
+                            <div class="col-md-12">
                               <div class="mb-2">
-                                <label class="form-label" for="validationCustom01">Trạng thái</label>
+                                <label class="form-label" for="validationCustom01">Người ký</label>
                                 <multiselect
-                                    v-model="model.trangThai"
-                                    :options="optionsTrangThai"
+                                    v-model="model.nguoiKy"
+                                    :options="optionsUser"
                                     track-by="id"
-                                    label="ten"
-                                    placeholder="Chọn trạng thái"
+                                    label="fullName"
+                                    placeholder="Chọn người ký"
                                     deselect-label="Nhấn để xoá"
                                     selectLabel="Nhấn enter để chọn"
                                     selectedLabel="Đã chọn"
-                                ></multiselect>
+                                >
+                                  <template slot="singleLabel" slot-scope="{ option }">
+                                    <strong>{{ option.fullName }}</strong>
+
+                                    <span v-if="option.donVi" style="color:red">&nbsp;{{ option.donVi.ten }}</span>
+                                  </template>
+                                  <template slot="option" slot-scope="{ option }">
+                                    <div class="option__desc">
+          <span class="option__title">
+            <strong>{{ option.fullName }}&nbsp;</strong>
+          </span>
+                                      <span v-if="option.donVi" class="option__small"
+                                            style="color:green">{{ option.donVi.ten }}</span>
+                                    </div>
+                                  </template>
+                                </multiselect>
                               </div>
                             </div>
+
+
                             <!--                            Khối cơ quan gửi-->
                             <div class="col-md-12">
                               <div class="mb-2">
@@ -1123,20 +1133,20 @@ export default {
                               </div>
                             </div>
                             <!--                            Điều kiện-->
-                            <div class="col-md-12">
-                              <div class="mb-2 d-flex align-items-center">
-                                <switches v-model="model.congVanChiDoc" color="primary" class="ml-1 mx-2"></switches>
-                                <label for="">Là công văn chỉ đọc</label>
-                              </div>
-                              <div class="mb-2 d-flex align-items-center">
-                                <switches v-model="model.banChinh" color="primary" class="ml-1 mx-2"></switches>
-                                <label for=""> Là bản chính</label>
-                              </div>
-                              <div class="mb-2 d-flex align-items-center">
-                                <switches v-model="model.hienThiThongBao" color="primary" class="ml-1 mx-2"></switches>
-                                <label for="">Hiển thị mục thông báo</label>
-                              </div>
-                            </div>
+<!--                            <div class="col-md-12">-->
+<!--                              <div class="mb-2 d-flex align-items-center">-->
+<!--                                <switches v-model="model.congVanChiDoc" color="primary" class="ml-1 mx-2"></switches>-->
+<!--                                <label for="">Là công văn chỉ đọc</label>-->
+<!--                              </div>-->
+<!--                              <div class="mb-2 d-flex align-items-center">-->
+<!--                                <switches v-model="model.banChinh" color="primary" class="ml-1 mx-2"></switches>-->
+<!--                                <label for=""> Là bản chính</label>-->
+<!--                              </div>-->
+<!--                              <div class="mb-2 d-flex align-items-center">-->
+<!--                                <switches v-model="model.hienThiThongBao" color="primary" class="ml-1 mx-2"></switches>-->
+<!--                                <label for="">Hiển thị mục thông báo</label>-->
+<!--                              </div>-->
+<!--                            </div>-->
                           </div>
                         </div>
                       </div>
@@ -1218,7 +1228,7 @@ export default {
                         Xử lý VB
                       </b-button>
                       <b-button
-                          v-else-if="data.item.ower && data.item.ower.userName == currentUserName && (data.item.trangThai.code == 'DVBD' || data.item.trangThai.code == 'TCVBD' || data.item.trangThai.code == 'HTXLVBD' || data.item.trangThai.code == 'KHTXLVBD')"
+                          v-else-if="data.item.ower && data.item.ower.userName == currentUserName && (data.item.trangThai.code == 'KTVBD' || data.item.trangThai.code == 'DVBD' || data.item.trangThai.code == 'TCVBD' || data.item.trangThai.code == 'HTXLVBD' || data.item.trangThai.code == 'KHTXLVBD')"
                           type="button"
                           size="sm"
                           class="btn btn-light btn-danger"
