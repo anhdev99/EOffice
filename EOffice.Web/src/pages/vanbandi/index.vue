@@ -603,7 +603,7 @@ export default {
       const params = {
         start: ctx.currentPage,
         limit: ctx.perPage,
-        content: this.filter,
+        // content: this.filter,
         sortBy: ctx.sortBy,
         sortDesc: ctx.sortDesc,
       }
@@ -2473,7 +2473,7 @@ export default {
 
               </div>
               <div class="mb-3">
-                <label class="form-label title-capso">Ghi chú</label>
+                <label class="form-label title-capso">Lý do (Từ chối)</label>
                 <div>
                   <textarea
                       v-model="modelTrangThai.noiDung"

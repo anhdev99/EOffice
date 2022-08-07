@@ -1247,14 +1247,7 @@ export default {
                             v-on:click="handleUpdate(data.item.id)">
                           <i class="fas fa-pencil-alt text-success me-1"></i>
                         </button>
-                        <button
-                            type="button"
-                            size="sm"
-                            class="btn btn-outline btn-sm"
-                            data-toggle="tooltip" data-placement="bottom" title="Lịch sử"
-                            v-on:click="handleHistory(data.item.id)">
-                          <i class="fas fa-history text-info me-1"></i>
-                        </button>
+
 <!--                        <button-->
 <!--                            type="button"-->
 <!--                            size="sm"-->
@@ -1270,6 +1263,14 @@ export default {
                             data-toggle="tooltip" data-placement="bottom" title="Cập nhật"
                             v-on:click="handleShowButPhe(data.item.id)">
                           <i class="fas fa-feather-alt text-primary me-1"></i>
+                        </button>
+                        <button
+                            type="button"
+                            size="sm"
+                            class="btn btn-outline btn-sm"
+                            data-toggle="tooltip" data-placement="bottom" title="Lịch sử"
+                            v-on:click="handleHistory(data.item.id)">
+                          <i class="fas fa-history text-info me-1"></i>
                         </button>
                         <button
                             type="button"

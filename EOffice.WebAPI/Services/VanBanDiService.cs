@@ -1562,6 +1562,9 @@ namespace EOffice.WebAPI.Services
                             }).FirstOrDefault();
                 entity.TrangThai = newTrangThai;
                 entity.Ower = entity.GetOwerWithRole(DefaultRoleCode.HIEU_TRUONG);
+                if (entity.ListOwerId == default)
+                    entity.ListOwerId = new List<string>();
+                entity.ListOwerId.Add( entity.Ower .UserName);
                 var result = await BaseMongoDb.UpdateAsync(entity);
                 if (result.Entity.Id == default || !result.Success)
                 {
@@ -1601,12 +1604,12 @@ namespace EOffice.WebAPI.Services
             var file = new FileShort();
            if(entity.FilePDF != default && entity.FilePDF.Any(x => x.Ext.Contains(".pdf")))
             {
-                file = entity.FilePDF.Where(x => x.Ext.Contains(".pdf")).FirstOrDefault();
+                file = entity.FilePDF.Where(x => x.Ext.Contains(".pdf")).LastOrDefault();
                 filePathTemp = _context.Files.AsQueryable().Where(x => x.Id == file.FileId).FirstOrDefault()?.Path;
             }
             else if (entity.File != default && entity.File.Any(x => x.Ext.Contains(".pdf")))
             {
-                 file = entity.File.Where(x => x.Ext.Contains(".pdf")).FirstOrDefault();
+                 file = entity.File.Where(x => x.Ext.Contains(".pdf")).LastOrDefault();
                  filePathTemp = _context.Files.AsQueryable().Where(x => x.Id == file.FileId).FirstOrDefault()?.Path;
             }
 
@@ -1712,12 +1715,12 @@ namespace EOffice.WebAPI.Services
             var file = new FileShort();
            if(entity.FilePDF != default && entity.FilePDF.Any(x => x.Ext.Contains(".pdf") ))
             {
-                file = entity.FilePDF.Where(x => x.Ext.Contains(".pdf")).FirstOrDefault();
+                file = entity.FilePDF.Where(x => x.Ext.Contains(".pdf")).LastOrDefault();
                 filePathTemp = _context.Files.AsQueryable().Where(x => x.Id == file.FileId).FirstOrDefault()?.Path;
             }
             else if (entity.File != default && entity.File.Any(x => x.Ext.Contains(".pdf")))
             {
-                 file = entity.File.Where(x =>x.Ext.Contains(".pdf")).FirstOrDefault();
+                 file = entity.File.Where(x =>x.Ext.Contains(".pdf")).LastOrDefault();
                  filePathTemp = _context.Files.AsQueryable().Where(x => x.Id == file.FileId).FirstOrDefault()?.Path;
             }
 

@@ -3,7 +3,7 @@ namespace EOffice.WebAPI.Helpers
 
     public class Constants
     {
-        public const string DEFAULT_LOGO = "files/logo.png";
+        public const string DEFAULT_LOGO = "assets/DTHU.aead3196.png";
     }
     public class RoleConstants
     {

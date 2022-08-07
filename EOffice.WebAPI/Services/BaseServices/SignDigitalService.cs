@@ -421,7 +421,6 @@ namespace EOffice.WebAPI.Services
                     formatHSignp31.Italic = true;
                     p3.AppendText(listuser[i].ChucVu?.Ten).ApplyCharacterFormat(formatHSignp3);
                     p3.AppendBreak(BreakType.LineBreak);
-                    p3.AppendBreak(BreakType.LineBreak);
                     if (listuser[i].FilePath != default)
                     {
                         Image image = null;
@@ -447,8 +446,8 @@ namespace EOffice.WebAPI.Services
                     p3.AppendBreak(BreakType.LineBreak);
                     p3.AppendText("Ký số tại DThU").ApplyCharacterFormat(formatHSignp31);
                     p3.AppendBreak(BreakType.LineBreak);
-                    p2.AppendText(listuser[i].NgayKy).ApplyCharacterFormat(formatHSignp31);
-                    p2.AppendBreak(BreakType.LineBreak);
+                    p3.AppendText(listuser[i].NgayKy).ApplyCharacterFormat(formatHSignp31);
+                    p3.AppendBreak(BreakType.LineBreak);
                     // CharacterFormat formatHSignp31 = new CharacterFormat(doc);
                     // formatHSignp31.FontSize = 10;
                     // p3.AppendText(listuser[i].DonVi?.Ten).ApplyCharacterFormat(formatHSignp31);
