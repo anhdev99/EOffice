@@ -8,11 +8,6 @@ import {required} from "vuelidate/lib/validators";
 import Multiselect from "vue-multiselect";
 import DatePicker from "vue2-datepicker";
 import Switches from "vue-switches";
-// import the component
-import Treeselect from '@riophae/vue-treeselect'
-// import the styles
-// import '@riophae/vue-treeselect/dist/vue-treeselect.css'
-
 /**
  * Form editor
  */
@@ -39,10 +34,8 @@ export default {
     PageHeader,
     Multiselect,
     ckeditor: CKEditor.component,
-    Switches,
     DatePicker,
     vueDropzone: vue2Dropzone,
-    Treeselect,
   },
   data() {
     return {
@@ -665,7 +658,7 @@ export default {
                   <!-- Model create -->
                   <b-modal
                       v-model="showModal"
-                      title="Tiếp nhận văn bản đến"
+                      title="Tiếp nhận công văn"
                       title-class="text-black font-18"
                       body-class="p-3"
                       hide-footer
@@ -706,7 +699,7 @@ export default {
                             <!--                            Số VB đến -->
                             <div class="col-md-5">
                               <div class="mb-2">
-                                <label class="form-label" for="validationCustom01">Số văn bản đến</label> <span
+                                <label class="form-label" for="validationCustom01">Số công văn</label> <span
                                   class="text-danger">*</span>
                                 <input
                                     id="validationSoVBDen"
@@ -723,7 +716,7 @@ export default {
                                     class="invalid-feedback"
                                 >
                                 <span v-if="!$v.model.soVBDen.required"
-                                >Vui lòng thêm số văn bản đến.</span
+                                >Vui lòng thêm số công văn.</span
                                 >
                                 </div>
                               </div>
@@ -748,7 +741,7 @@ export default {
                                     class="invalid-feedback"
                                 >
                                 <span v-if="!$v.model.loaiVanBan.required"
-                                >Vui lòng thêm số văn bản đến.</span
+                                >Vui lòng thêm số công văn.</span
                                 >
                                 </div>
                               </div>
@@ -1031,21 +1024,6 @@ export default {
                                 />
                               </div>
                             </div>
-                            <!--                            Điều kiện-->
-                            <div class="col-md-12">
-                              <div class="mb-2 d-flex align-items-center">
-                                <switches v-model="model.congVanChiDoc" color="primary" class="ml-1 mx-2"></switches>
-                                <label for="">Là công văn chỉ đọc</label>
-                              </div>
-                              <div class="mb-2 d-flex align-items-center">
-                                <switches v-model="model.banChinh" color="primary" class="ml-1 mx-2"></switches>
-                                <label for=""> Là bản chính</label>
-                              </div>
-                              <div class="mb-2 d-flex align-items-center">
-                                <switches v-model="model.hienThiThongBao" color="primary" class="ml-1 mx-2"></switches>
-                                <label for="">Hiển thị mục thông báo</label>
-                              </div>
-                            </div>
                           </div>
                         </div>
                       </div>
@@ -1275,28 +1253,6 @@ export default {
                       v-on:click="handleChuyenTrangThaiVanBan(null)">
               Trình lãnh đạo đơn vị
             </b-button>
-            <b-button
-                v-if="modelTrangThai.newTrangThai && modelTrangThai.newTrangThai.code == 'PCVBD' && modelButPhe.noiDungButPhe == null  || modelButPhe.noiDungButPhe == ''"
-                v-b-modal.modal-close_visit
-                size="sm"
-                variant="primary"
-                type="button"
-                class="w-md"
-                @click="handleShowButPhe(model.id)"
-            >
-              Bút phê VBD
-            </b-button>
-            <b-button
-                v-if="modelTrangThai.newTrangThai && modelTrangThai.newTrangThai.code == 'PCVBD' && modelButPhe.noiDungButPhe != null"
-                v-b-modal.modal-close_visit
-                size="sm"
-                variant="primary"
-                type="button"
-                class="w-md"
-                @click="HandleShowPhanCong(model.id)"
-            >
-              Phân công VBD
-            </b-button>
             <b-button v-else v-b-modal.modal-close_visit
                       size="sm"
                       variant="primary"
@@ -1430,364 +1386,7 @@ export default {
           <!--            </div>-->
           <!--          </template>-->
         </b-modal>
-        <!--        Modal bút phê-->
-        <b-modal
-            v-model="showModalButPhe"
-            title="Bút phê đơn vị lãnh đạo, đơn vị nhận/ xử lý văn bản"
-            title-class="text-black font-18"
-            body-class="p-3"
-            hide-footer
-            centered
-            no-close-on-backdrop
-            size="xl"
-        >
-          <template #modal-header="{ }">
-            <h5>Bút phê đơn vị lãnh đạo, đơn vị nhận/ xử lý văn bản</h5>
-            <div class="text-end">
-              <b-button variant="light" class="w-md" size="sm"
-                        @click="showModalButPhe = false"
-              >
-                Đóng
-              </b-button>
-              <b-button type="submit" variant="primary" size="sm" class="ms-1 w-md"
-                        @click="handleButPhe"
-              >
-                Lưu
-              </b-button>
-            </div>
-          </template>
-          <form @submit.prevent="handleButPhe" ref="formContainer">
-            <div class="row">
-              <div class="col-md-6">
-                <!--                Số lưu and số văn bản đến -->
-                <div class="d-flex justify-content-start">
-                  <!--                              Số lưu -->
-                  <div class="me-4 d-flex align-items-baseline">
-                    <label class="form-label me-2" for="validationCustom01">Số lưu CV:</label>
-                    <p class="fw-bold text-primary">{{ model.soLuuCV }}</p>
-                  </div>
-                  <!--                            Số VB đến -->
-                  <div class="d-flex align-items-baseline">
-                    <label class="form-label me-2" for="validationCustom01">Số văn bản đến:</label>
-                    <p class="fw-bold text-primary">{{ model.soVBDen }}</p>
-                  </div>
-                </div>
-                <!--                Trích yếu -->
-                <div class="mb-2">
-                  <label class="form-label" for="validationCustom01">Trích yếu</label>
-                  <div
-                      :inner-html.prop="model.trichYeu | truncate(100)"
-                      class="bg-soft-blue-grey p-2"
-                      style="border-radius: 3px; color: #2a2a2a;"
-                  ></div>
-                </div>
-                <!--                Bút phê -->
-                <label class="form-label" for="validationCustom01">Bút phê</label> <span
-                  class="text-danger">*</span>
-                <ckeditor
-                    v-model="modelButPhe.noiDungButPhe"
-                    :editor="editor"
-                    :config="editorConfig"
-                ></ckeditor>
-                <!--                Lãnh đạo bút phê -->
-                <div class="mb-2">
-                  <label class="form-label" for="validationCustom01">Lãnh đạo bút phê</label>
-                  <multiselect
-                      v-model="modelButPhe.nguoiButPhe"
-                      :options="optionsUser"
-                      track-by="id"
-                      label="fullName"
-                      placeholder="Chọn lãnh đạp bút phê"
-                      deselect-label="Nhấn để xoá"
-                      selectLabel="Nhấn enter để chọn"
-                      selectedLabel="Đã chọn"
-                  ></multiselect>
-                </div>
-                <!--                Ngày bút phê -->
-                <div class="mb-2">
-                  <label class="form-label" for="validationCustom01">Ngày bút phê</label>
-                  <date-picker v-model="modelButPhe.ngayButPhe"
-                               format="DD/MM/YYYY"
-                               value-type="format"
-                  >
-                    <div slot="input">
-                      <input v-model="modelButPhe.ngayButPhe"
-                             v-mask="'##/##/####'" type="text" class="form-control" placeholder="Chọn ngày bút phê"/>
-                    </div>
-                  </date-picker>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <!--                Mức độ quan trong -->
-                <div class="mb-2">
-                  <label class="form-label" for="validationCustom01">Mức độ quan trọng</label>
-                  <multiselect
-                      v-model="modelButPhe.mucDoQuanTrong"
-                      :options="optionsMucDo"
-                      track-by="id"
-                      label="name"
-                      placeholder="Chọn mức độ quan trọng"
-                      deselect-label="Nhấn để xoá"
-                      selectLabel="Nhấn enter để chọn"
-                      selectedLabel="Đã chọn"
-                  ></multiselect>
-                </div>
-                <!--                Người phụ trách -->
-                <div class="mb-2">
-                  <label class="form-label" for="validationCustom01">Người phụ trách</label>
-                  <multiselect
-                      :multiple="true"
-                      v-model="modelButPhe.nguoiPhuTrach"
-                      :options="optionsUser"
-                      track-by="id"
-                      label="fullName"
-                      placeholder="Chọn người phụ trách"
-                      deselect-label="Nhấn để xoá"
-                      selectLabel="Nhấn enter để chọn"
-                      selectedLabel="Đã chọn"
-                  ></multiselect>
-                </div>
-                <!--                Ngừoi chủ trì -->
-                <div class="mb-2">
-                  <label class="form-label" for="validationCustom01">Người chủ trì</label>
-                  <multiselect
-                      :multiple="true"
-                      v-model="modelButPhe.nguoiChuTri"
-                      :options="optionsUser"
-                      track-by="id"
-                      label="fullName"
-                      placeholder="Chọn người chủ trì"
-                      deselect-label="Nhấn để xoá"
-                      selectLabel="Nhấn enter để chọn"
-                      selectedLabel="Đã chọn"
-                  ></multiselect>
-                </div>
-                <!--                Người phối hợp xử lý-->
-                <div class="mb-2">
-                  <label class="form-label" for="validationCustom01">Người phối hợp xử lý</label>
-                  <multiselect
-                      :multiple="true"
-                      v-model="modelButPhe.nguoiPhoiHopXuLy"
-                      :options="optionsUser"
-                      track-by="id"
-                      label="fullName"
-                      placeholder="Chọn người phối hợp xử lý"
-                      deselect-label="Nhấn để xoá"
-                      selectLabel="Nhấn enter để chọn"
-                      selectedLabel="Đã chọn"
-                  ></multiselect>
-                </div>
-                <!--                Đơn vị xử lý-->
-                <div class="mb-2">
-                  <!--                  <label class="form-label" for="validationCustom01">Đơn vị xử Lý</label>-->
-                  <!--                  <treeselect-->
-                  <!--                      :multiple="true"-->
-                  <!--                      v-model="modelButPhe.donViXuLy"-->
-                  <!--                      :options="optionsDonVi"-->
-                  <!--                      placeholder="Chọn đơn vị xử lý"-->
-                  <!--                      value-format="object"-->
-                  <!--                  />-->
-                  <!--                  <treeselect-value :value="model.donViXuLy"/>-->
-                  <!--                  <treeselect-->
-                  <!--                      v-on:select="formatDonViXuLy"-->
-                  <!--                      v-on:deselect="formatRemoveDonViXuLy"-->
-                  <!--                      :options="optionsDonVi"-->
-                  <!--                      :value="modelButPhe.donViPhoiHop"-->
-                  <!--                      :searchable="true"-->
-                  <!--                      :show-count="true"-->
-                  <!--                      :default-expand-level="1"-->
-                  <!--                      :normalizer="normalizer"-->
-                  <!--                      value-format="object"-->
-                  <!--                  >-->
 
-                  <!--                    <label slot="option-label"-->
-                  <!--                           slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }"-->
-                  <!--                           :class="labelClassName">-->
-                  <!--                      {{ node.label }}-->
-                  <!--                      <span v-if="shouldShowCount" :class="countClassName">({{ count }})</span>-->
-                  <!--                    </label>-->
-                  <!--                  </treeselect>-->
-                </div>
-                <!--                Đơn vị phối hợp-->
-                <div class="mb-2">
-                  <label class="form-label" for="validationCustom01"> Đơn vị phối hợp</label>
-                  <treeselect
-                      v-on:select="formatDonVi"
-                      v-on:deselect="formatRemoveDonVi"
-                      :multiple="true"
-                      :options="optionsTreeDonVi"
-                      :value="modelButPhe.donViPhoiHop"
-                      :searchable="true"
-                      :show-count="true"
-                      :default-expand-level="1"
-                      :normalizer="normalizer"
-                      value-format="object"
-                      placeholder="Chọn đơn vị phối hợp"
-                  >
-
-                    <label slot="option-label"
-                           slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }"
-                           :class="labelClassName">
-                      {{ node.label }}
-                      <span v-if="shouldShowCount" :class="countClassName">({{ count }})</span>
-                    </label>
-                  </treeselect>
-                </div>
-                <!--                Ngừoi xem để biết-->
-                <div class="mb-2">
-                  <label class="form-label" for="validationCustom01">Người xem để biết</label>
-                  <multiselect
-                      :multiple="true"
-                      v-model="modelButPhe.nguoiXemDeBiet"
-                      :options="optionsUser"
-                      track-by="id"
-                      label="fullName"
-                      placeholder="Chọn người xem để biết"
-                      deselect-label="Nhấn để xoá"
-                      selectLabel="Nhấn enter để chọn"
-                      selectedLabel="Đã chọn"
-                  ></multiselect>
-                </div>
-              </div>
-              <div class="col-md-12">
-                <!--                File đính kèm-->
-                <div class="mb-2">
-                  <label for="">File đính kèm</label>
-                  <vue-dropzone
-                      id="dropzone"
-                      ref="myVueDropzone"
-                      :options="dropzoneOptions"
-                      v-on:vdropzone-removed-file="removeThisFile"
-                      v-on:vdropzone-success="addThisFile"
-                  ></vue-dropzone>
-                </div>
-              </div>
-            </div>
-
-          </form>
-        </b-modal>
-        <!--        Modal phân công -->
-        <b-modal
-            v-model="showModalPhanCong"
-            title="Phân công xử lý"
-            title-class="text-black font-18"
-            body-class="p-3"
-            hide-footer
-            centered
-            no-close-on-backdrop
-            size="xl"
-        >
-          <form @submit.prevent="handlePhanCong" ref="formContainer">
-            <div class="row">
-              <div class="col-md-12">
-                <div class="customAddElement">
-                  <b-button
-                      pill
-                      variant="success"
-                      @click="AddformData(modelPhanCong.vanBanDenId)"
-                  >
-                    <i class="fas fa-plus text-light fs-3"></i>
-                  </b-button>
-                </div>
-                <div class="mb-4"></div>
-                <div data-repeater-list="group-a">
-                  <div
-                      v-for="(items, index) in phanCong"
-                      :key="items.id"
-                      class="card mx-3"
-                  >
-                    <div class="card-body" style="position: relative">
-                      <div class="custom-ribon">
-                        <div class="bg-primary text-center">
-                          <p class="text-light p-1">Nhóm {{ index }}</p>
-                        </div>
-                      </div>
-                      <div class="row align-items-center">
-                        <div class="col-lg-12 d-flex justify-content-end">
-                          <b-button
-                              pill
-                              @click="deleteRow(index)"
-                          >
-                            <i class="fas fa-trash text-danger"></i>
-                          </b-button>
-                        </div>
-                        <div class="col-md-12 mb-2">
-                          <label class="form-label" for="validationCustom01">Ý kiến chỉ đạo</label> <span
-                            class="text-danger">*</span>
-                          <ckeditor
-                              v-model="items.yKienChiDao"
-                              :editor="editor"
-                              :config="editorConfig"
-                          ></ckeditor>
-                        </div>
-                        <div class="col-md-5 mb-3">
-                          <div class="mb-2">
-                            <label class="form-label" for="validationCustom01">Người bút phê</label>
-                            <multiselect
-                                v-model="items.nguoiButPhe"
-                                :options="optionsUser"
-                                track-by="id"
-                                label="fullName"
-                                placeholder="Chọn người bút phê"
-                                deselect-label="Nhấn để xoá"
-                                selectLabel="Nhấn enter để chọn"
-                                selectedLabel="Đã chọn"
-                            ></multiselect>
-                          </div>
-                        </div>
-                        <div class="col-md-2 mb-3 text-center">
-                          <div class="d-flex align-items-center justify-content-center ">
-                            <i class="fas fa-folder-open text-lime fs-2 me-1"></i>
-                            <i class="fas fa-chevron-right text-secondary "></i>
-                            <i class="fas fa-chevron-right text-lime"></i>
-                          </div>
-
-                        </div>
-                        <div class="col-md-5 mb-3">
-                          <div class="mb-2">
-                            <label class="form-label" for="validationCustom01">Người nhận</label>
-                            <multiselect
-                                :multiple="true"
-                                v-model="items.nguoiNhanXuLy"
-                                :options="optionsUser"
-                                track-by="id"
-                                label="fullName"
-                                placeholder="Chọn người nhận xử lý"
-                                deselect-label="Nhấn để xoá"
-                                selectLabel="Nhấn enter để chọn"
-                                selectedLabel="Đã chọn"
-                            ></multiselect>
-                          </div>
-                        </div>
-                        <!--                        <div class="col-md-12">-->
-                        <!--                          <div class="mb-2">-->
-                        <!--                            <label for="">File đính kèm</label>-->
-                        <!--                            <vue-dropzone-->
-                        <!--                                id="dropzone"-->
-                        <!--                                ref="myVueDropzone"-->
-                        <!--                                :options="dropzoneOptions"-->
-                        <!--                                v-on:vdropzone-removed-file="removeThisFile"-->
-                        <!--                                v-on:vdropzone-success="addThisFile"-->
-                        <!--                            ></vue-dropzone>-->
-                        <!--                          </div>-->
-                        <!--                        </div>-->
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-            <div class="text-end pt-2 mt-3">
-              <b-button variant="light" class="w-md" size="sm" @click="showModalPhanCong = false">
-                Đóng
-              </b-button>
-              <b-button type="submit" variant="primary" size="sm" class="ms-1 w-md">
-                Lưu
-              </b-button>
-            </div>
-          </form>
-        </b-modal>
         <!--        Modal delete -->
         <b-modal
             v-model="showDeleteModal"

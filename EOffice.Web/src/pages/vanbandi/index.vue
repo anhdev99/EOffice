@@ -2755,7 +2755,7 @@ export default {
     </div>
   </Layout>
 </template>
-<style>
+<style scoped>
 .title-capso {
   font-weight: bold;
   color: #00568C;

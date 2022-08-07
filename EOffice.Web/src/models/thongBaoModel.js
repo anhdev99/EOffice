@@ -1,4 +1,3 @@
-import moment from "moment";
 const toJson = (item) => {
     return {
         id: item.id,
@@ -9,7 +8,9 @@ const toJson = (item) => {
         recipient: item.recipient,
         senderId : item.senderId,
         sender:item.sender,
-        url:item.url
+        url:item.url,
+        congVanId: item.congVanId,
+        loaiCongVan: item.loaiCongVan
     }
 }
 
@@ -23,7 +24,9 @@ const fromJson = (item) => {
         recipient: item.recipient,
         senderId : item.senderId,
         sender:item.sender,
-        url:item.url
+        url:item.url,
+        congVanId: item.congVanId,
+        loaiCongVan: item.loaiCongVan
     }
 }
 
@@ -38,7 +41,9 @@ const baseJson = () => {
         senderId : null,
         sender:null,
         url:null,
-        createdAt: null
+        createdAt: null,
+        congVanId: null,
+        loaiCongVan: 0
     }
 }
 

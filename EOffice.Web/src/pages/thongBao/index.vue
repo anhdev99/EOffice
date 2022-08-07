@@ -7,13 +7,27 @@ import Sidepanel from "./sidepanel";
 import {userModel} from "@/models/userModel";
 import {thongBaoModel} from "@/models/thongBaoModel";
 import {CONSTANTS} from "@/helpers/constants";
+import {vanBanDenModel} from "@/models/vanBanDenModel";
+import Multiselect from "vue-multiselect";
+import CKEditor from "@ckeditor/ckeditor5-vue";
+import Switches from "vue-switches";
+import DatePicker from "vue2-datepicker";
+import vue2Dropzone from "vue2-dropzone";
+import Treeselect from "@riophae/vue-treeselect";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import {vanBanDiModel} from "@/models/vanBanDiModel";
+import {notifyModel} from "@/models/notifyModel";
 
 export default {
   page: {
     title: "Thông báo",
     meta: [{name: "description", content: appConfig.description}],
   },
-  components: { Layout, PageHeader },
+  components: { Layout, PageHeader,
+    Multiselect,
+    ckeditor: CKEditor.component,
+    DatePicker,
+  },
   data() {
     return {
       url: process.env.VUE_APP_API_URL + "files/view/",
@@ -28,6 +42,10 @@ export default {
           active: true,
         }
       ],
+      editor: ClassicEditor,
+      editorConfig: {
+        height: '200px'
+      },
       data: [],
       currentPage: 1,
       perPage: 30,
@@ -45,6 +63,8 @@ export default {
       numberOfElement: 1,
       totalRows: 1,
       model: thongBaoModel.baseJson(),
+      modelVBDen: vanBanDenModel.baseJson(),
+      modelVBDi: vanBanDiModel.baseJson(),
       modelUser:userModel.baseJson(),
       pagination: pagingModel.baseJson(),
       fields: [
@@ -91,6 +111,29 @@ export default {
           thClass: 'hidden-sortable title-capso',
         }
       ],
+      showModalVBDen: false,
+      showModalVBDi: false,
+      optionsLoaiVanBan: [],
+      optionsDonVi: [],
+      optionsTreeDonVi: [],
+      optionsKhoiCoQuan: [],
+      optionsLinhVuc: [],
+      optionsUser: [],
+      optionsHinhThucNhan: [],
+      optionsMucDo: [],
+      optionsTrangThai: [],
+      apiUrl: process.env.VUE_APP_API_URL,
+      url1: `${process.env.VUE_APP_API_URL}files/upload`,
+      dropzoneOptions: {
+        url: `${process.env.VUE_APP_API_URL}files/upload`,
+        thumbnailWidth: 300,
+        thumbnailHeight: 160,
+        maxFiles: 4,
+        maxFilesize: 30,
+        headers: {"My-Awesome-Header": "header value"},
+        addRemoveLinks: true,
+        acceptedFiles: ".jpeg,.jpg,.png,.gif,.doc,.docx,.xlsx,.pptx,.pdf",
+      },
     };
   },
   validations: {},
@@ -106,6 +149,36 @@ export default {
     }
   },
   methods: {
+    removeThisFile(file, error, xhr) {
+      let fileCongViec = JSON.parse(file.xhr.response);
+      if (fileCongViec.data && fileCongViec.data.id) {
+        let idFile = fileCongViec.data.id;
+        let resultData = this.model.uploadFiles.filter(x => {
+          return x.fileId != idFile;
+        })
+        this.model.uploadFiles = resultData;
+      }
+    },
+    addThisFile(file, response) {
+      if (this.showModalButPhe == true) {
+        if (this.modelButPhe.uploadFiles == null || this.modelButPhe.uploadFiles <= 0) {
+          this.modelButPhe.uploadFiles = [];
+        }
+        let fileSuccess = response.data;
+        this.modelButPhe.uploadFiles.push({
+          fileId: fileSuccess.id,
+          fileName: fileSuccess.fileName,
+          ext: fileSuccess.ext
+        })
+      }
+      if (this.model) {
+        if (this.model.uploadFiles == null || this.model.uploadFiles.length <= 0) {
+          this.model.uploadFiles = [];
+        }
+        let fileSuccess = response.data;
+        this.model.uploadFiles.push({fileId: fileSuccess.id, fileName: fileSuccess.fileName, ext: fileSuccess.ext})
+      }
+    },
     async handleChangeStatus(id) {
       this.model.id = id;
       await this.$store.dispatch("notifyStore/changeStatus", this.model).then((res) => {
@@ -152,6 +225,117 @@ export default {
         this.modelUser = userModel.fromJson(res.data);
         this.showModal = true;
       });
+    },
+    handleLuuCV(loaiCongVan, congVanId){
+      if(loaiCongVan && congVanId){
+        if(loaiCongVan == 2){
+          this.handleGetCongVanDi(congVanId);
+        }else if(loaiCongVan == 1){
+          this.handleGetCongVanDen(congVanId);
+        }
+      }
+    },
+    async handleGetCongVanDi(id) {
+      await this.$store.dispatch("vanBanDiStore/getById", id).then((res) => {
+        if (res.resultCode == "SUCCESS") {
+          this.modelVBDi = res.data;
+          this.showModalVBDi = true;
+        } else {
+          // this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+        }
+      });
+    },
+    async handleGetCongVanDen(id) {
+      await this.$store.dispatch("vanBanDenStore/getById", id).then((res) => {
+        if (res.resultCode == "SUCCESS") {
+          console.log(res.data)
+          this.modelVBDen = res.data;
+          this.showModalVBDen = true;
+        } else {
+          // this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+        }
+      });
+    },
+    async getKhoiCoQuan() {
+      try {
+        await this.$store.dispatch("khoiCoQuanStore/get").then(resp => {
+          if (resp.resultCode == "SUCCESS") {
+            let items = resp.data
+            this.loading = false
+            this.optionsKhoiCoQuan = items;
+          }
+          return [];
+        });
+      } finally {
+        this.loading = false
+      }
+    },
+    async getUser() {
+      try {
+        await this.$store.dispatch("userStore/getAll").then(resp => {
+          if (resp.resultCode == "SUCCESS") {
+            let items = resp.data
+            this.loading = false
+            this.optionsUser = items;
+          }
+          return [];
+        });
+      } finally {
+        this.loading = false
+      }
+    },
+    async getLinhVuc() {
+      try {
+        await this.$store.dispatch("dmLinhVucStore/get").then(resp => {
+          if (resp.resultCode == "SUCCESS") {
+            let items = resp.data
+            this.loading = false
+            this.optionsLinhVuc = items;
+          }
+          return [];
+        });
+      } finally {
+        this.loading = false
+      }
+    },
+    async getHinhThuc() {
+      try {
+        let promise = this.$store.dispatch("hinhThucGuiStore/get")
+        return promise.then(resp => {
+          if (resp.resultCode == "SUCCESS") {
+            let items = resp.data
+            this.loading = false
+            this.optionsHinhThucNhan = items;
+          }
+          return [];
+        });
+      } finally {
+        this.loading = false
+      }
+    },
+    async getMucDo() {
+      await this.$store.dispatch("enumStore/getMucDo").then((res) => {
+        if (res.resultCode === "SUCCESS") {
+          this.optionsMucDo = res.data;
+        } else {
+          this.optionsMucDo = [];
+        }
+      });
+    },
+   async handleSubmitLuuCV(id){
+     let loader = this.$loading.show({
+       container: this.$refs.formContainer,
+     });
+      await this.$store.dispatch("notifyStore/luuCVNoiBo", id).then((res) => {
+        if (res.resultCode == "SUCCESS") {
+          this.showModalVBDi = false;
+          this.showModalVBDen = false;
+          this.modelVBDi= vanBanDiModel;
+          this.modelVBDen= vanBanDenModel;
+        }
+        this.$store.dispatch("snackBarStore/addNotify", notifyModel.addMessage(res));
+      });
+     loader.hide();
     }
   }
 };
@@ -275,10 +459,13 @@ export default {
         hide-footer
         no-close-on-backdrop
     >
-      <template #modal-header="{ close }">
+      <template #modal-header="{  }">
         <!-- Emulate built in modal header close button action -->
         <h5> Thông báo</h5>
         <div class="text-end">
+          <b-button v-if="model.loaiCongVan && model.congVanId" variant="info" size="sm" style="width: 120px; margin-right: 10px" @click="handleLuuCV(model.loaiCongVan, model.congVanId)">
+            Lưu CV nội bộ
+          </b-button>
           <b-button variant="light" size="sm" style="width: 80px" @click="showModal = false">
             Đóng
           </b-button>
@@ -316,10 +503,731 @@ export default {
         </p>
       </div>
     </b-modal>
+
+<!--    Van ban den-->
+    <b-modal
+        v-model="showModalVBDen"
+        title="Lưu công văn nội bộ"
+        title-class="text-black font-18"
+        body-class="p-3"
+        hide-footer
+        centered
+        no-close-on-backdrop
+        size="xl"
+    >
+      <template #modal-header="{  }">
+        <!-- Emulate built in modal header close button action -->
+        <h5> Lưu công văn nội bộ</h5>
+        <div class="text-end">
+          <b-button variant="light" size="sm" style="width: 80px" @click="showModal = false">
+            Đóng
+          </b-button>
+          <b-button type="submit" variant="primary" class="ms-1" style="width: 80px"
+                    size="sm"
+                    @click="handleSubmitLuuCV(model.id)"
+          >
+            Lưu
+          </b-button>
+        </div>
+      </template>
+      <form
+            ref="formContainer">
+        <div class="row">
+          <div class="col-lg-7 col-md-12">
+            <div class="row">
+              <!--                              Số lưu -->
+              <div class="col-md-3">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Số lưu CV</label> <span
+                    class="text-danger">*</span>
+                  <input
+                      id="validationCustom01"
+                      v-model="modelVBDen.soLuuCV"
+                      type="text"
+                      class="form-control"
+                      placeholder="eg: 123-dthu"
+                  />
+
+                </div>
+              </div>
+              <!--                            Số VB đến -->
+              <div class="col-md-5">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Số văn bản đến</label> <span
+                    class="text-danger">*</span>
+                  <input
+                      id="validationSoVBDen"
+                      v-model="modelVBDen.soVBDen"
+                      type="text"
+                      class="form-control"
+                      placeholder="eg: 123-dthu"
+                  />
+                </div>
+              </div>
+              <!--                            Loại văn bản-->
+              <div class="col-md-4">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Loại văn bản</label> <span
+                    class="text-danger">*</span>
+                  <multiselect
+                      v-model="modelVBDen.loaiVanBan"
+                      :options="optionsLoaiVanBan"
+                      track-by="id"
+                      label="ten"
+                      placeholder="Chọn trạng thái"
+                      deselect-label="Nhấn để xoá"
+                      selectLabel="Nhấn enter để chọn"
+                      selectedLabel="Đã chọn"
+                  ></multiselect>
+                </div>
+              </div>
+              <!--                            Trích yếu -->
+              <div class="col-md-12">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Trích yếu</label> <span
+                    class="text-danger">*</span>
+                  <ckeditor
+                      v-model="modelVBDen.trichYeu"
+                      :editor="editor"
+                      :config="editorConfig"
+                  ></ckeditor>
+                </div>
+              </div>
+              <!--                            Ngày ban hành -->
+              <div class="col-md-6">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Ngày ban hành</label>
+                  <date-picker v-model="modelVBDen.ngayBanHanh"
+                               format="DD/MM/YYYY"
+                               value-type="format"
+                  >
+                    <div slot="input">
+                      <input v-model="modelVBDen.ngayBanHanh"
+                             v-mask="'##/##/####'" type="text" class="form-control"
+                             placeholder="Nhập ngày ban hành"/>
+                    </div>
+                  </date-picker>
+                </div>
+              </div>
+              <!--                            Ngày nhận -->
+              <div class="col-md-6">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Ngày nhận</label>
+                  <date-picker v-model="modelVBDen.ngayNhan"
+                               format="DD/MM/YYYY"
+                               value-type="format"
+                  >
+                    <div slot="input">
+                      <input v-model="modelVBDen.ngayNhan"
+                             v-mask="'##/##/####'" type="text" class="form-control"
+                             placeholder="Nhập ngày nhận"/>
+                    </div>
+                  </date-picker>
+                </div>
+              </div>
+              <div v-if="modelVBDen.id">
+                <div v-if="modelVBDen.file != null  && modelVBDen.file.length > 0" class="col-md-12">
+                  <label for="">Danh sách đã ký (Nhấn vào để tải xuống)</label>
+                  <div
+                      class=" p-1"
+                  >
+                    <template>
+                      <div v-for="(file, index) in modelVBDen.file" :key="index">
+                        <a
+                            :href="`${apiUrl}files/view/${file.fileId}`"
+                            class=" fw-medium"
+                        ><i
+                            :class="`mdi font-size-16 align-middle me-2`"
+                        ></i>
+                          {{ index + 1 }}: {{ file.fileName }}</a
+                        >
+                      </div>
+                    </template>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="col-lg-5 col-md-12">
+            <div class="row">
+              <!--                            Ngày Ký-->
+              <div class="col-md-6">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Ngày ký</label>
+                  <date-picker v-model="modelVBDen.ngayKy"
+                               format="DD/MM/YYYY"
+                               value-type="format"
+                  >
+                    <div slot="input">
+                      <input v-model="modelVBDen.ngayKy"
+                             v-mask="'##/##/####'" type="text" class="form-control"
+                             placeholder="Nhập ngày ký"/>
+                    </div>
+                  </date-picker>
+                </div>
+              </div>
+              <!--                            Người ký-->
+              <div class="col-md-6">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Người ký</label>
+                  <multiselect
+                      v-model="modelVBDen.nguoiKy"
+                      :options="optionsUser"
+                      track-by="id"
+                      label="fullName"
+                      placeholder="Chọn người ký"
+                      deselect-label="Nhấn để xoá"
+                      selectLabel="Nhấn enter để chọn"
+                      selectedLabel="Đã chọn"
+                  ></multiselect>
+                </div>
+              </div>
+              <!--                            Khối cơ quan gửi-->
+              <div class="col-md-12">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Khối cơ quan gửi</label>
+                  <multiselect
+                      v-model="modelVBDen.khoiCoQuanGui"
+                      :options="optionsKhoiCoQuan"
+                      track-by="id"
+                      label="ten"
+                      placeholder="Chọn trạng thái"
+                      deselect-label="Nhấn để xoá"
+                      selectLabel="Nhấn enter để chọn"
+                      selectedLabel="Đã chọn"
+                  ></multiselect>
+                </div>
+              </div>
+              <!--                            Cơ quan gửi-->
+              <div class="col-md-12">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Cơ quan gửi</label>
+                  <multiselect
+                      v-model="modelVBDen.coQuanGui"
+                      :options="optionsDonVi"
+                      track-by="id"
+                      label="ten"
+                      placeholder="Chọn trạng thái"
+                      deselect-label="Nhấn để xoá"
+                      selectLabel="Nhấn enter để chọn"
+                      selectedLabel="Đã chọn"
+                  ></multiselect>
+                </div>
+              </div>
+              <!--                            Hình thức nhận -->
+              <div class="col-md-6">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Hình thức nhận</label>
+                  <multiselect
+                      v-model="modelVBDen.hinhThucNhan"
+                      :options="optionsHinhThucNhan"
+                      track-by="id"
+                      label="ten"
+                      placeholder="Chọn hình thức nhận"
+                      deselect-label="Nhấn để xoá"
+                      selectLabel="Nhấn enter để chọn"
+                      selectedLabel="Đã chọn"
+                  ></multiselect>
+                </div>
+              </div>
+              <!--                            Lĩnh vực-->
+              <div class="col-md-6">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Lĩnh vực</label>
+                  <multiselect
+                      v-model="modelVBDen.linhVuc"
+                      :options="optionsLinhVuc"
+                      track-by="id"
+                      label="ten"
+                      placeholder="Chọn lĩnh vực"
+                      deselect-label="Nhấn để xoá"
+                      selectLabel="Nhấn enter để chọn"
+                      selectedLabel="Đã chọn"
+                  ></multiselect>
+                </div>
+              </div>
+              <!--                            Mức độ tính chất-->
+              <div class="col-md-6">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Mức độ tính chất</label>
+                  <multiselect
+                      v-model="modelVBDen.mucDoTinhChat"
+                      :options="optionsMucDo"
+                      track-by="id"
+                      label="name"
+                      placeholder="Chọn mức độ tính chất"
+                      deselect-label="Nhấn để xoá"
+                      selectLabel="Nhấn enter để chọn"
+                      selectedLabel="Đã chọn"
+                  ></multiselect>
+                </div>
+              </div>
+              <!--                            Mức độ bảo mật-->
+              <div class="col-md-6">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Mức độ bảo mật</label>
+                  <multiselect
+                      v-model="modelVBDen.mucDoBaoMat"
+                      :options="optionsMucDo"
+                      track-by="id"
+                      label="name"
+                      placeholder="Chọn mức độ bảo mật"
+                      deselect-label="Nhấn để xoá"
+                      selectLabel="Nhấn enter để chọn"
+                      selectedLabel="Đã chọn"
+                  ></multiselect>
+                </div>
+              </div>
+              <!--                            Hồ sơ đơn vị-->
+              <div class="col-md-6">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Hồ sơ đơn vị</label>
+                  <input
+                      v-model="modelVBDen.hoSoDonVi"
+                      type="text"
+                      class="form-control"
+                      placeholder=""
+                  />
+                </div>
+              </div>
+              <!--                            Nơi lưu trữ-->
+              <div class="col-md-6">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Nơi lưu trữ</label>
+                  <input
+                      v-model="modelVBDen.noiLuuTru"
+                      type="text"
+                      class="form-control"
+                      placeholder="Nhập nơi lưu trữ"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </b-modal>
+
+    <b-modal
+        v-model="showModalVBDi"
+        title="Lưu công văn nội bộ"
+        title-class="text-black font-18"
+        body-class="p-3"
+        hide-footer
+        centered
+        no-close-on-backdrop
+        size="xl"
+    >
+      <template #modal-header="{  }">
+        <!-- Emulate built in modal header close button action -->
+        <h5>Lưu công văn nội bộ</h5>
+        <div class="text-end">
+          <b-button variant="light" size="sm" style="width: 80px" @click="showModal = false">
+            Đóng
+          </b-button>
+
+          <b-button type="submit" variant="primary" class="ms-1" style="width: 80px"
+                    size="sm"
+                    @click="handleSubmitLuuCV(model.id)"
+          >
+            Lưu
+          </b-button>
+        </div>
+      </template>
+      <form
+            ref="formContainer">
+        <div class="row">
+          <div class="col-md-7">
+            <div class="row">
+              <!--                            Loại văn bản-->
+              <div class="col-md-6">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Loại văn bản</label> <span
+                    class="text-danger">*</span>
+                  <multiselect
+                      v-model="modelVBDi.loaiVanBan"
+                      :options="optionsLoaiVanBan"
+                      track-by="id"
+                      label="ten"
+                      placeholder="Chọn loại văn bản"
+                  ></multiselect>
+                </div>
+              </div>
+              <!--                            Trạng thái-->
+              <div class="col-md-6">
+
+                <div v-if="modelVBDi.trangThai && modelVBDi.id" class="mb-2">
+                  <label class="form-label" for="validationCustom01">Trạng thái</label> <span
+                    class="text-danger">*</span>
+                  <input
+                      id="validationCustom01"
+                      :value="modelVBDi.trangThai.ten"
+                      type="text"
+                      class="form-control"
+                      placeholder=""
+                      disabled
+                  />
+                </div>
+
+                <div v-else class="mb-2">
+                  <label class="form-label" for="validationCustom01">Trạng thái</label> <span
+                    class="text-danger">*</span>
+                  <multiselect
+                      v-model="modelVBDi.trangThai"
+                      :options="optionsTrangThai"
+                      track-by="id"
+                      label="ten"
+                      placeholder="Chọn trạng thái"
+                  ></multiselect>
+                </div>
+              </div>
+              <!--                              Số lưu -->
+              <div class="col-md-4">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Số lưu CV</label>
+                  <!--                                <span-->
+                  <!--                                  class="text-danger">*</span>-->
+                  <input
+                      id="validationCustom01"
+                      v-model="modelVBDi.soLuuCV"
+                      type="text"
+                      class="form-control"
+                      placeholder=""
+                  />
+                </div>
+              </div>
+              <!--                            Số VB đến -->
+              <div class="col-md-4">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Số CV đi</label>
+                  <!--                                <span-->
+                  <!--                                  class="text-danger">*</span>-->
+                  <input
+                      id="validationSoVBDen"
+                      v-model="modelVBDi.soVBDi"
+                      type="text"
+                      class="form-control"
+                      placeholder=""
+
+                  />
+                </div>
+              </div>
+              <!--                            Ngày nhận -->
+              <div class="col-md-4">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Ngày nhập</label>
+                  <!--                                <date-picker-->
+                  <!--                                    v-model="model.ngayNhap"-->
+                  <!--                                    format="DD/MM/YYYY"-->
+                  <!--                                    :first-day-of-week="1"-->
+                  <!--                                    lang="en"-->
+                  <!--                                    placeholder="Chọn ngày nhập"-->
+                  <!--                                ></date-picker>-->
+                  <date-picker v-model="modelVBDi.ngayNhap"
+                               format="DD/MM/YYYY"
+                               value-type="format"
+                  >
+                    <div slot="input">
+                      <input v-model="modelVBDi.ngayNhap"
+                             v-mask="'##/##/####'" type="text" class="form-control"
+                             placeholder="Nhập ngày nhập"/>
+                    </div>
+                  </date-picker>
+                </div>
+              </div>
+              <!--                              Số lưu -->
+              <div class="col-md-4">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01"> Trả lời CV số</label>
+                  <!--                                <span-->
+                  <!--                                  class="text-danger">*</span>-->
+                  <input
+                      id="validationCustom01"
+                      v-model="modelVBDi.traLoiCVSo"
+                      type="text"
+                      class="form-control"
+                      placeholder=""
+                  />
+                </div>
+              </div>
+              <!--                            Ngày nhận -->
+              <div class="col-md-4">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01"> Ngày trả lời</label>
+                  <date-picker v-model="modelVBDi.ngayTraLoi"
+                               format="DD/MM/YYYY"
+                               value-type="format"
+                  >
+                    <div slot="input">
+                      <input v-model="modelVBDi.ngayTraLoi"
+                             v-mask="'##/##/####'" type="text" class="form-control"
+                             placeholder="Nhập ngày trả lời"/>
+                    </div>
+                  </date-picker>
+                </div>
+              </div>
+              <!--                            Số VB đến -->
+              <div class="col-md-4">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01"> Số bản</label>
+                  <!--                                <span-->
+                  <!--                                  class="text-danger">*</span>-->
+                  <input
+                      id="validationSoVBDen"
+                      v-model="modelVBDi.soBan"
+                      type="number"
+                      class="form-control"
+                      placeholder=""
+
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01"> Người ký</label>
+                  <multiselect
+                      v-model="modelVBDi.nguoiKy"
+                      :options="optionsUser"
+                      track-by="id"
+                      label="fullName"
+                      placeholder="Chọn cán bộ soạn"
+                      deselect-label="Nhấn để xoá"
+                      selectLabel="Nhấn enter để chọn"
+                      selectedLabel="Đã chọn"
+                  >
+                    <template slot="singleLabel" slot-scope="{ option }">
+                      <strong>{{ option.fullName }}</strong>
+
+                      <span v-if="option.donVi" style="color:red">&nbsp;{{ option.donVi.ten }}</span>
+                    </template>
+                    <template slot="option" slot-scope="{ option }">
+                      <div class="option__desc">
+          <span class="option__title">
+            <strong>{{ option.fullName }}&nbsp;</strong>
+          </span>
+                        <span v-if="option.donVi" class="option__small"
+                              style="color:green">{{ option.donVi.ten }}</span>
+                      </div>
+                    </template>
+                  </multiselect>
+                </div>
+              </div>
+              <!--                            Ngày Ký-->
+              <div class="col-md-6">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Ngày ký</label>
+                  <date-picker v-model="modelVBDi.ngayKy"
+                               format="DD/MM/YYYY"
+                               value-type="format"
+                  >
+                    <div slot="input">
+                      <input v-model="modelVBDi.ngayKy"
+                             v-mask="'##/##/####'" type="text" class="form-control"
+                             placeholder="Nhập ngày ký"/>
+                    </div>
+                  </date-picker>
+                </div>
+              </div>
+              <!--                            Trích yếu -->
+              <div class="col-md-12">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Trích yếu</label>
+                  <!--                                <span-->
+                  <!--                                  class="text-danger">*</span>-->
+                  <ckeditor
+                      v-model="modelVBDi.trichYeu"
+                      :editor="editor"
+                      :config="editorConfig"
+                  ></ckeditor>
+                </div>
+              </div>
+              <div v-if="modelVBDi.filePDF != null  && modelVBDi.filePDF.length > 0" class="col-md-12">
+                <label for="">Danh sách đã ký (Nhấn vào để tải xuống)</label>
+                <template>
+                  <div v-for="(file, index) in model.filePDF" :key="index">
+                    <a
+                        :href="`${apiUrl}files/view/${file.fileId}`"
+                        class=" fw-medium"
+                    ><i
+                        :class="`mdi font-size-16 align-middle me-2`"
+                    ></i>
+                      {{ index + 1 }}: {{ file.fileName }}</a
+                    >
+                  </div>
+                </template>
+
+              </div>
+              <div class="col-md-12">
+                <label for="">Danh sách tệp tin (Nhấn vào để tải xuống)</label>
+                <template v-if="modelVBDi.file == null || (modelVBDi.file != null &&modelVBDi.file.length <= 0)">
+                  <div>Không có tệp tin</div>
+                </template>
+                <template v-else>
+                  <div v-for="(file, index) in modelVBDi.file" :key="index">
+                    <a
+                        :href="`${apiUrl}files/view/${file.fileId}`"
+                        class=" fw-medium"
+                    ><i
+                        :class="`mdi font-size-16 align-middle me-2`"
+                    ></i>
+                      {{ index + 1 }}: {{ file.fileName }}</a
+                    >
+                  </div>
+                </template>
+
+              </div>
+            </div>
+
+          </div>
+
+          <div class="col-md-5">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01"> Đơn vị soạn</label>
+                  <multiselect
+                      v-model="modelVBDi.donViSoan"
+                      :options="optionsDonVi"
+                      track-by="id"
+                      label="ten"
+                      placeholder="Chọn đơn vị soạn"
+                      deselect-label="Nhấn để xoá"
+                      selectLabel="Nhấn enter để chọn"
+                      selectedLabel="Đã chọn"
+                  ></multiselect>
+
+                </div>
+              </div>
+              <!--                            Cơ quan gửi-->
+              <div class="col-md-12">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01"> Cán bộ soạn</label>
+                  <multiselect
+                      v-model="modelVBDi.canBoSoan"
+                      :options="optionsUser"
+                      track-by="id"
+                      label="fullName"
+                      placeholder="Chọn cán bộ soạn"
+                      deselect-label="Nhấn để xoá"
+                      selectLabel="Nhấn enter để chọn"
+                      selectedLabel="Đã chọn"
+                  >
+                    <template slot="singleLabel" slot-scope="{ option }">
+                      <strong>{{ option.fullName }}</strong>
+
+                      <span v-if="option.donVi" style="color:red">&nbsp;{{ option.donVi.ten }}</span>
+                    </template>
+                    <template slot="option" slot-scope="{ option }">
+                      <div class="option__desc">
+          <span class="option__title">
+            <strong>{{ option.fullName }}&nbsp;</strong>
+          </span>
+                        <span v-if="option.donVi" class="option__small"
+                              style="color:green">{{ option.donVi.ten }}</span>
+                      </div>
+                    </template>
+                  </multiselect>
+                </div>
+              </div>
+              <!--                            Hình thức nhận -->
+              <div class="col-md-6">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Hình thức nhận</label>
+                  <multiselect
+                      v-model="modelVBDi.hinhThucGui"
+                      :options="optionsHinhThucNhan"
+                      track-by="id"
+                      label="ten"
+                      placeholder="Chọn hình thức nhận"
+                      deselect-label="Nhấn để xoá"
+                      selectLabel="Nhấn enter để chọn"
+                      selectedLabel="Đã chọn"
+                  ></multiselect>
+                </div>
+              </div>
+              <!--                            Lĩnh vực-->
+              <div class="col-md-6">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Lĩnh vực</label>
+                  <multiselect
+                      v-model="modelVBDi.linhVuc"
+                      :options="optionsLinhVuc"
+                      track-by="id"
+                      label="ten"
+                      placeholder="Chọn lĩnh vực"
+                      deselect-label="Nhấn để xoá"
+                      selectLabel="Nhấn enter để chọn"
+                      selectedLabel="Đã chọn"
+                  ></multiselect>
+                </div>
+              </div>
+              <!--                            Mức độ tính chất-->
+              <div class="col-md-6">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Mức độ tính chất</label>
+                  <multiselect
+                      v-model="modelVBDi.mucDoTinhChat"
+                      :options="optionsMucDo"
+                      track-by="id"
+                      label="name"
+                      placeholder="Chọn mức độ tính chất"
+                      deselect-label="Nhấn để xoá"
+                      selectLabel="Nhấn enter để chọn"
+                      selectedLabel="Đã chọn"
+                  ></multiselect>
+                </div>
+              </div>
+              <!--                            Mức độ bảo mật-->
+              <div class="col-md-6">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Mức độ bảo mật</label>
+                  <multiselect
+                      v-model="modelVBDi.mucDoBaoMat"
+                      :options="optionsMucDo"
+                      track-by="id"
+                      label="name"
+                      placeholder="Chọn mức độ bảo mật"
+                      deselect-label="Nhấn để xoá"
+                      selectLabel="Nhấn enter để chọn"
+                      selectedLabel="Đã chọn"
+                  ></multiselect>
+                </div>
+              </div>
+              <!--                            Hồ sơ đơn vị-->
+              <div class="col-md-6">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Hồ sơ đơn vị</label>
+                  <input
+                      v-model="modelVBDi.hoSoDonVi"
+                      type="text"
+                      class="form-control"
+                      placeholder=""
+                  />
+                </div>
+              </div>
+              <!--                            Nơi lưu trữ-->
+              <div class="col-md-6">
+                <div class="mb-2">
+                  <label class="form-label" for="validationCustom01">Nơi lưu trữ</label>
+                  <input
+                      v-model="modelVBDi.noiLuuTru"
+                      type="text"
+                      class="form-control"
+                      placeholder="Nhập nơi lưu trữ"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </b-modal>
   </Layout>
 
 </template>
-<style>
+<style scoped>
 .td-stttt {
   text-align: center;
   width: 10px;

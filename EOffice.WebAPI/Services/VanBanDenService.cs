@@ -738,7 +738,10 @@ namespace EOffice.WebAPI.Services
                         Title =
                             $"Văn bản số {vanBanDen.SoLuuCV} được ban hành!",
                         Content =
-                            $"Văn bản số {vanBanDen.SoLuuCV} được ban hành. <br /> Trích yếu: {vanBanDen.TrichYeu} <br /> Ngày ký: {vanBanDen.NgayKy} <a href='/van-ban-di'> Xem chi tiết</a>"
+                            $"{vanBanDen.TrichYeu}",
+                        Url = vanBanDen.Id,
+                        LoaiCongVan = ELoaiCongVan.CONG_VAN_DEN,
+                        CongVanId = vanBanDen.Id
                     };
                     await  _notifyService.WithNotify(notify).WithRecipients(userIds).PushNotify();
 

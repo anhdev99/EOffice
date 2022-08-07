@@ -15,5 +15,7 @@ namespace EOffice.WebAPI.Models
         public string SenderId { get; set; }
         public string Sender { get; set; }
         public string Url { get; set; }
+        public string CongVanId { get; set; }
+        public ELoaiCongVan LoaiCongVan { get; set; }
     }
 }

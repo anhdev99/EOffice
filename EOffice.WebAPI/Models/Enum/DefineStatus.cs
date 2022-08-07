@@ -26,4 +26,10 @@ namespace EOffice.WebAPI.Models
         [Description("File tài liệu")]
         FILETAILIEU
     }
+    
+    public enum ELoaiCongVan
+    {
+        CONG_VAN_DEN = 1,
+        CONG_VAN_DI = 2
+    }
 }

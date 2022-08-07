@@ -8,4 +8,7 @@ export const actions = {
   changeStatus({ commit, dispatch}, values) {
     return apiClient.put(controller + "/change-status", values);
   },
+  luuCVNoiBo({ commit, dispatch}, id) {
+    return apiClient.get(controller + "/luu-cong-van-noi-bo/" + id);
+  },
 };

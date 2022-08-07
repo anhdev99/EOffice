@@ -40,6 +40,8 @@ namespace EOffice.WebAPI.Data
         public string LoaiTrangThaiCollectionName { get; set; }
         public string HopThuCollectionName { get; set; }
         public string CongVanCollectionName { get; set; }
+      public  string LuuCVDenCollectionName { get; set; }
+      public  string LuuCVDiCollectionName { get; set; }
     }
 
     public interface IDbSettings
@@ -79,5 +81,7 @@ namespace EOffice.WebAPI.Data
         string LoaiTrangThaiCollectionName { get; set; }
         string HopThuCollectionName { get; set; }
         string CongVanCollectionName { get; set; }
+        string LuuCVDenCollectionName { get; set; }
+        string LuuCVDiCollectionName { get; set; }
     }
 }
