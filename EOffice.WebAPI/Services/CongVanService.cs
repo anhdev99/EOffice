@@ -317,5 +317,73 @@ namespace EOffice.WebAPI.Services
                 .ToListAsync();
             return result;
         }
+        
+        public async Task<PagingModel<LuuCVDen>> GetPagingLuuCVDen(CongVanParam param)
+        {
+            var result = new PagingModel<LuuCVDen>();
+            var builder = Builders<LuuCVDen>.Filter;
+            var filter = builder.Empty;
+            filter = builder.And(filter, builder.Where(x => x.IsDeleted == false));
+            // filter = filter & builder.In(x => x.IdOwner, CurrentUser.DonViIds);
+            
+            if (!String.IsNullOrEmpty(param.Content))
+            {
+                filter = builder.And(filter,
+                    builder.Where(x => x.SoLuuCV.Trim().ToLower().Contains(param.Content.Trim().ToLower())));
+            }
+
+            if (!String.IsNullOrEmpty(param.TrangThai))
+            {
+                filter = builder.And(filter, builder.Eq(x => x.TrangThai.Id, param.TrangThai));
+            }
+
+            if (!String.IsNullOrEmpty(param.LinhVuc))
+            {
+                filter = builder.And(filter, builder.Eq(x => x.LinhVuc.Id, param.LinhVuc));
+            }
+
+            string sortBy = nameof(CongVan.ModifiedAt);
+            result.TotalRows = await _context.LuuCVDen.CountDocumentsAsync(filter);
+            result.Data = await _context.LuuCVDen.Find(filter)
+                .SortByDescending(x => x.ModifiedAt)
+                .Skip(param.Skip)
+                .Limit(param.Limit)
+                .ToListAsync();
+            return result;
+        }
+        
+        public async Task<PagingModel<LuuCVDi>> GetPagingLuuCVDi(CongVanParam param)
+        {
+            var result = new PagingModel<LuuCVDi>();
+            var builder = Builders<LuuCVDi>.Filter;
+            var filter = builder.Empty;
+            filter = builder.And(filter, builder.Where(x => x.IsDeleted == false));
+            // filter = filter & builder.In(x => x.IdOwner, CurrentUser.DonViIds);
+            
+            if (!String.IsNullOrEmpty(param.Content))
+            {
+                filter = builder.And(filter,
+                    builder.Where(x => x.SoLuuCV.Trim().ToLower().Contains(param.Content.Trim().ToLower())));
+            }
+
+            if (!String.IsNullOrEmpty(param.TrangThai))
+            {
+                filter = builder.And(filter, builder.Eq(x => x.TrangThai.Id, param.TrangThai));
+            }
+
+            if (!String.IsNullOrEmpty(param.LinhVuc))
+            {
+                filter = builder.And(filter, builder.Eq(x => x.LinhVuc.Id, param.LinhVuc));
+            }
+
+            string sortBy = nameof(CongVan.ModifiedAt);
+            result.TotalRows = await _context.LuuCVDi.CountDocumentsAsync(filter);
+            result.Data = await _context.LuuCVDi.Find(filter)
+                .SortByDescending(x => x.ModifiedAt)
+                .Skip(param.Skip)
+                .Limit(param.Limit)
+                .ToListAsync();
+            return result;
+        }
     }
 }

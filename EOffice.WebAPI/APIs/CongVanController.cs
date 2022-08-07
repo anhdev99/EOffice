@@ -161,5 +161,53 @@ namespace EOffice.WebAPI.APIs
                 );
             }
         }
+        
+        [HttpPost]
+        [Route("get-paging-params-luucvden")]
+        public async Task<IActionResult> GetPagingParamLuuCVDen([FromBody] CongVanParam param)
+        {
+            try
+            {
+                var response = await _congVanService.GetPagingLuuCVDen(param);
+
+                return Ok(
+                    new ResultResponse<PagingModel<LuuCVDen>>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
+        
+        [HttpPost]
+        [Route("get-paging-params-luucvdi")]
+        public async Task<IActionResult> GetPagingParamLuuCVDi([FromBody] CongVanParam param)
+        {
+            try
+            {
+                var response = await _congVanService.GetPagingLuuCVDi(param);
+
+                return Ok(
+                    new ResultResponse<PagingModel<LuuCVDi>>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
     }
 }

@@ -815,5 +815,10 @@ export default [{
         path: "/cong-van",
         name: "cong-van",
         component: () => import("../pages/congVan"),
+    },
+    {
+        path: "/luu-cv-den",
+        name: "cong-van-den",
+        component: () => import("../pages/congVan/luuCVDen"),
     }
 ]
