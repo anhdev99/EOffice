@@ -233,5 +233,29 @@ namespace EOffice.WebAPI.APIs
                 );
             }
         }
+        
+        [HttpGet]
+        [Route("get-by-id-luucvdi/{id}")]
+        public async Task<IActionResult> GetByIdLuuCVDi(string id)
+        {
+            try
+            {
+                var response = await _congVanService.GetByIdLuuCVDi(id);
+
+                return Ok(
+                    new ResultResponse<LuuCVDi>()
+                        .WithData(response)
+                        .WithCode(EResultResponse.SUCCESS.ToString())
+                        .WithMessage(DefaultMessage.GET_DATA_SUCCESS)
+                );
+            }
+            catch (ResponseMessageException ex)
+            {
+                return Ok(
+                    new ResultMessageResponse().WithCode(ex.ResultCode)
+                        .WithMessage(ex.ResultString)
+                );
+            }
+        }
     }
 }

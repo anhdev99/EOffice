@@ -7,12 +7,6 @@ import {required} from "vuelidate/lib/validators";
 import {vanBanDenModel} from "@/models/vanBanDenModel";
 import Multiselect from "vue-multiselect";
 import DatePicker from "vue2-datepicker";
-import Switches from "vue-switches";
-// import the component
-import Treeselect from '@riophae/vue-treeselect'
-// import the styles
-// import '@riophae/vue-treeselect/dist/vue-treeselect.css'
-
 /**
  * Form editor
  */

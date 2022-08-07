@@ -32,8 +32,7 @@ export default {
     PageHeader,
     Multiselect,
     ckeditor: CKEditor.component,
-    DatePicker,
-    vueDropzone: vue2Dropzone,
+    DatePicker
   },
   data() {
     return {
@@ -187,15 +186,6 @@ export default {
     };
   },
   validations: {
-    model: {
-      loaiVanBan: {required},
-      trangThai: {required},
-    },
-    modelTrangThai: {
-      currentTrangThai: {required},
-      newTrangThai: {required},
-      userName: {required},
-    }
   },
 
   async created() {
@@ -225,7 +215,7 @@ export default {
   },
   methods: {
     async  handleDetail(id) {
-      await this.$store.dispatch("congVanStore/getByIdLuuCVDen", id).then((res) => {
+      await this.$store.dispatch("congVanStore/getByIdLuuCVDi", id).then((res) => {
         if (res.resultCode === 'SUCCESS') {
           this.showModal = true;
           this.model = res.data;
@@ -885,13 +875,13 @@ export default {
                         </b-button>
                       </div>
                     </template>
-                    <form @submit.prevent="handleSubmit"
+                    <form
                           ref="formContainer">
                       <div class="row">
                         <div class="col-md-7">
                           <div class="row">
                             <!--                            Loại văn bản-->
-                            <div class="col-md-6">
+                            <div class="col-md-6" v-if="model.loaiVanBan">
                               <div class="mb-2">
                                 <label class="form-label" for="validationCustom01">Loại văn bản</label> <span
                                   class="text-danger">*</span>
@@ -901,17 +891,7 @@ export default {
                                     track-by="id"
                                     label="ten"
                                     placeholder="Chọn loại văn bản"
-                                    :class="{
-                                'is-invalid':
-                                  submitted && $v.model.loaiVanBan.$error,
-                                }"
                                 ></multiselect>
-                                <div
-                                    v-if="submitted && !$v.model.loaiVanBan.required"
-                                    class="invalid-feedback"
-                                >
-                                  Loại văn bản không được để trống.
-                                </div>
                               </div>
                             </div>
                             <!--                            Trạng thái-->
@@ -939,17 +919,7 @@ export default {
                                     track-by="id"
                                     label="ten"
                                     placeholder="Chọn trạng thái"
-                                    :class="{
-                                'is-invalid':
-                                  submitted && $v.model.trangThai.$error,
-                                }"
                                 ></multiselect>
-                                <div
-                                    v-if="submitted && !$v.model.trangThai.required"
-                                    class="invalid-feedback"
-                                >
-                                  Trạng thái không được để trống.
-                                </div>
                               </div>
                             </div>
                             <!--                              Số lưu -->
@@ -1143,42 +1113,11 @@ export default {
                                   ></i>
                                     {{ index + 1 }}: {{ file.fileName }}</a
                                   >
-                                  <button
-                                      type="button"
-                                      size="sm"
-                                      class="btn btn-outline btn-sm"
-                                      data-toggle="tooltip" data-placement="bottom" title="Xóa"
-                                      v-on:click="handleDeleteFile(index)">
-                                    <i class="fas fa-trash-alt text-danger me-1"></i>
-                                  </button>
                                 </div>
                               </template>
 
                             </div>
 
-                            <!--                            file đính kèm-->
-                            <div class="col-md-12">
-                              <label for="">Tệp tin đính kèm</label>
-                              <div style="color: red">Lưu ý: Tệp tin pdf hoặc word</div>
-                              <vue-dropzone
-                                  id="dropzone"
-                                  ref="myVueDropzone"
-                                  :use-custom-slot="true"
-                                  :options="dropzoneOptions"
-                                  v-on:vdropzone-removed-file="removeThisFile"
-                                  v-on:vdropzone-success="addThisFile"
-                              >
-                                <div class="dropzone-custom-content">
-                                  <i
-                                      class="display-1 text-muted bx bxs-cloud-upload"
-                                      style="font-size: 70px"
-                                  ></i>
-                                  <h4>
-                                    Kéo thả tệp tin hoặc bấm vào để tải tệp tin
-                                  </h4>
-                                </div>
-                              </vue-dropzone>
-                            </div>
                           </div>
 
                         </div>

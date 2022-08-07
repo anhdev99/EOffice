@@ -392,5 +392,12 @@ namespace EOffice.WebAPI.Services
                 .FirstOrDefaultAsync();
             return model;
         }
+        
+        public async Task<LuuCVDi> GetByIdLuuCVDi(string id)
+        {
+            var model = await _context.LuuCVDi.Find(x => x.Id == id && x.IsDeleted != true)
+                .FirstOrDefaultAsync();
+            return model;
+        }
     }
 }

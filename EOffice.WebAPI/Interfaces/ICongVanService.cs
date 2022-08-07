@@ -15,6 +15,7 @@ namespace EOffice.WebAPI.Interfaces
         Task<PagingModel<CongVan>> GetPaging(CongVanParam param);
         Task<PagingModel<LuuCVDi>> GetPagingLuuCVDi(CongVanParam param);
         Task<PagingModel<LuuCVDen>> GetPagingLuuCVDen(CongVanParam param);
-        Task<LuuCVDen> GetByIdLuuCVDen(string id);
+        Task<LuuCVDen> GetByIdLuuCVDen(string id);        
+        Task<LuuCVDi> GetByIdLuuCVDi(string id);
     }
 }
