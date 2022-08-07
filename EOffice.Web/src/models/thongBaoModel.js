@@ -10,7 +10,8 @@ const toJson = (item) => {
         sender:item.sender,
         url:item.url,
         congVanId: item.congVanId,
-        loaiCongVan: item.loaiCongVan
+        loaiCongVan: item.loaiCongVan,
+        files: item.files
     }
 }
 
@@ -26,7 +27,8 @@ const fromJson = (item) => {
         sender:item.sender,
         url:item.url,
         congVanId: item.congVanId,
-        loaiCongVan: item.loaiCongVan
+        loaiCongVan: item.loaiCongVan,
+        files: item.files
     }
 }
 
@@ -43,7 +45,8 @@ const baseJson = () => {
         url:null,
         createdAt: null,
         congVanId: null,
-        loaiCongVan: 0
+        loaiCongVan: 0,
+        files: null
     }
 }
 

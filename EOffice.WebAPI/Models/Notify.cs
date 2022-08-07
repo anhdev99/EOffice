@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace EOffice.WebAPI.Models
@@ -17,5 +18,7 @@ namespace EOffice.WebAPI.Models
         public string Url { get; set; }
         public string CongVanId { get; set; }
         public ELoaiCongVan LoaiCongVan { get; set; }
+        [BsonIgnore]
+        public List<FileShort> Files { get; set; }
     }
 }
