@@ -117,7 +117,7 @@ export default {
     <div class="navbar-header" style="background-color: #005990">
       <div class="d-flex">
         <!-- LOGO -->
-        <div class="navbar-brand-box" style="background-color: #005990">
+        <div class="navbar-brand-box d-flex align-items-center" style="">
           <router-link to="/" class="logo logo-dark">
             <span class="logo-sm">
               <img src="@/assets/images/logo-sm.png" alt height="22" />
@@ -127,9 +127,9 @@ export default {
             </span>
           </router-link>
 
-          <router-link to="/" class="logo logo-light">
+          <router-link to="/" class="logo logo-light d-flex align-items-center">
             <span class="logo-sm">
-              <img src="@/assets/images/DTHU.png" alt height="30" />
+              <img src="@/assets/images/DTHU.png" class="logo-dthu" alt height="30" />
             </span>
             <span class="logo-lg">
               <img src="@/assets/images/logo-eoffice.png" alt height="35" />
@@ -426,7 +426,7 @@ export default {
         body-class="p-0"
         hide-footer
     >
-      <template #modal-header="{ close }">
+      <template #modal-header="{ }">
         <!-- Emulate built in modal header close button action -->
         <h5> Thông báo</h5>
         <div class="text-end">
@@ -474,4 +474,13 @@ export default {
   font-weight: bold; color: #00568C; margin-right: 10px;
 
 }
+</style>
+
+<style lang="scss">
+  .logo-dthu{
+    width: 50px;
+  }
+  .navbar-brand-box{
+    background-color: transparent;
+  }
 </style>
