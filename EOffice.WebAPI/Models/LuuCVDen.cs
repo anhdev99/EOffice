@@ -10,6 +10,7 @@ namespace EOffice.WebAPI.Models
         [BsonId]
         [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
         public string Id { get; set; }
+        public string VanBanId { get; set; }
         public int Version { get; set; }
         public int Number { get; set; }
         public int Identity { get; set; }

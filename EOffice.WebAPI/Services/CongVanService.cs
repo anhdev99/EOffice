@@ -385,5 +385,12 @@ namespace EOffice.WebAPI.Services
                 .ToListAsync();
             return result;
         }
+        
+        public async Task<LuuCVDen> GetByIdLuuCVDen(string id)
+        {
+            var model = await _context.LuuCVDen.Find(x => x.Id == id && x.IsDeleted != true)
+                .FirstOrDefaultAsync();
+            return model;
+        }
     }
 }

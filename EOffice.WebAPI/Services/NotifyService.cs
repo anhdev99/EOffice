@@ -227,6 +227,7 @@ namespace EOffice.WebAPI.Services
                     var entity = new LuuCVDi();
                     entity.Id = BsonObjectId.GenerateNewId().ToString();
                     entity.LoaiVanBan = congVanDi.LoaiVanBan;
+                    entity.VanBanId = congVanDi.Id;
                     entity.TrangThai = congVanDi.TrangThai;
                     entity.SoLuuCV = congVanDi.SoLuuCV;
                     entity.SoVBDi = congVanDi.SoVBDi;
@@ -281,6 +282,7 @@ namespace EOffice.WebAPI.Services
                     }
                     var entity = new LuuCVDen();
                     entity.Id = BsonObjectId.GenerateNewId().ToString();
+                    entity.VanBanId = congVanDen.Id;
                     entity.LoaiVanBan = congVanDen.LoaiVanBan;
                     entity.TrangThai = congVanDen.TrangThai;
                     entity.SoLuuCV = congVanDen.SoLuuCV;

@@ -23,4 +23,10 @@ export const actions = {
     async getById({commit}, id) {
         return apiClient.get(controller + "/get-by-id/" + id);
     },
+    async getByIdLuuCVDen({commit}, id) {
+        return apiClient.get(controller + "/get-by-id-luucvden/" + id);
+    },
+    async getByIdLuuCVDi({commit}, id) {
+        return apiClient.get(controller + "/get-by-id-luucvdi/" + id);
+    },
 };
