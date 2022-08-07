@@ -41,6 +41,7 @@ namespace EOffice.WebAPI.Data
         private readonly IMongoCollection<KhoiCoQuan> _khoiCoQuan;
         private readonly IMongoCollection<LoaiTrangThai> _loaiTrangThai;
         private readonly IMongoCollection<HopThu> _hopThu;
+        private readonly IMongoCollection<CongVan> _congVan;
         
         private readonly IDbSettings _settings;
         public DataContext(IDbSettings settings)
@@ -94,6 +95,7 @@ namespace EOffice.WebAPI.Data
             _khoiCoQuan = _context.GetCollection<KhoiCoQuan>(_settings.KhoiCoQuanCollectionName);
             _loaiTrangThai = _context.GetCollection<LoaiTrangThai>(_settings.LoaiTrangThaiCollectionName);
             _hopThu = _context.GetCollection<HopThu>(_settings.HopThuCollectionName);
+            _congVan = _context.GetCollection<CongVan>(_settings.CongVanCollectionName);
         }
         
         public IMongoDatabase Database
@@ -135,6 +137,8 @@ namespace EOffice.WebAPI.Data
         public IMongoCollection<KhoiCoQuan> KhoiCoQuan { get => _khoiCoQuan; }
         public IMongoCollection<LoaiTrangThai> LoaiTrangThai { get => _loaiTrangThai; }
         public IMongoCollection<HopThu> HopThu { get => _hopThu; }
+        
+        public IMongoCollection<CongVan> CongVan { get => _congVan; }
         
     }
 }
