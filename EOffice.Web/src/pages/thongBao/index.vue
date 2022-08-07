@@ -72,43 +72,43 @@ export default {
           key: 'STT',
           label: 'STT',
           thStyle: {width: '50px', minWidth: '50px'},
-          class: "text-center title-capso",
-          thClass: 'hidden-sortable title-capso',
+          class: "text-center text-primary",
+          thClass: 'hidden-sortable text-primary bold',
         },
         {
           key: "title",
           label: "Tiêu đề",
-          class: "px-2 title-capso",
+          class: "px-2 text-primary",
           sortable: true,
-          thClass: 'hidden-sortable title-capso',
+          thClass: 'hidden-sortable text-primary bold',
         },
         {
           key: "sender",
           label: "Người tạo",
           thStyle: {width: '160px', minWidth: '160px'},
-          class: "text-center px-1 title-capso",
-          thClass: 'hidden-sortable title-capso',
+          class: "text-center px-1 text-primary",
+          thClass: 'hidden-sortable text-primary bold',
         },
         {
           key: "createdAtShow",
           label: "Ngày tạo",
           thStyle: {width: '100px', minWidth: '100px'},
-          class: "text-center px-1 title-capso",
-          thClass: 'hidden-sortable title-capso',
+          class: "text-center px-1 text-primary",
+          thClass: 'hidden-sortable text-primary bold',
         },
         {
           key: "read",
           label: "Trạng thái",
           thStyle: {width: '100px', minWidth: '100px'},
-          class: "text-center px-1 title-capso",
-          thClass: 'hidden-sortable title-capso',
+          class: "text-center px-1 text-primary ",
+          thClass: 'hidden-sortable text-primary bold',
         },
         {
           key: 'process',
           label: 'Xử lý',
-          class: "text-center title-capso",
+          class: "text-center text-primary",
           thStyle: {width: '110px', minWidth: '110px'},
-          thClass: 'hidden-sortable title-capso',
+          thClass: 'hidden-sortable text-primary bold',
         }
       ],
       showModalVBDen: false,
@@ -1267,8 +1267,7 @@ export default {
   display: none !important;
 }
 
-.title-capso {
-  font-weight: 500;
+.title-thongbao {
   color: #00568C;
   margin-right: 10px;
 
