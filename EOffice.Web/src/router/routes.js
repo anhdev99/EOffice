@@ -810,5 +810,10 @@ export default [{
         path: "/thiet-lap-ky-so-phap-ly",
         name: "ThietLapKySoPhapLy",
         component: () => import("../pages/kySoPhapLy/thietLapKySo"),
+    },
+    {
+        path: "/cong-van",
+        name: "cong-van",
+        component: () => import("../pages/congVan"),
     }
 ]
