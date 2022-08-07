@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using EOffice.WebAPI.Data;
 using EOffice.WebAPI.Exceptions;
@@ -117,7 +118,42 @@ namespace EOffice.WebAPI.Services
         
         public async Task<Notify> GetById(string id)
         {
-            return await _context.Notify.Find(x => x.Id == id).FirstOrDefaultAsync();
+            var data = await _context.Notify.Find(x => x.Id == id).FirstOrDefaultAsync();
+            if (data != default)
+            {
+                var files = new List<FileShort>();
+                if (data.LoaiCongVan == ELoaiCongVan.CONG_VAN_DI)
+                {
+                    var vanBan = _context.VanBanDi.Find(x => x.Id == data.CongVanId).FirstOrDefault();
+                    if (vanBan != default)
+                    {
+                        if (vanBan.File != default)
+                        {
+                            files.AddRange(vanBan.File);
+                        }
+
+                        if (vanBan.FilePDF != default)
+                        {
+                            files.Add(vanBan.FilePDF.LastOrDefault());
+                        }
+                    }
+                }else if (data.LoaiCongVan == ELoaiCongVan.CONG_VAN_DEN)
+                {
+                    var vanBan = _context.VanBanDen.Find(x => x.Id == data.CongVanId).FirstOrDefault();
+                    if (vanBan != default)
+                    {
+                        if (vanBan.File != default)
+                        {
+                            files.AddRange(vanBan.File);
+                        }
+                    }
+                }
+
+                data.Files = files;
+                return data;
+            }
+
+            return null;
         }
 
         public async Task<ResultResponse<NotifyVM>> GetListNotify()

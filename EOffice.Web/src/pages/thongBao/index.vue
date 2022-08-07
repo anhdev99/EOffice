@@ -180,6 +180,7 @@ export default {
       }
     },
     async handleChangeStatus(id) {
+      console.log("id", id,  this.model)
       this.model.id = id;
       await this.$store.dispatch("notifyStore/changeStatus", this.model).then((res) => {
         if (res.resultCode === 'SUCCESS') {
@@ -501,6 +502,23 @@ export default {
         <h4 class="mt-0 font-size-16 pb-3" style="font-weight: bold;color: #00568C">{{model.title}}</h4>
         <p style="color: #00568C" v-if="model.content" :inner-html.prop="model.content">
         </p>
+        <div class="col-md-12 capso-container" style="display: flex; flex-direction: column">
+          <ul v-if="model.files && model.files.length > 0" style="padding: 0px">
+            <li class="title-capso" style="font-weight: normal" v-for="(value, index) in model.files" :key="index">
+
+              <a
+                  :href="`${apiUrl}files/view/${value.fileId}`"
+                  class=" fw-medium"
+              ><i
+                  :class="`mdi font-size-16 align-middle`"
+              ></i>
+                [Tải về]</a
+              >
+              <span style="padding-left: 20px; font-weight: 500; color: #2F93E0">{{ value.fileName }}</span>
+            </li>
+          </ul>
+
+        </div>
       </div>
     </b-modal>
 
@@ -519,7 +537,7 @@ export default {
         <!-- Emulate built in modal header close button action -->
         <h5> Lưu công văn nội bộ</h5>
         <div class="text-end">
-          <b-button variant="light" size="sm" style="width: 80px" @click="showModal = false">
+          <b-button variant="light" size="sm" style="width: 80px" @click="showModalVBDen = false">
             Đóng
           </b-button>
           <b-button type="submit" variant="primary" class="ms-1" style="width: 80px"
@@ -824,7 +842,7 @@ export default {
         <!-- Emulate built in modal header close button action -->
         <h5>Lưu công văn nội bộ</h5>
         <div class="text-end">
-          <b-button variant="light" size="sm" style="width: 80px" @click="showModal = false">
+          <b-button variant="light" size="sm" style="width: 80px" @click="showModalVBDi = false">
             Đóng
           </b-button>
 
